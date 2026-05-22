@@ -229,6 +229,123 @@ body.dark a:hover
   text-decoration: none;
 }
 
+.button {
+  display: inline-block;
+  height: 30px;
+  padding: 0 15px;
+  color: #333;
+  text-align: center;
+  font-size: 14px;
+  line-height: 30px;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.button.active {
+  background-color: #2380e0;
+  color: white;
+  font-weight: 600;
+  border: 1px solid #2380e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #000;
+    color: #e0e0e0;
+  }
+
+  p, tr, td, th, strong, u {
+    color: #e0e0e0;
+  }
+
+  h1 {
+    color: #f0f0f0;
+  }
+
+  heading {
+    color: #f0f0f0;
+  }
+
+  papertitle {
+    color: #f0f0f0;
+  }
+
+  a {
+    color: #64b5f6;
+  }
+
+  a:focus, a:hover {
+    color: #f09228;
+  }
+
+  .tab-pane a,
+  #papers-all a,
+  #papers-selected a {
+    color: #ccc;
+  }
+
+  .tab-pane a.pub-link,
+  #papers-all a.pub-link,
+  #papers-selected a.pub-link {
+    color: #64b5f6;
+  }
+
+  .tab-pane a:focus,
+  .tab-pane a:hover,
+  #papers-all a:hover,
+  #papers-selected a:hover {
+    color: #f09228;
+  }
+
+  hr {
+    background-color: #555 !important;
+  }
+
+  .button {
+    color: #e0e0e0;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+  }
+
+  .button:hover {
+    background-color: #2a2a2a;
+  }
+
+  .button.active {
+    background-color: #2380e0;
+    color: white;
+    border: 1px solid #2380e0;
+  }
+
+  ::selection {
+    background: #3a506b;
+  }
+
+  ::-moz-selection {
+    background: #3a506b;
+  }
+}
+
 .label {
     display: flex;
     align-items: center;
@@ -267,45 +384,6 @@ body.dark a:hover
 
 .checkbox:checked + .label .ball {
     transform: translateX(24px);
-}
-
-.button {
-  display: inline-block;
-  height: 30px;
-  padding: 0 15px;
-  color: #333;
-  text-align: center;
-  font-size: 14px;
-  line-height: 30px;
-  text-decoration: none;
-  white-space: nowrap;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  box-sizing: border-box;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.button:hover {
-  background-color: #e6e6e6;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.button.active {
-  background-color: #2380e0;
-  color: white;
-  font-weight: 600;
-  border: 1px solid #2380e0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.tab-pane {
-  display: none;
-}
-
-.tab-pane.active {
-  display: block;
 }
 
 
