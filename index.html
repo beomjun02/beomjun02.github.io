@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<script src="./assets/github_stars.js"></script>
+
+<script>
+  function renderGithubStars(root) {
+    if (typeof githubStars !== 'function') return;
+    root = root || document;
+
+    root.querySelectorAll('.githubstars[data-repo]').forEach(function(el) {
+      if (el.dataset.loaded === '1' || el.dataset.loading === '1') return;
+      el.dataset.loading = '1';
+
+      githubStars(el.dataset.repo, function(stars) {
+        el.textContent = stars;
+        el.dataset.loaded = '1';
+        delete el.dataset.loading;
+      });
+    });
+  }
+
+  function buildSelectedPapers() {
+    const all = document.querySelector('#papers-all');
+    const selected = document.querySelector('#papers-selected');
+    if (!all || !selected) return;
+
+    selected.innerHTML = '';
+
+    const picks = all.querySelectorAll('p[data-selected="1"]');
+    picks.forEach(p => selected.appendChild(p.cloneNode(true)));
+
+    selected.querySelectorAll('.githubstars').forEach(function(el) {
+      delete el.dataset.loaded;
+      delete el.dataset.loading;
+    });
+
+    renderGithubStars(selected);
+  }
+
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+    document.querySelector(tabId).classList.add('active');
+
+    document.querySelectorAll('.button').forEach(button => button.classList.remove('active'));
+    document.querySelector('[data-ref="' + tabId + '"]').classList.add('active');
+
+    if (tabId === '#papers-selected') buildSelectedPapers();
+    renderGithubStars(document.querySelector(tabId));
+  }
+
+  function initPubs() {
+    showTab('#papers-all');
+  }
+
+  document.addEventListener('DOMContentLoaded', initPubs);
+  window.addEventListener('load', initPubs);
+</script>
+
+  <title>Beomjun Kim</title>
+  <meta name="author" content="Beomjun Kim">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="description" content="Beomjun Kim's personal website.">
+  <meta name="keywords" content="Beomjun Kim, KAIST, AI Researcher, Robotics, LLM, VLM, Foundation Models">
+  <meta name="author" content="Beomjun Kim">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+<!--   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+ -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+
+</head>
+
+
+<!---------- HTML start ----------->
+<body style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+  <div class="profile-container">
+    <div class="profile-photo" style="width:45%;max-width:100%;">
+      <img alt="profile photo" src="images/prof_pic.jpg">
+      <p>
+        <a href="https://scholar.google.com/citations?user=cTeKWycAAAAJ"><i class="ai ai-google-scholar fa-lg"></i></a> |
+        <a href="https://github.com/i3ullbum"><i class="fab fa-github fa-lg"></i></a> |
+        <a href="https://x.com/i3ullbum"><i class="fab fa-x-twitter fa-lg"></i></a> |
+        <a href="https://google.com"><i class="ai ai-cv fa-lg"></i></a>
+      </p>
+    </div>
+    <div class="profile-text">
+      <h1>Beomjun Kim</h1>
+      <p style="text-align: left">
+      I am a M.S. student at <a href="https://alinlab.kaist.ac.kr/">ALIN-LAB</a>, advised by Prof. <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a> at <a href="https://www.kaist.ac.kr/">KAIST</a>. I received my B.S. in Computer Science from <a href="https://www.kaist.ac.kr/">KAIST</a> in 2025.
+      </p>
+
+      <p style="text-align: left">
+      My research mainly focuses on <strong>Robotics Foundation Models</strong>, with a broader interest in <strong>LLM/VLMs</strong>. Recently, I have been interested in <strong>human-to-robot transfer</strong> — learning dexterous robot policies solely from human demonstrations, without any robot data, to overcome the data bottleneck in robotics.
+      </p>
+    </div>
+  </div>
+        <!---------- News ----------->
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:2.5%;width:68%;vertical-align:middle">
+              <heading>News</heading>
+              <hr style="width:100%;border:0;background-color:#BBBBBB;height:1px;">
+              <strong>May 2026</strong>: <a href="https://google.com">Dexterous Point Policy</a> is available on arXiv.
+              <br>
+              <strong>May 2026</strong>: <a href="https://google.com">ExComm</a> is available on arXiv.
+              <br>
+              <strong>May 2026</strong>: <a href="https://arxiv.org/abs/2605.03269">RLDX-1 Technical Report</a> is available on arXiv.
+              <br>
+              <strong>Sep 2025</strong>: Started integrated M.S. & Ph.D. program at <a href="https://www.kaist.ac.kr/">KAIST</a>, advised by Prof. <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>.
+              <br>
+              <strong>May 2025</strong>: <a href="https://arxiv.org/abs/2505.15259">ReGUIDE</a> is available on arXiv.
+              <br>
+              <strong>May 2025</strong>: <a href="https://arxiv.org/abs/2502.02732">Peri-LN</a> is accepted at ICML 2025.
+              <br>
+            </td>
+          </tr>
+        </tbody></table>
+
+        <!---------- Research ----------->
+      <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:2.5%;width:68%;vertical-align:middle">
+              <div style=" margin-top: 10px;">
+                <heading>Publications&nbsp;&nbsp;</heading>
+                <div class="button active" data-ref="#papers-selected" onclick="showTab('#papers-selected')">Selected</div>
+                <div class="button" data-ref="#papers-all" onclick="showTab('#papers-all')">All</div>
+              </div>
+              <hr style="width:100%;border:0;background-color:#BBBBBB;height:1px;">
+              <!---------- Publication ----------->
+              <!---------------------------------->
+              <div class="tab-pane active" id="papers-selected">
+              </div>
+              <!-------------------------------------------------------------->
+              <div class="tab-pane" id="papers-all">
+                <p>
+                  <papertitle>Dexterous Point Policy: Learning Point-based Dexterous Hand Policies from Human Demonstrations</papertitle>
+                  <br>
+                  <u>Beomjun Kim</u>,
+                  <a href="https://www.shpark.org/">Seong Hyeon Park</a>,
+                  Seunghoon Sim,
+                  SeungJun Moon,
+                  SangHyeok Lee,
+                  <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>
+                  <br>
+                  preprint.
+                  <br>
+                </p>
+
+                <p data-selected="1">
+                  <papertitle>RLDX-1 Technical Report</papertitle>
+                  <br>
+                  <a href="https://kingdy2002.github.io/">Dongyoung Kim</a>,
+                  <a href="https://huiwon-jang.github.io/">Huiwon Jang</a>,
+                  <a href="https://myungkyukoo.github.io/">Myungkyu Koo</a>,
+                  <a href="https://suhyeok-jang.github.io/">Suhyeok Jang</a>,
+                  Taeyoung Kim,
+                  <u>Beomjun Kim</u>,
+                  <a href="https://happyhappy-jun.github.io/">Byungjun Yoon</a>,
+                  Changsung Jang,
+                  <a href="https://choidae1.github.io/">Daewon Choi</a>,
+                  Dongsu Han,
+                  Donguk Lee,
+                  Heeseung Kwon,
+                  Hojin Jeon,
+                  Jaehyun Kang,
+                  Jaekyoung Bae,
+                  Jihyuk Lee,
+                  Jimin Lee,
+                  <a href="https://periphanes.github.io/">John Won</a>,
+                  Joonwoo Ahn,
+                  Junhyeong Park,
+                  Junyoung Sung,
+                  <a href="https://kyungmnlee.github.io/">Kyungmin Lee</a>,
+                  Minseong Han,
+                  Minsung Yoon,
+                  Sejune Joo,
+                  Seonil Son,
+                  Seungcheol Park,
+                  Seunggeun Cho,
+                  Seungjun Moon,
+                  Seungku Kim,
+                  Yonghoon Dong,
+                  Yongjin Cho,
+                  Youngchan Kim,
+                  Chang Hwan Kim,
+                  Dohyeon Kim,
+                  Heecheol Kim,
+                  Heewon Lee,
+                  Hensen Ahn,
+                  Hyungkyu Ryu,
+                  Hyunsoo Choi,
+                  Hyunsoo Shin,
+                  Jaeheon Jung,
+                  Jaewoo Kim,
+                  Jinwook Kim,
+                  Joochul Chang,
+                  Joonsoo Kim,
+                  Junghun Park,
+                  Jungwoo Park,
+                  Junho Cho,
+                  Junhyeok Park,
+                  Junwon Lee,
+                  Kangwook Lee,
+                  Kwanghoon Kim,
+                  Kyoungwhan Choe,
+                  Manoj Bhadu,
+                  Nayoung Oh,
+                  Sangjun Kim,
+                  Sangwoo Kim,
+                  Seunghoon Shim,
+                  Seunghyun Kim,
+                  Seungjun Lee,
+                  Seungyup Ka,
+                  Sungryol Yang,
+                  Wook Jung,
+                  Yashu Shukla,
+                  Yeonjae Lee,
+                  Yeonwoo Bae,
+                  <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>
+                  <br>
+                  Technical Report.
+                  <br>
+                  <a href="https://arxiv.org/abs/2605.03269" class="pub-link">paper</a> &nbsp|&nbsp
+                  <a href="https://github.com/RLWRLD/RLDX-1" class="pub-link">code</a>
+                  (★: <span class="githubstars" data-repo="RLWRLD/RLDX-1"></span>)
+                </p>
+
+                <p>
+                  <papertitle>ExComm: Exploration-Stage Communication for Error-Resilient Agentic Test-Time Scaling</papertitle>
+                  <br>
+                  <a href="https://woominsong.github.io/">Woomin Song</a>,
+                  <u>Beomjun Kim</u>,
+                  <a href="https://choidae1.github.io/">Daewon Choi</a>,
+                  Sai Muralidhar Jayanthi,
+                  Saket Dingliwal,
+                  <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>,
+                  Aram Galstyan
+                  <br>
+                  preprint.
+                  <br>
+                </p>
+
+                <p>
+                  <papertitle>ReGUIDE: Data Efficient GUI Grounding via Spatial Reasoning and Search</papertitle>
+                  <br>
+                  <a href="https://hyunseoklee-ai.github.io/">Hyunseok Lee</a>,
+                  <a href="https://penpaperkeycode.github.io/">Jeonghoon Kim</a>,
+                  <u>Beomjun Kim</u>,
+                  <a href="https://jihoontack.github.io/">Jihoon Tack</a>,
+                  Chansong Jo,
+                  Jaehong Lee,
+                  Cheonbok Park,
+                  Sookyo In,
+                  <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>,
+                  Kang Min Yoo
+                  <br>
+                  preprint.
+                  <br>
+                  <a href="https://arxiv.org/abs/2505.15259" class="pub-link">paper</a>
+                </p>
+
+                <p data-selected="1">
+                  <papertitle>Peri-LN: Revisiting Normalization Layer in the Transformer Architecture</papertitle>
+                  <br>
+                  <a href="https://penpaperkeycode.github.io/">Jeonghoon Kim</a>,
+                  Byeongchan Lee,
+                  Cheonbok Park,
+                  Yeontaek Oh,
+                  <u>Beomjun Kim</u>,
+                  Taehwan Yoo,
+                  Seongjin Shin,
+                  Dongyoon Han,
+                  <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a>,
+                  Kang Min Yoo
+                  <br>
+                  ICML 2025
+                  <br>
+                  <a href="https://arxiv.org/abs/2502.02732" class="pub-link">paper</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+        </tbody></table>
+
+        <!------------ Work ------------->
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:2.5%;width:68%;vertical-align:middle">
+              <heading>Work Experience</heading>
+              <hr style="width:100%;border:0;background-color:#BBBBBB;height:1px;">
+              <p>
+                <strong>ALIN-LAB, KAIST</strong><br>
+                Undergraduate Research Intern
+                <br>
+                2023 - 2025
+                <br>
+                Research on LLM agents, including GUI grounding and multi-agent collaboration.
+              </p>
+              <p>
+                <strong>Samsung Advanced Institute of Technology (SAIT)</strong><br>
+                Research Intern
+                <br>
+                2023
+                <br>
+                Research on extending context length in Transformer architectures.
+              </p>
+          </tr>
+        </tbody></table>
+
+        <!----------- Honors ------------->
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:2.5%;width:68%;vertical-align:middle">
+              <heading>Honors and Awards</heading>
+              <hr style="width:100%;border:0;background-color:#BBBBBB;height:1px;">
+
+              <p style="line-height: 1.5;">
+                <strong>Summa Cum Laude</strong>, 2025
+                <br>
+                <strong>Dean's List</strong>, Fall 2023, Fall 2022, Spring 2022
+              </p>
+              <p style="line-height: 1.5;">
+                <strong>Recipient</strong>, Woon Hae Scholarship, 2024
+                <br>
+                <strong>Recipient</strong>, Kim Yong-Han Global Leader Scholarship, 2023
+              </p>
+              <p style="line-height: 1.5;">
+                <strong>Winner</strong>, Uni-D Datathon 2023
+              </p>
+            </td>
+          </tr>
+        </tbody></table>
+
+        <!----------- Education ------------->
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:2.5%;width:68%;vertical-align:middle">
+              <heading>Education</heading>
+              <hr style="width:100%;border:0;background-color:#BBBBBB;height:1px;">
+
+              <p style="line-height: 1.5;">
+                <strong>KAIST</strong> — M.S. & Ph.D. in Artificial Intelligence, 2025 - Now
+                <br>
+                <strong>KAIST</strong> — B.S. in Computer Science, 2021 - 2025
+              </p>
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </tbody></table>
+</body>
+</html>
