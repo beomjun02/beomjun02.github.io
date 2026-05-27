@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-05-27</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-title { font-weight: 500; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { color: #222; font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-btn { font-size: 1.3em; background: none; border: 2px solid #ddd; border-radius: 6px; padding: 0.25em 0.55em; cursor: pointer; transition: border-color 0.15s, background 0.15s; line-height: 1; }
+.daily-news .fb-btn:hover { border-color: #aaa; }
+.daily-news .fb-btn.active { border-color: #d4a017; background: #fdf8e8; }
+.daily-news .fb-text { flex: 1; min-width: 180px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .theme-toggle { position: absolute; top: 1.2em; right: 1.2em; display: flex; gap: 0.3em; }
+.daily-news .theme-toggle button { background: none; border: 1px solid #ccc; border-radius: 4px; padding: 0.2em 0.5em; font-size: 0.85em; cursor: pointer; color: #555; font-family: inherit; }
+.daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .daily-news { color: #e0e0e0; }
+  html:not([data-theme="light"]) .daily-news h1 { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+  html:not([data-theme="light"]) .daily-news .user-handle { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news .item-desc { color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .item-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .page-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .archive { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .feedback { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .fb-btn { border-color: #555; color: #ccc; }
+  html:not([data-theme="light"]) .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+  html:not([data-theme="light"]) .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+  html:not([data-theme="light"]) .daily-news .fb-submit { background: #555; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+}
+html[data-theme="dark"] .daily-news { color: #e0e0e0; }
+html[data-theme="dark"] .daily-news h1 { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+html[data-theme="dark"] .daily-news .user-handle { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news .item-desc { color: #aaa; }
+html[data-theme="dark"] .daily-news .item-meta { color: #888; }
+html[data-theme="dark"] .daily-news .page-meta { color: #888; }
+html[data-theme="dark"] .daily-news .archive { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .feedback { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .fb-btn { border-color: #555; color: #ccc; }
+html[data-theme="dark"] .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+html[data-theme="dark"] .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+html[data-theme="dark"] .daily-news .fb-submit { background: #555; }
+html[data-theme="dark"] .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+</style>
+</head>
+<body>
+<div class="daily-news" style="position:relative;">
+<div class="theme-toggle"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system">System</button></div>
+<h1>Daily News — 2026-05-27</h1>
+<div class="user-banner"><div class="user-handle">John</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · robot learning · world models · JEPA models · world action models · video generative models · diffusion modeling · multimodal generation models</div></div>
+<p class="page-meta">14 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<h2>News</h2>
+<ul>
+  <li><span class="item-title">🆕 <a href="https://x.com/mseyed/status/2059504005387284629">Gemini Embedding 2: A Native Multimodal Embedding Model</a></span><span class="item-meta">Google DeepMind · 2026-05-27<span class="item-keywords"> · multimodal generation models</span></span><span class="item-desc">DeepMind dropped the white paper for GE 2, their first natively multimodal embedding model that handles text, audio, video, and image in a unified representation — positioned as a foundation for cross-modal retrieval and RAG over arbitrary media types.</span></li>
+  <li><span class="item-title">🆕 <a href="https://x.com/pushmeet/status/2058936037754224998">AlphaProof Nexus: an agentic framework for formal proof search</a></span><span class="item-meta">Google DeepMind · 2026-05-25</span><span class="item-desc">Pushmeet Kohli announced AlphaProof Nexus, a Gemini-powered agent for formal mathematics that automatically solves open formal-math problems by orchestrating proof search — a meaningful step toward agentic research-level math, not just LLM-style symbol manipulation.</span></li>
+  <li><span class="item-title">🆕 <a href="https://x.com/GoogleDeepMind/status/2059235181274202500">SynthID watermarking expands to OpenAI, ElevenLabs, and Kakao</a></span><span class="item-meta">Google DeepMind · 2026-05-26</span><span class="item-desc">Over 100B pieces of content have been SynthID-watermarked to date; DeepMind is now partnering with OpenAI, ElevenLabs, and Kakao to embed SynthID in their generators, plus expanding verification into Google Search and Chrome. Provenance is becoming an industry-wide protocol, not a single-vendor feature.</span></li>
+  <li><span class="item-title">🆕 <a href="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands">Figure signs agreement with Catalyst Brands to scale humanoid operations</a></span><span class="item-meta">Figure AI · 2026-05-26</span><span class="item-desc">Figure announced a commercial deal with Catalyst Brands (the holding company behind Brooks Brothers, JCPenney and others) to deploy Figure 03 humanoids into apparel-retail operations — its first major retail/logistics partner beyond the BMW automotive pilot.</span></li>
+  <li><span class="item-title">🆕 <a href="https://x.com/babugi28/status/2059385557948739801">Human Archive raises $8.2M seed to model human embodied intelligence</a></span><span class="item-meta">Human Archive · 2026-05-26<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">A new robotics-data startup announced $8.2M to build datasets and models of how humans interact with the physical world. Their pitch is that despite decades of motion-capture and biomechanics work, we still lack a foundation model of embodied human behavior — the data layer underneath any human-to-robot transfer pipeline.</span></li>
+</ul>
+<h2>Releases</h2>
+<ul>
+  <li><span class="item-title">🆕 <a href="https://x.com/KlemenKotar/status/2057644061293793341">PSI-0.5: a promptable physical world model</a></span><span class="item-meta">Klemen Kotar / Stanford · 2026-05-22<span class="item-keywords"> · world models</span></span><span class="item-desc">Released a world model you can not only navigate but also interact with — most world models let you move a camera through a scene; PSI-0.5 accepts text-style prompts as actions on objects in the rendered world. Direct step toward action-conditioned world models for manipulation.</span></li>
+  <li><span class="item-title">🆕 <a href="https://x.com/KnightNemo_/status/2059273823380451431">Nano World Models: a minimalist deployable WM stack</a></span><span class="item-meta">KnightNemo / community · 2026-05-26<span class="item-keywords"> · world models</span></span><span class="item-desc">Argues that industry-scale world models have raced ahead while open deployment lags, and releases &quot;Nano World Models&quot; — a minimalist implementation aimed at letting the broader community actually run and fine-tune WMs locally rather than just read papers about them.</span></li>
+  <li><span class="item-title">🆕 <a href="https://stability.ai/news-updates/meet-stable-audio-3-the-model-family-built-for-artistic-experimentation-with-open-weight-models">Stable Audio 3.0: open-weight audio model family</a></span><span class="item-meta">Stability AI · 2026-05-20<span class="item-keywords"> · multimodal generation models</span></span><span class="item-desc">Stability shipped Stable Audio 3.0 as an open-weight model family trained on fully licensed data, designed as the foundation layer for downstream audio tooling. First major open-weight audio drop of the year — runs even on CPU per community ports.</span></li>
+  <li><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.7-Max: the agent frontier model</a></span><span class="item-meta">Alibaba Qwen · 2026-05-20</span><span class="item-desc">Qwen&#x27;s new proprietary flagship, positioned explicitly for the agent era: built to write/debug code, drive office workflows, and sustain autonomous execution across hundreds to thousands of tool-use steps. The push is breadth+depth of agent capabilities rather than raw reasoning benchmarks.</span></li>
+  <li><span class="item-title">🆕 <a href="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid">LeRobot Humanoid: an open, low-cost, 3D-printed humanoid</a></span><span class="item-meta">HF community (VirgileBatto) · 2026-05-21<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Full open-source 3D-printed humanoid platform built on LeRobot — bill-of-materials, CAD files, firmware, and data-collection scripts. Aimed at academics who want to do robot-learning research without a $50k arm-pair budget.</span></li>
+</ul>
+<h2>Papers</h2>
+<ul>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span><span class="item-meta">arXiv cs.RO · 2026-05-26<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds the first real-world continual-learning benchmark for VLA models across four sequential manipulation tasks (rigid pick-and-place through deformable handling), then evaluates whether current VLAs catastrophically forget previously learned skills as new ones are added. Spoiler from the abstract: yes, they do — and naive replay isn&#x27;t enough.</span></li>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable VLA Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Existing robot datasets pair trajectories with coarse goal language (&quot;put the cup on the shelf&quot;), leaving execution-critical details — which arm, approach direction, contact region — unspecified. FineVLA introduces a data-construction pipeline and training recipe for fine-grained action-aligned supervision, enabling controllable steering of VLA policies at inference.</span></li>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26282">Scaling World-Model RL through Diffusion Policy Optimization</a></span><span class="item-meta">arXiv cs.LG · 2026-05-26<span class="item-keywords"> · world models</span></span><span class="item-desc">Identifies a structural misalignment between search and value learning as the real bottleneck in scaling world-model RL (more critical than the usual &quot;model bias / error compounding&quot; story). Proposes diffusion-policy optimization inside the WM loop to keep search and value-learning consistent, with reported gains at scale.</span></li>
+  <li><span class="item-title">🆕 <a href="https://x.com/RoboPapers/status/2058940907227918425">PointWorld: Scaling 3D World Models for In-The-Wild Robotic Manipulation</a></span><span class="item-meta">Wenlong Huang et al. (RoboPapers preview) · 2026-05-25<span class="item-keywords"> · world models</span></span><span class="item-desc">Preview of an upcoming paper from Wenlong Huang&#x27;s group on building 3D point-cloud-conditioned world models that work on in-the-wild manipulation scenes (not just tabletop benchmarks). Project page at point-world.github.io; full episode and arXiv drop teased shortly.</span></li>
+</ul>
+<h2>Watch list</h2>
+<ul>
+  <li><span class="item-title">No items configured — add entries to `config.watch_list` to track specific releases or events.</span></li>
+</ul>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby9xNN8fJRph8PD5Xmxu7HOKq5T7vOadgo3Gjmn5JjogOg1NOfk1hgud5sHqAzBIFAI/exec" data-user="john" data-date="2026-05-27"><div class="feedback-row"><button class="fb-btn" data-v="up" title="Useful">&#x1F44D;</button><button class="fb-btn" data-v="down" title="Not useful">&#x1F44E;</button><input class="fb-text" type="text" placeholder="Any feedback? (optional)" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var rating=null,btns=w.querySelectorAll('.fb-btn'),
+      txt=w.querySelector('.fb-text'),sub=w.querySelector('.fb-submit');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    rating=b.dataset.v;btns.forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+  })});
+  sub.addEventListener('click',function(){
+    if(!rating)return;sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,rating:rating,comment:txt.value})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks for the feedback!</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks! (saved locally)</p>';
+    });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var d=document.documentElement,bs=document.querySelectorAll('.theme-toggle button');
+  function apply(t){
+    if(t==='system')d.removeAttribute('data-theme');
+    else d.setAttribute('data-theme',t);
+    if(t==='dark')document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+    bs.forEach(function(b){b.classList.toggle('active',b.dataset.t===t)});
+    try{localStorage.setItem('dn-theme',t)}catch(e){}
+  }
+  bs.forEach(function(b){b.addEventListener('click',function(){apply(b.dataset.t)});});
+  var s=null;try{s=localStorage.getItem('dn-theme')}catch(e){}
+  apply(s||'system');
+})();
+</script>
+</body>
+</html>
