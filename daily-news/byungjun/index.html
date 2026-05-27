@@ -91,7 +91,7 @@
 </ul>
 
 
-<div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="byungjun" data-date="2026-05-27"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_source">Edit source</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div></div>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="byungjun" data-date="2026-05-27"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div></div>
 
 <script>
 (function(){
@@ -101,7 +101,7 @@
       sub=w.querySelector('.fb-submit');
   var ph={feedback:'e.g. Papers section was great / too many LLM items',
     edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_source:'e.g. follow https://x.com/... / remove Boston Dynamics',
+    edit_watchlist:'e.g. watch https://orcahand.com / remove Orca Hand',
     tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
   sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
   sub.addEventListener('click',function(){
