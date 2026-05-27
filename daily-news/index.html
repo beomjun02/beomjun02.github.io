@@ -36,41 +36,8 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .theme-toggle { position: absolute; top: 1.2em; right: 1.2em; display: flex; gap: 0.3em; }
-.daily-news .theme-toggle button { background: none; border: 1px solid #ccc; border-radius: 4px; padding: 0.2em 0.5em; font-size: 0.85em; cursor: pointer; color: #555; font-family: inherit; }
-.daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; font-weight: 600; }
 @media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) .daily-news { color: #e0e0e0; }
-  html:not([data-theme="light"]) .daily-news h1 { color: #f0f0f0; }
-  html:not([data-theme="light"]) .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
-  html:not([data-theme="light"]) .daily-news .user-handle { color: #f0f0f0; }
-  html:not([data-theme="light"]) .daily-news .item-desc { color: #aaa; }
-  html:not([data-theme="light"]) .daily-news .item-meta { color: #888; }
-  html:not([data-theme="light"]) .daily-news .page-meta { color: #888; }
-  html:not([data-theme="light"]) .daily-news .archive { border-top-color: #444; }
-  html:not([data-theme="light"]) .daily-news .feedback { border-top-color: #444; }
-  html:not([data-theme="light"]) .daily-news .fb-btn { border-color: #555; color: #ccc; }
-  html:not([data-theme="light"]) .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
-  html:not([data-theme="light"]) .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
-  html:not([data-theme="light"]) .daily-news .fb-submit { background: #555; }
-  html:not([data-theme="light"]) .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
-  html:not([data-theme="light"]) .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
-}
-html[data-theme="dark"] .daily-news { color: #e0e0e0; }
-html[data-theme="dark"] .daily-news h1 { color: #f0f0f0; }
-html[data-theme="dark"] .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
-html[data-theme="dark"] .daily-news .user-handle { color: #f0f0f0; }
-html[data-theme="dark"] .daily-news .item-desc { color: #aaa; }
-html[data-theme="dark"] .daily-news .item-meta { color: #888; }
-html[data-theme="dark"] .daily-news .page-meta { color: #888; }
-html[data-theme="dark"] .daily-news .archive { border-top-color: #444; }
-html[data-theme="dark"] .daily-news .feedback { border-top-color: #444; }
-html[data-theme="dark"] .daily-news .fb-btn { border-color: #555; color: #ccc; }
-html[data-theme="dark"] .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
-html[data-theme="dark"] .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
-html[data-theme="dark"] .daily-news .fb-submit { background: #555; }
-html[data-theme="dark"] .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
-html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+                              }
 
 .daily-news .users-list { list-style: none; padding-left: 0; }
 .daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
@@ -78,10 +45,45 @@ html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: 
 .daily-news .users-list strong { font-size: 1.1em; }
 .daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
 .daily-news .users-headline { color: #555; display: block; margin-top: 0.25em; font-size: 0.95em; }
+
+.daily-news .theme-toggle { position: absolute; top: 0.6em; right: 0; background: none; border: none; font-size: 1.25em; cursor: pointer; padding: 0.2em 0.4em; line-height: 1; opacity: 0.6; transition: opacity 0.15s; }
+.daily-news .theme-toggle:hover { opacity: 1; }
+html[data-theme="light"] body { background: #fff !important; color: #333 !important; }
+html[data-theme="light"] a { color: #2380e0; }
+html[data-theme="light"] a:hover, html[data-theme="light"] a:focus { color: #f09228; }
+html[data-theme="light"] .daily-news,
+html[data-theme="light"] .daily-news h1,
+html[data-theme="light"] .daily-news h2 { color: inherit; }
+html[data-theme="light"] .daily-news h2 { border-bottom-color: #ddd; }
+html[data-theme="light"] .daily-news .user-handle { color: #222; }
+html[data-theme="light"] .daily-news .item-desc { color: #555; }
+html[data-theme="light"] .daily-news .archive,
+html[data-theme="light"] .daily-news .feedback { border-top-color: #ddd; }
+html[data-theme="light"] .daily-news .fb-btn { border-color: #ddd; color: inherit; }
+html[data-theme="light"] .daily-news .fb-btn.active { background: #fdf8e8; }
+html[data-theme="light"] .daily-news .fb-text { background: #fff; color: inherit; border-color: #ddd; }
+html[data-theme="light"] .daily-news .fb-submit { background: #333; }
+html[data-theme="dark"] body { background: #000 !important; color: #e0e0e0 !important; }
+html[data-theme="dark"] a { color: #64b5f6; }
+html[data-theme="dark"] a:hover, html[data-theme="dark"] a:focus { color: #f09228; }
+html[data-theme="dark"] .daily-news { color: #e0e0e0; }
+html[data-theme="dark"] .daily-news h1 { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+html[data-theme="dark"] .daily-news .user-handle { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news .item-desc { color: #aaa; }
+html[data-theme="dark"] .daily-news .page-meta { color: #888; }
+html[data-theme="dark"] .daily-news .archive { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .feedback { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .fb-btn { border-color: #555; color: #ccc; }
+html[data-theme="dark"] .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+html[data-theme="dark"] .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+html[data-theme="dark"] .daily-news .fb-submit { background: #555; }
 </style>
+<script>(function(){var t;try{t=localStorage.getItem('dn-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" style="position:relative;">
+<button id="light-toggle" class="theme-toggle" aria-label="Toggle dark mode"></button>
 <h1>Daily News</h1>
 <p class="page-meta">5 reader(s) · <a href="/">← back to site</a></p>
 <ul class="users-list">
@@ -92,5 +94,14 @@ html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: 
   <li><a href="kunwoong/"><strong>Kunwoong</strong></a><span class="users-date">2026-05-27</span><span class="users-headline">Qwen3.7-Max agent foundation · NVIDIA Nemotron diffusion LMs · Anthropic Korea office</span></li>
 </ul>
 </div>
+<script>
+(function(){
+  var btn=document.getElementById('light-toggle');if(!btn)return;
+  function get(){var s;try{s=localStorage.getItem('dn-theme')}catch(e){}if(s==='light'||s==='dark')return s;return window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+  function apply(t){document.documentElement.setAttribute('data-theme',t);if(t==='dark'){document.body.classList.add('dark');btn.textContent='☀️';btn.title='Switch to light mode';}else{document.body.classList.remove('dark');btn.textContent='🌙';btn.title='Switch to dark mode';}try{localStorage.setItem('dn-theme',t)}catch(e){}}
+  btn.addEventListener('click',function(){apply(get()==='dark'?'light':'dark');});
+  apply(get());
+})();
+</script>
 </body>
 </html>
