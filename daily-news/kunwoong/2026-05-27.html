@@ -36,10 +36,47 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+
+.daily-news .theme-toggle { position: absolute; top: 1.2em; right: 1.2em; display: flex; gap: 0.3em; }
+.daily-news .theme-toggle button { background: none; border: 1px solid #ccc; border-radius: 4px; padding: 0.2em 0.5em; font-size: 0.85em; cursor: pointer; color: #555; font-family: inherit; }
+.daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .daily-news { color: #e0e0e0; }
+  html:not([data-theme="light"]) .daily-news h1 { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+  html:not([data-theme="light"]) .daily-news .user-handle { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news .item-desc { color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .item-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .page-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .archive { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .feedback { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .fb-btn { border-color: #555; color: #ccc; }
+  html:not([data-theme="light"]) .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+  html:not([data-theme="light"]) .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+  html:not([data-theme="light"]) .daily-news .fb-submit { background: #555; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+}
+html[data-theme="dark"] .daily-news { color: #e0e0e0; }
+html[data-theme="dark"] .daily-news h1 { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+html[data-theme="dark"] .daily-news .user-handle { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news .item-desc { color: #aaa; }
+html[data-theme="dark"] .daily-news .item-meta { color: #888; }
+html[data-theme="dark"] .daily-news .page-meta { color: #888; }
+html[data-theme="dark"] .daily-news .archive { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .feedback { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .fb-btn { border-color: #555; color: #ccc; }
+html[data-theme="dark"] .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+html[data-theme="dark"] .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+html[data-theme="dark"] .daily-news .fb-submit { background: #555; }
+html[data-theme="dark"] .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
 </style>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" style="position:relative;">
+<div class="theme-toggle"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system">System</button></div>
 <h1>Daily News — 2026-05-27</h1>
 <div class="user-banner"><div class="user-handle">Kunwoong</div><div class="user-categories">Language · Vision</div><div class="user-kws">MoE · VLM · trustworthy · agent · fundamental · architecture · test-time · VLM · video</div></div>
 <p class="page-meta">14 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
@@ -94,5 +131,21 @@
 })();
 </script>
 
+<script>
+(function(){
+  var d=document.documentElement,bs=document.querySelectorAll('.theme-toggle button');
+  function apply(t){
+    if(t==='system')d.removeAttribute('data-theme');
+    else d.setAttribute('data-theme',t);
+    if(t==='dark')document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+    bs.forEach(function(b){b.classList.toggle('active',b.dataset.t===t)});
+    try{localStorage.setItem('dn-theme',t)}catch(e){}
+  }
+  bs.forEach(function(b){b.addEventListener('click',function(){apply(b.dataset.t)});});
+  var s=null;try{s=localStorage.getItem('dn-theme')}catch(e){}
+  apply(s||'system');
+})();
+</script>
 </body>
 </html>
