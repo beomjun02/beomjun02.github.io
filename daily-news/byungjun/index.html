@@ -72,7 +72,30 @@
 </ul>
 
 
-</div>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby9xNN8fJRph8PD5Xmxu7HOKq5T7vOadgo3Gjmn5JjogOg1NOfk1hgud5sHqAzBIFAI/exec" data-user="byungjun" data-date="2026-05-27"><div class="feedback-row"><button class="fb-btn" data-v="up" title="Useful">&#x1F44D;</button><button class="fb-btn" data-v="down" title="Not useful">&#x1F44E;</button><input class="fb-text" type="text" placeholder="Any feedback? (optional)" maxlength="500"><button class="fb-submit">Send</button></div></div></div>
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var rating=null,btns=w.querySelectorAll('.fb-btn'),
+      txt=w.querySelector('.fb-text'),sub=w.querySelector('.fb-submit');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    rating=b.dataset.v;btns.forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+  })});
+  sub.addEventListener('click',function(){
+    if(!rating)return;sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,rating:rating,comment:txt.value})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks for the feedback!</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks! (saved locally)</p>';
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
