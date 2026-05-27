@@ -26,6 +26,16 @@
 .daily-news .archive ul { list-style: none; padding-left: 0; }
 .daily-news .archive li { margin-bottom: 0.3em; }
 .daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-btn { font-size: 1.3em; background: none; border: 2px solid #ddd; border-radius: 6px; padding: 0.25em 0.55em; cursor: pointer; transition: border-color 0.15s, background 0.15s; line-height: 1; }
+.daily-news .fb-btn:hover { border-color: #aaa; }
+.daily-news .fb-btn.active { border-color: #d4a017; background: #fdf8e8; }
+.daily-news .fb-text { flex: 1; min-width: 180px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
 
 .daily-news .users-list { list-style: none; padding-left: 0; }
 .daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
@@ -40,7 +50,7 @@
 <h1>Daily News</h1>
 <p class="page-meta">2 reader(s) · <a href="/">← back to site</a></p>
 <ul class="users-list">
-  <li><a href="beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-05-27</span><span class="users-headline">Figure × Catalyst retail deal · Anthropic Korea office · PointWorld 3D world model</span></li>
+  <li><a href="beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-05-27</span><span class="users-headline">VLA papers dominate · Anthropic opens Seoul · Human Archive embodied seed</span></li>
   <li><a href="byungjun/"><strong>Byungjun</strong></a><span class="users-date">2026-05-27</span><span class="users-headline">FineVLA introduces subtask-level VLA dataset · Figure×Catalyst humanoid retail deal · Anthropic opens Korea office</span></li>
 </ul>
 </div>
