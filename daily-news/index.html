@@ -14,7 +14,10 @@
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
 .daily-news .item-title { font-weight: 500; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
 .daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
 .daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
 .daily-news .user-handle { color: #222; font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
 .daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
@@ -26,16 +29,13 @@
 .daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
 .daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
 .daily-news .fb-btn { font-size: 1.3em; background: none; border: 2px solid #ddd; border-radius: 6px; padding: 0.25em 0.55em; cursor: pointer; transition: border-color 0.15s, background 0.15s; line-height: 1; }
+.daily-news .fb-btn:hover { border-color: #aaa; }
 .daily-news .fb-btn.active { border-color: #d4a017; background: #fdf8e8; }
 .daily-news .fb-text { flex: 1; min-width: 180px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-
-  .daily-news .user-handle { color: #f0f0f0; }
-}
-
-.daily-news .users-list { list-style: none; padding-left: 0; }
-.daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
-.daily-news .users-list a { text-decoration: none; }
-.daily-news .users-list strong { font-size: 1.1em; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -59,6 +59,13 @@
   .daily-news .users-list a:hover { color: #f09228; }
   .daily-news .users-headline { color: #ccc; }
 }
+
+.daily-news .users-list { list-style: none; padding-left: 0; }
+.daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
+.daily-news .users-list a { text-decoration: none; }
+.daily-news .users-list strong { font-size: 1.1em; }
+.daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
+.daily-news .users-headline { color: #555; display: block; margin-top: 0.25em; font-size: 0.95em; }
 </style>
 </head>
 <body>
