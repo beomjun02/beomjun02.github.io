@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-05-27</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-title { font-weight: 500; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { color: #222; font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-btn { font-size: 1.3em; background: none; border: 2px solid #ddd; border-radius: 6px; padding: 0.25em 0.55em; cursor: pointer; transition: border-color 0.15s, background 0.15s; line-height: 1; }
+.daily-news .fb-btn:hover { border-color: #aaa; }
+.daily-news .fb-btn.active { border-color: #d4a017; background: #fdf8e8; }
+.daily-news .fb-text { flex: 1; min-width: 180px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .theme-toggle { position: absolute; top: 1.2em; right: 1.2em; display: flex; gap: 0.3em; }
+.daily-news .theme-toggle button { background: none; border: 1px solid #ccc; border-radius: 4px; padding: 0.2em 0.5em; font-size: 0.85em; cursor: pointer; color: #555; font-family: inherit; }
+.daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .daily-news { color: #e0e0e0; }
+  html:not([data-theme="light"]) .daily-news h1 { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+  html:not([data-theme="light"]) .daily-news .user-handle { color: #f0f0f0; }
+  html:not([data-theme="light"]) .daily-news .item-desc { color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .item-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .page-meta { color: #888; }
+  html:not([data-theme="light"]) .daily-news .archive { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .feedback { border-top-color: #444; }
+  html:not([data-theme="light"]) .daily-news .fb-btn { border-color: #555; color: #ccc; }
+  html:not([data-theme="light"]) .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+  html:not([data-theme="light"]) .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+  html:not([data-theme="light"]) .daily-news .fb-submit { background: #555; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+  html:not([data-theme="light"]) .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+}
+html[data-theme="dark"] .daily-news { color: #e0e0e0; }
+html[data-theme="dark"] .daily-news h1 { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news h2 { color: #e0e0e0; border-bottom-color: #444; }
+html[data-theme="dark"] .daily-news .user-handle { color: #f0f0f0; }
+html[data-theme="dark"] .daily-news .item-desc { color: #aaa; }
+html[data-theme="dark"] .daily-news .item-meta { color: #888; }
+html[data-theme="dark"] .daily-news .page-meta { color: #888; }
+html[data-theme="dark"] .daily-news .archive { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .feedback { border-top-color: #444; }
+html[data-theme="dark"] .daily-news .fb-btn { border-color: #555; color: #ccc; }
+html[data-theme="dark"] .daily-news .fb-btn.active { border-color: #d4a017; background: #3a3520; }
+html[data-theme="dark"] .daily-news .fb-text { background: #1a1a1a; color: #e0e0e0; border-color: #555; }
+html[data-theme="dark"] .daily-news .fb-submit { background: #555; }
+html[data-theme="dark"] .daily-news .theme-toggle button { border-color: #555; color: #aaa; }
+html[data-theme="dark"] .daily-news .theme-toggle button.active { border-color: #d4a017; color: #d4a017; }
+</style>
+</head>
+<body>
+<div class="daily-news" style="position:relative;">
+<div class="theme-toggle"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system">System</button></div>
+<h1>Daily News — 2026-05-27</h1>
+<div class="user-banner"><div class="user-handle">Huiwon</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · long-term planning · VLA architecture · VLA generalization · world-action model · visual representation learning · visual tokenizer · video diffusion model</div></div>
+<p class="page-meta">8 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+
+
+<h2>Papers</h2>
+<ul>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds a real-world continual-learning dataset across four sequential manipulation tasks (rigid pick-and-place, articulated, deformable, tool-use) and shows that standard VLA fine-tuning suffers severe catastrophic forgetting, while a simple replay+EWC variant largely recovers prior skills. Highlights how brittle current VLA deployment is once you leave the static finetune-and-freeze regime.</span></li>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a data-construction pipeline that unifies 97 robotic datasets with execution-critical labels (active arm, approach direction, contact region) so that VLA policies can be steered by instruction modifiers rather than only goal text. The fine-grained supervision yields measurable gains in following &quot;how&quot; instructions without retraining the base policy.</span></li>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2603.04639">RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Stanford/Michigan (Chelsea Finn, Joyce Chai) ship a large-scale standardized benchmark for long-horizon, history-dependent VLA tasks — counting repeated actions, manipulating objects under occlusion, etc. — and analyze how today&#x27;s memory mechanisms (KV-cache vs. recurrent vs. retrieval) fare. Useful diagnostic for any group claiming &quot;memory&quot; in their generalist policy.</span></li>
+  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25874">WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">289 multi-turn test cases (1,058 interaction turns) scoring interactive video world models on quality, setting adherence, interaction adherence, temporal consistency, and physics compliance. Directly relevant to anyone building world-action models on top of video generators — finally a unified yardstick.</span></li>
+  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.20708">Rethinking Cross-Layer Information Routing in Diffusion Transformers</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Systematic empirical study of how information flows along depth × denoising-timestep in DiTs, identifying three pathologies of the inherited residual stream and proposing a lightweight rewiring. Generation quality improves at matched compute on standard image/video DiT baselines — relevant to anyone training video diffusion backbones used downstream by world models.</span></li>
+  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26266">Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion</a></span><span class="item-meta">arXiv cs.LG · 2026-05-27<span class="item-keywords"> · video diffusion model</span></span><span class="item-desc">Identifies a &quot;Jensen bias&quot; in softmax attention where quantization noise on cached keys systematically inflates their contribution, degrading long-video quality at low bitwidth. Their bias-correction term recovers most of the quality lost to 4-bit KV-cache compression in chunk-wise autoregressive video diffusion.</span></li>
+  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Frames an agent&#x27;s skill as the *external state* of a frozen base model and trains a separate optimizer model to apply bounded add/delete/replace edits driven by scored rollouts — the first principled text-space optimizer for skills. Top-upvoted paper on HF this week (↑177); the framing is interesting for anyone evolving generalist policies via post-hoc supervision.</span></li>
+  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25604">DVAO: Dynamic Variance-adaptive Advantage Optimization for Multi-reward RL</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Variance-adaptive advantage scaling for GRPO under multi-reward setups — fixes the training-instability and gradient-domination failure modes of naive reward/advantage scalarization. Mostly LLM-aligned, but the mechanism is policy-agnostic and worth knowing if you do multi-objective RL on robot policies.</span></li>
+</ul>
+
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby9xNN8fJRph8PD5Xmxu7HOKq5T7vOadgo3Gjmn5JjogOg1NOfk1hgud5sHqAzBIFAI/exec" data-user="huiwon" data-date="2026-05-27"><div class="feedback-row"><button class="fb-btn" data-v="up" title="Useful">&#x1F44D;</button><button class="fb-btn" data-v="down" title="Not useful">&#x1F44E;</button><input class="fb-text" type="text" placeholder="Any feedback? (optional)" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var rating=null,btns=w.querySelectorAll('.fb-btn'),
+      txt=w.querySelector('.fb-text'),sub=w.querySelector('.fb-submit');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    rating=b.dataset.v;btns.forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+  })});
+  sub.addEventListener('click',function(){
+    if(!rating)return;sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,rating:rating,comment:txt.value})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks for the feedback!</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Thanks! (saved locally)</p>';
+    });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var d=document.documentElement,bs=document.querySelectorAll('.theme-toggle button');
+  function apply(t){
+    if(t==='system')d.removeAttribute('data-theme');
+    else d.setAttribute('data-theme',t);
+    if(t==='dark')document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+    bs.forEach(function(b){b.classList.toggle('active',b.dataset.t===t)});
+    try{localStorage.setItem('dn-theme',t)}catch(e){}
+  }
+  bs.forEach(function(b){b.addEventListener('click',function(){apply(b.dataset.t)});});
+  var s=null;try{s=localStorage.getItem('dn-theme')}catch(e){}
+  apply(s||'system');
+})();
+</script>
+</body>
+</html>
