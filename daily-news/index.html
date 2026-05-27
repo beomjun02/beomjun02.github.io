@@ -50,11 +50,6 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .users-list li { border-color: #333; }
-  .daily-news .users-list a { color: #64b5f6; }
-  .daily-news .users-list a:hover { color: #f09228; }
-  .daily-news .users-date { color: #aaa; }
-  .daily-news .users-headline { color: #e0e0e0; }
 }
 
 .daily-news .users-list { list-style: none; padding-left: 0; }
@@ -63,6 +58,13 @@
 .daily-news .users-list strong { font-size: 1.1em; color: inherit; }
 .daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
 .daily-news .users-headline { color: #666; display: block; margin-top: 0.25em; font-size: 0.95em; }
+@media (prefers-color-scheme: dark) {
+  .daily-news .users-list li { border-color: #333; }
+  .daily-news .users-list a { color: #64b5f6; }
+  .daily-news .users-list a:hover { color: #f09228; }
+  .daily-news .users-date { color: #aaa; }
+  .daily-news .users-headline { color: #ccc; }
+}
 </style>
 </head>
 <body>
