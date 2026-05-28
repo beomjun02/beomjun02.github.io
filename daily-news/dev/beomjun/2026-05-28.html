@@ -105,25 +105,19 @@
   var dn=document.querySelector('.daily-news');if(!dn)return;
   var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
   if(!url||!user)return;
-  var myVotes={};
-  var cbName='_dnVotes'+Math.random().toString(36).slice(2,8);
-  window[cbName]=function(d){
-    myVotes=d.my_votes||{};
-    Object.keys(myVotes).forEach(function(id){
-      var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-      if(b)b.classList.add('voted');
-    });
-    delete window[cbName];
-  };
-  var s=document.createElement('script');
-  s.src=url+'?action=votes&date='+date+'&user='+user+'&callback='+cbName;
-  document.head.appendChild(s);
+  var lsKey='dn_'+user+'_'+date;
+  var myVotes=JSON.parse(localStorage.getItem(lsKey)||'{}');
+  Object.keys(myVotes).forEach(function(id){
+    var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+    if(b)b.classList.add('voted');
+  });
   dn.addEventListener('click',function(e){
     var btn=e.target.closest('.vote-btn');if(!btn)return;
     var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
     var wasVoted=!!myVotes[id];
     if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
     else{myVotes[id]=1;btn.classList.add('voted');}
+    localStorage.setItem(lsKey,JSON.stringify(myVotes));
     fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
         value:link,item_id:id,title:title})
