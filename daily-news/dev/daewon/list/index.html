@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daily News</title>
+<title>Daily News — archive</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
 <style>
@@ -62,77 +62,15 @@
 @media (max-width: 600px) {
   .daily-news .vote-btn { padding: 0.25em 0.35em; }
 }
-
-.daily-news .users-list { list-style: none; padding-left: 0; }
-.daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
-.daily-news .users-list a { text-decoration: none; }
-.daily-news .users-list strong { font-size: 1.1em; color: inherit; }
-.daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
-.daily-news .users-headline { color: #666; display: block; margin-top: 0.25em; font-size: 0.95em; }
-@media (prefers-color-scheme: dark) {
-  .daily-news .users-list li { border-color: #333; }
-  .daily-news .users-list a { color: #64b5f6; }
-  .daily-news .users-list a:hover { color: #f09228; }
-  .daily-news .users-date { color: #aaa; }
-  .daily-news .users-headline { color: #ccc; }
-}
-
-.daily-news .trending { margin-bottom: 2em; }
-.daily-news .trending h2 { font-size: 1.15em; border-bottom: 1px solid #d4a017; padding-bottom: 0.3em; color: #d4a017; }
-.daily-news .trending ul { list-style: none; padding-left: 0; }
-.daily-news .trending li { margin-bottom: 0.8em; padding: 0.5em 0.7em; border-left: 3px solid #d4a017; background: rgba(212,160,23,0.04); }
-.daily-news .trending .t-score { font-weight: 600; color: #d4a017; margin-right: 0.5em; }
-.daily-news .trending .t-title a { text-decoration: none; color: inherit; }
-.daily-news .trending .t-title a:hover { color: #d4a017; }
-.daily-news .trending .t-voters { font-size: 0.8em; color: #888; display: block; margin-top: 0.2em; }
-.daily-news .trending-loading { color: #888; font-size: 0.9em; }
-@media (prefers-color-scheme: dark) {
-  .daily-news .trending li { background: rgba(212,160,23,0.06); }
-  .daily-news .trending .t-title a { color: #f0f0f0; }
-}
 </style>
 </head>
 <body>
 <div class="daily-news">
-<h1>Daily News</h1>
-<p class="page-meta">3 reader(s) · <a href="/">← back to site</a></p>
-<div class="trending" id="trending-section" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-date="2026-05-28"><h2>Trending</h2><p class="trending-loading">Loading...</p></div>
-<ul class="users-list">
-  <li><a href="beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-05-28</span><span class="users-headline">VLA continual learning + FineVLA · TOPReward zero-shot rewards · Figure × Catalyst Brands</span></li>
-  <li><a href="daewon/"><strong>Daewon</strong></a><span class="users-date">2026-05-28</span><span class="users-headline">VLA continual learning + FineVLA · TOPReward zero-shot rewards · Figure × Catalyst Brands</span></li>
-  <li><a href="john/"><strong>John</strong></a><span class="users-date">2026-05-28</span><span class="users-headline">VLA continual learning + FineVLA · TOPReward zero-shot rewards · Figure × Catalyst Brands</span></li>
+<h1>Daily News — archive</h1>
+<p class="page-meta">1 days · <a href="../">← latest</a></p>
+<ul>
+  <li><a href="../2026-05-28.html">2026-05-28</a>: <span class="archive-headline">VLA continual learning + FineVLA · TOPReward zero-shot rewards · Figure × Catalyst Brands</span></li>
 </ul>
 </div>
-
-<script>
-(function(){
-  var sec=document.getElementById('trending-section');if(!sec)return;
-  var url=sec.dataset.url,date=sec.dataset.date;
-  if(!url)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  fetch(proxy+'?action=trending')
-    .then(function(r){return r.json()})
-    .then(function(d){
-      if(!d.items||!d.items.length){
-        sec.querySelector('.trending-loading').textContent='No trending items yet.';
-        return;
-      }
-      var ul=document.createElement('ul');
-      d.items.forEach(function(it){
-        var li=document.createElement('li');
-        li.innerHTML='<span class="t-score">+'+it.score+'</span>'
-          +'<span class="t-title"><a href="'+it.link+'">'+it.title+'</a></span>'
-          +'<span class="t-voters">voted by '+it.voters.join(', ')+'</span>';
-        ul.appendChild(li);
-      });
-      var loading=sec.querySelector('.trending-loading');
-      if(loading)loading.remove();
-      sec.appendChild(ul);
-    }).catch(function(){
-      sec.querySelector('.trending-loading').textContent='Could not load trending.';
-    });
-})();
-</script>
-
 </body>
 </html>
