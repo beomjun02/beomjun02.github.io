@@ -37,9 +37,9 @@
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
 .daily-news .vote-wrap { display: inline-flex; align-items: center; gap: 0; flex-shrink: 0; white-space: nowrap; }
 .daily-news .vote-btn { background: none; border: 1px solid #ddd; padding: 0.3em 0.35em; font-size: 0.7em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; }
-.daily-news .vote-btn.vup .tri { border-bottom: 5px solid currentColor; }
-.daily-news .vote-btn.vdn .tri { border-top: 5px solid currentColor; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; }
+.daily-news .vote-btn.vup .tri { border-bottom: 6px solid currentColor; }
+.daily-news .vote-btn.vdn .tri { border-top: 6px solid currentColor; }
 .daily-news .vote-btn.vup { border-radius: 3px 0 0 3px; border-right: none; }
 .daily-news .vote-btn.vdn { border-radius: 0 3px 3px 0; }
 .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; z-index: 1; position: relative; }
@@ -66,6 +66,13 @@
   .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; }
   .daily-news .vote-btn.voted-up { background: rgba(212,160,23,0.15); }
   .daily-news .vote-btn.voted-down { background: rgba(128,128,128,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.2em 0.25em; }
+  .daily-news .vote-btn .tri { border-left-width: 4px; border-right-width: 4px; }
+  .daily-news .vote-btn.vup .tri { border-bottom-width: 5px; }
+  .daily-news .vote-btn.vdn .tri { border-top-width: 5px; }
+  .daily-news .vote-score { font-size: 0.7em; }
 }
 </style>
 </head>
@@ -111,18 +118,28 @@
   var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
   if(!url)return;
   var voted=JSON.parse(localStorage.getItem('dn_votes_'+date)||'{}');
-  var serverScores={};
+  var baseScores={};
   fetch(url+'?action=votes&date='+date)
     .then(function(r){return r.json()})
     .then(function(d){
       if(d.votes){
-        serverScores=d.votes;
-        Object.keys(d.votes).forEach(function(id){
-          var el=document.querySelector('.vote-score[data-id="'+id+'"]');
-          if(el){var v=d.votes[id];el.textContent=v>0?v:'';}
-        });
+        baseScores=d.votes;
+        refreshAll();
       }
     }).catch(function(){});
+  function myContrib(id){return voted[id]||0;}
+  function displayScore(id){
+    var base=baseScores[id]||0;
+    var mine=myContrib(id);
+    return base+mine;
+  }
+  function refreshAll(){
+    document.querySelectorAll('.vote-score').forEach(function(el){
+      var id=el.dataset.id;
+      var s=displayScore(id);
+      el.textContent=s>0?s:'';
+    });
+  }
   function applyState(id){
     var dir=voted[id]||0;
     document.querySelectorAll('.vote-btn[data-id="'+id+'"]').forEach(function(b){
@@ -130,6 +147,8 @@
       var bv=parseInt(b.dataset.vote);
       if(dir!==0&&bv===dir)b.classList.add(dir>0?'voted-up':'voted-down');
     });
+    var sc=document.querySelector('.vote-score[data-id="'+id+'"]');
+    if(sc){var s=displayScore(id);sc.textContent=s>0?s:'';}
   }
   Object.keys(voted).forEach(function(id){applyState(id);});
   dn.addEventListener('click',function(e){
@@ -138,12 +157,9 @@
         link=btn.dataset.link,title=btn.dataset.title;
     var prev=voted[id]||0;
     var next=(prev===vote)?0:vote;
-    var delta=next-prev;
     if(next===0){delete voted[id];}else{voted[id]=next;}
     localStorage.setItem('dn_votes_'+date,JSON.stringify(voted));
     applyState(id);
-    var sc=document.querySelector('.vote-score[data-id="'+id+'"]');
-    if(sc){var cur=parseInt(sc.textContent)||0;var nv=cur+delta;sc.textContent=nv>0?nv:'';}
     var action=next>0?'upvote':next<0?'downvote':'unvote';
     fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({user:user,date:date,action:action,
