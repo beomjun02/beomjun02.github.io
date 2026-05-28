@@ -10,12 +10,13 @@
 .devlog { max-width: 760px; margin: 2em auto; padding: 0 1.2em; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 .devlog h1 { font-size: 1.6em; margin-bottom: 0.3em; }
 .devlog .page-meta { color: #888; font-size: 0.85em; margin-bottom: 2em; }
-.devlog .entry { margin-bottom: 3em; border-bottom: 1px solid #eee; padding-bottom: 2em; }
+.devlog .entry { margin-bottom: 0.5em; border-bottom: 1px solid #eee; }
+.devlog .entry[open] { margin-bottom: 2em; padding-bottom: 1.5em; }
 .devlog .entry:last-child { border-bottom: none; }
-.devlog .entry-title { font-size: 1.25em; font-weight: 600; margin-bottom: 0.3em; }
-.devlog .entry-title a { color: inherit; text-decoration: none; }
-.devlog .entry-title a:hover { color: #d4a017; }
-.devlog .entry-meta { color: #888; font-size: 0.85em; margin-bottom: 1em; }
+.devlog .entry-title { font-size: 1.1em; font-weight: 600; padding: 0.5em 0; cursor: pointer; list-style: none; }
+.devlog .entry-title::-webkit-details-marker { display: none; }
+.devlog .entry-title:hover { color: #d4a017; }
+.devlog .entry-meta { color: #888; font-size: 0.75em; font-weight: 400; margin-left: 0.8em; }
 .devlog .entry-body h2 { font-size: 1.05em; margin-top: 1.3em; border-bottom: 1px solid #eee; padding-bottom: 0.2em; }
 .devlog .entry-body h3 { font-size: 0.95em; margin-top: 1em; }
 .devlog .entry-body p { margin: 0.6em 0; line-height: 1.6; }
@@ -32,7 +33,7 @@
   .devlog { color: #f0f0f0; }
   .devlog h1 { color: #f5f5f5; }
   .devlog .entry { border-bottom-color: #333; }
-  .devlog .entry-title a:hover { color: #d4a017; }
+  .devlog .entry-title:hover { color: #d4a017; }
   .devlog .entry-body h2 { border-bottom-color: #444; }
   .devlog .entry-body code { background: #2a2a2a; }
   .devlog .entry-body pre { background: #1a1a1a; }
@@ -46,9 +47,8 @@
 <div class="devlog">
 <h1>Dev Log</h1>
 <p class="page-meta">4 entries · <a href="../">← daily news</a></p>
-<div class="entry" id="004-upvote-trending">
-<div class="entry-title"><a href="#004-upvote-trending">004: Upvote System + Trending Page</a></div>
-<div class="entry-meta"> 2026-05-28 ~ 05-29 ·  Feature addition ·  Complete, deployed to production</div>
+<details class="entry" id="004-upvote-trending">
+<summary class="entry-title">004: Upvote System + Trending Page<span class="entry-meta"> 2026-05-28 ~ 05-29 ·  Feature addition ·  Complete, deployed to production</span></summary>
 <div class="entry-body"><h3>What</h3>
 <p>Per-item upvote button on individual user pages + trending section on the all-users page. Users vote by clicking ▲ on items they find valuable. Trending shows items with ≥20% of members upvoting, top 3 cap.</p>
 <h3>Architecture</h3>
@@ -109,9 +109,8 @@
 <li>Individual: <code>https://beomjun02.github.io/daily-news/dev/beomjun/</code></li>
 <li>All users + trending: <code>https://beomjun02.github.io/daily-news/dev/</code></li>
 </ul></div>
-</div><div class="entry" id="003-implicit-interest-effect">
-<div class="entry-title"><a href="#003-implicit-interest-effect">Experiment 003: Effect of Implicit Interests on Output Quality</a></div>
-<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+</details><details class="entry" id="003-implicit-interest-effect">
+<summary class="entry-title">Experiment 003: Effect of Implicit Interests on Output Quality<span class="entry-meta"> 2026-05-28 ·  Complete</span></summary>
 <div class="entry-body"><p><strong>Depends on:</strong> Experiment 002 (effort level comparison — established Opus xhigh as optimal)</p>
 <h3>Motivation</h3>
 <p>The <code>interests.implicit</code> field in config.json holds fine-grained preference signals from user feedback (via the <code>tune_interest</code> action). Unlike explicit keywords that control *what* is selected, implicit interests are natural-language soft constraints.</p>
@@ -238,9 +237,8 @@ Final summary:           explicit determines what; implicit shapes how
 <p>The explicit &gt; implicit hierarchy works as designed. With the tiebreaker framing, implicit acts as LoRA — lightweight adjustment on a stable base, never overriding strong keyword matches.</p>
 <h4>Current implicit value</h4>
 <p>With john&#x27;s 2 existing implicit entries, the primary value is description enrichment (code availability). As implicit accumulates to 5+ entries via feedback, selection-level effects will become more meaningful. The architecture is ready for that growth.</p></div>
-</div><div class="entry" id="002-effort-level-comparison">
-<div class="entry-title"><a href="#002-effort-level-comparison">Experiment 002: Effort Level &amp; Model Comparison</a></div>
-<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+</details><details class="entry" id="002-effort-level-comparison">
+<summary class="entry-title">Experiment 002: Effort Level &amp; Model Comparison<span class="entry-meta"> 2026-05-28 ·  Complete</span></summary>
 <div class="entry-body"><p><strong>Depends on:</strong> Experiment 001 (two-pass filtering architecture)</p>
 <h3>Motivation</h3>
 <p>Experiment 001 established the two-pass paper filtering pipeline. This experiment tests how the <code>--effort</code> parameter and model choice affect quality and speed across the full LLM pipeline (tweet analysis + two-pass paper filtering + ranking + summary generation).</p>
@@ -441,9 +439,8 @@ Score ↑
 <li>Multiple runs per condition for variance estimation (n=1의 신뢰도 한계)</li>
 <li>Opus low with structured output constraints → 속도 + quality + discipline 최적점?</li>
 </ul></div>
-</div><div class="entry" id="001-two-pass-paper-filtering">
-<div class="entry-title"><a href="#001-two-pass-paper-filtering">Experiment 001: Two-Pass Paper Filtering</a></div>
-<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+</details><details class="entry" id="001-two-pass-paper-filtering">
+<summary class="entry-title">Experiment 001: Two-Pass Paper Filtering<span class="entry-meta"> 2026-05-28 ·  Complete</span></summary>
 <div class="entry-body"><h3>Motivation</h3>
 <p>arXiv paper HTML pages are ~150KB each. With 4 categories, the agent reads ~585KB (~150K tokens, 75% of context window) just for papers. Most of this is HTML noise (nav, CSS, links) and unrelated papers. The agent processes everything in a single pass, which both wastes context and risks missing papers buried deep in the HTML.</p>
 <h3>Hypothesis</h3>
@@ -523,7 +520,7 @@ Score ↑
 <li>Pass 1 input = title-only JSON (~26KB, ~7K tokens regardless of paper count)</li>
 <li>Pass 2 input scales with Pass 1 output (~1.5KB/paper with abstract)</li>
 </ul></div>
-</div>
+</details>
 </div>
 </body>
 </html>
