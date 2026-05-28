@@ -51,33 +51,45 @@
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
 }
+
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { flex: 1; min-width: 0; }
+.daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+
+  .daily-news .vote-btn { border-color: #555; color: #666; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+
 </style>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-05-28">
 <h1>Daily News — 2026-05-28</h1>
 <div class="user-banner"><div class="user-handle">John</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · robot learning · world models · JEPA models · world action models · video generative models · diffusion modeling · multimodal generation models</div></div>
 <p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea">Anthropic appoints KiYoung Choi as Representative Director of Korea</a></span><span class="item-meta">Anthropic news · 2026-05-26</span><span class="item-desc">Anthropic names KiYoung Choi to lead its Korea entity ahead of its first Seoul office opening — a frontier lab&#x27;s first formal foothold in Korea, with implications for local model access, hiring, and policy presence.</span></li>
-  <li><span class="item-title">🆕 <a href="https://www.anthropic.com/research/glasswing-initial-update">Project Glasswing: An initial update</a></span><span class="item-meta">Anthropic news · 2026-05-22</span><span class="item-desc">First progress report from the multi-org consortium (AWS, Anthropic, Apple, Cisco, CrowdStrike, Google, JPMorganChase, Linux Foundation, Microsoft, NVIDIA, Palo Alto Networks) working to harden the security of the world&#x27;s most critical software against AI-driven attack.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea">Anthropic appoints KiYoung Choi as Representative Director of Korea</a></span> <button class="vote-btn" data-id="7002a68c20" data-link="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-title="Anthropic appoints KiYoung Choi as Representative Director of Korea" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic news · 2026-05-26</span><span class="item-desc">Anthropic names KiYoung Choi to lead its Korea entity ahead of its first Seoul office opening — a frontier lab&#x27;s first formal foothold in Korea, with implications for local model access, hiring, and policy presence.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/research/glasswing-initial-update">Project Glasswing: An initial update</a></span> <button class="vote-btn" data-id="37fdae27ba" data-link="https://www.anthropic.com/research/glasswing-initial-update" data-title="Project Glasswing: An initial update" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic news · 2026-05-22</span><span class="item-desc">First progress report from the multi-org consortium (AWS, Anthropic, Apple, Cisco, CrowdStrike, Google, JPMorganChase, Linux Foundation, Microsoft, NVIDIA, Palo Alto Networks) working to harden the security of the world&#x27;s most critical software against AI-driven attack.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://x.com/perryadong/status/2059541699618324941">Introducing EXPO-FT — Efficient, Reliable &amp; Open-Source VLA Finetuning</a></span><span class="item-meta">X (@perryadong) · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">A new open-source finetuning recipe for Physical Intelligence&#x27;s π0.5 model. Demonstrated on hard manipulation tasks — routing string lights into a power connector, pool-ball strikes, inserting flowers into wine bottles. Code available.</span></li>
-  <li><span class="item-title">🆕 <a href="https://x.com/LeRobotHF/status/2059673339002601863">Zero-shot robot rewards land in LeRobot with TOPReward</a></span><span class="item-meta">X (@LeRobotHF) · 2026-05-27<span class="item-keywords"> · robot learning</span></span><span class="item-desc">From Allen AI / UW / Amazon: turns any frozen video VLM into a robot reward model by reading `log P(&quot;True&quot; | video + instruction)` directly from the logits — no reward head, preference data, or labels needed. Now integrated into LeRobot with usage docs.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/blog/local-reachy-mini-conversation">Reachy Mini goes fully local</a></span><span class="item-meta">Hugging Face blog · 2026-05-27</span><span class="item-desc">Hugging Face demonstrates Reachy Mini running fully on-device conversations via an open-source Realtime API stack — fast enough that they had to hardcode response delays to stop the robot from interrupting users. Code available.</span></li>
-  <li><span class="item-title">🆕 <a href="https://x.com/runwayml/status/2059636517283176479">Introducing Runway MCP</a></span><span class="item-meta">X (@runwayml) · 2026-05-27</span><span class="item-desc">Runway exposes its video/image generation models (Gen-4.5, Seedance 2.0) through the Model Context Protocol so they plug directly into Claude, ChatGPT, Cursor, Replit, and other MCP clients.</span></li>
-  <li><span class="item-title"><a href="https://x.com/KnightNemo_/status/2059273823380451431">Releasing Nano World Models</a></span><span class="item-meta">X (@KnightNemo_) · 2026-05-26<span class="item-keywords"> · world models</span></span><span class="item-desc">Minimalist open release aimed at the gap between industry-scale world model papers and what the broader community can actually run. Designed so labs without industry compute can train + deploy world models meaningfully. Code released.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/perryadong/status/2059541699618324941">Introducing EXPO-FT — Efficient, Reliable &amp; Open-Source VLA Finetuning</a></span> <button class="vote-btn" data-id="c80d7529df" data-link="https://x.com/perryadong/status/2059541699618324941" data-title="Introducing EXPO-FT — Efficient, Reliable &amp; Open-Source VLA Finetuning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@perryadong) · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">A new open-source finetuning recipe for Physical Intelligence&#x27;s π0.5 model. Demonstrated on hard manipulation tasks — routing string lights into a power connector, pool-ball strikes, inserting flowers into wine bottles. Code available.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/LeRobotHF/status/2059673339002601863">Zero-shot robot rewards land in LeRobot with TOPReward</a></span> <button class="vote-btn" data-id="f796b1a732" data-link="https://x.com/LeRobotHF/status/2059673339002601863" data-title="Zero-shot robot rewards land in LeRobot with TOPReward" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@LeRobotHF) · 2026-05-27<span class="item-keywords"> · robot learning</span></span><span class="item-desc">From Allen AI / UW / Amazon: turns any frozen video VLM into a robot reward model by reading `log P(&quot;True&quot; | video + instruction)` directly from the logits — no reward head, preference data, or labels needed. Now integrated into LeRobot with usage docs.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/local-reachy-mini-conversation">Reachy Mini goes fully local</a></span> <button class="vote-btn" data-id="fa271f4309" data-link="https://huggingface.co/blog/local-reachy-mini-conversation" data-title="Reachy Mini goes fully local" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-27</span><span class="item-desc">Hugging Face demonstrates Reachy Mini running fully on-device conversations via an open-source Realtime API stack — fast enough that they had to hardcode response delays to stop the robot from interrupting users. Code available.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/runwayml/status/2059636517283176479">Introducing Runway MCP</a></span> <button class="vote-btn" data-id="d9710c25d3" data-link="https://x.com/runwayml/status/2059636517283176479" data-title="Introducing Runway MCP" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@runwayml) · 2026-05-27</span><span class="item-desc">Runway exposes its video/image generation models (Gen-4.5, Seedance 2.0) through the Model Context Protocol so they plug directly into Claude, ChatGPT, Cursor, Replit, and other MCP clients.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/KnightNemo_/status/2059273823380451431">Releasing Nano World Models</a></span> <button class="vote-btn" data-id="3c7b1449a1" data-link="https://x.com/KnightNemo_/status/2059273823380451431" data-title="Releasing Nano World Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@KnightNemo_) · 2026-05-26<span class="item-keywords"> · world models</span></span><span class="item-desc">Minimalist open release aimed at the gap between industry-scale world model papers and what the broader community can actually run. Designed so labs without industry compute can train + deploy world models meaningfully. Code released.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27817">Turning Video Models into Generalist Robot Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Li, Kim, Bai, Zhao, Pang, Simchowitz, Sitzmann (MIT). Instead of finetuning a video planner with action-labeled data, keep it embodiment-agnostic and train a small per-embodiment inverse dynamics model on top. Lets you swap video backbones without retraining everything and decouples planning from control.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27491">GE-Sim 2.0: A Closed-loop Video World Simulator for Robotic Manipulation</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · world models</span></span><span class="item-desc">Genie Envisioner team. Retrained on thousands of hours of teleop + on-robot policy data. Adds a state expert that decodes proprioception from video latents to feed downstream VLA policies, plus a world judge that scores rollouts — closes the loop from video simulation into policy learning.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27759">Colosseum V2: Benchmarking Generalization for Vision Language Action Models</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">USC / Sukhatme &amp; Thomason group. 28 manipulation tasks across 13 categories and two robot morphologies. Argues VLAs&#x27; impressive zero-shot perception masks fragile control under distribution shift, and quantifies where the gap actually lives.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27734">Learn from your own latents and not from tokens: A sample-complexity theory</a></span><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · JEPA models</span></span><span class="item-desc">Korchinski, Favero, Wyart. Sample-complexity theory for self-prediction methods like data2vec and JEPA vs. token prediction. Quantifies the data-efficiency win from predicting your own latents and asks whether stacking helps. Theory paper — no code.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27589">What-If World: A Causal Benchmark for General World Models in Embodied Scenarios</a></span><span class="item-meta">arXiv cs.CV · 2026-05-28<span class="item-keywords"> · world models</span></span><span class="item-desc">Tests whether video world models obey physics by giving paired prompts varying only one physical detail and checking whether outputs diverge the way they should. Catches &quot;each video looks plausible but the pair is causally wrong&quot; failures that single-video benchmarks miss.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27817">Turning Video Models into Generalist Robot Policies</a></span> <button class="vote-btn" data-id="0073ef7d16" data-link="https://arxiv.org/abs/2605.27817" data-title="Turning Video Models into Generalist Robot Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Li, Kim, Bai, Zhao, Pang, Simchowitz, Sitzmann (MIT). Instead of finetuning a video planner with action-labeled data, keep it embodiment-agnostic and train a small per-embodiment inverse dynamics model on top. Lets you swap video backbones without retraining everything and decouples planning from control.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27491">GE-Sim 2.0: A Closed-loop Video World Simulator for Robotic Manipulation</a></span> <button class="vote-btn" data-id="f3a33d7bfc" data-link="https://arxiv.org/abs/2605.27491" data-title="GE-Sim 2.0: A Closed-loop Video World Simulator for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · world models</span></span><span class="item-desc">Genie Envisioner team. Retrained on thousands of hours of teleop + on-robot policy data. Adds a state expert that decodes proprioception from video latents to feed downstream VLA policies, plus a world judge that scores rollouts — closes the loop from video simulation into policy learning.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27759">Colosseum V2: Benchmarking Generalization for Vision Language Action Models</a></span> <button class="vote-btn" data-id="3bcf54a909" data-link="https://arxiv.org/abs/2605.27759" data-title="Colosseum V2: Benchmarking Generalization for Vision Language Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">USC / Sukhatme &amp; Thomason group. 28 manipulation tasks across 13 categories and two robot morphologies. Argues VLAs&#x27; impressive zero-shot perception masks fragile control under distribution shift, and quantifies where the gap actually lives.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27734">Learn from your own latents and not from tokens: A sample-complexity theory</a></span> <button class="vote-btn" data-id="8208577aee" data-link="https://arxiv.org/abs/2605.27734" data-title="Learn from your own latents and not from tokens: A sample-complexity theory" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · JEPA models</span></span><span class="item-desc">Korchinski, Favero, Wyart. Sample-complexity theory for self-prediction methods like data2vec and JEPA vs. token prediction. Quantifies the data-efficiency win from predicting your own latents and asks whether stacking helps. Theory paper — no code.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27589">What-If World: A Causal Benchmark for General World Models in Embodied Scenarios</a></span> <button class="vote-btn" data-id="3abec069b3" data-link="https://arxiv.org/abs/2605.27589" data-title="What-If World: A Causal Benchmark for General World Models in Embodied Scenarios" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-05-28<span class="item-keywords"> · world models</span></span><span class="item-desc">Tests whether video world models obey physics by giving paired prompts varying only one physical detail and checking whether outputs diverge the way they should. Catches &quot;each video looks plausible but the pair is causally wrong&quot; failures that single-video benchmarks miss.</span></li>
 </ul>
 <h2>Watch list</h2>
 <ul>
@@ -107,6 +119,37 @@
     }).catch(function(){
       w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
     });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,item_id:id,title:title})
+    }).catch(function(){});
   });
 })();
 </script>

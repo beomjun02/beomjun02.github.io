@@ -55,10 +55,22 @@
   .daily-news .users-list a:hover { color: #f09228; }
   .daily-news .users-headline { color: #ddd; }
 }
+
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { flex: 1; min-width: 0; }
+.daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+
+  .daily-news .vote-btn { border-color: #555; color: #666; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+
 </style>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="huiwon" data-date="2026-05-27">
 <h1>Daily News — 2026-05-27</h1>
 <div class="user-banner"><div class="user-handle">Huiwon</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · long-term planning · VLA architecture · VLA generalization · world-action model · visual representation learning · visual tokenizer · video diffusion model</div></div>
 <p class="page-meta">8 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
@@ -66,14 +78,14 @@
 
 <h2>Papers</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds a real-world continual-learning dataset across four sequential manipulation tasks (rigid pick-and-place, articulated, deformable, tool-use) and shows that standard VLA fine-tuning suffers severe catastrophic forgetting, while a simple replay+EWC variant largely recovers prior skills. Highlights how brittle current VLA deployment is once you leave the static finetune-and-freeze regime.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a data-construction pipeline that unifies 97 robotic datasets with execution-critical labels (active arm, approach direction, contact region) so that VLA policies can be steered by instruction modifiers rather than only goal text. The fine-grained supervision yields measurable gains in following &quot;how&quot; instructions without retraining the base policy.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2603.04639">RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Stanford/Michigan (Chelsea Finn, Joyce Chai) ship a large-scale standardized benchmark for long-horizon, history-dependent VLA tasks — counting repeated actions, manipulating objects under occlusion, etc. — and analyze how today&#x27;s memory mechanisms (KV-cache vs. recurrent vs. retrieval) fare. Useful diagnostic for any group claiming &quot;memory&quot; in their generalist policy.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25874">WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">289 multi-turn test cases (1,058 interaction turns) scoring interactive video world models on quality, setting adherence, interaction adherence, temporal consistency, and physics compliance. Directly relevant to anyone building world-action models on top of video generators — finally a unified yardstick.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.20708">Rethinking Cross-Layer Information Routing in Diffusion Transformers</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Systematic empirical study of how information flows along depth × denoising-timestep in DiTs, identifying three pathologies of the inherited residual stream and proposing a lightweight rewiring. Generation quality improves at matched compute on standard image/video DiT baselines — relevant to anyone training video diffusion backbones used downstream by world models.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26266">Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion</a></span><span class="item-meta">arXiv cs.LG · 2026-05-27<span class="item-keywords"> · video diffusion model</span></span><span class="item-desc">Identifies a &quot;Jensen bias&quot; in softmax attention where quantization noise on cached keys systematically inflates their contribution, degrading long-video quality at low bitwidth. Their bias-correction term recovers most of the quality lost to 4-bit KV-cache compression in chunk-wise autoregressive video diffusion.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Frames an agent&#x27;s skill as the *external state* of a frozen base model and trains a separate optimizer model to apply bounded add/delete/replace edits driven by scored rollouts — the first principled text-space optimizer for skills. Top-upvoted paper on HF this week (↑177); the framing is interesting for anyone evolving generalist policies via post-hoc supervision.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25604">DVAO: Dynamic Variance-adaptive Advantage Optimization for Multi-reward RL</a></span><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Variance-adaptive advantage scaling for GRPO under multi-reward setups — fixes the training-instability and gradient-domination failure modes of naive reward/advantage scalarization. Mostly LLM-aligned, but the mechanism is policy-agnostic and worth knowing if you do multi-objective RL on robot policies.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span> <button class="vote-btn" data-id="90921c330e" data-link="https://arxiv.org/abs/2605.26820" data-title="Can VLA Models Learn from Real-World Data Continually without Forgetting?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds a real-world continual-learning dataset across four sequential manipulation tasks (rigid pick-and-place, articulated, deformable, tool-use) and shows that standard VLA fine-tuning suffers severe catastrophic forgetting, while a simple replay+EWC variant largely recovers prior skills. Highlights how brittle current VLA deployment is once you leave the static finetune-and-freeze regime.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span> <button class="vote-btn" data-id="162e4eba53" data-link="https://arxiv.org/abs/2605.27284" data-title="FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a data-construction pipeline that unifies 97 robotic datasets with execution-critical labels (active arm, approach direction, contact region) so that VLA policies can be steered by instruction modifiers rather than only goal text. The fine-grained supervision yields measurable gains in following &quot;how&quot; instructions without retraining the base policy.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2603.04639">RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies</a></span> <button class="vote-btn" data-id="fbc96f8b84" data-link="https://arxiv.org/abs/2603.04639" data-title="RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Stanford/Michigan (Chelsea Finn, Joyce Chai) ship a large-scale standardized benchmark for long-horizon, history-dependent VLA tasks — counting repeated actions, manipulating objects under occlusion, etc. — and analyze how today&#x27;s memory mechanisms (KV-cache vs. recurrent vs. retrieval) fare. Useful diagnostic for any group claiming &quot;memory&quot; in their generalist policy.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25874">WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span> <button class="vote-btn" data-id="6cc46f254e" data-link="https://huggingface.co/papers/2605.25874" data-title="WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">289 multi-turn test cases (1,058 interaction turns) scoring interactive video world models on quality, setting adherence, interaction adherence, temporal consistency, and physics compliance. Directly relevant to anyone building world-action models on top of video generators — finally a unified yardstick.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.20708">Rethinking Cross-Layer Information Routing in Diffusion Transformers</a></span> <button class="vote-btn" data-id="415b947229" data-link="https://huggingface.co/papers/2605.20708" data-title="Rethinking Cross-Layer Information Routing in Diffusion Transformers" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Systematic empirical study of how information flows along depth × denoising-timestep in DiTs, identifying three pathologies of the inherited residual stream and proposing a lightweight rewiring. Generation quality improves at matched compute on standard image/video DiT baselines — relevant to anyone training video diffusion backbones used downstream by world models.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26266">Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion</a></span> <button class="vote-btn" data-id="c7bb43fca9" data-link="https://arxiv.org/abs/2605.26266" data-title="Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-27<span class="item-keywords"> · video diffusion model</span></span><span class="item-desc">Identifies a &quot;Jensen bias&quot; in softmax attention where quantization noise on cached keys systematically inflates their contribution, degrading long-video quality at low bitwidth. Their bias-correction term recovers most of the quality lost to 4-bit KV-cache compression in chunk-wise autoregressive video diffusion.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span> <button class="vote-btn" data-id="5f5fae4e79" data-link="https://huggingface.co/papers/2605.23904" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Frames an agent&#x27;s skill as the *external state* of a frozen base model and trains a separate optimizer model to apply bounded add/delete/replace edits driven by scored rollouts — the first principled text-space optimizer for skills. Top-upvoted paper on HF this week (↑177); the framing is interesting for anyone evolving generalist policies via post-hoc supervision.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25604">DVAO: Dynamic Variance-adaptive Advantage Optimization for Multi-reward RL</a></span> <button class="vote-btn" data-id="2cc3e241e5" data-link="https://huggingface.co/papers/2605.25604" data-title="DVAO: Dynamic Variance-adaptive Advantage Optimization for Multi-reward RL" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face papers · 2026-05-27</span><span class="item-desc">Variance-adaptive advantage scaling for GRPO under multi-reward setups — fixes the training-instability and gradient-domination failure modes of naive reward/advantage scalarization. Mostly LLM-aligned, but the mechanism is policy-agnostic and worth knowing if you do multi-objective RL on robot policies.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="huiwon" data-date="2026-05-27"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
@@ -101,6 +113,37 @@
     }).catch(function(){
       w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
     });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,item_id:id,title:title})
+    }).catch(function(){});
   });
 })();
 </script>

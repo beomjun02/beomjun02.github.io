@@ -51,33 +51,45 @@
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
 }
+
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { flex: 1; min-width: 0; }
+.daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+
+  .daily-news .vote-btn { border-color: #555; color: #666; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+
 </style>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="kunwoong" data-date="2026-05-28">
 <h1>Daily News — 2026-05-28</h1>
 <div class="user-banner"><div class="user-handle">Kunwoong</div><div class="user-categories">Language · Vision</div><div class="user-kws">MoE · VLM · trustworthy · agent · fundamental · architecture · test-time · VLM · video</div></div>
 <p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://www.anthropic.com/news/anthropic-acquires-stainless">Anthropic acquires Stainless</a></span><span class="item-meta">Anthropic news · 2026-05-18</span><span class="item-desc">Anthropic acquired Stainless, the SDK-generation company behind many widely used official Python/TypeScript SDKs (including OpenAI&#x27;s and Anthropic&#x27;s own). Signals a push to own the developer-tooling stack around Claude rather than rely on third-party generators.</span></li>
-  <li><span class="item-title">🆕 <a href="https://cohere.com/blog/cohere-acquires-reliant-ai-expand-sovereign-enterprise-ai">Cohere acquires Reliant AI</a></span><span class="item-meta">Cohere blog · 2026-05-19</span><span class="item-desc">Cohere bought Reliant AI to extend its &quot;sovereign enterprise AI&quot; play into biopharma and healthcare, doubling down on regulated-industry deployments where data residency and privacy guarantees matter more than raw benchmark scores.</span></li>
-  <li><span class="item-title">🆕 <a href="https://www.anthropic.com/news/anthropic-kpmg">KPMG integrates Claude across 276,000-person workforce</a></span><span class="item-meta">Anthropic news · 2026-05-19</span><span class="item-desc">KPMG is rolling Claude out as a core tool across its entire global staff in a strategic alliance — one of the largest enterprise LLM deployments announced to date, and a concrete data point on how fast Big-4 firms are committing to a single model vendor.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/anthropic-acquires-stainless">Anthropic acquires Stainless</a></span> <button class="vote-btn" data-id="71cf91f126" data-link="https://www.anthropic.com/news/anthropic-acquires-stainless" data-title="Anthropic acquires Stainless" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic news · 2026-05-18</span><span class="item-desc">Anthropic acquired Stainless, the SDK-generation company behind many widely used official Python/TypeScript SDKs (including OpenAI&#x27;s and Anthropic&#x27;s own). Signals a push to own the developer-tooling stack around Claude rather than rely on third-party generators.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://cohere.com/blog/cohere-acquires-reliant-ai-expand-sovereign-enterprise-ai">Cohere acquires Reliant AI</a></span> <button class="vote-btn" data-id="3128262f51" data-link="https://cohere.com/blog/cohere-acquires-reliant-ai-expand-sovereign-enterprise-ai" data-title="Cohere acquires Reliant AI" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Cohere blog · 2026-05-19</span><span class="item-desc">Cohere bought Reliant AI to extend its &quot;sovereign enterprise AI&quot; play into biopharma and healthcare, doubling down on regulated-industry deployments where data residency and privacy guarantees matter more than raw benchmark scores.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/anthropic-kpmg">KPMG integrates Claude across 276,000-person workforce</a></span> <button class="vote-btn" data-id="0ce6c60457" data-link="https://www.anthropic.com/news/anthropic-kpmg" data-title="KPMG integrates Claude across 276,000-person workforce" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic news · 2026-05-19</span><span class="item-desc">KPMG is rolling Claude out as a core tool across its entire global staff in a strategic alliance — one of the largest enterprise LLM deployments announced to date, and a concrete data point on how fast Big-4 firms are committing to a single model vendor.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://cohere.com/blog/command-a-plus">Cohere Command A+</a></span><span class="item-meta">Cohere blog · 2026-05-20<span class="item-keywords"> · agent</span></span><span class="item-desc">Cohere&#x27;s fastest and most capable open-weights LLM yet, pitched as &quot;sovereign agentic&quot; — full weights released for on-prem use with stronger agent/tool-use benchmarks than the original Command A. A real alternative to Llama/Qwen for enterprises that need to self-host.</span></li>
-  <li><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.5-LiveTranslate-Flash</a></span><span class="item-meta">Qwen research · 2026-05-19<span class="item-keywords"> · VLM</span></span><span class="item-desc">Real-time simultaneous interpretation model built on Qwen3.5-Omni that translates speech *while also seeing visual context* (slides, scenes), reducing the ambiguity that text-only translators hit on homophones and deictic references. Multimodal grounding applied to a concrete latency-bound task.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/blog/local-reachy-mini-conversation">Reachy Mini goes fully local</a></span><span class="item-meta">Hugging Face blog · 2026-05-27</span><span class="item-desc">Pollen Robotics + HF push the Reachy Mini conversational robot to fully on-device inference (STT, LLM, TTS, vision) — no cloud calls in the loop. Removes the round-trip latency that has been the main pain point for natural-feeling robot conversation.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/blog/ettin-reranker">Ettin Reranker Family</a></span><span class="item-meta">Hugging Face blog · 2026-05-19</span><span class="item-desc">A new open family of cross-encoder rerankers (sub-100M to 1B) trained on filtered retrieval corpora, reporting state-of-the-art BEIR results in the sub-100M tier — the size class most teams actually deploy in production RAG.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://cohere.com/blog/command-a-plus">Cohere Command A+</a></span> <button class="vote-btn" data-id="eaf8ead0c2" data-link="https://cohere.com/blog/command-a-plus" data-title="Cohere Command A+" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Cohere blog · 2026-05-20<span class="item-keywords"> · agent</span></span><span class="item-desc">Cohere&#x27;s fastest and most capable open-weights LLM yet, pitched as &quot;sovereign agentic&quot; — full weights released for on-prem use with stronger agent/tool-use benchmarks than the original Command A. A real alternative to Llama/Qwen for enterprises that need to self-host.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.5-LiveTranslate-Flash</a></span> <button class="vote-btn" data-id="d98cb8d236" data-link="https://qwen.ai/research" data-title="Qwen3.5-LiveTranslate-Flash" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Qwen research · 2026-05-19<span class="item-keywords"> · VLM</span></span><span class="item-desc">Real-time simultaneous interpretation model built on Qwen3.5-Omni that translates speech *while also seeing visual context* (slides, scenes), reducing the ambiguity that text-only translators hit on homophones and deictic references. Multimodal grounding applied to a concrete latency-bound task.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/local-reachy-mini-conversation">Reachy Mini goes fully local</a></span> <button class="vote-btn" data-id="fa271f4309" data-link="https://huggingface.co/blog/local-reachy-mini-conversation" data-title="Reachy Mini goes fully local" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-27</span><span class="item-desc">Pollen Robotics + HF push the Reachy Mini conversational robot to fully on-device inference (STT, LLM, TTS, vision) — no cloud calls in the loop. Removes the round-trip latency that has been the main pain point for natural-feeling robot conversation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/ettin-reranker">Ettin Reranker Family</a></span> <button class="vote-btn" data-id="7dc09a820b" data-link="https://huggingface.co/blog/ettin-reranker" data-title="Ettin Reranker Family" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-19</span><span class="item-desc">A new open family of cross-encoder rerankers (sub-100M to 1B) trained on filtered retrieval corpora, reporting state-of-the-art BEIR results in the sub-100M tier — the size class most teams actually deploy in production RAG.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26376">BioFact-MoE: Biologically Factorized Mixture of Experts for Vision-Language Prognostic Modeling</a></span><span class="item-meta">arXiv cs.CV · 2026-05-28<span class="item-keywords"> · MoE</span></span><span class="item-desc">Replaces the single entangled latent in prognostic VLMs with biologically supervised experts that explicitly separate hepatic-function vs. tumor-related factors in HCC. Argues that factorization, not bigger encoders, is what unlocks both accuracy and interpretability on multimodal MRI + report data.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26172">ARBITER: Reasoning Trajectory Basins and Majority Vote Failures in Test-Time Sampling</a></span><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · test-time</span></span><span class="item-desc">Shows that test-time-sampled reasoning chains aren&#x27;t independent — they cluster into a few &quot;reasoning basins,&quot; and plain majority vote picks the most stable basin rather than the correct one. ARBITER reweights basins using hidden-state evidence to recover the right-but-outvoted answers without retraining.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26132">Self-Verified Distillation: Your Language Model Is Secretly Its Own Synthetic Data Pipeline</a></span><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · test-time</span></span><span class="item-desc">Tony Lee and Percy Liang: post-trained LLMs can keep improving on math/science/code from *unlabeled* seed prompts by generating, self-verifying, filtering, and training on their own outputs — no teacher, no tools. A clean ablation of how far self-improvement can go without external feedback.</span></li>
-  <li><span class="item-title"><a href="https://arxiv.org/abs/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span><span class="item-meta">HF papers (weekly) · 2026-05-25<span class="item-keywords"> · agent</span></span><span class="item-desc">Microsoft&#x27;s text-space optimizer treats agent skills as external state and trains them via add/delete/replace edits against a validation score. Optimized skills transfer across model scales and between Codex/Claude Code with zero inference overhead — at 181 upvotes the week&#x27;s top paper on HF.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.25874">WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span><span class="item-meta">HF papers (weekly) · 2026-05-25<span class="item-keywords"> · video</span></span><span class="item-desc">First multi-turn benchmark for interactive video world models, with 289 test cases and 1,058 interaction trajectories spanning five evaluation dimensions. Targets the gap that existing single-shot video-gen benchmarks leave open for world-model use cases (planning, lookahead).</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26376">BioFact-MoE: Biologically Factorized Mixture of Experts for Vision-Language Prognostic Modeling</a></span> <button class="vote-btn" data-id="be3e63f510" data-link="https://arxiv.org/abs/2605.26376" data-title="BioFact-MoE: Biologically Factorized Mixture of Experts for Vision-Language Prognostic Modeling" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-05-28<span class="item-keywords"> · MoE</span></span><span class="item-desc">Replaces the single entangled latent in prognostic VLMs with biologically supervised experts that explicitly separate hepatic-function vs. tumor-related factors in HCC. Argues that factorization, not bigger encoders, is what unlocks both accuracy and interpretability on multimodal MRI + report data.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26172">ARBITER: Reasoning Trajectory Basins and Majority Vote Failures in Test-Time Sampling</a></span> <button class="vote-btn" data-id="b99618e961" data-link="https://arxiv.org/abs/2605.26172" data-title="ARBITER: Reasoning Trajectory Basins and Majority Vote Failures in Test-Time Sampling" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · test-time</span></span><span class="item-desc">Shows that test-time-sampled reasoning chains aren&#x27;t independent — they cluster into a few &quot;reasoning basins,&quot; and plain majority vote picks the most stable basin rather than the correct one. ARBITER reweights basins using hidden-state evidence to recover the right-but-outvoted answers without retraining.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26132">Self-Verified Distillation: Your Language Model Is Secretly Its Own Synthetic Data Pipeline</a></span> <button class="vote-btn" data-id="af11889c26" data-link="https://arxiv.org/abs/2605.26132" data-title="Self-Verified Distillation: Your Language Model Is Secretly Its Own Synthetic Data Pipeline" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · test-time</span></span><span class="item-desc">Tony Lee and Percy Liang: post-trained LLMs can keep improving on math/science/code from *unlabeled* seed prompts by generating, self-verifying, filtering, and training on their own outputs — no teacher, no tools. A clean ablation of how far self-improvement can go without external feedback.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span> <button class="vote-btn" data-id="96da3cfc99" data-link="https://arxiv.org/abs/2605.23904" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers (weekly) · 2026-05-25<span class="item-keywords"> · agent</span></span><span class="item-desc">Microsoft&#x27;s text-space optimizer treats agent skills as external state and trains them via add/delete/replace edits against a validation score. Optimized skills transfer across model scales and between Codex/Claude Code with zero inference overhead — at 181 upvotes the week&#x27;s top paper on HF.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.25874">WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span> <button class="vote-btn" data-id="6cc46f254e" data-link="https://arxiv.org/abs/2605.25874" data-title="WBench: A Comprehensive Multi-turn Benchmark for Interactive Video World Model Evaluation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers (weekly) · 2026-05-25<span class="item-keywords"> · video</span></span><span class="item-desc">First multi-turn benchmark for interactive video world models, with 289 test cases and 1,058 interaction trajectories spanning five evaluation dimensions. Targets the gap that existing single-shot video-gen benchmarks leave open for world-model use cases (planning, lookahead).</span></li>
 </ul>
 <h2>Watch list</h2>
 <ul>
@@ -108,6 +120,37 @@
     }).catch(function(){
       w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
     });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,item_id:id,title:title})
+    }).catch(function(){});
   });
 })();
 </script>
