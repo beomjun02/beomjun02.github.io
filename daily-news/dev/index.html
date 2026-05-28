@@ -107,29 +107,28 @@
   var sec=document.getElementById('trending-section');if(!sec)return;
   var url=sec.dataset.url,date=sec.dataset.date;
   if(!url)return;
-  var tcb='_dnTrend'+Math.random().toString(36).slice(2,8);
-  window[tcb]=function(d){
-    delete window[tcb];
-    if(!d.items||!d.items.length){
-      sec.querySelector('.trending-loading').textContent='No trending items yet.';
-      return;
-    }
-    var ul=document.createElement('ul');
-    d.items.forEach(function(it){
-      var li=document.createElement('li');
-      li.innerHTML='<span class="t-score">+'+it.score+'</span>'
-        +'<span class="t-title"><a href="'+it.link+'">'+it.title+'</a></span>'
-        +'<span class="t-voters">voted by '+it.voters.join(', ')+'</span>';
-      ul.appendChild(li);
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  fetch(proxy+'?action=trending&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(!d.items||!d.items.length){
+        sec.querySelector('.trending-loading').textContent='No trending items yet.';
+        return;
+      }
+      var ul=document.createElement('ul');
+      d.items.forEach(function(it){
+        var li=document.createElement('li');
+        li.innerHTML='<span class="t-score">+'+it.score+'</span>'
+          +'<span class="t-title"><a href="'+it.link+'">'+it.title+'</a></span>'
+          +'<span class="t-voters">voted by '+it.voters.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      var loading=sec.querySelector('.trending-loading');
+      if(loading)loading.remove();
+      sec.appendChild(ul);
+    }).catch(function(){
+      sec.querySelector('.trending-loading').textContent='Could not load trending.';
     });
-    var loading=sec.querySelector('.trending-loading');
-    if(loading)loading.remove();
-    sec.appendChild(ul);
-  };
-  var s=document.createElement('script');
-  s.src=url+'?action=trending&date='+date+'&callback='+tcb;
-  s.onerror=function(){sec.querySelector('.trending-loading').textContent='Could not load trending.';};
-  document.head.appendChild(s);
 })();
 </script>
 
