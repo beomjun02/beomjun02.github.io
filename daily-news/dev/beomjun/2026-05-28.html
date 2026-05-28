@@ -116,50 +116,42 @@
 (function(){
   var dn=document.querySelector('.daily-news');if(!dn)return;
   var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url)return;
-  var voted=JSON.parse(localStorage.getItem('dn_votes_'+date)||'{}');
-  var baseScores={};
-  fetch(url+'?action=votes&date='+date)
+  if(!url||!user)return;
+  var scores={},myVotes={};
+  fetch(url+'?action=votes&date='+date+'&user='+user)
     .then(function(r){return r.json()})
     .then(function(d){
-      if(d.votes){
-        baseScores=d.votes;
-        refreshAll();
-      }
+      scores=d.votes||{};myVotes=d.my_votes||{};
+      renderAll();
     }).catch(function(){});
-  function myContrib(id){return voted[id]||0;}
-  function displayScore(id){
-    var base=baseScores[id]||0;
-    var mine=myContrib(id);
-    return base+mine;
-  }
-  function refreshAll(){
+  function renderAll(){
     document.querySelectorAll('.vote-score').forEach(function(el){
-      var id=el.dataset.id;
-      var s=displayScore(id);
+      var s=scores[el.dataset.id]||0;
       el.textContent=s>0?s:'';
     });
-  }
-  function applyState(id){
-    var dir=voted[id]||0;
-    document.querySelectorAll('.vote-btn[data-id="'+id+'"]').forEach(function(b){
-      b.classList.remove('voted-up','voted-down');
-      var bv=parseInt(b.dataset.vote);
-      if(dir!==0&&bv===dir)b.classList.add(dir>0?'voted-up':'voted-down');
+    Object.keys(myVotes).forEach(function(id){
+      var dir=myVotes[id];
+      document.querySelectorAll('.vote-btn[data-id="'+id+'"]').forEach(function(b){
+        b.classList.remove('voted-up','voted-down');
+        if(parseInt(b.dataset.vote)===dir)b.classList.add(dir>0?'voted-up':'voted-down');
+      });
     });
-    var sc=document.querySelector('.vote-score[data-id="'+id+'"]');
-    if(sc){var s=displayScore(id);sc.textContent=s>0?s:'';}
   }
-  Object.keys(voted).forEach(function(id){applyState(id);});
   dn.addEventListener('click',function(e){
     var btn=e.target.closest('.vote-btn');if(!btn)return;
     var id=btn.dataset.id,vote=parseInt(btn.dataset.vote),
         link=btn.dataset.link,title=btn.dataset.title;
-    var prev=voted[id]||0;
+    var prev=myVotes[id]||0;
     var next=(prev===vote)?0:vote;
-    if(next===0){delete voted[id];}else{voted[id]=next;}
-    localStorage.setItem('dn_votes_'+date,JSON.stringify(voted));
-    applyState(id);
+    var delta=next-prev;
+    scores[id]=(scores[id]||0)+delta;
+    if(next===0){delete myVotes[id];}else{myVotes[id]=next;}
+    document.querySelectorAll('.vote-btn[data-id="'+id+'"]').forEach(function(b){
+      b.classList.remove('voted-up','voted-down');
+      if(next!==0&&parseInt(b.dataset.vote)===next)b.classList.add(next>0?'voted-up':'voted-down');
+    });
+    var sc=document.querySelector('.vote-score[data-id="'+id+'"]');
+    if(sc){var s=scores[id]||0;sc.textContent=s>0?s:'';}
     var action=next>0?'upvote':next<0?'downvote':'unvote';
     fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({user:user,date:date,action:action,
