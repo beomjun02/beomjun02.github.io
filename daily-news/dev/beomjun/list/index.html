@@ -37,7 +37,7 @@
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
 .daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-.daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
@@ -56,7 +56,7 @@
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
   .daily-news .vote-btn { border-color: #555; color: #666; }
-  .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
   .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
 }
 @media (max-width: 600px) {
