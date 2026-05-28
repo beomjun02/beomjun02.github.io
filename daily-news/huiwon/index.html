@@ -51,31 +51,43 @@
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
 }
+
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { flex: 1; min-width: 0; }
+.daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+
+  .daily-news .vote-btn { border-color: #555; color: #666; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+
 </style>
 </head>
 <body>
-<div class="daily-news">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="huiwon" data-date="2026-05-28">
 <h1>Daily News — 2026-05-28</h1>
 <div class="user-banner"><div class="user-handle">Huiwon</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · long-term planning · VLA architecture · VLA generalization · world-action model · visual representation learning · visual tokenizer · video diffusion model</div></div>
 <p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><span class="item-title">(none — no X list or lab sites configured)</span></li>
+  <li><div class="item-row"><span class="item-title">(none — no X list or lab sites configured)</span> <button class="vote-btn" data-id="cdd06d61c7" data-link="" data-title="(none — no X list or lab sites configured)" title="upvote"><span class="tri"></span></button></div></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><span class="item-title">(none — no X list or lab sites configured)</span></li>
+  <li><div class="item-row"><span class="item-title">(none — no X list or lab sites configured)</span> <button class="vote-btn" data-id="cdd06d61c7" data-link="" data-title="(none — no X list or lab sites configured)" title="upvote"><span class="tri"></span></button></div></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><span class="item-title"><a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds the first real-world continual-learning benchmark for VLA policies — four sequential manipulation tasks spanning rigid-object pick-and-place, contact-rich pressing, and deformable folding. Finds significant catastrophic forgetting on heterogeneous real-world demonstrations and dissects which experience-replay implementation factors actually recover performance, with practical guidance for deploying long-lived robot policies.</span></li>
-  <li><span class="item-title"><a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">Argues current VLA datasets only pair trajectories with coarse goal-level language, leaving execution details (active arm, approach direction, contact region) unspecified. Releases FineVLA-Data — 47,159 human-verified fine-grained trajectories unified across 10 open robot datasets — plus a 500-video held-out benchmark, and shows steerability gains without sacrificing goal-level success.</span></li>
-  <li><span class="item-title"><a href="https://arxiv.org/abs/2603.04639">RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies</a></span><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">16-task standardized benchmark for memory in long-horizon, history-dependent manipulation (counting, temporary occlusion). The team builds 14 memory-augmented variants on the π0.5 backbone and finds no single memory representation dominates — effective design is highly task-dependent across temporal, spatial, object, and procedural categories.</span></li>
-  <li><span class="item-title"><a href="https://huggingface.co/papers/2605.25874">WBench: Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span><span class="item-meta">HF papers · 2026-05-25</span><span class="item-desc">289 test cases / 1,058 interaction turns evaluating interactive world models on five axes: video quality, setting adherence, interaction adherence, consistency, and physics compliance. Covers navigation (text + 6-DoF), subject action, event editing, and perspective switching — first unified standard for the interactive video world-model space.</span></li>
-  <li><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26282">Scaling World-Model RL Through Diffusion Policy Optimization</a></span><span class="item-meta">arXiv cs.LG · 2026-05-28</span><span class="item-desc">Identifies a structural misalignment between search and value learning as the underexplored scaling bottleneck for model-based RL. MBDPO unifies the two via a diffusion process over searched trajectories in latent world models, extracting an implicit energy function from collected data instead of constructing an explicit planner over the learned model.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.27367">SpatialBench: Is Your Spatial Foundation Model an All-Round Player?</a></span><span class="item-meta">HF papers · 2026-05-26</span><span class="item-desc">Cross-paradigm benchmark that stress-tests spatial foundation models across arbitrary viewpoints, shifting scene domains, varying input densities, and hardware constraints — the dimensions that matter for embodied / robotic deployment but get glossed over by domain-specific evals.</span></li>
-  <li><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.27365">LocateAnything: Fast and High-Quality Vision-Language Grounding with Parallel Box Decoding</a></span><span class="item-meta">HF papers · 2026-05-26</span><span class="item-desc">Replaces serial coordinate-token decoding in VLMs with Parallel Box Decoding (PBD), treating bounding boxes and points as atomic units decoded in a single step. Preserves intra-box geometric coherence and unlocks parallelism, improving both decoding throughput and localization accuracy.</span></li>
-  <li><span class="item-title"><a href="https://arxiv.org/abs/2605.26266">Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion</a></span><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · video diffusion model</span></span><span class="item-desc">Pinpoints &quot;Jensen bias&quot; — softmax convexity makes quantization noise inflate cached-key attention weights — as the failure mode in low-bit KV-cache video diffusion. Derives an on-the-fly per-score correction recovering near-BF16 quality at INT2 on MAGI-1, SkyReels-V2, and HY-WorldPlay with negligible overhead.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span> <button class="vote-btn" data-id="8a4c516c5f" data-link="https://arxiv.org/abs/2605.26820" data-title="Can VLA Models Learn from Real-World Data Continually without Forgetting?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds the first real-world continual-learning benchmark for VLA policies — four sequential manipulation tasks spanning rigid-object pick-and-place, contact-rich pressing, and deformable folding. Finds significant catastrophic forgetting on heterogeneous real-world demonstrations and dissects which experience-replay implementation factors actually recover performance, with practical guidance for deploying long-lived robot policies.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span> <button class="vote-btn" data-id="682fb98bc8" data-link="https://arxiv.org/abs/2605.27284" data-title="FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">Argues current VLA datasets only pair trajectories with coarse goal-level language, leaving execution details (active arm, approach direction, contact region) unspecified. Releases FineVLA-Data — 47,159 human-verified fine-grained trajectories unified across 10 open robot datasets — plus a 500-video held-out benchmark, and shows steerability gains without sacrificing goal-level success.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2603.04639">RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies</a></span> <button class="vote-btn" data-id="263e7f1bbc" data-link="https://arxiv.org/abs/2603.04639" data-title="RoboMME: Benchmarking and Understanding Memory for Robotic Generalist Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-28<span class="item-keywords"> · VLA</span></span><span class="item-desc">16-task standardized benchmark for memory in long-horizon, history-dependent manipulation (counting, temporary occlusion). The team builds 14 memory-augmented variants on the π0.5 backbone and finds no single memory representation dominates — effective design is highly task-dependent across temporal, spatial, object, and procedural categories.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/papers/2605.25874">WBench: Multi-turn Benchmark for Interactive Video World Model Evaluation</a></span> <button class="vote-btn" data-id="f896fe1d6e" data-link="https://huggingface.co/papers/2605.25874" data-title="WBench: Multi-turn Benchmark for Interactive Video World Model Evaluation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-25</span><span class="item-desc">289 test cases / 1,058 interaction turns evaluating interactive world models on five axes: video quality, setting adherence, interaction adherence, consistency, and physics compliance. Covers navigation (text + 6-DoF), subject action, event editing, and perspective switching — first unified standard for the interactive video world-model space.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.26282">Scaling World-Model RL Through Diffusion Policy Optimization</a></span> <button class="vote-btn" data-id="276d09918f" data-link="https://arxiv.org/abs/2605.26282" data-title="Scaling World-Model RL Through Diffusion Policy Optimization" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28</span><span class="item-desc">Identifies a structural misalignment between search and value learning as the underexplored scaling bottleneck for model-based RL. MBDPO unifies the two via a diffusion process over searched trajectories in latent world models, extracting an implicit energy function from collected data instead of constructing an explicit planner over the learned model.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.27367">SpatialBench: Is Your Spatial Foundation Model an All-Round Player?</a></span> <button class="vote-btn" data-id="f91c55e671" data-link="https://huggingface.co/papers/2605.27367" data-title="SpatialBench: Is Your Spatial Foundation Model an All-Round Player?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-26</span><span class="item-desc">Cross-paradigm benchmark that stress-tests spatial foundation models across arbitrary viewpoints, shifting scene domains, varying input densities, and hardware constraints — the dimensions that matter for embodied / robotic deployment but get glossed over by domain-specific evals.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.27365">LocateAnything: Fast and High-Quality Vision-Language Grounding with Parallel Box Decoding</a></span> <button class="vote-btn" data-id="be7a7353f7" data-link="https://huggingface.co/papers/2605.27365" data-title="LocateAnything: Fast and High-Quality Vision-Language Grounding with Parallel Box Decoding" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-26</span><span class="item-desc">Replaces serial coordinate-token decoding in VLMs with Parallel Box Decoding (PBD), treating bounding boxes and points as atomic units decoded in a single step. Preserves intra-box geometric coherence and unlocks parallelism, improving both decoding throughput and localization accuracy.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26266">Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion</a></span> <button class="vote-btn" data-id="aba9816793" data-link="https://arxiv.org/abs/2605.26266" data-title="Quantized Keys Steal Attention: Bias Correction for KV-Cache Compression in Video Diffusion" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · video diffusion model</span></span><span class="item-desc">Pinpoints &quot;Jensen bias&quot; — softmax convexity makes quantization noise inflate cached-key attention weights — as the failure mode in low-bit KV-cache video diffusion. Derives an on-the-fly per-score correction recovering near-BF16 quality at INT2 on MAGI-1, SkyReels-V2, and HY-WorldPlay with negligible overhead.</span></li>
 </ul>
 <h2>Watch list</h2>
 <ul>
@@ -105,6 +117,37 @@
     }).catch(function(){
       w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
     });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,item_id:id,title:title})
+    }).catch(function(){});
   });
 })();
 </script>
