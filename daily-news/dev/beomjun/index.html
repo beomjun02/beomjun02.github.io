@@ -36,7 +36,7 @@
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
 .daily-news .vote-btn { background: none; border: 1px solid #ddd; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #bbb; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
 .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
 @media (prefers-color-scheme: dark) {
@@ -106,21 +106,22 @@
   var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
   if(!url||!user)return;
   var myVotes={};
-  fetch(url+'?action=votes&date='+date+'&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        if(myVotes[id]>0){
-          var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-          if(b)b.classList.add('voted');
-        }
-      });
-    }).catch(function(){});
+  var cbName='_dnVotes'+Math.random().toString(36).slice(2,8);
+  window[cbName]=function(d){
+    myVotes=d.my_votes||{};
+    Object.keys(myVotes).forEach(function(id){
+      var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(b)b.classList.add('voted');
+    });
+    delete window[cbName];
+  };
+  var s=document.createElement('script');
+  s.src=url+'?action=votes&date='+date+'&user='+user+'&callback='+cbName;
+  document.head.appendChild(s);
   dn.addEventListener('click',function(e){
     var btn=e.target.closest('.vote-btn');if(!btn)return;
     var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
-    var wasVoted=myVotes[id]>0;
+    var wasVoted=!!myVotes[id];
     if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
     else{myVotes[id]=1;btn.classList.add('voted');}
     fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
