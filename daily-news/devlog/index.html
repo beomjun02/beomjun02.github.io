@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — Dev Log</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.devlog { max-width: 760px; margin: 2em auto; padding: 0 1.2em; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.devlog h1 { font-size: 1.6em; margin-bottom: 0.3em; }
+.devlog .page-meta { color: #888; font-size: 0.85em; margin-bottom: 2em; }
+.devlog .entry { margin-bottom: 3em; border-bottom: 1px solid #eee; padding-bottom: 2em; }
+.devlog .entry:last-child { border-bottom: none; }
+.devlog .entry-title { font-size: 1.25em; font-weight: 600; margin-bottom: 0.3em; }
+.devlog .entry-title a { color: inherit; text-decoration: none; }
+.devlog .entry-title a:hover { color: #d4a017; }
+.devlog .entry-meta { color: #888; font-size: 0.85em; margin-bottom: 1em; }
+.devlog .entry-body h2 { font-size: 1.05em; margin-top: 1.3em; border-bottom: 1px solid #eee; padding-bottom: 0.2em; }
+.devlog .entry-body h3 { font-size: 0.95em; margin-top: 1em; }
+.devlog .entry-body p { margin: 0.6em 0; line-height: 1.6; }
+.devlog .entry-body ul, .devlog .entry-body ol { padding-left: 1.5em; margin: 0.5em 0; }
+.devlog .entry-body li { margin-bottom: 0.3em; line-height: 1.5; }
+.devlog .entry-body code { background: #f5f5f5; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+.devlog .entry-body pre { background: #f5f5f5; padding: 0.8em 1em; border-radius: 4px; overflow-x: auto; font-size: 0.85em; line-height: 1.4; }
+.devlog .entry-body pre code { background: none; padding: 0; }
+.devlog .entry-body table { border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.devlog .entry-body th, .devlog .entry-body td { border: 1px solid #ddd; padding: 0.35em 0.6em; text-align: left; }
+.devlog .entry-body th { background: #f9f9f9; font-weight: 600; }
+.devlog .entry-body blockquote { border-left: 3px solid #d4a017; margin: 0.5em 0; padding: 0.3em 1em; color: #666; }
+@media (prefers-color-scheme: dark) {
+  .devlog { color: #f0f0f0; }
+  .devlog h1 { color: #f5f5f5; }
+  .devlog .entry { border-bottom-color: #333; }
+  .devlog .entry-title a:hover { color: #d4a017; }
+  .devlog .entry-body h2 { border-bottom-color: #444; }
+  .devlog .entry-body code { background: #2a2a2a; }
+  .devlog .entry-body pre { background: #1a1a1a; }
+  .devlog .entry-body th { background: #2a2a2a; }
+  .devlog .entry-body th, .devlog .entry-body td { border-color: #444; }
+  .devlog .entry-body blockquote { color: #aaa; }
+}
+</style>
+</head>
+<body>
+<div class="devlog">
+<h1>Dev Log</h1>
+<p class="page-meta">4 entries · <a href="../">← daily news</a></p>
+<div class="entry" id="004-upvote-trending">
+<div class="entry-title"><a href="#004-upvote-trending">004: Upvote System + Trending Page</a></div>
+<div class="entry-meta"> 2026-05-28 ~ 05-29 ·  Feature addition ·  Complete, deployed to production</div>
+<div class="entry-body"><h3>What</h3>
+<p>Per-item upvote button on individual user pages + trending section on the all-users page. Users vote by clicking ▲ on items they find valuable. Trending shows items with ≥20% of members upvoting, top 3 cap.</p>
+<h3>Architecture</h3>
+<pre><code>
+[User clicks ▲] → POST to Cloudflare Worker → forwards to Apps Script → Votes sheet (upsert)
+[Page loads]     → GET from Cloudflare Worker → Apps Script reads Votes → returns my_votes → button state restored
+[All-users page] → GET trending from Worker → Apps Script aggregates → top 3 displayed
+</code></pre>
+<h4>Why Cloudflare Worker?</h4>
+<p>Apps Script responds with a 302 redirect (<code>script.google.com</code> → <code>script.googleusercontent.com</code>). The intermediate redirect lacks CORS headers, blocking browser <code>fetch</code> from reading the JSON response. POST works with <code>mode: &#x27;no-cors&#x27;</code> (fire-and-forget), but GET needs to read the response body.</p>
+<p>Tried and rejected:</p>
+<ul>
+<li><strong>JSONP</strong>: Apps Script returns <code>text/html</code> on the redirect hop, causing <code>x-content-type-options: nosniff</code> to block script execution</li>
+<li><strong>localStorage-only</strong>: Works but no cross-device sync (phone ↔ laptop)</li>
+<li><strong>Direct fetch</strong>: CORS blocked on redirect</li>
+</ul>
+<p>Worker proxy adds <code>Access-Control-Allow-Origin: *</code> and eliminates the redirect issue. Cloudflare free tier: 100K requests/day (we use ~50/day).</p>
+<h4>Vote storage: upsert</h4>
+<p>Each (user, date, itemId) has at most one row in the Votes sheet. Upvote inserts or updates. Unvote (toggle off) deletes the row. No append-only log — clean state.</p>
+<p>Google Sheets auto-converts date strings to Date objects. <code>_normalizeDate()</code> converts back to <code>YYYY-MM-DD</code> for matching.</p>
+<h4>Trending threshold</h4>
+<p><code>score ≥ ceil(total_registered_users × 0.2)</code> → top 3 cap. Currently 6 users → threshold = 2. Items with &lt;2 upvotes don&#x27;t appear on trending.</p>
+<h3>Design decisions</h3>
+<h4>Upvote-only (no downvote)</h4>
+<p>Downvote removed after initial implementation. Rationale:</p>
+<ul>
+<li>Single button = easier mobile tap target</li>
+<li>Positive signal sufficient for implicit interest tuning</li>
+<li>&quot;Not upvoted&quot; ≈ implicit disinterest — no need for explicit negative</li>
+<li>Simpler upsert logic (toggle on/off, not 3-state)</li>
+</ul>
+<h4>Server as source of truth</h4>
+<p>Button state restored from server on page load (via Worker GET). No localStorage dependency. Works across devices — vote on phone, see state on laptop.</p>
+<h4>Vote → implicit interest pipeline</h4>
+<p>Votes feed into §0.5 (daily feedback processing). The LLM analyzes vote patterns and updates <code>interests.implicit[]</code>:</p>
+<ul>
+<li>≥2 upvotes on similar topics → synthesize implicit preference</li>
+<li>e.g., &quot;3 upvotes on KV cache papers&quot; → implicit: &quot;Tends to prefer KV cache and inference efficiency papers&quot;</li>
+</ul>
+<p>Raw votes stay in Sheets but never enter LLM context directly — only the distilled implicit interests do. Keeps context bounded.</p>
+<h3>Files changed</h3>
+<ul>
+<li><code>scripts/post_html.py</code>: vote button HTML/CSS/JS, <code>--enable-votes</code> flag, <code>--subdir</code> override</li>
+<li><code>scripts/feedback_webapp.gs</code>: <code>upvote</code>/<code>unvote</code> POST, <code>_upsertVote</code>, <code>_getVotes</code> (with user filter), <code>_getTrending</code> (threshold + cap), JSONP support, <code>_normalizeDate</code></li>
+<li><code>scripts/cloudflare-worker.js</code>: CORS proxy for Apps Script</li>
+<li>SKILL.md: §0.5 vote pattern processing, trending architecture</li>
+</ul>
+<h3>Other changes in this session</h3>
+<ul>
+<li><strong>Section ordering</strong> (#001 feedback): <code>config.section_order</code> field, post_html.py renders sections in user-preferred order. Applied to byungjun + kunwoong (Papers first).</li>
+<li><strong>Code-based dedup</strong> (<code>scripts/dedup.py</code>): deterministic history matching replaces LLM-based dedup. Tags tweets with <code>_is_new</code> + stored desc. <code>prepare</code> mode (pre-LLM) + <code>update</code> mode (post-LLM).</li>
+<li><strong>Description reuse</strong>: history.jsonl stores <code>desc</code> + <code>section</code>. Non-new items reuse stored title+desc verbatim.</li>
+<li><strong>Headline from new items only</strong>: headline composed only from <code>is_new == true</code> items.</li>
+<li><strong>Inline archive removed</strong>: bottom-of-page &quot;Recent&quot; section removed; archive link at top suffices.</li>
+</ul>
+<h3>Dev URL</h3>
+<ul>
+<li>Individual: <code>https://beomjun02.github.io/daily-news/dev/beomjun/</code></li>
+<li>All users + trending: <code>https://beomjun02.github.io/daily-news/dev/</code></li>
+</ul></div>
+</div><div class="entry" id="003-implicit-interest-effect">
+<div class="entry-title"><a href="#003-implicit-interest-effect">Experiment 003: Effect of Implicit Interests on Output Quality</a></div>
+<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+<div class="entry-body"><p><strong>Depends on:</strong> Experiment 002 (effort level comparison — established Opus xhigh as optimal)</p>
+<h3>Motivation</h3>
+<p>The <code>interests.implicit</code> field in config.json holds fine-grained preference signals from user feedback (via the <code>tune_interest</code> action). Unlike explicit keywords that control *what* is selected, implicit interests are natural-language soft constraints.</p>
+<p>This experiment measures: (1) how implicit interests affect output when applied only at the final summary stage, and (2) whether injecting them into the paper selection stage (Pass 2) as tiebreakers produces controlled, predictable selection changes — like LoRA fine-tuning over a base model.</p>
+<h3>Setup</h3>
+<ul>
+<li><strong>Model:</strong> Opus 4.6, effort=xhigh (optimal from Experiment 002)</li>
+<li><strong>User profile:</strong> john (robotics-focused)</li>
+</ul>
+<p>- Primary: VLA, robot foundation model, robot learning, world models, JEPA models, world action models</p>
+<p>- Secondary: video generative models, diffusion modeling, multimodal generation models</p>
+<ul>
+<li><strong>Input:</strong> Same prefetched data as Experiment 002 (43 X tweets, 187 arXiv papers)</li>
+<li><strong>Control variable:</strong> <code>interests.implicit</code> field + placement in prompt</li>
+</ul>
+<h4>Conditions</h4>
+<table>
+<tr><th>ID</th><th>Implicit</th><th>Placement</th><th>Description</th></tr>
+<tr><td>A</td><td><code>[]</code></td><td>—</td><td>Baseline, no implicit</td></tr>
+<tr><td>B</td><td>2 description-style entries</td><td>Final only</td><td>Implicit in profile section only</td></tr>
+<tr><td>C</td><td>2 description + 3 selection-relevant</td><td>Pass 2 tiebreaker + Final</td><td>Implicit as LoRA-style tiebreaker</td></tr>
+</table>
+<p><strong>Condition B implicit:</strong></p>
+<p>1. &quot;Not interested in startup funding news or seed round announcements&quot;</p>
+<p>2. &quot;For new papers and product launches, note whether code or checkpoints are available&quot;</p>
+<p><strong>Condition C adds (Pass 2 tiebreaker):</strong></p>
+<p>3. &quot;Prefer papers demonstrating real-robot experiments over simulation-only results&quot;</p>
+<p>4. &quot;More interested in manipulation tasks than navigation&quot;</p>
+<p>5. &quot;Skip benchmark-only papers that don&#x27;t introduce new methods&quot;</p>
+<p>Pass 2 prompt phrasing: *&quot;Select top 3 most relevant papers based on explicit keyword match. When choosing among similarly relevant papers, use these soft preferences as tiebreakers — explicit keyword relevance always takes priority.&quot;*</p>
+<h3>Results</h3>
+<h4>Overview</h4>
+<table>
+<tr><th>Condition</th><th>Time</th><th>Items</th><th>News</th><th>Papers</th><th>vs A overlap</th></tr>
+<tr><td>A (no implicit)</td><td>81s</td><td>12</td><td>1</td><td>11</td><td>—</td></tr>
+<tr><td>B (description implicit)</td><td>114s</td><td>13</td><td>2</td><td>11</td><td><strong>11/11 (100%)</strong></td></tr>
+<tr><td>C (tiebreaker implicit)</td><td>134s</td><td>12</td><td>2</td><td>10</td><td><strong>9/11 (82%)</strong></td></tr>
+</table>
+<h4>Paper selection comparison</h4>
+<table>
+<tr><th>Paper ID</th><th>Title</th><th>A</th><th>B</th><th>C</th><th>Notes</th></tr>
+<tr><td>2605.27947</td><td>SANTS: World Action Model Scheduler</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27491</td><td>GE-Sim 2.0: World Simulator</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27817</td><td>VERA: Video→Robot Policies</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27886</td><td>Tabero: Vision-Touch-Language VLA</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.28231</td><td>ProgVLA: Compact 0.1B VLA</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27461</td><td>Factory-Floor VLA (Siemens)</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27919</td><td>Frequency-Guided Action Diffusion</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27736</td><td>Explicit Critic for Diffusion</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27476</td><td>Fidelity-Diversity in Diffusion</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>2605.27759</td><td>Colosseum V2: VLA Benchmark</td><td>✓</td><td>✓</td><td>❌</td><td>← &quot;skip benchmark-only&quot;</td></tr>
+<tr><td>2605.27582</td><td>Uni-LaViRA: Embodied Navigation</td><td>✓</td><td>✓</td><td>❌</td><td>← &quot;manipulation &gt; navigation&quot;</td></tr>
+<tr><td>2605.27724</td><td>HumanoidMimicGen: Loco-Manipulation</td><td></td><td></td><td>✓</td><td>← &quot;prefer manipulation&quot;</td></tr>
+</table>
+<p><strong>Condition C produced exactly the predicted changes:</strong></p>
+<ul>
+<li>Colosseum V2 dropped (benchmark-only, no new method → implicit #5)</li>
+<li>Uni-LaViRA dropped (navigation-focused → implicit #4)</li>
+<li>HumanoidMimicGen promoted (manipulation + robot learning → implicit #3, #4)</li>
+</ul>
+<p>Core papers (9/11) unchanged. Only marginal papers swapped — LoRA-level adjustment confirmed.</p>
+<h4>News selection</h4>
+<table>
+<tr><th>Condition</th><th>News items</th></tr>
+<tr><td>A</td><td>Trajectory Labs continual learning</td></tr>
+<tr><td>B</td><td>Tri Dao GEMM kernel</td></tr>
+<tr><td>C</td><td>Project Glasswing (Anthropic cybersecurity)</td></tr>
+</table>
+<p>All conditions kept the same core Releases (Qwen3.7-Max, implicit caching). News selection varied across conditions — expected variance given borderline relevance of all candidates to john&#x27;s robotics focus.</p>
+<h4>Description style: B vs C</h4>
+<p>Both B and C include code/checkpoint availability statements (implicit #2 active in both). But C&#x27;s descriptions are slightly more opinionated due to additional implicit context:</p>
+<table>
+<tr><th>Item</th><th>B description</th><th>C description</th></tr>
+<tr><td>Siemens VLA</td><td>&quot;Lessons paper; no model release&quot;</td><td>&quot;no checkpoints expected (proprietary task)&quot;</td></tr>
+<tr><td>GE-Sim 2.0</td><td>&quot;paper does not commit to open weights&quot;</td><td>&quot;Code/checkpoint availability not stated&quot;</td></tr>
+<tr><td>Tabero</td><td>&quot;abstract implies open artifacts&quot;</td><td>&quot;Benchmark + data-efficient pipeline released alongside the paper&quot;</td></tr>
+</table>
+<p>C&#x27;s descriptions show slightly more judgment (e.g., &quot;expected&quot; for Siemens, noting &quot;proprietary&quot; as reason).</p>
+<h3>Analysis</h3>
+<h4>Implicit operates on two layers</h4>
+<table>
+<tr><th>Layer</th><th>Effect</th><th>Strength</th><th>Evidence</th></tr>
+<tr><td><strong>Description</strong> (how)</td><td>Adds actionable metadata (code availability, quantitative details)</td><td>Strong</td><td>0→11 items with code statements (A→B)</td></tr>
+<tr><td><strong>Selection</strong> (what, tiebreaker)</td><td>Swaps marginal papers matching implicit preferences</td><td>Controlled</td><td>2 drops + 1 addition, core 9 unchanged (A→C)</td></tr>
+</table>
+<h4>Explicit &gt; implicit hierarchy works</h4>
+<p>The tiebreaker framing successfully bounded implicit&#x27;s influence:</p>
+<ul>
+<li><strong>Core papers unchanged</strong>: all 9 papers with strong keyword matches survived</li>
+<li><strong>Only marginal papers affected</strong>: Colosseum V2 (benchmark), Uni-LaViRA (navigation) — both had weaker keyword relevance</li>
+<li><strong>Replacement is sensible</strong>: HumanoidMimicGen (manipulation, robot learning) is objectively a better fit for john&#x27;s profile</li>
+</ul>
+<p>This confirms the LoRA analogy: implicit adjusts within the space defined by explicit keywords, never overriding strong matches.</p>
+<h4>Where implicit should NOT be applied</h4>
+<p><strong>Pass 1 (title filter):</strong> Titles are 10-15 tokens. Implicit preferences like &quot;prefer real-robot experiments&quot; cannot be evaluated from titles. Applying implicit here would either have no effect or cause false positives — equivalent to full fine-tuning instead of LoRA.</p>
+<p><strong>Watch list:</strong> Status checks, not discovery. Implicit preferences are irrelevant.</p>
+<h4>Time cost</h4>
+<table>
+<tr><th>Condition</th><th>Time</th><th>vs A</th></tr>
+<tr><td>A (no implicit)</td><td>81s</td><td>—</td></tr>
+<tr><td>B (description)</td><td>114s</td><td>+41%</td></tr>
+<tr><td>C (tiebreaker)</td><td>134s</td><td>+65%</td></tr>
+</table>
+<p>C is slower than B because the tiebreaker evaluation at Pass 2 requires more reasoning. The 20s difference (B→C) is the cost of selection-level implicit processing.</p>
+<h3>Architecture recommendation (implemented in SKILL.md)</h3>
+<pre><code>
+User profile section:    implicit declared (available to all steps)
+X tweets:                implicit applies naturally (profile context)
+Lab/company sites:       implicit applies naturally (profile context)
+arXiv Pass 1 (title):    explicit keywords ONLY
+arXiv Pass 2 (abstract): explicit first, implicit as tiebreaker
+HF papers:               explicit first, implicit as tiebreaker
+Watch list:              explicit only (status check)
+Final summary:           explicit determines what; implicit shapes how
+</code></pre>
+<p>Prompt phrasing at Pass 2:</p>
+<blockquote>&quot;Select top N most relevant papers based on explicit keyword match. When choosing among similarly relevant papers, use implicit preferences as tiebreakers — explicit keyword relevance always takes priority.&quot;</blockquote>
+<p>Prompt phrasing at Final:</p>
+<blockquote>&quot;Generate the summary reflecting both explicit interests (keywords) and implicit preferences (user feedback). Explicit interests determine what to include; implicit preferences shape how items are described and fine-tune ranking among similar items.&quot;</blockquote>
+<h3>Conclusion</h3>
+<p>Implicit interests are a <strong>dual-layer tool</strong>:</p>
+<p>1. <strong>Description layer</strong> (strong, always active): adds actionable metadata like code availability</p>
+<p>2. <strong>Selection layer</strong> (controlled, via tiebreaker): swaps marginal papers in a predictable, bounded way</p>
+<p>The explicit &gt; implicit hierarchy works as designed. With the tiebreaker framing, implicit acts as LoRA — lightweight adjustment on a stable base, never overriding strong keyword matches.</p>
+<h4>Current implicit value</h4>
+<p>With john&#x27;s 2 existing implicit entries, the primary value is description enrichment (code availability). As implicit accumulates to 5+ entries via feedback, selection-level effects will become more meaningful. The architecture is ready for that growth.</p></div>
+</div><div class="entry" id="002-effort-level-comparison">
+<div class="entry-title"><a href="#002-effort-level-comparison">Experiment 002: Effort Level &amp; Model Comparison</a></div>
+<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+<div class="entry-body"><p><strong>Depends on:</strong> Experiment 001 (two-pass filtering architecture)</p>
+<h3>Motivation</h3>
+<p>Experiment 001 established the two-pass paper filtering pipeline. This experiment tests how the <code>--effort</code> parameter and model choice affect quality and speed across the full LLM pipeline (tweet analysis + two-pass paper filtering + ranking + summary generation).</p>
+<p>User stance: token cost is not a constraint. If higher effort yields even marginally better quality, it should be used.</p>
+<h3>Setup</h3>
+<ul>
+<li><strong>Input:</strong> Identical across all 10 conditions — 43 X tweets, 187 arXiv papers (pre-parsed JSON), daewon&#x27;s interest profile</li>
+<li><strong>Pipeline:</strong> Full daily-news LLM pipeline (excluding prefetch and HTML publish)</li>
+<li><strong>Invocation:</strong> <code>claude -p &lt;prompt&gt; --effort &lt;level&gt; --model &lt;model&gt; --permission-mode bypassPermissions</code></li>
+</ul>
+<h4>Conditions</h4>
+<table>
+<tr><th>ID</th><th>Model</th><th>Effort</th><th>Description</th></tr>
+<tr><td>O_low</td><td>Opus 4.6</td><td>low</td><td>Minimal reasoning</td></tr>
+<tr><td>O_med</td><td>Opus 4.6</td><td>medium</td><td>Reduced reasoning</td></tr>
+<tr><td>O_high</td><td>Opus 4.6</td><td>high</td><td>Default</td></tr>
+<tr><td>O_xhi</td><td>Opus 4.6</td><td>xhigh</td><td>Extended reasoning</td></tr>
+<tr><td>O_max</td><td>Opus 4.6</td><td>max</td><td>Maximum reasoning</td></tr>
+<tr><td>S_low</td><td>Sonnet 4.6</td><td>low</td><td>Sonnet, minimal reasoning</td></tr>
+<tr><td>S_med</td><td>Sonnet 4.6</td><td>medium</td><td>Sonnet, reduced reasoning</td></tr>
+<tr><td>S_high</td><td>Sonnet 4.6</td><td>high</td><td>Sonnet, default</td></tr>
+<tr><td>S_xhi</td><td>Sonnet 4.6</td><td>xhigh</td><td>Sonnet, extended reasoning</td></tr>
+<tr><td>S_max</td><td>Sonnet 4.6</td><td>max</td><td>Sonnet, maximum reasoning</td></tr>
+</table>
+<h4>Quality scoring</h4>
+<p>Each selected paper rated against user&#x27;s primary/secondary keywords:</p>
+<ul>
+<li><strong>HIGH</strong> (3 pts): directly matches ≥1 primary keyword (efficient inference, KV cache, speculative decoding, sLM, agent, efficient training)</li>
+<li><strong>MED</strong> (2 pts): matches secondary keyword or indirectly related</li>
+<li><strong>LOW</strong> (1 pt): tangentially related</li>
+</ul>
+<p>Score = Σ(HIGH×3 + MED×2 + LOW×1). Ratings applied consistently across all 10 conditions.</p>
+<h3>Results</h3>
+<h4>Overview</h4>
+<table>
+<tr><th>Condition</th><th>Time</th><th>Items</th><th>News</th><th>Papers</th><th>HIGH</th><th>MED</th><th>LOW</th><th>Score</th></tr>
+<tr><td><strong>O_low</strong></td><td><strong>65s</strong></td><td>16</td><td>7</td><td>9</td><td>8</td><td>1</td><td>0</td><td>26</td></tr>
+<tr><td>O_med</td><td>89s</td><td>15</td><td>8</td><td>7</td><td>6</td><td>1</td><td>0</td><td>20</td></tr>
+<tr><td>O_high</td><td>121s</td><td>15</td><td>6</td><td>9</td><td>7</td><td>2</td><td>0</td><td>25</td></tr>
+<tr><td><strong>O_xhi</strong></td><td>94s</td><td><strong>17</strong></td><td>7</td><td><strong>10</strong></td><td><strong>8</strong></td><td>1</td><td>1</td><td><strong>27</strong></td></tr>
+<tr><td>O_max</td><td>137s</td><td>14</td><td>5</td><td>9</td><td>7</td><td>2</td><td>0</td><td>25</td></tr>
+<tr><td>S_low</td><td>109s</td><td>12</td><td>6</td><td>6</td><td>5</td><td>1</td><td>0</td><td>17</td></tr>
+<tr><td>S_med</td><td><strong>224s</strong></td><td>14</td><td>6</td><td>8</td><td>5</td><td>2</td><td>1</td><td>20</td></tr>
+<tr><td>S_high</td><td>153s</td><td>13</td><td>6</td><td>7</td><td>6</td><td>0</td><td>1</td><td>19</td></tr>
+<tr><td>S_xhi</td><td>164s</td><td>13</td><td>6</td><td>7</td><td>5</td><td>1</td><td>1</td><td>18</td></tr>
+<tr><td>S_max</td><td>188s</td><td>13</td><td>5</td><td>8</td><td>6</td><td>1</td><td>0</td><td>20</td></tr>
+</table>
+<h4>Paper selection matrix (17 unique papers)</h4>
+<pre><code>
+Rel  Paper ID   Title (short)                O_lo O_me O_hi O_xh O_mx  S_lo S_me S_hi S_xh S_mx  cnt
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ H   2605.27390 EvoSpec Speculative Decoding    ✓    ✓    ✓    ✓    ✓     ✓    ✓    ✓    ✓    ✓    10 ← unanimous
+ H   2605.27646 HQMQ KV Cache Compression       ✓    ✓    ✓    ✓    ✓     ✓    ✓    ✓    ✓    ✓    10 ← unanimous
+ H   2605.27740 UNIQUE Sparse Attention          ✓    ✓    ✓    ✓    ✓     ✓    ✓    ✓    ✓    ✓    10 ← unanimous
+ H   2605.27387 AR→Diffusion (FLUID)             ✓    ✓    ✓    ✓    ✓     ✓    ✓         ✓    ✓     9
+ M   2605.27817 Video→Robot (VERA)               ✓              ✓    ✓     ✓    ✓         ✓    ✓     7
+ H   2605.27744 CacheSage Agent KV               ✓         ✓    ✓    ✓          ✓         ✓          6
+ H   2605.27786 LoRP Depth Pruning               ✓              ✓    ✓     ✓         ✓              ✓     6
+ H   2605.27947 SANTS Robot Scheduling           ✓         ✓                               ✓              ✓     4
+ H   2605.27596 SLM Multi-hop QA                      ✓    ✓    ✓                                         3
+ H   2605.27678 Heterogeneous Parallelism        ✓              ✓    ✓                                    3
+ M   2605.27788 CARL Tool-Use Credit                  ✓    ✓                     ✓                        3
+ L   2605.27759 Colosseum V2 VLA Benchmark                      ✓                ✓    ✓                   3
+ H   2605.27605 Laguna M.1/XS.2 MoE                                                   ✓              ✓     2
+ M   2605.27428 E³-Agent Edge Inference                    ✓                                               1
+ H   2605.28231 ProgVLA Compact VLA                   ✓                                                    1
+ M   2605.27760 SkillGrad Agent Opt.                                 ✓                                    1
+ L   2605.27697 Multi-robot Sim Diffusion                                                   ✓             1
+</code></pre>
+<h4>Key findings: paper selection</h4>
+<p><strong>3 unanimous papers</strong> across all 10 conditions: EvoSpec, HQMQ, UNIQUE. These are the highest-signal matches — selected regardless of effort or model.</p>
+<p><strong>FLUID</strong> selected by 9/10 (only S_high missed it).</p>
+<p><strong>Opus-exclusive papers</strong> (never selected by any Sonnet condition):</p>
+<ul>
+<li>27596 (SLM Multi-hop QA) — selected by 3 Opus conditions</li>
+<li>27678 (Heterogeneous Parallelism) — selected by 3 Opus conditions</li>
+<li>28231 (ProgVLA Compact VLA) — selected by 1 Opus condition</li>
+</ul>
+<p><strong>Sonnet-exclusive papers</strong>:</p>
+<ul>
+<li>27605 (Laguna M.1/XS.2) — selected by 2 Sonnet conditions</li>
+<li>27697 (Multi-robot Sim) — selected by 1 Sonnet condition (LOW relevance)</li>
+</ul>
+<p><strong>HIGH-relevance coverage per condition:</strong></p>
+<table>
+<tr><th>Rank</th><th>Condition</th><th>HIGH papers</th></tr>
+<tr><td>1</td><td>O_xhi, O_low</td><td>8</td></tr>
+<tr><td>3</td><td>O_high, O_max</td><td>7</td></tr>
+<tr><td>5</td><td>O_med, S_high, S_max</td><td>6</td></tr>
+<tr><td>8</td><td>S_low, S_med, S_xhi</td><td>5</td></tr>
+</table>
+<p>Opus averages <strong>7.2</strong> HIGH papers; Sonnet averages <strong>5.4</strong> (+33% advantage for Opus).</p>
+<h4>Model comparison: Opus vs Sonnet</h4>
+<table>
+<tr><th>Metric</th><th>Opus (mean±std)</th><th>Sonnet (mean±std)</th><th>Δ</th></tr>
+<tr><td>Time</td><td>101 ± 28s</td><td>168 ± 42s</td><td>Opus <strong>40% faster</strong></td></tr>
+<tr><td>Papers</td><td>8.8 ± 1.1</td><td>7.2 ± 0.8</td><td>Opus selects more</td></tr>
+<tr><td>HIGH papers</td><td>7.2 ± 0.8</td><td>5.4 ± 0.5</td><td>Opus +33%</td></tr>
+<tr><td>Score</td><td>24.6 ± 2.9</td><td>18.8 ± 1.2</td><td>Opus <strong>+31%</strong></td></tr>
+<tr><td>Total items</td><td>15.4 ± 1.1</td><td>13.0 ± 0.7</td><td>Opus +18%</td></tr>
+</table>
+<p><strong>Opus dominates Sonnet on every dimension.</strong> Not only higher quality (31% higher score) but also faster (40% less time). Sonnet&#x27;s slowness is paradoxical — a smaller model should be faster. Root cause: less efficient agentic tool usage (Sonnet makes more tool calls, generates more verbose intermediate output, and sometimes redundant steps).</p>
+<p><strong>Sonnet medium anomaly:</strong> 224s (slowest of all 10 conditions). Sonnet at medium effort generated extremely verbose item descriptions (~470 chars/item vs ~280-340 for others), inflating output token count and time.</p>
+<h4>Effort comparison within Opus</h4>
+<table>
+<tr><th>Metric</th><th>low</th><th>med</th><th>high</th><th>xhigh</th><th>max</th></tr>
+<tr><td>Time</td><td>65s</td><td>89s</td><td>121s</td><td>94s</td><td>137s</td></tr>
+<tr><td>Score</td><td>26</td><td>20</td><td>25</td><td><strong>27</strong></td><td>25</td></tr>
+<tr><td>HIGH papers</td><td><strong>8</strong></td><td>6</td><td>7</td><td><strong>8</strong></td><td>7</td></tr>
+<tr><td>Items</td><td>16</td><td>15</td><td>15</td><td><strong>17</strong></td><td>14</td></tr>
+<tr><td>Cap (≤15)</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td></tr>
+</table>
+<p><strong>xhigh is quality-optimal</strong> (score 27, 8 HIGH papers), but violates the ≤15 item cap.</p>
+<p><strong>low is surprisingly strong</strong> (score 26, 8 HIGH papers, fastest at 65s), also violates cap.</p>
+<p><strong>medium is the weakest Opus</strong> (score 20, only 6 HIGH papers).</p>
+<p><strong>max is disciplined</strong> (score 25, respects cap, but slowest at 137s).</p>
+<h4>Effort comparison within Sonnet</h4>
+<table>
+<tr><th>Metric</th><th>low</th><th>med</th><th>high</th><th>xhigh</th><th>max</th></tr>
+<tr><td>Time</td><td>109s</td><td>224s</td><td>153s</td><td>164s</td><td>188s</td></tr>
+<tr><td>Score</td><td>17</td><td><strong>20</strong></td><td>19</td><td>18</td><td><strong>20</strong></td></tr>
+<tr><td>HIGH papers</td><td>5</td><td>5</td><td><strong>6</strong></td><td>5</td><td><strong>6</strong></td></tr>
+<tr><td>Items</td><td>12</td><td>14</td><td>13</td><td>13</td><td>13</td></tr>
+</table>
+<p>Sonnet shows flatter quality scaling — effort has less impact (17-20 range vs Opus&#x27;s 20-27).</p>
+<p><strong>Sonnet max and medium</strong> tie at score 20, but medium is 19% slower due to verbosity.</p>
+<p><strong>Sonnet high and max</strong> tie at 6 HIGH papers.</p>
+<h4>News selection</h4>
+<p>5 core items appear in all 10 conditions:</p>
+<ul>
+<li>GEMM + Epilogue kernel rewrite (Tri Dao)</li>
+<li>Qwen3.5 580 tps on TokenSpeed</li>
+<li>Qwen3.7-Max launch</li>
+<li>Implicit caching on Qwen3.7-Max</li>
+<li>DeepSeek-V4-Pro discount</li>
+</ul>
+<p>Additional items by model:</p>
+<table>
+<tr><th></th><th>Opus (any effort)</th><th>Sonnet (any effort)</th></tr>
+<tr><td>Together AI Blackwell stack</td><td>✓ (xhi, max)</td><td>✓ (xhi, max)</td></tr>
+<tr><td>Agent sandboxing (Anthropic)</td><td></td><td>✓ (all 5 Sonnet)</td></tr>
+<tr><td>Project Glasswing</td><td>✓ (med, max)</td><td></td></tr>
+<tr><td>OpenAI Codex</td><td>✓ (xhi)</td><td></td></tr>
+<tr><td>Self-evolving kernel</td><td>✓ (low, med)</td><td></td></tr>
+</table>
+<p>Sonnet consistently selects the Anthropic agent sandboxing tweet; Opus never does. This may reflect model-specific bias (Anthropic&#x27;s own model favoring Anthropic news) or Sonnet&#x27;s lower keyword discrimination — the item is relevant but not highly ranked under daewon&#x27;s interest profile.</p>
+<h3>Speed vs Quality</h3>
+<pre><code>
+Score ↑
+  27 |                O_xhi
+  26 | O_low
+  25 |                O_high         O_max
+     |
+  20 |       O_med                             S_med  S_max
+  19 |                                    S_high
+  18 |                                   S_xhi
+  17 |                              S_low
+     +---+---+---+---+---+---+---+---+---+---+---+---→ Time (s)
+        65  89  94 109 121 137 153 164 188 224
+</code></pre>
+<p><strong>Pareto front</strong>: O_low (65s, 26) → O_xhi (94s, 27). Everything else is dominated.</p>
+<p>Opus&#x27;s entire effort range (20-27) is above Sonnet&#x27;s entire range (17-20). The two model populations are <strong>fully separable</strong> — worst Opus (medium, 20) ties best Sonnet (medium/max, 20) on score while being 2.0-2.5× faster.</p>
+<h3>Conclusion</h3>
+<h4>비용 무관 시 추천</h4>
+<p><strong>1순위: Opus xhigh</strong> (score 27, 94s)</p>
+<ul>
+<li>최고 quality score, 8개 HIGH 논문 선별</li>
+<li>cap violation (17 items) 경향 있지만, post-processing에서 잘라도 됨</li>
+<li>high보다 빠름 (94s vs 121s) — extended thinking이 upfront planning을 효율화</li>
+</ul>
+<p><strong>2순위: Opus low</strong> (score 26, 65s)</p>
+<ul>
+<li>xhigh와 1점 차이, 2배 빠름</li>
+<li>최소 reasoning으로도 keyword 기반 selection은 충분히 정확</li>
+<li>cap violation 경향 (16 items)</li>
+</ul>
+<p><strong>3순위: Opus max</strong> (score 25, 137s)</p>
+<ul>
+<li>cap 준수하며 안정적</li>
+<li>가장 느리지만, 비용 무관 시 time은 부차적</li>
+</ul>
+<h4>Sonnet은 부적합</h4>
+<p>Sonnet은 모든 차원에서 Opus에 열세:</p>
+<ul>
+<li><strong>Quality</strong>: 평균 score 18.8 vs Opus 24.6 (31% 낮음)</li>
+<li><strong>Speed</strong>: 평균 168s vs Opus 101s (66% 느림)</li>
+<li><strong>Coverage</strong>: HIGH 논문 평균 5.4개 vs Opus 7.2개</li>
+</ul>
+<p>Smaller model = faster라는 직관과 달리, Sonnet은 <strong>더 느리다</strong>. Agentic tool use의 효율성 차이 (불필요한 tool call, 중복 작업, 과도한 중간 output)가 원인.</p>
+<h4>Surprising findings</h4>
+<p>1. <strong>Effort는 non-monotonic</strong>: low(26) &gt; med(20) &lt; high(25) &lt; xhigh(27) &gt; max(25). Medium이 최저, low가 max와 동등.</p>
+<p>2. <strong>Sonnet medium anomaly</strong>: 224s로 전 condition 중 최장 — verbose output 생성이 원인.</p>
+<p>3. <strong>Core selection is stable</strong>: top 3-4 papers (EvoSpec, HQMQ, UNIQUE, FLUID)는 effort/model 무관하게 선별됨. 차이는 marginal papers에서만 발생.</p>
+<p>4. <strong>Opus-exclusive discoveries</strong>: SLM Multi-hop QA, Heterogeneous Parallelism 등 Sonnet은 어떤 effort에서도 선별 못 함.</p>
+<h3>Future work</h3>
+<ul>
+<li>xhigh + explicit cap enforcement (post-processing에서 ≤15로 제한) → cap violation 해결</li>
+<li>Multiple runs per condition for variance estimation (n=1의 신뢰도 한계)</li>
+<li>Opus low with structured output constraints → 속도 + quality + discipline 최적점?</li>
+</ul></div>
+</div><div class="entry" id="001-two-pass-paper-filtering">
+<div class="entry-title"><a href="#001-two-pass-paper-filtering">Experiment 001: Two-Pass Paper Filtering</a></div>
+<div class="entry-meta"> 2026-05-28 ·  Complete</div>
+<div class="entry-body"><h3>Motivation</h3>
+<p>arXiv paper HTML pages are ~150KB each. With 4 categories, the agent reads ~585KB (~150K tokens, 75% of context window) just for papers. Most of this is HTML noise (nav, CSS, links) and unrelated papers. The agent processes everything in a single pass, which both wastes context and risks missing papers buried deep in the HTML.</p>
+<h3>Hypothesis</h3>
+<p>A two-pass approach — (1) title-only semantic filter, (2) abstract read for candidates only — should reduce token usage while improving recall by giving the LLM better signal-to-noise ratio.</p>
+<h3>Setup</h3>
+<ul>
+<li><strong>User:</strong> daewon (primary: Language/LLM, secondary: Robotics)</li>
+<li><strong>Data:</strong> 2026-05-28 arXiv prefetch (187 papers across cs.RO/LG/CL/AI)</li>
+<li><strong>Cap:</strong> 3 papers per category, 2 max for secondary (Robotics)</li>
+<li><strong>Model:</strong> Claude Opus 4.6 for all conditions</li>
+</ul>
+<h4>Conditions</h4>
+<table>
+<tr><th>ID</th><th>Method</th><th>Description</th></tr>
+<tr><td>A</td><td>Baseline</td><td>Agent reads raw HTML (~150KB/category). Single-pass selection.</td></tr>
+<tr><td>B</td><td>Two-pass (generous)</td><td>Pass 1: all 187 titles → LLM selects candidates (no per-category limit). Pass 2: candidates&#x27; abstracts → final selection.</td></tr>
+<tr><td>C</td><td>Two-pass (top-10)</td><td>Pass 1: all 187 titles → LLM selects top 10 per category (40 total). Pass 2: candidates&#x27; abstracts → final selection.</td></tr>
+</table>
+<h3>Results</h3>
+<h4>Token usage (paper processing only)</h4>
+<table>
+<tr><th></th><th>Main agent context</th><th>Subagent tokens</th><th>Total</th></tr>
+<tr><td>A (baseline)</td><td>~150K</td><td>0</td><td>~150K</td></tr>
+<tr><td>B (generous)</td><td>~0 (results only)</td><td>~83K (P1: 36K + P2: 47K)</td><td>~83K</td></tr>
+<tr><td>C (top-10)</td><td>~0 (results only)</td><td>~73K (P1: 35K + P2: 38K)</td><td>~73K</td></tr>
+</table>
+<h4>Pass 1 → Pass 2 funnel</h4>
+<table>
+<tr><th></th><th>Pass 1 input</th><th>Pass 1 output</th><th>Pass 2 input size</th><th>Final output</th></tr>
+<tr><td>A</td><td>585KB HTML</td><td>—</td><td>—</td><td>3 papers</td></tr>
+<tr><td>B</td><td>26KB titles</td><td>66 papers (35%)</td><td>98KB (25K tok)</td><td>9 papers</td></tr>
+<tr><td>C</td><td>26KB titles</td><td>40 papers (21%)</td><td>60KB (15K tok)</td><td>11 papers</td></tr>
+</table>
+<h4>Selected papers comparison</h4>
+<table>
+<tr><th>Paper</th><th>Cat</th><th>A</th><th>B</th><th>C</th></tr>
+<tr><td>HQMQ KV Cache Compression (2605.27646)</td><td>cs.LG</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>EvoSpec Speculative Decoding (2605.27390)</td><td>cs.CL</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>UNIQUE Sparse Attention (2605.27740)</td><td>cs.CL</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>LoRP Depth Pruning (2605.27786)</td><td>cs.LG</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>SLM System-I/II Reasoning (2605.27596)</td><td>cs.CL</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>CacheSage Agent KV Serving (2605.27744)</td><td>cs.AI</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>LaneRoPE Parallel Reasoning (2605.27570)</td><td>cs.AI</td><td></td><td>✓</td><td>✓</td></tr>
+<tr><td>Gradient Transformer sLM→LLM (2605.27591)</td><td>cs.LG</td><td></td><td>✓</td><td></td></tr>
+<tr><td>TCP-MCP Token Cost (2605.27850)</td><td>cs.AI</td><td></td><td>✓</td><td></td></tr>
+<tr><td>Heterogeneous Parallelism (2605.27678)</td><td>cs.LG</td><td></td><td></td><td>✓</td></tr>
+<tr><td>Hierarchical Prompt-Domain (2605.27703)</td><td>cs.AI</td><td></td><td></td><td>✓</td></tr>
+<tr><td>SANTS Adaptive Scheduling (2605.27947)</td><td>cs.RO</td><td></td><td></td><td>✓</td></tr>
+<tr><td>ProgVLA Compact VLA (2605.28231)</td><td>cs.RO</td><td></td><td></td><td>✓</td></tr>
+<tr><td><strong>Total</strong></td><td></td><td><strong>3</strong></td><td><strong>9</strong></td><td><strong>11</strong></td></tr>
+</table>
+<h4>Category coverage</h4>
+<table>
+<tr><th>Category</th><th>A</th><th>B</th><th>C</th></tr>
+<tr><td>cs.LG</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>cs.CL</td><td>2</td><td>3</td><td>3</td></tr>
+<tr><td>cs.AI</td><td>0</td><td>3</td><td>3</td></tr>
+<tr><td>cs.RO</td><td>0</td><td>0</td><td>2</td></tr>
+</table>
+<h3>Analysis</h3>
+<p>1. <strong>All baseline papers retained.</strong> Both B and C found the same 3 papers that A found. No regression.</p>
+<p>2. <strong>Two-pass finds more relevant papers.</strong> A found 3, B found 9, C found 11. The baseline likely missed papers because 150KB of HTML in a single context pass causes attention to degrade on papers in the middle/end of the list.</p>
+<p>3. <strong>Tighter Pass 1 (C) outperforms generous (B).</strong> Counter-intuitively, C found 11 papers vs B&#x27;s 9, despite having a stricter Pass 1 (40 vs 66 candidates). The tighter filter gave Pass 2 better signal-to-noise, letting it make better selections. C also found 2 robotics papers that B missed entirely.</p>
+<p>4. <strong>Token savings.</strong> A: 150K → C: 73K (2x total reduction). But the main agent context drops from 150K to ~0 — the savings there are far more impactful since main context also holds X tweets, ranking, and summary generation.</p>
+<p>5. <strong>B vs C token trade-off.</strong> C uses 10K fewer tokens than B (73K vs 83K) while producing better results. The per-category cap in Pass 1 is strictly better.</p>
+<h3>Conclusion</h3>
+<p><strong>Adopt condition C (two-pass with top-10 per category).</strong></p>
+<ul>
+<li>2x total token reduction, ~100% main context reduction for papers</li>
+<li>3.7x more papers found (11 vs 3) with better category coverage</li>
+<li>Tighter Pass 1 paradoxically improves quality — less noise for Pass 2</li>
+</ul>
+<h3>Implementation notes</h3>
+<ul>
+<li>Pass 1 and Pass 2 each run as subagents → main agent context stays clean</li>
+<li>HTML → JSON parsing happens in prefetch.py (title + abstract extraction)</li>
+<li>Pass 1 input = title-only JSON (~26KB, ~7K tokens regardless of paper count)</li>
+<li>Pass 2 input scales with Pass 1 output (~1.5KB/paper with abstract)</li>
+</ul></div>
+</div>
+</div>
+</body>
+</html>
