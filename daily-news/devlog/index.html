@@ -112,7 +112,7 @@
 <li>All users + trending: <code>https://beomjun02.github.io/daily-news/dev/</code></li>
 </ul></div>
 </details><details class="entry" id="003-implicit-interest-effect">
-<summary class="entry-title">Experiment 003: Effect of Implicit Interests on Output Quality<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
+<summary class="entry-title">003: Effect of Implicit Interests on Output Quality<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
 <div class="entry-body"><p><strong>Depends on:</strong> Experiment 002 (effort level comparison — established Opus xhigh as optimal)</p>
 <h3>Motivation</h3>
 <p>The <code>interests.implicit</code> field in config.json holds fine-grained preference signals from user feedback (via the <code>tune_interest</code> action). Unlike explicit keywords that control *what* is selected, implicit interests are natural-language soft constraints.</p>
@@ -240,7 +240,7 @@ Final summary:           explicit determines what; implicit shapes how
 <h4>Current implicit value</h4>
 <p>With john&#x27;s 2 existing implicit entries, the primary value is description enrichment (code availability). As implicit accumulates to 5+ entries via feedback, selection-level effects will become more meaningful. The architecture is ready for that growth.</p></div>
 </details><details class="entry" id="002-effort-level-comparison">
-<summary class="entry-title">Experiment 002: Effort Level &amp; Model Comparison<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
+<summary class="entry-title">002: Effort Level &amp; Model Comparison<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
 <div class="entry-body"><p><strong>Depends on:</strong> Experiment 001 (two-pass filtering architecture)</p>
 <h3>Motivation</h3>
 <p>Experiment 001 established the two-pass paper filtering pipeline. This experiment tests how the <code>--effort</code> parameter and model choice affect quality and speed across the full LLM pipeline (tweet analysis + two-pass paper filtering + ranking + summary generation).</p>
@@ -442,7 +442,7 @@ Score ↑
 <li>Opus low with structured output constraints → 속도 + quality + discipline 최적점?</li>
 </ul></div>
 </details><details class="entry" id="001-two-pass-paper-filtering">
-<summary class="entry-title">Experiment 001: Two-Pass Paper Filtering<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
+<summary class="entry-title">001: Two-Pass Paper Filtering<span class="entry-meta"><span class="entry-date"> 2026-05-28</span><span class="entry-type"> Experiment</span></span></summary>
 <div class="entry-body"><h3>Motivation</h3>
 <p>arXiv paper HTML pages are ~150KB each. With 4 categories, the agent reads ~585KB (~150K tokens, 75% of context window) just for papers. Most of this is HTML noise (nav, CSS, links) and unrelated papers. The agent processes everything in a single pass, which both wastes context and risks missing papers buried deep in the HTML.</p>
 <h3>Hypothesis</h3>
