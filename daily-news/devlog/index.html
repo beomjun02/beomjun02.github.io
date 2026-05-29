@@ -48,8 +48,48 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">4 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="004-upvote-trending">
+<p class="page-meta">5 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="005-pipeline-performance">
+<summary class="entry-title">005: Pipeline Performance Analysis<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Experiment</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
+<p><strong>Type:</strong> Experiment</p>
+<h3>What</h3>
+<p>Cron failed with <code>claude-opus-4-8</code> unavailable. Fixed by pinning <code>--model claude-opus-4-6 --effort xhigh</code>. Then investigated pipeline performance — tested pre-running prefetch/dedup in bash vs letting LLM handle everything.</p>
+<h3>Root cause: model default changed</h3>
+<p>CLI auto-updated to 2.1.156, default model became <code>claude-opus-4-8</code> which is unavailable on current plan. All 6 users failed with exit 1.</p>
+<p><strong>Fix:</strong> <code>--model claude-opus-4-6 --effort xhigh</code> pinned in <code>run_all_users.sh</code>.</p>
+<h3>Component timing</h3>
+<table>
+<tr><th>Component</th><th>Method</th><th>Time</th></tr>
+<tr><td>prefetch.py</td><td>Python (bash)</td><td>58s</td></tr>
+<tr><td>dedup.py prepare</td><td>Python (bash)</td><td>0.1s</td></tr>
+<tr><td>LLM simple prompt (no skill)</td><td>opus-4-6 xhigh</td><td>7s</td></tr>
+<tr><td>Full pipeline (LLM does everything)</td><td>opus-4-6 xhigh</td><td><strong>8min</strong></td></tr>
+<tr><td>Full pipeline</td><td>sonnet-4-6 low</td><td>11min 36s</td></tr>
+</table>
+<h3>Experiment: bash pre-run vs LLM-driven</h3>
+<p>Hypothesis: moving prefetch + dedup to bash (before LLM) should save ~1min.</p>
+<table>
+<tr><th>Condition</th><th>SKILL.md §2</th><th>Time</th><th>Items</th></tr>
+<tr><td>OLD (LLM does prefetch)</td><td>&quot;run prefetch.py&quot;</td><td><strong>8min</strong></td><td>13</td></tr>
+<tr><td>NEW (bash pre-ran, LLM skips)</td><td>&quot;already done, just read&quot;</td><td><strong>14min</strong></td><td>12</td></tr>
+</table>
+<p><strong>Result: opposite of expected.</strong> Pre-running was 75% slower.</p>
+<h4>Why?</h4>
+<p>Changing SKILL.md §2 from &quot;run this script&quot; to &quot;data is already ready, just read it&quot; caused the LLM to spend MORE time — likely re-interpreting the changed instructions, additional reasoning about what to skip vs read, and processing the overall larger/more complex SKILL.md.</p>
+<p>The LLM&#x27;s tool-call overhead for running prefetch.py (~1 bash call) is trivial compared to the cost of a more complex prompt.</p>
+<h4>Takeaway</h4>
+<p><strong>Don&#x27;t optimize LLM pipelines by moving work to bash.</strong> The LLM&#x27;s context window cost from changed/added instructions can outweigh the time saved. Simpler, familiar instructions &gt; fewer tool calls.</p>
+<h3>Node.js stdout buffering</h3>
+<p>Claude CLI (Node.js) buffers stdout when redirected to a file. Output is 0 bytes until process exit, then flushed all at once. This caused us to repeatedly kill processes thinking they were stuck.</p>
+<p><strong>Lesson:</strong> never kill based on 0 output — check <code>ps</code> for CPU usage instead. If CPU &gt; 0%, it&#x27;s working.</p>
+<h3>Changes deployed</h3>
+<ul>
+<li><code>run_all_users.sh</code>: pin <code>--model claude-opus-4-6 --effort xhigh</code>, beomjun per-run logging to <code>cache/&lt;date&gt;.log</code></li>
+<li>SKILL.md §2: reverted to LLM-driven prefetch (8min version)</li>
+<li>Slack: plain URL instead of link text</li>
+</ul></div>
+</details><details class="entry" id="004-upvote-trending">
 <summary class="entry-title">004: Upvote System + Trending Page<span class="entry-meta"><span class="entry-date"> 2026-05-28 ~ 05-29</span><span class="entry-type"> Feature addition</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-28 ~ 05-29</p>
 <p><strong>Type:</strong> Feature addition</p>
