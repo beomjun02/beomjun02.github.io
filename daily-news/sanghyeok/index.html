@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-05-30</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
+.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+@media (prefers-color-scheme: dark) {
+  .daily-news { color: #f0f0f0; }
+  .daily-news h1 { color: #f5f5f5; }
+  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
+  .daily-news .item-title a { color: #64b5f6; }
+  .daily-news .item-title a:hover { color: #f09228; }
+  .daily-news .item-desc { color: #ccc; }
+  .daily-news .item-meta { color: #aaa; }
+  .daily-news .page-meta { color: #aaa; }
+  .daily-news .archive { border-top-color: #444; }
+  .daily-news .archive a { color: #64b5f6; }
+  .daily-news .archive a:hover { color: #f09228; }
+  .daily-news .feedback { border-top-color: #444; }
+  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-submit { background: #555; }
+  .daily-news .vote-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+}
+</style>
+</head>
+<body>
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-05-30">
+<h1>Daily News — 2026-05-30</h1>
+<div class="user-banner"><div class="user-handle">Sanghyeok</div><div class="user-categories">Language · Robotics</div><div class="user-kws">Gui agent · on policy rl</div></div>
+<p class="page-meta">9 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+
+
+<h2>Papers</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.30280">Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments</a></span> <button class="vote-btn" data-id="3f70ad8572" data-link="https://huggingface.co/papers/2605.30280" data-source="https://huggingface.co/papers/2605.30280" data-title="Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">From Alibaba&#x27;s Qwen team, a single VLA framework that unifies manipulation, navigation, and other embodied decision-making across different robot embodiments and environments — aiming to replace the current fragmented landscape of task-specific models. 72 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29447">Recovering Policy-Induced Errors: Benchmarking and Trajectory Synthesis for Robust GUI Agents</a></span> <button class="vote-btn" data-id="0c9f451694" data-link="https://arxiv.org/abs/2605.29447" data-source="https://arxiv.org/abs/2605.29447" data-title="Recovering Policy-Induced Errors: Benchmarking and Trajectory Synthesis for Robust GUI Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-05-30<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Introduces GUI-RobustEval with 1,216 test cases for error recovery and RoTS, a tree-based trajectory synthesis framework generating 800k training examples that discovers diverse error modes and synthesizes recovery steps, achieving state-of-the-art 47.4% success on OSWorld.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span> <button class="vote-btn" data-id="b26ee0731c" data-link="https://huggingface.co/papers/2605.23904" data-source="https://huggingface.co/papers/2605.23904" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-22</span><span class="item-desc">Reframes agent skill improvement as an optimization problem rather than hand-crafting or one-shot generation — trains skills like deep learning parameters under feedback, reliably improving over the starting point. 201 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.29801">AgentDoG 1.5: A Lightweight and Scalable Alignment Framework for AI Agent Safety and Security</a></span> <button class="vote-btn" data-id="c8ad1f1d2e" data-link="https://huggingface.co/papers/2605.29801" data-source="https://huggingface.co/papers/2605.29801" data-title="AgentDoG 1.5: A Lightweight and Scalable Alignment Framework for AI Agent Safety and Security" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Proposes a lightweight alignment framework for open-world agents like OpenClaw, addressing the new safety risk surfaces that advanced frontier models create when deployed as autonomous agents. 81 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.29250">OmniRetrieval: Unified Retrieval across Heterogeneous Knowledge Sources</a></span> <button class="vote-btn" data-id="283457779d" data-link="https://huggingface.co/papers/2605.29250" data-source="https://huggingface.co/papers/2605.29250" data-title="OmniRetrieval: Unified Retrieval across Heterogeneous Knowledge Sources" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Eliminates the fragmentation of single-source retrievers by unifying retrieval across text, tables, knowledge graphs, and property graphs under a single interface and query language. 53 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.25378">CollectionLoRA: Collecting 50 Effects in 1 LoRA via Multi-Teacher On-Policy Distillation</a></span> <button class="vote-btn" data-id="f7d82b3924" data-link="https://huggingface.co/papers/2605.25378" data-source="https://huggingface.co/papers/2605.25378" data-title="CollectionLoRA: Collecting 50 Effects in 1 LoRA via Multi-Teacher On-Policy Distillation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Consolidates 50 visual effects into a single LoRA adapter using multi-teacher on-policy distillation, drastically reducing deployment overhead when scaling customized image editing. 49 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.30263">minWM: A Full-Stack Open-Source Framework for Real-Time Interactive Video World Models</a></span> <button class="vote-btn" data-id="fae9281a71" data-link="https://huggingface.co/papers/2605.30263" data-source="https://huggingface.co/papers/2605.30263" data-title="minWM: A Full-Stack Open-Source Framework for Real-Time Interactive Video World Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Open-source pipeline covering data construction through post-training for turning video diffusion foundation models into controllable, causal, low-latency interactive world models. 39 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.30346">YoCausal: How Far is Video Generation from World Model? A Causality Perspective</a></span> <button class="vote-btn" data-id="ea26ff62cc" data-link="https://huggingface.co/papers/2605.30346" data-source="https://huggingface.co/papers/2605.30346" data-title="YoCausal: How Far is Video Generation from World Model? A Causality Perspective" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Tests whether video diffusion models truly understand causality or merely overfit to temporal patterns, introducing a real-world benchmark that addresses the sim-to-real gap of existing synthetic evaluations. 32 upvotes.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.30248">GenClaw: Code-Driven Agentic Image Generation</a></span> <button class="vote-btn" data-id="bca83640c3" data-link="https://huggingface.co/papers/2605.30248" data-source="https://huggingface.co/papers/2605.30248" data-title="GenClaw: Code-Driven Agentic Image Generation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29</span><span class="item-desc">Moves beyond black-box image models by equipping agents with code-driven tool invocation and visual comprehension for image generation, enabling more structured and controllable creative workflows. 25 upvotes.</span></li>
+</ul>
+
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-05-30"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,source:source,item_id:id,title:title})
+    }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
+      sub=w.querySelector('.fb-submit');
+  var ph={feedback:'e.g. Papers section was great / too many LLM items',
+    edit_keyword:'e.g. add VLA / remove quantum computing',
+    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
+    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
+  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
+  sub.addEventListener('click',function(){
+    var v=val.value.trim();if(!v)return;
+    sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
