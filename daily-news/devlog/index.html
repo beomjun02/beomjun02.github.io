@@ -48,8 +48,103 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">6 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="006-cross-source-vote-matching">
+<p class="page-meta">7 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="007-llm-item-matching">
+<summary class="entry-title">007: LLM-based Item Matching + GlobalNews<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Feature addition</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
+<p><strong>Type:</strong> Feature addition</p>
+<h3>What</h3>
+<p>URL-based item_id matching을 LLM semantic clustering으로 대체. 전체 유저 daily-news 생성 후 cross-user matching → canonical ID/title/link 통일 → trending + GlobalNews 시트 동기화.</p>
+<h3>Problem</h3>
+<p>같은 뉴스라도 source가 다르면 (tweet vs article, external_url 없음) URL hash가 달라 vote가 분산됨. URL-based 접근의 한계:</p>
+<ul>
+<li>Tweet without external_url → 매칭 불가</li>
+<li>t.co 단축 URL → resolve 필요</li>
+<li>같은 내용 다른 제목 → hash 불일치</li>
+</ul>
+<h3>Solution: LLM semantic clustering</h3>
+<h4>Pipeline</h4>
+<pre><code>
+[모든 유저 daily-news 완료]
+     ↓
+[match_items.py]
+  1. 전체 유저 HTML에서 아이템 추출 (81개, 7유저)
+  2. LLM (sonnet medium) 호출 — &quot;같은 뉴스 그룹핑, canonical title/link 선택&quot;
+  3. canonical_id = MD5(canonical_link) — 기존 ID와 자동 일치
+  4. HTML data-id 업데이트 + git push
+  5. GlobalNews 시트에 동기화
+</code></pre>
+<h4>비용</h4>
+<ul>
+<li>81 items → ~2.8K tokens input</li>
+<li>Sonnet medium: ~$0.01/day</li>
+<li>실행 시간: ~30초</li>
+</ul>
+<h4>첫 실행 결과 (2026-05-29)</h4>
+<p><strong>15 clusters 발견:</strong></p>
+<table>
+<tr><th>Cluster</th><th>Users</th><th>Type</th></tr>
+<tr><td>Anthropic $65B Series H</td><td>beomjun, daewon, john, kunwoong, woomin</td><td>tweet↔article</td></tr>
+<tr><td>Claude Opus 4.8</td><td>beomjun, byungjun, daewon, john, kunwoong, woomin</td><td>tweet↔article (6명!)</td></tr>
+<tr><td>Project Glasswing</td><td>daewon, woomin</td><td>tweet↔tweet</td></tr>
+<tr><td>DeepSeek V4-Pro discount</td><td>daewon, woomin</td><td>tweet↔tweet</td></tr>
+<tr><td>Qwen3.5 580 tps</td><td>daewon, woomin</td><td>tweet↔tweet</td></tr>
+<tr><td>Qwen3.7-Max release</td><td>byungjun, woomin</td><td>article↔article</td></tr>
+<tr><td>VERA: Video→Robot</td><td>beomjun, byungjun</td><td>paper↔paper</td></tr>
+<tr><td>Factory-Floor VLA (Siemens)</td><td>beomjun, byungjun</td><td>paper↔paper</td></tr>
+<tr><td>ProgVLA</td><td>beomjun, byungjun</td><td>paper↔paper</td></tr>
+<tr><td>FineVLA</td><td>byungjun, john</td><td>paper↔paper</td></tr>
+<tr><td>TOPReward in LeRobot</td><td>beomjun, john</td><td>tweet↔tweet</td></tr>
+<tr><td>Shift home cleaning</td><td>beomjun, john</td><td>tweet↔tweet</td></tr>
+<tr><td>Qwen-VLA</td><td>huiwon, john</td><td>paper↔paper</td></tr>
+<tr><td>3DVLA</td><td>huiwon, john</td><td>paper↔paper</td></tr>
+<tr><td>Gamma-World</td><td>huiwon, kunwoong, woomin</td><td>paper↔paper</td></tr>
+</table>
+<p><strong>퀄리티 평가:</strong></p>
+<ul>
+<li>15 clusters 전부 정확 — false positive 0건</li>
+<li>Claude Opus 4.8: tweet (external_url 없음) ↔ article 매칭 성공 (URL-based로는 불가능했던 케이스)</li>
+<li>Paper 매칭: 동일 arxiv ID로 정확히 매칭</li>
+<li>Tweet↔tweet: 같은 뉴스의 다른 트윗 매칭</li>
+</ul>
+<p><strong>LLM이 해결한 것 (URL-based로 불가능):</strong></p>
+<ul>
+<li>Claude Opus 4.8 tweet (no external_url) ↔ anthropic.com article</li>
+<li>Project Glasswing 두 개의 다른 트윗 (같은 뉴스)</li>
+<li>Qwen3.7-Max: qwen.ai/research ↔ x.com/opencode/... (다른 URL, 같은 내용)</li>
+</ul>
+<h3>GlobalNews 시트</h3>
+<p>매칭 후 모든 뉴스가 GlobalNews 시트에 동기화:</p>
+<pre><code>
+CanonicalID | CanonicalTitle | CanonicalLink | FirstSeen | LastSeen | Users | UpvoteCount
+</code></pre>
+<p>58 items (15 clusters + 43 singletons). 전체 뉴스 DB 역할:</p>
+<ul>
+<li>어떤 뉴스가 며칠간 떴는지 (FirstSeen ↔ LastSeen)</li>
+<li>누가 어떤 뉴스를 받았는지 (Users)</li>
+<li>Upvote 집계 (UpvoteCount)</li>
+</ul>
+<h3>Edge cases handled</h3>
+<p>1. <strong>Item day1→A, day2→B</strong>: A의 history에 canonical_id 있음 → match step에서 B도 동일 ID 배정</p>
+<p>2. <strong>All from tweets</strong>: LLM이 가장 descriptive한 제목 + 첫 번째 tweet URL을 canonical로 선택</p>
+<p>3. <strong>False positive</strong>: LLM에게 &quot;only if clearly the same news&quot; 지시 → 0건 (첫 실행 기준)</p>
+<p>4. <strong>LLM failure</strong>: <code>|| true</code> — URL-based ID 유지, graceful degradation</p>
+<p>5. <strong>Singleton items</strong>: GlobalNews에 등록되지만 ID 교체 없음</p>
+<h3>Architecture: Global User</h3>
+<p>match_items.py가 global user 역할:</p>
+<ul>
+<li><strong>canonical_title</strong>: neutral, 어느 유저 관점도 아닌 제목</li>
+<li><strong>canonical_link</strong>: 원본 source 우선 (article &gt; blog &gt; tweet)</li>
+<li><strong>canonical_id</strong>: canonical_link의 MD5 hash</li>
+</ul>
+<p>별도 global user config 불필요. 매칭 LLM의 출력 = global view.</p>
+<h3>Files</h3>
+<ul>
+<li><code>scripts/match_items.py</code>: NEW — extract, LLM cluster, update HTML, sync GlobalNews</li>
+<li><code>scripts/run_all_users.sh</code>: match step 추가 (user loop 후)</li>
+<li><code>scripts/feedback_webapp.gs</code>: <code>upsert_news</code> POST + <code>global_news</code> GET + GlobalNews 시트</li>
+</ul></div>
+</details><details class="entry" id="006-cross-source-vote-matching">
 <summary class="entry-title">006: Cross-Source Vote Matching<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Fix</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
 <p><strong>Type:</strong> Fix</p>
