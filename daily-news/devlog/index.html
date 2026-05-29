@@ -138,11 +138,18 @@ CanonicalID | CanonicalTitle | CanonicalLink | FirstSeen | LastSeen | Users | Up
 <li><strong>canonical_id</strong>: canonical_link의 MD5 hash</li>
 </ul>
 <p>별도 global user config 불필요. 매칭 LLM의 출력 = global view.</p>
+<h3>Trending integration</h3>
+<p><code>_getTrending</code> updated to use both sheets:</p>
+<ul>
+<li><strong>Votes</strong>: real-time vote count (upvote 즉시 반영)</li>
+<li><strong>GlobalNews</strong>: canonical title/link (neutral, not personalized)</li>
+</ul>
+<p>Trending 표시 = GlobalNews의 canonical title + Votes의 실시간 voter count.</p>
 <h3>Files</h3>
 <ul>
 <li><code>scripts/match_items.py</code>: NEW — extract, LLM cluster, update HTML, sync GlobalNews</li>
 <li><code>scripts/run_all_users.sh</code>: match step 추가 (user loop 후)</li>
-<li><code>scripts/feedback_webapp.gs</code>: <code>upsert_news</code> POST + <code>global_news</code> GET + GlobalNews 시트</li>
+<li><code>scripts/feedback_webapp.gs</code>: <code>upsert_news</code> POST, <code>global_news</code> GET, GlobalNews 시트, <code>_getTrending</code> GlobalNews 참조</li>
 </ul></div>
 </details><details class="entry" id="006-cross-source-vote-matching">
 <summary class="entry-title">006: Cross-Source Vote Matching<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Fix</span></span></summary>
