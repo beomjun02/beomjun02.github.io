@@ -13,7 +13,8 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-title { font-weight: 500; }
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
 .daily-news .item-keywords { color: #d4a017; }
@@ -34,6 +35,10 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -50,14 +55,21 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
+  .daily-news .vote-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.25em 0.35em; }
 }
 </style>
 </head>
 <body>
 <div class="daily-news">
 <h1>Daily News — archive</h1>
-<p class="page-meta">2 days · <a href="../">← latest</a></p>
+<p class="page-meta">3 days · <a href="../">← latest</a></p>
 <ul>
+  <li><a href="../2026-05-29.html">2026-05-29</a>: <span class="archive-headline">Claude Opus 4.8 · ProgVLA subtask-aware VLA · NVIDIA HumanoidMimicGen</span></li>
   <li><a href="../2026-05-28.html">2026-05-28</a>: <span class="archive-headline">Reachy Mini ships fully-local · VR-DAgger dex data collection · new VLA continual-learning + RoboMME memory benchmark</span></li>
   <li><a href="../2026-05-27.html">2026-05-27</a>: <span class="archive-headline">Qwen3.7-Max debuts agent-tier proprietary model · FineVLA targets fine-grained VLAs · Figure×Catalyst Brands deal</span></li>
 </ul>
