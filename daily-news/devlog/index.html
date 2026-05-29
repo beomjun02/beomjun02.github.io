@@ -48,8 +48,45 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">5 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="005-pipeline-performance">
+<p class="page-meta">6 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="006-cross-source-vote-matching">
+<summary class="entry-title">006: Cross-Source Vote Matching<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Fix</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
+<p><strong>Type:</strong> Fix</p>
+<h3>Problem</h3>
+<p>같은 뉴스라도 유저마다 다른 source에서 가져오면 item_id가 달라져 vote가 분산됨.</p>
+<p>예: Claude Opus 4.8</p>
+<ul>
+<li>beomjun/byungjun/john/kunwoong: <code>anthropic.com/news/claude-opus-4-8</code> → id <code>5f3a9a5193</code></li>
+<li>daewon: <code>x.com/claudeai/status/...</code> (트윗) → id <code>12aaa60a6c</code></li>
+</ul>
+<p>2명이 upvote해도 각각 1표 → trending 미달.</p>
+<h3>Root cause</h3>
+<p>item_id = MD5(link URL). 같은 뉴스의 tweet URL ≠ article URL → 다른 hash.</p>
+<h3>Solution</h3>
+<p>tweet의 <code>external_url</code> (링크된 기사 URL)을 item_id 계산에 사용. HTML link는 tweet URL 유지 (클릭 → 트윗).</p>
+<pre><code>
+HTML:  &lt;a href=&quot;x.com/claudeai/status/...&quot;&gt;Claude Opus 4.8&lt;/a&gt;  ← 유저가 보는 링크
+ID:    MD5(&quot;anthropic.com/news/claude-opus-4-8&quot;)                 ← vote 집계용
+</code></pre>
+<h4>Pipeline</h4>
+<p>1. <code>dedup.py prepare</code>: x.json에서 <code>{tweet_url: external_url}</code> 추출. <code>t.co</code> 단축 URL → 최종 URL resolve. <code>url_mapping.json</code>에 저장.</p>
+<p>2. <code>post_html.py _item_id()</code>: <code>url_mapping.json</code> 참조. tweet URL이면 mapped external URL hash 사용.</p>
+<p>3. LLM: 변경 없음. tweet URL로 link 유지.</p>
+<h4>t.co 문제</h4>
+<p>X의 external_url은 <code>t.co/xxxxx</code> 단축 URL. 이걸 그대로 hash하면 다른 유저의 직접 URL과 안 맞음. <code>dedup.py</code>에서 HTTP HEAD → redirect follow → 최종 URL resolve.</p>
+<h3>오늘 적용</h3>
+<p>기존 HTML 17개 item_id를 수동 교체:</p>
+<p>1. 3개 유저 X list re-fetch → external_url 추출</p>
+<p>2. 44개 t.co URL → 최종 URL resolve</p>
+<p>3. 9개 HTML 파일에서 17개 data-id 교체</p>
+<h3>Files changed</h3>
+<ul>
+<li><code>scripts/dedup.py</code>: url_mapping.json 생성 + t.co resolve</li>
+<li><code>scripts/post_html.py</code>: <code>_item_id()</code> url_mapping 참조</li>
+<li>SKILL.md §3: tweet link 유지, ID 매칭은 자동</li>
+</ul></div>
+</details><details class="entry" id="005-pipeline-performance">
 <summary class="entry-title">005: Pipeline Performance Analysis<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Experiment</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
 <p><strong>Type:</strong> Experiment</p>
