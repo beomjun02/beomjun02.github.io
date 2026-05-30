@@ -48,8 +48,71 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">8 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="008-url-validation">
+<p class="page-meta">9 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="009-parallel-batch-runner">
+<summary class="entry-title">009: Parallel Batch Runner<span class="entry-meta"><span class="entry-date"> 2026-05-30</span><span class="entry-type"> Feature</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
+<p><strong>Type:</strong> Feature</p>
+<h3>Problem</h3>
+<p>순차 실행: 8min × 7 users + jitter = ~56min. 유저 증가 시 선형 증가.</p>
+<h3>Solution</h3>
+<p>3-phase 병렬 아키텍처:</p>
+<pre><code>
+Phase 1 (~90s, 병렬):
+  papers+labs 공유 prefetch (60s) ─┐
+                                   ├─ 동시 실행
+  X list 유저별 순차 (5-10s jitter)┘
+
+Phase 2 (~8-16min, 3명 병렬):
+  MAX_PARALLEL=3 concurrent LLM
+  공유: papers, labs, watch (read-only)
+  개별: x_&lt;handle&gt;.json (유저별 X data)
+
+Phase 3 (~1min):
+  match_items + report
+</code></pre>
+<h4>Phase 1: Shared Prefetch</h4>
+<ul>
+<li>전체 유저의 paper_sources + lab_sites 합쳐서 1회 fetch (dedup)</li>
+<li>8 paper sources + 21 lab sites → 1회 60s (vs 7회 × 60s)</li>
+<li>X list: 유저별 순차 (공유 세션), 5-10s jitter (기존 30-120s → 90% 단축)</li>
+<li>papers+labs와 X fetch 동시 실행</li>
+</ul>
+<h4>Phase 2: Parallel LLM</h4>
+<ul>
+<li>각 LLM이 <code>/tmp/daily_news_prefetch/x_&lt;handle&gt;.json</code> 읽음</li>
+<li>공유 데이터는 같은 <code>/tmp/daily_news_prefetch/</code> 경로 (read-only, race condition 없음)</li>
+<li>SKILL.md: prefetch manifest 이미 있으면 스킵, X는 <code>x_&lt;handle&gt;.json</code>에서 읽기</li>
+<li><code>wait -n</code>으로 빈 slot 즉시 채움 (batch 단위 아닌 streaming)</li>
+</ul>
+<h4>Race condition 방지</h4>
+<table>
+<tr><th>Data</th><th>경로</th><th>동시 접근</th><th>안전</th></tr>
+<tr><td>Papers/labs</td><td><code>/tmp/daily_news_prefetch/papers/</code></td><td>read-only</td><td>✅</td></tr>
+<tr><td>X tweets</td><td><code>/tmp/daily_news_prefetch/x_&lt;handle&gt;.json</code></td><td>유저별 분리</td><td>✅</td></tr>
+<tr><td>seen_items.json</td><td>dedup.py prepare가 사전 생성</td><td>read-only</td><td>✅</td></tr>
+<tr><td>HTML publish</td><td>git push</td><td>post_html.py 내부에서 순차</td><td>✅</td></tr>
+</table>
+<h4>X Jitter 축소</h4>
+<p>기존: 30-120s (bot detection 방지)</p>
+<p>변경: 5-10s (다른 list 방문은 자연스러운 행동)</p>
+<p>X fetch 자체: ~25s/user. 3명 기준 총: ~90s (기존 ~4min).</p>
+<h3>예상 시간</h3>
+<table>
+<tr><th></th><th>기존 (순차)</th><th>변경 (병렬)</th></tr>
+<tr><td>Prefetch</td><td>7 × 60s = 420s</td><td>1 × 90s</td></tr>
+<tr><td>LLM</td><td>7 × 8min = 56min</td><td>ceil(7/3) × 8min ≈ 16min</td></tr>
+<tr><td>Post</td><td>1min</td><td>1min</td></tr>
+<tr><td><strong>총</strong></td><td><strong>~60min</strong></td><td><strong>~18min</strong></td></tr>
+</table>
+<p>MAX_PARALLEL=5로 올리면 ~12min 가능 (rate limit 테스트 후).</p>
+<h3>Files</h3>
+<ul>
+<li><code>scripts/run_all_users.sh</code>: 3-phase 병렬 아키텍처로 전면 재작성</li>
+<li>SKILL.md §2: prefetch manifest 존재 시 스킵</li>
+<li>SKILL.md §3: X data를 <code>x_&lt;handle&gt;.json</code>에서 읽기</li>
+</ul></div>
+</details><details class="entry" id="008-url-validation">
 <summary class="entry-title">008: arXiv ID Hallucination Prevention<span class="entry-meta"><span class="entry-date"> 2026-05-30</span><span class="entry-type"> Fix</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
 <p><strong>Type:</strong> Fix</p>
