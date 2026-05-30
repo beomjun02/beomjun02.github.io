@@ -56,8 +56,13 @@
 <h3>Problem</h3>
 <p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29358</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
 <h3>Solution</h3>
-<p><code>parse_arxiv.py</code> — arXiv HTML → JSON 사전 파싱 (Python, rule-based). LLM이 raw HTML 대신 <code>{id, url, title, abstract}</code> JSON 읽음. ID가 코드에서 추출되므로 hallucination 불가.</p>
-<p>다른 source는 이미 structured (X: JSON, Labs: Playwright URL, HF: 일관된 URL 패턴) → 추가 조치 불필요.</p>
+<p><code>parse_arxiv.py</code> — arXiv + HF HTML → JSON 사전 파싱 (Python, rule-based). LLM이 raw HTML 대신 <code>{id, url, title, abstract}</code> JSON 읽음. ID가 코드에서 추출되므로 hallucination 불가.</p>
+<ul>
+<li>arXiv: regex로 ID/title/abstract 추출 (48+48+46 = 142 papers)</li>
+<li>HF: embedded JSON 파싱 (<code>dailyPapers</code> array) (13+12+10 = 35 papers)</li>
+<li>X tweets: 이미 structured JSON</li>
+<li>Lab sites: Playwright URL 추출</li>
+</ul>
 <h3>Files</h3>
 <ul>
 <li><code>scripts/parse_arxiv.py</code>: NEW — arXiv HTML → JSON parser</li>
