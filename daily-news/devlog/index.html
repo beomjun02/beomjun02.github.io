@@ -48,8 +48,22 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">7 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="007-llm-item-matching">
+<p class="page-meta">8 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="008-url-validation">
+<summary class="entry-title">008: arXiv ID Hallucination Prevention<span class="entry-meta"><span class="entry-date"> 2026-05-30</span><span class="entry-type"> Fix</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
+<p><strong>Type:</strong> Fix</p>
+<h3>Problem</h3>
+<p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29358</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
+<h3>Solution</h3>
+<p><code>parse_arxiv.py</code> — arXiv HTML → JSON 사전 파싱 (Python, rule-based). LLM이 raw HTML 대신 <code>{id, url, title, abstract}</code> JSON 읽음. ID가 코드에서 추출되므로 hallucination 불가.</p>
+<p>다른 source는 이미 structured (X: JSON, Labs: Playwright URL, HF: 일관된 URL 패턴) → 추가 조치 불필요.</p>
+<h3>Files</h3>
+<ul>
+<li><code>scripts/parse_arxiv.py</code>: NEW — arXiv HTML → JSON parser</li>
+<li>SKILL.md §5: arXiv는 JSON 우선 읽기</li>
+</ul></div>
+</details><details class="entry" id="007-llm-item-matching">
 <summary class="entry-title">007: LLM-based Item Matching + GlobalNews<span class="entry-meta"><span class="entry-date"> 2026-05-29</span><span class="entry-type"> Feature addition</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-29</p>
 <p><strong>Type:</strong> Feature addition</p>
