@@ -48,8 +48,47 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">9 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="009-parallel-batch-runner">
+<p class="page-meta">10 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="010-canonical-matching-pipeline">
+<summary class="entry-title">010: Canonical Item Matching Pipeline<span class="entry-meta"><span class="entry-date"> 2026-05-31</span><span class="entry-type"> Feature</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-05-31</p>
+<p><strong>Type:</strong> Feature</p>
+<h4>Problem</h4>
+<p>두 가지 edge case로 인해 🆕 태그 오표기와 upvote 유실이 발생:</p>
+<p><strong>Edge Case 1 — Cross-day 🆕 오표기</strong>: 같은 뉴스가 다른 URL/title로 재등장하면 dedup.py가 URL 기반 매칭만 하므로 &quot;새 아이템&quot;으로 판별. 예: PointWorld가 매일 다른 트윗 URL로 등장하면서 매번 🆕로 표시.</p>
+<p><strong>Edge Case 2 — Vote ID 불연속</strong>: post_html.py가 URL 기반 data-id를 생성하므로, 같은 뉴스의 다른 URL에 다른 vote ID가 부여되어 이전 upvote가 유실. match_items.py가 같은 날 유저 간 매칭은 했지만, 이전 날과의 연속성은 보장하지 않음.</p>
+<h4>Solution</h4>
+<p><code>match_items.py</code>에 3-phase canonical matching pipeline 도입:</p>
+<table>
+<tr><th>Phase</th><th>Method</th><th>Context cost</th><th>Purpose</th></tr>
+<tr><td>A</td><td>Deterministic (Python)</td><td>0</td><td>URL, arXiv ID, alt_urls 기반 매칭</td></tr>
+<tr><td>B</td><td>LLM (Sonnet 1회)</td><td>~3K tokens</td><td>within-day 유저 간 그루핑 + cross-day canonical 매칭</td></tr>
+<tr><td>C</td><td>Deterministic (Python)</td><td>0</td><td>HTML data-id/🆕 수정, registry 업데이트</td></tr>
+</table>
+<p>핵심 데이터 구조: <code>cache/canonical_registry.jsonl</code> — 7일간 canonical 아이템 저장, alt_urls/alt_titles 축적.</p>
+<pre><code>
+{&quot;canonical_id&quot;:&quot;a1b2c3&quot;,&quot;title&quot;:&quot;...&quot;,&quot;link&quot;:&quot;...&quot;,&quot;first_seen&quot;:&quot;2026-05-28&quot;,&quot;last_seen&quot;:&quot;2026-05-31&quot;,&quot;alt_urls&quot;:[&quot;...&quot;],&quot;alt_titles&quot;:[&quot;...&quot;]}
+</code></pre>
+<h4>Design decisions</h4>
+<p><strong>Context length 최적화</strong>: Phase A에서 deterministic 매칭률이 ~99%로, LLM은 미매칭 아이템 + canonical title 목록만 처리. 테스트 결과 94개 아이템 중 93개가 Phase A에서 해결되어 LLM에는 1개만 전달.</p>
+<p><strong>Per-user 🆕 vs global</strong>: 🆕는 &quot;이 유저 피드에서 처음 등장&quot;을 의미하므로, canonical registry의 global first_seen이 아닌 per-user history.jsonl 기반으로 판정. 같은 뉴스가 beomjun에겐 🆕이고 byungjun에겐 seen일 수 있음 — 이는 정상 동작.</p>
+<p><strong>Regression-free</strong>: 모든 phase가 실패해도 기존 동작과 동일 (regression 없음). 성공 시에만 개선.</p>
+<h4>Also changed</h4>
+<ul>
+<li><code>dedup.py</code>: title-based 매칭 추가 (URL이 같은 경우의 1차 방어선), <code>update</code>에서 🆕 태그를 deterministic하게 교정</li>
+<li><code>SKILL.md</code>: seen_items.json 포맷 변경 (<code>{by_url, by_title}</code>) 반영</li>
+</ul>
+<h4>Results</h4>
+<table>
+<tr><th>Metric</th><th>Before</th><th>After</th></tr>
+<tr><td>beomjun 5/31 false 🆕</td><td>9</td><td>0</td></tr>
+<tr><td>daewon 5/31 false 🆕</td><td>4</td><td>0</td></tr>
+<tr><td>Cross-user ID mismatch</td><td>2</td><td>0</td></tr>
+<tr><td>Same-content split canonical</td><td>1 (WALL-WM)</td><td>0</td></tr>
+<tr><td>Phase A deterministic match rate</td><td>—</td><td>99% (93/94)</td></tr>
+<tr><td>LLM context per run</td><td>~5K tok (old)</td><td>~3K tok</td></tr>
+</table></div>
+</details><details class="entry" id="009-parallel-batch-runner">
 <summary class="entry-title">009: Parallel Batch Runner<span class="entry-meta"><span class="entry-date"> 2026-05-30</span><span class="entry-type"> Feature</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
 <p><strong>Type:</strong> Feature</p>
