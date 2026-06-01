@@ -332,7 +332,7 @@
       var lbl=document.createElement('label');
       if(sent){lbl.style.opacity='0.5';}
       lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
-        '> '+u.charAt(0).toUpperCase()+u.slice(1)+(sent?' ✓':'');
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
       dd.appendChild(lbl);
     });
     var send=document.createElement('button');
