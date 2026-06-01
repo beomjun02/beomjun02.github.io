@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,46 +69,58 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
 <body>
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="daewon" data-date="2026-05-29">
 <h1>Daily News — 2026-05-29</h1>
-<div class="user-banner"><div class="user-handle">Daewon</div><div class="user-categories">Language · Robotics</div><div class="user-kws">agent · efficient inference · efficient training · token cost · speculative decoding · kv cache compression · sLM · elastic training · efficiency · reasoning</div></div>
+<div class="user-banner"><div class="user-handle">Daewon</div><div class="user-categories">Language · Robotics</div><div class="user-kws">agent · efficient inference · efficient training · token cost · speculative decoding · kv cache compression · sLM · elastic training · routing · efficiency · reasoning</div></div>
 <p class="page-meta">14 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/AnthropicAI/status/2060061347522433422">Anthropic raises $65B Series H at $965B valuation</a></span> <button class="vote-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-source="https://x.com/AnthropicAI/status/2060061347522433422" data-title="Anthropic raises $65B Series H at $965B valuation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic&#x27;s latest funding round is led by Altimeter, Dragoneer, Greenoaks, and Sequoia. The company also disclosed a $47B annualized revenue run-rate, driven by enterprise Claude deployments across industries.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/Alibaba_Qwen/status/2059674574397313277">Qwen3.5 hits 580 tps for agentic workloads on TokenSpeed engine</a></span> <button class="vote-btn" data-id="0a45eb4c4a" data-link="https://x.com/Alibaba_Qwen/status/2059674574397313277" data-source="https://x.com/Alibaba_Qwen/status/2059674574397313277" data-title="Qwen3.5 hits 580 tps for agentic workloads on TokenSpeed engine" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Alibaba/Qwen · 2026-05-27<span class="item-keywords"> · efficient inference</span></span><span class="item-desc">A new throughput record for agentic inference, achieved in collaboration with LightSeek, NVIDIA, the Mooncake team, and Tri Dao. Demonstrates that aggressive engine-level optimization can still unlock substantial serving speedups.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/AnthropicAI/status/2057909102542549503">Anthropic Project Glasswing: 10,000+ critical vulnerabilities found</a></span> <button class="vote-btn" data-id="a6001065a4" data-link="https://x.com/AnthropicAI/status/2057909102542549503" data-source="https://x.com/AnthropicAI/status/2057909102542549503" data-title="Anthropic Project Glasswing: 10,000+ critical vulnerabilities found" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-22</span><span class="item-desc">Since launching last month, Anthropic&#x27;s collaborative AI cybersecurity initiative has uncovered over 10K high- or critical-severity vulnerabilities in essential software. The volume raises questions about how the industry will adapt to model-scale vulnerability discovery.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/AnthropicAI/status/2060061347522433422">Anthropic raises $65B Series H at $965B valuation</a></span> <button class="vote-btn" data-id="2772388c9e" data-link="https://x.com/AnthropicAI/status/2060061347522433422" data-source="https://x.com/AnthropicAI/status/2060061347522433422" data-title="Anthropic raises $65B Series H at $965B valuation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2772388c9e" data-link="https://x.com/AnthropicAI/status/2060061347522433422" data-title="Anthropic raises $65B Series H at $965B valuation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic&#x27;s latest funding round is led by Altimeter, Dragoneer, Greenoaks, and Sequoia. The company also disclosed a $47B annualized revenue run-rate, driven by enterprise Claude deployments across industries.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/Alibaba_Qwen/status/2059674574397313277">Qwen3.5 hits 580 tps for agentic workloads on TokenSpeed engine</a></span> <button class="vote-btn" data-id="0a45eb4c4a" data-link="https://x.com/Alibaba_Qwen/status/2059674574397313277" data-source="https://x.com/Alibaba_Qwen/status/2059674574397313277" data-title="Qwen3.5 hits 580 tps for agentic workloads on TokenSpeed engine" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="0a45eb4c4a" data-link="https://x.com/Alibaba_Qwen/status/2059674574397313277" data-title="Qwen3.5 hits 580 tps for agentic workloads on TokenSpeed engine"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Alibaba/Qwen · 2026-05-27<span class="item-keywords"> · efficient inference</span></span><span class="item-desc">A new throughput record for agentic inference, achieved in collaboration with LightSeek, NVIDIA, the Mooncake team, and Tri Dao. Demonstrates that aggressive engine-level optimization can still unlock substantial serving speedups.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/AnthropicAI/status/2057909102542549503">Anthropic Project Glasswing: 10,000+ critical vulnerabilities found</a></span> <button class="vote-btn" data-id="70463e315c" data-link="https://x.com/AnthropicAI/status/2057909102542549503" data-source="https://x.com/AnthropicAI/status/2057909102542549503" data-title="Anthropic Project Glasswing: 10,000+ critical vulnerabilities found" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="70463e315c" data-link="https://x.com/AnthropicAI/status/2057909102542549503" data-title="Anthropic Project Glasswing: 10,000+ critical vulnerabilities found"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-22</span><span class="item-desc">Since launching last month, Anthropic&#x27;s collaborative AI cybersecurity initiative has uncovered over 10K high- or critical-severity vulnerabilities in essential software. The volume raises questions about how the industry will adapt to model-scale vulnerability discovery.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/claudeai/status/2060042702150930686">Claude Opus 4.8: sharper judgment, longer independent work</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://x.com/claudeai/status/2060042702150930686" data-title="Claude Opus 4.8: sharper judgment, longer independent work" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Opus 4.8 builds on 4.7 with improved judgment, more honest self-assessment of progress, and the ability to work independently for longer stretches. Available at the same price across web, API, and all major cloud platforms.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/claudeai/status/2060042710753382816">Claude Code dynamic workflows (research preview)</a></span> <button class="vote-btn" data-id="0da8068e4f" data-link="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" data-source="https://x.com/claudeai/status/2060042710753382816" data-title="Claude Code dynamic workflows (research preview)" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">For complex tasks like large-scale migrations, Claude Code now plans, spawns hundreds of parallel subagents, and verifies its work before reporting back. Targets tasks that touch hundreds of files in a single run.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/deepseek_ai/status/2057854261699195173">DeepSeek-V4-Pro discount made permanent</a></span> <button class="vote-btn" data-id="4610183804" data-link="https://x.com/deepseek_ai/status/2057854261699195173" data-source="https://x.com/deepseek_ai/status/2057854261699195173" data-title="DeepSeek-V4-Pro discount made permanent" title="upvote"><span class="tri"></span></button></div><span class="item-meta">DeepSeek · 2026-05-22<span class="item-keywords"> · token cost</span></span><span class="item-desc">DeepSeek locked in its pricing discount permanently, lowering the barrier to building on V4-Pro for production workloads.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/claudeai/status/2060042702150930686">Claude Opus 4.8: sharper judgment, longer independent work</a></span> <button class="vote-btn" data-id="12aaa60a6c" data-link="https://x.com/claudeai/status/2060042702150930686" data-source="https://x.com/claudeai/status/2060042702150930686" data-title="Claude Opus 4.8: sharper judgment, longer independent work" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="12aaa60a6c" data-link="https://x.com/claudeai/status/2060042702150930686" data-title="Claude Opus 4.8: sharper judgment, longer independent work"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Opus 4.8 builds on 4.7 with improved judgment, more honest self-assessment of progress, and the ability to work independently for longer stretches. Available at the same price across web, API, and all major cloud platforms.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/claudeai/status/2060042710753382816">Claude Code dynamic workflows (research preview)</a></span> <button class="vote-btn" data-id="f3c0c1a9a0" data-link="https://x.com/claudeai/status/2060042710753382816" data-source="https://x.com/claudeai/status/2060042710753382816" data-title="Claude Code dynamic workflows (research preview)" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f3c0c1a9a0" data-link="https://x.com/claudeai/status/2060042710753382816" data-title="Claude Code dynamic workflows (research preview)"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">For complex tasks like large-scale migrations, Claude Code now plans, spawns hundreds of parallel subagents, and verifies its work before reporting back. Targets tasks that touch hundreds of files in a single run.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/deepseek_ai/status/2057854261699195173">DeepSeek-V4-Pro discount made permanent</a></span> <button class="vote-btn" data-id="4610183804" data-link="https://x.com/deepseek_ai/status/2057854261699195173" data-source="https://x.com/deepseek_ai/status/2057854261699195173" data-title="DeepSeek-V4-Pro discount made permanent" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4610183804" data-link="https://x.com/deepseek_ai/status/2057854261699195173" data-title="DeepSeek-V4-Pro discount made permanent"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">DeepSeek · 2026-05-22<span class="item-keywords"> · token cost</span></span><span class="item-desc">DeepSeek locked in its pricing discount permanently, lowering the barrier to building on V4-Pro for production workloads.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27744">CacheSage: A Policy-Driven Runtime Layer for Agentic LLM Serving</a></span> <button class="vote-btn" data-id="99a74924b2" data-link="https://arxiv.org/abs/2605.27744" data-source="https://arxiv.org/abs/2605.27744" data-title="CacheSage: A Policy-Driven Runtime Layer for Agentic LLM Serving" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-05-28<span class="item-keywords"> · kv cache compression · agent</span></span><span class="item-desc">Introduces an agent-identity-aware KV-cache manager for multi-agent sessions that learns per-workload transition matrices online for smarter eviction and prefetch. Achieves +13–37 pp cache hit-rate lift and 12–29% lower time-to-first-token.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27788">CARL: Knowing When to Ask — Segment-Level Credit Assignment for LLM Tool Use</a></span> <button class="vote-btn" data-id="ef18f3e2d2" data-link="https://arxiv.org/abs/2605.27788" data-source="https://arxiv.org/abs/2605.27788" data-title="CARL: Knowing When to Ask — Segment-Level Credit Assignment for LLM Tool Use" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">Trains a critic on model rollouts to distinguish genuinely needed tool calls from unnecessary ones, assigning per-segment credit from binary outcomes without step-level labels. Improves accuracy by 6.7–9.7 points over RL baselines while issuing 53% fewer tool calls.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27786">LoRP: Locality-Aware Redundancy Pruning for LLM Depth Compression</a></span> <button class="vote-btn" data-id="d29ded3862" data-link="https://arxiv.org/abs/2605.27786" data-source="https://arxiv.org/abs/2605.27786" data-title="LoRP: Locality-Aware Redundancy Pruning for LLM Depth Compression" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · efficient inference</span></span><span class="item-desc">A training-free, one-shot depth-pruning framework that clusters layers by representational similarity and prunes within clusters. Reveals that redundancy patterns are architecture-dependent and improves perplexity and downstream accuracy over prior one-shot methods.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27596">System-I/II Reasoning for Multi-Hop QA with Small Language Models</a></span> <button class="vote-btn" data-id="51269727cb" data-link="https://arxiv.org/abs/2605.27596" data-source="https://arxiv.org/abs/2605.27596" data-title="System-I/II Reasoning for Multi-Hop QA with Small Language Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · sLM</span></span><span class="item-desc">Proposes an &quot;answer-first, reason-later&quot; strategy for SLMs: a fast zero-shot answer (System-I) followed by retrieval and reasoning only when needed (System-II). Outperforms iterative retrieval methods on multi-step QA benchmarks while keeping compute low.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27390">EvoSpec: Evolving Speculative Decoding via Real-Time Vocabulary and Parameter Adaptation</a></span> <button class="vote-btn" data-id="380fdffb6c" data-link="https://arxiv.org/abs/2605.27390" data-source="https://arxiv.org/abs/2605.27390" data-title="EvoSpec: Evolving Speculative Decoding via Real-Time Vocabulary and Parameter Adaptation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · speculative decoding</span></span><span class="item-desc">Addresses static vocabulary pruning failure under domain shift by dynamically adapting the draft model&#x27;s vocabulary and parameters in real time. Achieves 1.13x speedup over the SOTA static baseline with 27% lower memory overhead.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27646">HQMQ: Hurwitz Quaternion Multiplicative Quantization for KV Cache Compression</a></span> <button class="vote-btn" data-id="2f1df2b976" data-link="https://arxiv.org/abs/2605.27646" data-source="https://arxiv.org/abs/2605.27646" data-title="HQMQ: Hurwitz Quaternion Multiplicative Quantization for KV Cache Compression" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">A calibration-free method that represents 4-element K/V chunks as quaternions and quantizes using the Hurwitz group plus a small random codebook. Achieves up to 5.05x KV compression recovering fp16 quality at ~5 bits across five modern LLMs.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27740">UNIQUE: Universal Top-k Sparse Attention for Training-free Inference</a></span> <button class="vote-btn" data-id="8c6ea1f131" data-link="https://arxiv.org/abs/2605.27740" data-source="https://arxiv.org/abs/2605.27740" data-title="UNIQUE: Universal Top-k Sparse Attention for Training-free Inference" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">Page-granularity importance scoring for sparse attention that works for both training-free and sparsity-aware settings. Achieves up to 11.4x attention-kernel speedup and 5.3x end-to-end decoding speedup on long-context benchmarks.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27850">TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies</a></span> <button class="vote-btn" data-id="8851af42af" data-link="https://arxiv.org/abs/2605.27850" data-source="https://arxiv.org/abs/2605.27850" data-title="TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-05-28<span class="item-keywords"> · token cost</span></span><span class="item-desc">Co-evolves agent prompts and communication graph topologies using a Pareto front over accuracy, token cost, and structural complexity. Matches debate-style multi-agent accuracy while using up to 5.69x fewer tokens.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27744">CacheSage: A Policy-Driven Runtime Layer for Agentic LLM Serving</a></span> <button class="vote-btn" data-id="99a74924b2" data-link="https://arxiv.org/abs/2605.27744" data-source="https://arxiv.org/abs/2605.27744" data-title="CacheSage: A Policy-Driven Runtime Layer for Agentic LLM Serving" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="99a74924b2" data-link="https://arxiv.org/abs/2605.27744" data-title="CacheSage: A Policy-Driven Runtime Layer for Agentic LLM Serving"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-05-28<span class="item-keywords"> · kv cache compression · agent</span></span><span class="item-desc">Introduces an agent-identity-aware KV-cache manager for multi-agent sessions that learns per-workload transition matrices online for smarter eviction and prefetch. Achieves +13–37 pp cache hit-rate lift and 12–29% lower time-to-first-token.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27788">CARL: Knowing When to Ask — Segment-Level Credit Assignment for LLM Tool Use</a></span> <button class="vote-btn" data-id="ef18f3e2d2" data-link="https://arxiv.org/abs/2605.27788" data-source="https://arxiv.org/abs/2605.27788" data-title="CARL: Knowing When to Ask — Segment-Level Credit Assignment for LLM Tool Use" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ef18f3e2d2" data-link="https://arxiv.org/abs/2605.27788" data-title="CARL: Knowing When to Ask — Segment-Level Credit Assignment for LLM Tool Use"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">Trains a critic on model rollouts to distinguish genuinely needed tool calls from unnecessary ones, assigning per-segment credit from binary outcomes without step-level labels. Improves accuracy by 6.7–9.7 points over RL baselines while issuing 53% fewer tool calls.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27786">LoRP: Locality-Aware Redundancy Pruning for LLM Depth Compression</a></span> <button class="vote-btn" data-id="d29ded3862" data-link="https://arxiv.org/abs/2605.27786" data-source="https://arxiv.org/abs/2605.27786" data-title="LoRP: Locality-Aware Redundancy Pruning for LLM Depth Compression" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d29ded3862" data-link="https://arxiv.org/abs/2605.27786" data-title="LoRP: Locality-Aware Redundancy Pruning for LLM Depth Compression"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · efficient inference</span></span><span class="item-desc">A training-free, one-shot depth-pruning framework that clusters layers by representational similarity and prunes within clusters. Reveals that redundancy patterns are architecture-dependent and improves perplexity and downstream accuracy over prior one-shot methods.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.27596">System-I/II Reasoning for Multi-Hop QA with Small Language Models</a></span> <button class="vote-btn" data-id="51269727cb" data-link="https://arxiv.org/abs/2605.27596" data-source="https://arxiv.org/abs/2605.27596" data-title="System-I/II Reasoning for Multi-Hop QA with Small Language Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="51269727cb" data-link="https://arxiv.org/abs/2605.27596" data-title="System-I/II Reasoning for Multi-Hop QA with Small Language Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · sLM</span></span><span class="item-desc">Proposes an &quot;answer-first, reason-later&quot; strategy for SLMs: a fast zero-shot answer (System-I) followed by retrieval and reasoning only when needed (System-II). Outperforms iterative retrieval methods on multi-step QA benchmarks while keeping compute low.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27390">EvoSpec: Evolving Speculative Decoding via Real-Time Vocabulary and Parameter Adaptation</a></span> <button class="vote-btn" data-id="380fdffb6c" data-link="https://arxiv.org/abs/2605.27390" data-source="https://arxiv.org/abs/2605.27390" data-title="EvoSpec: Evolving Speculative Decoding via Real-Time Vocabulary and Parameter Adaptation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="380fdffb6c" data-link="https://arxiv.org/abs/2605.27390" data-title="EvoSpec: Evolving Speculative Decoding via Real-Time Vocabulary and Parameter Adaptation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · speculative decoding</span></span><span class="item-desc">Addresses static vocabulary pruning failure under domain shift by dynamically adapting the draft model&#x27;s vocabulary and parameters in real time. Achieves 1.13x speedup over the SOTA static baseline with 27% lower memory overhead.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27646">HQMQ: Hurwitz Quaternion Multiplicative Quantization for KV Cache Compression</a></span> <button class="vote-btn" data-id="2f1df2b976" data-link="https://arxiv.org/abs/2605.27646" data-source="https://arxiv.org/abs/2605.27646" data-title="HQMQ: Hurwitz Quaternion Multiplicative Quantization for KV Cache Compression" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2f1df2b976" data-link="https://arxiv.org/abs/2605.27646" data-title="HQMQ: Hurwitz Quaternion Multiplicative Quantization for KV Cache Compression"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.LG · 2026-05-28<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">A calibration-free method that represents 4-element K/V chunks as quaternions and quantizes using the Hurwitz group plus a small random codebook. Achieves up to 5.05x KV compression recovering fp16 quality at ~5 bits across five modern LLMs.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27740">UNIQUE: Universal Top-k Sparse Attention for Training-free Inference</a></span> <button class="vote-btn" data-id="8c6ea1f131" data-link="https://arxiv.org/abs/2605.27740" data-source="https://arxiv.org/abs/2605.27740" data-title="UNIQUE: Universal Top-k Sparse Attention for Training-free Inference" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="8c6ea1f131" data-link="https://arxiv.org/abs/2605.27740" data-title="UNIQUE: Universal Top-k Sparse Attention for Training-free Inference"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-05-28<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">Page-granularity importance scoring for sparse attention that works for both training-free and sparsity-aware settings. Achieves up to 11.4x attention-kernel speedup and 5.3x end-to-end decoding speedup on long-context benchmarks.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27850">TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies</a></span> <button class="vote-btn" data-id="8851af42af" data-link="https://arxiv.org/abs/2605.27850" data-source="https://arxiv.org/abs/2605.27850" data-title="TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="8851af42af" data-link="https://arxiv.org/abs/2605.27850" data-title="TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-05-28<span class="item-keywords"> · token cost</span></span><span class="item-desc">Co-evolves agent prompts and communication graph topologies using a Pareto front over accuracy, token cost, and structural complexity. Matches debate-style multi-agent accuracy while using up to 5.69x fewer tokens.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="daewon" data-date="2026-05-29"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
+<div class="archive"><h3>Recent</h3>
+<ul>
+  <li><a href="2026-06-01.html">2026-06-01</a>: <span class="archive-headline">Cartesia Ink-2 leads streaming STT · DenseSteer dense math LLM</span></li>
+  <li><a href="2026-05-31.html">2026-05-31</a>: <span class="archive-headline">Context Distillation as Latent Memory Management</span></li>
+  <li><a href="2026-05-30.html">2026-05-30</a>: <span class="archive-headline">OpenAI Codex Windows · ElegantVLA · Knowledge Offloading · Parallax Attention · COLAGUARD · RoRo Routing</span></li>
+  <li><a href="2026-05-28.html">2026-05-28</a>: <span class="archive-headline">Qwen 3.7-Max lands for agents at 580 tps; new papers push KV cache compression past 5x and speculative decoding keeps evolving</span></li>
+</ul>
+</div>
 </div>
 
 <script>
@@ -115,14 +141,121 @@
     }).catch(function(){});
   dn.addEventListener('click',function(e){
     var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
     var wasVoted=!!myVotes[id];
     if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
     else{myVotes[id]=1;btn.classList.add('voted');}
     fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,item_id:id,title:title})
+        value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
