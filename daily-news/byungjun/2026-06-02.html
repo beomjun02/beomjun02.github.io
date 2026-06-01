@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -68,28 +87,24 @@
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-02">
 <h1>Daily News — 2026-06-02</h1>
 <div class="user-banner"><div class="user-handle">Byungjun</div><div class="user-categories">Robotics</div><div class="user-kws">VLA · Subtask-aware VLA · Subtask · Robot Data annoatation · long-horizon planning · Hierarchical VLA</div></div>
-<p class="page-meta">9 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">8 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30280">Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments</a></span> <button class="vote-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-source="https://arxiv.org/abs/2605.30280" data-title="Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-05-29<span class="item-keywords"> · VLA</span></span><span class="item-desc">A unified VLA model from Alibaba/Qwen that bridges manipulation, navigation, and other embodied tasks across different robot platforms. Built on Qwen&#x27;s multimodal foundation, it achieves strong out-of-distribution generalization including 26.6% zero-shot success on DOMINO dynamic manipulation — a notable step toward truly general-purpose embodied agents.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30877">Wall-OSS-0.5 Technical Report</a></span> <button class="vote-btn" data-id="6c71112942" data-link="https://arxiv.org/abs/2605.30877" data-source="https://arxiv.org/abs/2605.30877" data-title="Wall-OSS-0.5 Technical Report" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">An open-source 4B VLA built on a 3B VLM backbone, pretrained across 20+ embodiments and 1M+ robot trajectories per epoch. Before any fine-tuning, the pretrained checkpoint achieves non-trivial zero-shot real-robot behavior; after fine-tuning it reaches 60.5% average task progress on 15 real-robot tasks, outperforming π0.5 by 17.5%.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30695">Primitive Subspaces Mediate Few-Shot Transfer in VLAs</a></span> <button class="vote-btn" data-id="530e5ef887" data-link="https://arxiv.org/abs/2605.30695" data-source="https://arxiv.org/abs/2605.30695" data-title="Primitive Subspaces Mediate Few-Shot Transfer in VLAs" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA · Subtask</span></span><span class="item-desc">Training VLAs with primitive-segmented episodes creates a transferable sub-skill library enabling few-shot composition at inference time. Primitive-trained models reach 78% of fine-tuned performance with only 3 demonstrations versus 10 for flat-trained — a 3× sample efficiency gap replicated across seeds, architectures, and datasets. Ablating the primitive-decodable subspace degrades transfer by 32pp.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30795">Feat2Go: Visual Feature-Grounded Value Estimation for Embodied Reinforcement Learning</a></span> <button class="vote-btn" data-id="500644a7e7" data-link="https://arxiv.org/abs/2605.30795" data-source="https://arxiv.org/abs/2605.30795" data-title="Feat2Go: Visual Feature-Grounded Value Estimation for Embodied Reinforcement Learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA · long-horizon planning</span></span><span class="item-desc">Derives continuous progress targets from a pretrained visual world model via patch-level subgoal similarity and trend-based clustering, then trains an embodied value model to reshape rewards during VLA policy optimization. Improves OpenVLA-OFT from 17.5% to 82.9% OOD success on ManiSkill3 and reaches 88.8% on RoboTwin 2.0.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.29438">ElegantVLA: Learning When to Think for Efficient Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="c5d8cb7875" data-link="https://arxiv.org/abs/2605.29438" data-source="https://arxiv.org/abs/2605.29438" data-title="ElegantVLA: Learning When to Think for Efficient Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-05-30<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces adaptive computation for VLA models, learning when to invoke the full vision-language backbone versus running only the action head. Significantly improves control frequency and reduces computational cost while maintaining manipulation performance — a practical step toward real-time VLA deployment.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30877">Wall-OSS-0.5 Technical Report</a></span> <button class="vote-btn" data-id="6c71112942" data-link="https://arxiv.org/abs/2605.30877" data-source="https://arxiv.org/abs/2605.30877" data-title="Wall-OSS-0.5 Technical Report" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6c71112942" data-link="https://arxiv.org/abs/2605.30877" data-title="Wall-OSS-0.5 Technical Report"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">An open-source 4B VLA built on a 3B VLM backbone that demonstrates zero-shot real-robot behavior directly from pretraining — completing tasks including held-out deformable manipulation without any task-specific fine-tuning. After fine-tuning, reaches 60.5% average task progress on 15 real-robot tasks, outperforming π0.5 by 17.5%.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30695">Primitive Subspaces Mediate Few-Shot Transfer in VLAs</a></span> <button class="vote-btn" data-id="530e5ef887" data-link="https://arxiv.org/abs/2605.30695" data-source="https://arxiv.org/abs/2605.30695" data-title="Primitive Subspaces Mediate Few-Shot Transfer in VLAs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="530e5ef887" data-link="https://arxiv.org/abs/2605.30695" data-title="Primitive Subspaces Mediate Few-Shot Transfer in VLAs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA · Subtask</span></span><span class="item-desc">Shows that primitive-aware (sub-skill segmented) training produces a transferable skill library in VLAs: models reach 78% of fine-tuned performance with only 3 demonstrations, versus 10 needed by flat-trained models — a 3x sample efficiency gain replicated across OpenVLA and π0.5 on REASSEMBLE and LIBERO-Long.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30795">Feat2Go: Visual Feature-Grounded Value Estimation for Embodied RL</a></span> <button class="vote-btn" data-id="500644a7e7" data-link="https://arxiv.org/abs/2605.30795" data-source="https://arxiv.org/abs/2605.30795" data-title="Feat2Go: Visual Feature-Grounded Value Estimation for Embodied RL" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="500644a7e7" data-link="https://arxiv.org/abs/2605.30795" data-title="Feat2Go: Visual Feature-Grounded Value Estimation for Embodied RL"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA · long-horizon planning</span></span><span class="item-desc">A fine-grained value estimation framework that reshapes sparse terminal rewards for VLA policy optimization using patch-level visual progress signals from a pretrained world model. On ManiSkill3, improves OpenVLA-OFT from 17.5% to 82.9% OOD success; on RoboTwin 2.0, achieves 88.8% under domain randomization.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.30484">ELAN4D: Embodiment-Centric 4D Supervision for VLA Models</a></span> <button class="vote-btn" data-id="2d6a4fb717" data-link="https://arxiv.org/abs/2605.30484" data-source="https://arxiv.org/abs/2605.30484" data-title="ELAN4D: Embodiment-Centric 4D Supervision for VLA Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2d6a4fb717" data-link="https://arxiv.org/abs/2605.30484" data-title="ELAN4D: Embodiment-Centric 4D Supervision for VLA Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">Enhances VLA robustness by injecting future robot keypoint track predictions as auxiliary 4D supervision during training. The plug-and-play decoder is discarded at inference, adding zero overhead while achieving substantial gains under camera, background, and layout distribution shifts on LIBERO, LIBERO-Plus, and RoboTwin2.0.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.31234">HARP-VLA: Human-Robot Aligned Representation Learning for VLA Models</a></span> <button class="vote-btn" data-id="2f028a6357" data-link="https://arxiv.org/abs/2605.31234" data-source="https://arxiv.org/abs/2605.31234" data-title="HARP-VLA: Human-Robot Aligned Representation Learning for VLA Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2f028a6357" data-link="https://arxiv.org/abs/2605.31234" data-title="HARP-VLA: Human-Robot Aligned Representation Learning for VLA Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">Addresses the visual domain gap between human videos and robot data for VLA pretraining by aligning representations across embodiments using limited paired demonstrations as cross-embodiment bridges. Achieves 4.48 average length on CALVIN ABC→D and a 7.1% real-world success rate gain over the strongest baseline.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.31286">DeMaVLA: A VLA Foundation Model for Generalizable Deformable Manipulation</a></span> <button class="vote-btn" data-id="9718322b0a" data-link="https://arxiv.org/abs/2605.31286" data-source="https://arxiv.org/abs/2605.31286" data-title="DeMaVLA: A VLA Foundation Model for Generalizable Deformable Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9718322b0a" data-link="https://arxiv.org/abs/2605.31286" data-title="DeMaVLA: A VLA Foundation Model for Generalizable Deformable Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">A VLA foundation model targeting deformable object folding — one of manipulation&#x27;s hardest sub-domains — handling varying clothing categories, geometries, materials, and scenes from random initial states. Addresses the scarcity of deformable manipulation data that limits current general-purpose VLAs.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai">Welcome NVIDIA Cosmos 3: The First Open Omni-model for Physical AI Reasoning and Action</a></span> <button class="vote-btn" data-id="c07a24378d" data-link="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-source="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-title="Welcome NVIDIA Cosmos 3: The First Open Omni-model for Physical AI Reasoning and Action" title="upvote"><span class="tri"></span></button></div><span class="item-meta">NVIDIA · 2026-06-01</span><span class="item-desc">NVIDIA releases Cosmos 3, an open omni-model designed for Physical AI that supports both world understanding and embodied action generation. Extends the Cosmos family to serve as a foundation for robotics and autonomous systems, combining reasoning over physical scenes with action-level outputs.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.7-Plus: Multimodal Agent Intelligence</a></span> <button class="vote-btn" data-id="c89d517dbb" data-link="https://qwen.ai/research" data-source="https://qwen.ai/research" data-title="Qwen3.7-Plus: Multimodal Agent Intelligence" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Qwen · 2026-06-01</span><span class="item-desc">A multimodal agent model that unifies vision and language into a single versatile agent foundation. Building on Qwen3.7&#x27;s strong text backbone, Qwen3.7-Plus delivers a comprehensive upgrade in vision-language capabilities for agentic task execution across coding, office automation, and multi-step reasoning.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/claude-opus-4-8">Introducing Claude Opus 4.8</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://www.anthropic.com/news/claude-opus-4-8" data-title="Introducing Claude Opus 4.8" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">An upgrade to Anthropic&#x27;s Opus class with stronger performance across coding, agentic tasks, and professional work, plus improved consistency for long-running autonomous operations. Part of the Claude 4.X family alongside Sonnet 4.6 and Haiku 4.5.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.7-Plus: Multimodal Agent Intelligence</a></span> <button class="vote-btn" data-id="c89d517dbb" data-link="https://qwen.ai/research" data-source="https://qwen.ai/research" data-title="Qwen3.7-Plus: Multimodal Agent Intelligence" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c89d517dbb" data-link="https://qwen.ai/research" data-title="Qwen3.7-Plus: Multimodal Agent Intelligence"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Qwen · 2026-06-01</span><span class="item-desc">A multimodal agent model from Alibaba&#x27;s Qwen team that unifies vision and language into a single agent foundation. Builds on Qwen3.7&#x27;s text backbone with a comprehensive upgrade in vision-language capabilities, designed for agent workflows spanning code, office automation, and multi-step autonomous execution.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai">Welcome NVIDIA Cosmos 3: The First Open Omni-model for Physical AI Reasoning and Action</a></span> <button class="vote-btn" data-id="c07a24378d" data-link="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-source="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-title="Welcome NVIDIA Cosmos 3: The First Open Omni-model for Physical AI Reasoning and Action" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c07a24378d" data-link="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-title="Welcome NVIDIA Cosmos 3: The First Open Omni-model for Physical AI Reasoning and Action"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">NVIDIA · 2026-06-01</span><span class="item-desc">NVIDIA releases Cosmos 3, an open omni-model for physical AI that integrates reasoning and action generation. Positioned as the first open model designed specifically for physical AI applications including robotics and embodied agents, released via Hugging Face.</span></li>
 </ul>
-<h2>News</h2>
-<ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea">Anthropic appoints KiYoung Choi as Representative Director of Korea</a></span> <button class="vote-btn" data-id="de7e3e42c7" data-link="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-source="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-title="Anthropic appoints KiYoung Choi as Representative Director of Korea" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-26</span><span class="item-desc">Anthropic names KiYoung Choi as Korea&#x27;s first Representative Director ahead of opening its Seoul office. Concrete signal that Anthropic is investing in the Korean enterprise market — likely matters for KAIST / Korean labs angling for closer Claude infrastructure access, on-the-ground support, and university partnerships.</span></li>
-</ul>
+
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-02"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
 
 <script>
@@ -118,6 +133,113 @@
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
         value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
