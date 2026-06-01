@@ -24,9 +24,6 @@
 .daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
 .daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
 .daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
 .daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
 .daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
 .daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
@@ -38,28 +35,10 @@
 @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
 
-.daily-news .announcement { color: inherit; font-size: 0.9em; margin: 1.5em 0; text-align: center; }
-.daily-news .users-list { list-style: none; padding-left: 0; }
-.daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
-.daily-news .users-list a { text-decoration: none; }
-.daily-news .users-list strong { font-size: 1.1em; color: inherit; }
-.daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
-.daily-news .users-headline { color: #666; display: block; margin-top: 0.25em; font-size: 0.95em; }
-
-.daily-news .trending { margin-bottom: 2em; }
-.daily-news .trending h2 { font-size: 1.15em; border-bottom: 1px solid #d4a017; padding-bottom: 0.3em; color: #d4a017; }
-.daily-news .trending ul { list-style: none; padding-left: 0; }
-.daily-news .trending li { margin-bottom: 0.8em; padding: 0.5em 0.7em; border-left: 3px solid #d4a017; background: rgba(212,160,23,0.04); }
-.daily-news .trending .t-score { font-weight: 600; color: #d4a017; margin-right: 0.5em; }
-.daily-news .trending .t-title a { text-decoration: none; color: inherit; }
-.daily-news .trending .t-title a:hover { color: #d4a017; }
-.daily-news .trending .t-voters { font-size: 0.8em; color: #888; display: block; margin-top: 0.2em; }
-.daily-news .trending-loading { color: #888; font-size: 0.9em; }
-
 /* Dev badge */
 .dev-badge { display: inline-block; background: #d4a017; color: #000; font-size: 0.65em; font-weight: 700; padding: 0.15em 0.5em; border-radius: 3px; vertical-align: middle; margin-left: 0.4em; letter-spacing: 0.05em; }
 
-/* Dark mode */
+/* Dark mode base */
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -69,9 +48,6 @@
   .daily-news .item-desc { color: #ccc; }
   .daily-news .item-meta { color: #aaa; }
   .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
   .daily-news .feedback { border-top-color: #444; }
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
@@ -79,69 +55,327 @@
   .daily-news .vote-btn { border-color: #888; color: #aaa; }
   @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
   .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-  .daily-news .users-list li { border-color: #333; }
-  .daily-news .users-list a { color: #64b5f6; }
-  .daily-news .users-list a:hover { color: #f09228; }
-  .daily-news .users-date { color: #aaa; }
-  .daily-news .users-headline { color: #ccc; }
-  .daily-news .trending li { background: rgba(212,160,23,0.06); }
-  .daily-news .trending .t-title a { color: #f0f0f0; }
 }
 @media (max-width: 600px) {
   .daily-news .vote-btn { padding: 0.25em 0.35em; }
 }
 
-/* ===== EXPERIMENTS: edit below this line ===== */
+/* ===== EXPERIMENTS: Share feature ===== */
 
+/* Share button */
+.daily-news .share-btn {
+  background: none;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  padding: 0.15em 0.4em;
+  cursor: pointer;
+  color: #888;
+  font-family: inherit;
+  font-size: 0.82em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+@media (hover: hover) {
+  .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; }
+}
+.daily-news .share-btn.shared {
+  border-color: #d4a017;
+  color: #d4a017;
+  background: rgba(212,160,23,0.1);
+}
+
+/* Share dropdown */
+.daily-news .share-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.5em 0.6em;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  min-width: 150px;
+  white-space: nowrap;
+}
+.daily-news .share-dropdown label {
+  display: block;
+  padding: 0.25em 0.3em;
+  font-size: 0.88em;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.daily-news .share-dropdown label:hover {
+  background: rgba(212,160,23,0.08);
+}
+.daily-news .share-dropdown input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #d4a017;
+}
+.daily-news .share-send {
+  display: block;
+  width: 100%;
+  margin-top: 0.5em;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.35em 0.6em;
+  font-size: 0.85em;
+  font-family: inherit;
+  cursor: pointer;
+}
+.daily-news .share-send:hover { background: #555; }
+
+/* Shared-by inline badge */
+.daily-news .share-badge {
+  color: #d4a017;
+  font-size: 0.82em;
+  display: block;
+  margin-top: 0.15em;
+}
+
+/* Shared with you section */
+.daily-news .shared-section { margin-top: 2em; border-top: 1px solid #d4a017; padding-top: 1em; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
+
+/* Dark mode — share */
+@media (prefers-color-scheme: dark) {
+  .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
+  .daily-news .shared-section { border-top-color: #d4a017; }
+}
+@media (max-width: 600px) {
+  .daily-news .share-btn { padding: 0.1em 0.3em; font-size: 0.75em; }
+}
 </style>
 </head>
 <body>
-<div class="daily-news">
-<h1>Daily News <span class="dev-badge">DEV</span></h1>
-<p class="page-meta"><a href="../">← production</a></p>
-<p class="announcement">Design experiment page — edit CSS/HTML here freely</p>
-<div class="trending" id="trending-section" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-date="2026-06-01"><h2>Trending</h2><p class="trending-loading">Loading...</p></div>
-<p class="page-meta">9 reader(s) · <a href="../devlog/">dev log</a></p>
-<ul class="users-list">
-  <li><a href="../beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">OpenAI Rosalind Biodefense · Cartesia Ink-2 STT</span></li>
-  <li><a href="../byungjun/"><strong>Byungjun</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">Phase-Conditioned IL Failure Recovery · CGPO Critic-Guided Diffusion Policy</span></li>
-  <li><a href="../daewon/"><strong>Daewon</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">Cartesia Ink-2 leads streaming STT · DenseSteer dense math LLM</span></li>
-  <li><a href="../huiwon/"><strong>Huiwon</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">RoboWits Creative Problem Solving · ReasonBreak VLA Vulnerabilities · LLM-Guided Horizon-Aware Exploration · RL vs SFT Catastrophic Forgetting</span></li>
-  <li><a href="../john/"><strong>John</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">COBALT Cloud Teleoperation · GPT-5.5 DeepSWE #1 · PhAIL VLA Benchmark · VLAConf Task Confidence · LLM-Guided Horizon-Aware Exploration</span></li>
-  <li><a href="../kunwoong/"><strong>Kunwoong</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">Scaling Monosemanticity Claude 3 · OISD Self-Distillation · DenseSteer · MechELK Latent Knowledge · RL vs SFT Forgetting · Context Distillation · Embodied3DBench · PRO-CUA · Model Merging Projection</span></li>
-  <li><a href="../myungkyu/"><strong>Myungkyu</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">EXPO-FT achieves 30/30 VLA reliability · Nano World Models released · MolmoAct2 goes fully open</span></li>
-  <li><a href="../sanghyeok/"><strong>Sanghyeok</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">VLA-Pro Procedural Memory Transfer · Gaze2Act Gaze-Conditioned VLA · UniLab Heterogeneous Robot RL · EKSFT Entropy-KL Fine-Tuning</span></li>
-  <li><a href="../woomin/"><strong>Woomin</strong></a><span class="users-date">2026-06-01</span><span class="users-headline">Mistral Aerospace/Automotive/Energy · Fireworks AI $800M ARR 4x Growth · Anthropic Olah Pope Leo XIV · Knowledge Offloading LLM · Context Distillation · DenseSteer · GrepSeek · GTA Web Agents</span></li>
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-01">
+<h1>Daily News — 2026-06-01 <span class="dev-badge">DEV</span></h1>
+<div class="user-banner"><div class="user-handle">Beomjun</div><div class="user-categories">Robotics · Language</div><div class="user-kws">VLA · robot foundation model · robot learning · dexterous manipulation · point-based policy · sim-to-real RL · embodied MLLM · LLM · VLM</div></div>
+<p class="page-meta">12 items · last 7 days · <a href="../beomjun/">← production</a> · <a href="../">all users</a></p>
+<h2>News</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/AnthropicAI/status/2060061347522433422">Anthropic raises $65B Series H at $965B valuation</a></span> <button class="vote-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-source="https://x.com/AnthropicAI/status/2060061347522433422" data-title="Anthropic raises $65B Series H at $965B valuation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-title="Anthropic raises $65B Series H at $965B valuation">↗</button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic&#x27;s latest funding round is led by Altimeter, Dragoneer, Greenoaks, and Sequoia. The company also disclosed a $47B annualized revenue run-rate, driven by enterprise Claude deployments across industries.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands">Figure AI signs with Catalyst Brands to scale humanoid operations</a></span> <button class="vote-btn" data-id="80a52d3dbe" data-link="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-source="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-title="Figure AI signs with Catalyst Brands to scale humanoid operations" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="80a52d3dbe" data-link="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-title="Figure AI signs with Catalyst Brands to scale humanoid operations">↗</button></div><span class="item-meta">Figure AI · 2026-05-26<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Figure AI announced a partnership with Catalyst Brands to deploy humanoid robots in retail and logistics operations, extending its commercial deployment beyond the existing BMW factory line into a new industry vertical.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/OpenAI/status/2060376598642405492">OpenAI launches Rosalind Biodefense</a></span> <button class="vote-btn" data-id="b6485281c4" data-link="https://x.com/OpenAI/status/2060376598642405492" data-source="https://x.com/OpenAI/status/2060376598642405492" data-title="OpenAI launches Rosalind Biodefense" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b6485281c4" data-link="https://x.com/OpenAI/status/2060376598642405492" data-title="OpenAI launches Rosalind Biodefense">↗</button></div><span class="item-meta">OpenAI · 2026-05-29</span><span class="item-desc">OpenAI is launching Rosalind Biodefense to help trusted builders develop biodefense and pandemic preparedness capabilities, while expanding GPT-Rosalind access to select U.S. government and allied partners.</span></li>
 </ul>
+<h2>Releases</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/claudeai/status/2060042702150930686">Claude Opus 4.8: sharper judgment, longer independent work</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://x.com/claudeai/status/2060042702150930686" data-title="Claude Opus 4.8: sharper judgment, longer independent work" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-title="Claude Opus 4.8: sharper judgment, longer independent work">↗</button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Opus 4.8 builds on 4.7 with improved judgment, more honest self-assessment of progress, and the ability to work independently for longer stretches. Available at the same price across web, API, and all major cloud platforms.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/OpenAI/status/2060428604727771421">OpenAI Codex now supports Windows computer use</a></span> <button class="vote-btn" data-id="a96d8862b9" data-link="https://x.com/OpenAI/status/2060428604727771421" data-source="https://x.com/OpenAI/status/2060428604727771421" data-title="OpenAI Codex now supports Windows computer use" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a96d8862b9" data-link="https://x.com/OpenAI/status/2060428604727771421" data-title="OpenAI Codex now supports Windows computer use">↗</button></div><span class="item-meta">OpenAI · 2026-05-29</span><span class="item-desc">OpenAI&#x27;s Codex agent can now take actions on Windows machines via computer use, including when the laptop is locked. The ChatGPT mobile app also adds Windows support, letting users start and steer Codex tasks from their phone while work runs on the desktop.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/cartesia/status/2060041155216355376">Cartesia Ink-2 debuts as #1 streaming STT</a></span> <button class="vote-btn" data-id="9bceb2f1e2" data-link="https://x.com/cartesia/status/2060041155216355376" data-source="https://x.com/cartesia/status/2060041155216355376" data-title="Cartesia Ink-2 debuts as #1 streaming STT" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9bceb2f1e2" data-link="https://x.com/cartesia/status/2060041155216355376" data-title="Cartesia Ink-2 debuts as #1 streaming STT">↗</button></div><span class="item-meta">Cartesia · 2026-05-28</span><span class="item-desc">Cartesia&#x27;s Ink-2 model tops the new Artificial Analysis streaming speech-to-text leaderboard for accuracy, designed from the ground up for voice agents with low latency, eager transcripts, and semantic endpointing.</span></li>
+</ul>
+<h2>Papers</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30280">Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments</a></span> <button class="vote-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-source="https://arxiv.org/abs/2605.30280" data-title="Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-title="Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments">↗</button></div><span class="item-meta">arXiv cs.RO · 2026-05-31<span class="item-keywords"> · VLA · robot foundation model</span></span><span class="item-desc">Alibaba extends Qwen&#x27;s vision-language stack into a unified embodied foundation model spanning manipulation, navigation, and multiple robot embodiments within a single VLA checkpoint — the first to unify heterogeneous embodied tasks at this scale.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.29438">ElegantVLA: Learning When to Think for Efficient Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="c5d8cb7875" data-link="https://arxiv.org/abs/2605.29438" data-source="https://arxiv.org/abs/2605.29438" data-title="ElegantVLA: Learning When to Think for Efficient Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c5d8cb7875" data-link="https://arxiv.org/abs/2605.29438" data-title="ElegantVLA: Learning When to Think for Efficient Vision-Language-Action Models">↗</button></div><span class="item-meta">arXiv cs.RO · 2026-05-30<span class="item-keywords"> · VLA</span></span><span class="item-desc">A plug-in phase-adaptive inference framework for VLA models that dynamically schedules computation across the vision encoder, LLM, and action head — reusing temporal representations during stable motion — achieving up to 3.77x speedup and doubling control frequency on real robot tasks.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30226">BORA: Bridging Offline RL and Online Residual Adaptation for Real-World Dexterous VLA Models</a></span> <button class="vote-btn" data-id="902e86718f" data-link="https://arxiv.org/abs/2605.30226" data-source="https://arxiv.org/abs/2605.30226" data-title="BORA: Bridging Offline RL and Online Residual Adaptation for Real-World Dexterous VLA Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="902e86718f" data-link="https://arxiv.org/abs/2605.30226" data-title="BORA: Bridging Offline RL and Online Residual Adaptation for Real-World Dexterous VLA Models">↗</button></div><span class="item-meta">arXiv cs.RO · 2026-05-31<span class="item-keywords"> · VLA · dexterous manipulation</span></span><span class="item-desc">An offline-to-online RL post-training framework for dexterous VLA models that freezes the VLA base and introduces a lightweight human-in-the-loop residual adaptation mechanism. Achieves 33% absolute increase in success rate on five real-world dexterous tasks, with up to 43% improvement on unseen object generalization.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30282">Gaze2Act: Gaze-Conditioned VLA Policies for Interactive Robot Manipulation</a></span> <button class="vote-btn" data-id="84df7481a5" data-link="https://arxiv.org/abs/2605.30282" data-source="https://arxiv.org/abs/2605.30282" data-title="Gaze2Act: Gaze-Conditioned VLA Policies for Interactive Robot Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="84df7481a5" data-link="https://arxiv.org/abs/2605.30282" data-title="Gaze2Act: Gaze-Conditioned VLA Policies for Interactive Robot Manipulation">↗</button></div><span class="item-meta">arXiv cs.RO · 2026-05-31<span class="item-keywords"> · VLA</span></span><span class="item-desc">A VLA framework that uses human gaze as a dynamic intent signal for complex interactive manipulation on a Unitree G1 humanoid. Gaze provides a natural, low-burden modality for object disambiguation, fine-grained interaction, and dynamic intent steering, outperforming language-only baselines.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.29416">3DVLA: Enhancing VLA Models via 3D Spatial and Instance Understanding</a></span> <button class="vote-btn" data-id="5b049c4e9b" data-link="https://arxiv.org/abs/2605.29416" data-source="https://arxiv.org/abs/2605.29416" data-title="3DVLA: Enhancing VLA Models via 3D Spatial and Instance Understanding" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="5b049c4e9b" data-link="https://arxiv.org/abs/2605.29416" data-title="3DVLA: Enhancing VLA Models via 3D Spatial and Instance Understanding">↗</button></div><span class="item-meta">arXiv cs.RO · 2026-05-31<span class="item-keywords"> · VLA</span></span><span class="item-desc">A plug-and-play framework that injects robust 3D reasoning into pretrained VLAs without requiring extra manual labels, addressing weak 3D spatial extraction, inadequate instance understanding, and fragile reasoning under occlusion. Shows consistent gains on LIBERO-Plus and RoboTwin 2.0.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29360">MiraBench: Evaluating Action-Conditioned Reliability in Robotic World Models</a></span> <button class="vote-btn" data-id="70d6f3adfe" data-link="https://arxiv.org/abs/2605.29360" data-source="https://arxiv.org/abs/2605.29360" data-title="MiraBench: Evaluating Action-Conditioned Reliability in Robotic World Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="70d6f3adfe" data-link="https://arxiv.org/abs/2605.29360" data-title="MiraBench: Evaluating Action-Conditioned Reliability in Robotic World Models">↗</button></div><span class="item-meta">arXiv cs.AI · 2026-05-31<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">A hierarchical benchmark testing whether robotic world models respect physics, follow commanded actions, and detect optimism bias. Evaluates 12 model configurations and finds that visual fidelity is a poor proxy for action fidelity, scale doesn&#x27;t reliably improve action following, and optimism bias is pervasive.</span></li>
+</ul>
+<h2>Watch list</h2>
+<ul>
+  <li>🆕 <span class="item-title"><a href="https://www.orcahand.com/getting-started">Orca Hand BoM/CAD/Assembly Guide release</a></span><span class="item-meta"><span class="item-keywords">update</span></span><span class="item-desc">The target release date of June 1, 2026 has arrived. The wiki shows "IN PROGRESS" with the full BoM, CAD, and assembly guide listing a "target: june 1, 2026" timeline.</span></li>
+</ul>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-01"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
 </div>
 
+<!-- Vote JS (production mirror) -->
 <script>
 (function(){
-  var sec=document.getElementById('trending-section');if(!sec)return;
-  var url=sec.dataset.url,date=sec.dataset.date;
-  if(!url)return;
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
   var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  fetch(proxy+'?action=trending')
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
     .then(function(r){return r.json()})
     .then(function(d){
-      if(!d.items||!d.items.length){
-        sec.querySelector('.trending-loading').textContent='No trending items yet.';
-        return;
-      }
-      var ul=document.createElement('ul');
-      d.items.forEach(function(it){
-        var li=document.createElement('li');
-        li.innerHTML='<span class="t-score">+'+it.score+'</span>'
-          +'<span class="t-title"><a href="'+it.link+'">'+it.title+'</a></span>'
-          +'<span class="t-voters">voted by '+it.voters.join(', ')+'</span>';
-        ul.appendChild(li);
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
       });
-      var loading=sec.querySelector('.trending-loading');
-      if(loading)loading.remove();
-      sec.appendChild(ul);
-    }).catch(function(){
-      sec.querySelector('.trending-loading').textContent='Could not load trending.';
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,source:source,item_id:id,title:title})
+    }).catch(function(){});
+  });
+})();
+</script>
+
+<!-- Share JS (prototype with mock data) -->
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user;
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+
+  // Mock data — replace with fetch(proxy+'?action=shares&user='+user) in production
+  var MOCK_SHARES={
+    incoming:{
+      // Case A: Qwen-VLA is already in beomjun's feed
+      'da0612ad3f':{senders:['john']},
+      // Case B: items NOT in beomjun's feed
+      'mock_cobalt':{
+        senders:['john'],
+        title:'COBALT: Cloud-Native Teleoperation for Robot Learning at Scale',
+        link:'https://arxiv.org/abs/2605.30100',
+        meta:'arXiv cs.RO · 2026-05-30',
+        desc:'Cloud-native platform for large-scale robot demonstration collection via teleoperation, enabling distributed data gathering across multiple sites with consistent quality.',
+        keywords:'robot learning'
+      },
+      'mock_hands':{
+        senders:['john','kunwoong'],
+        title:'Chris Paxton: The state of robot hands in 2026',
+        link:'https://x.com/chris_j_paxton/status/2060019182066925601',
+        meta:'@chris_j_paxton · 2026-05-28',
+        desc:'Widely-shared deep-dive on why dexterous robot hands are still hard to build commercially, covering compliance, sensing, cost, and the gap between lab demos and production.',
+        keywords:'dexterous manipulation'
+      }
+    },
+    outgoing:{
+      'c5d8cb7875':['john']  // beomjun shared ElegantVLA to john
+    }
+  };
+
+  // 1. Mark outgoing shares
+  Object.keys(MOCK_SHARES.outgoing).forEach(function(id){
+    var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+    if(btn)btn.classList.add('shared');
+  });
+
+  // 2. Inject inline badges + collect not-in-feed
+  var notInFeed=[];
+  Object.keys(MOCK_SHARES.incoming).forEach(function(id){
+    var entry=MOCK_SHARES.incoming[id];
+    var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+    if(existing){
+      var li=existing.closest('li');
+      var meta=li.querySelector('.item-meta');
+      var badge=document.createElement('span');
+      badge.className='share-badge';
+      badge.textContent='↗ shared by '+entry.senders.join(', ');
+      if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+      else if(meta){meta.parentNode.appendChild(badge);}
+    }else{
+      notInFeed.push({id:id,data:entry});
+    }
+  });
+
+  // 3. Render "Shared with you" section
+  if(notInFeed.length>0){
+    var sec=document.createElement('div');
+    sec.className='shared-section';
+    sec.innerHTML='<h2>Shared with you</h2>';
+    var ul=document.createElement('ul');
+    notInFeed.forEach(function(item){
+      var d=item.data;
+      var kwHtml=d.keywords?'<span class="item-keywords"> · '+d.keywords+'</span>':'';
+      var li=document.createElement('li');
+      li.innerHTML=
+        '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+        +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+        +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">↗</button></div>'
+        +'<span class="item-meta">'+d.meta+kwHtml+'</span>'
+        +'<span class="share-badge">↗ shared by '+d.senders.join(', ')+'</span>'
+        +'<span class="item-desc">'+d.desc+'</span>';
+      ul.appendChild(li);
     });
+    sec.appendChild(ul);
+    var fb=dn.querySelector('.feedback');
+    if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+  }
+
+  // 4. Share button click handler
+  var activeDropdown=null;
+  function closeDropdown(){
+    if(activeDropdown){activeDropdown.remove();activeDropdown=null;}
+  }
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){
+      closeDropdown();
+    }
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+
+    if(activeDropdown){closeDropdown();return;}
+
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var lbl=document.createElement('label');
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        console.log('[SHARE]',btn.dataset.id,'→',targets.join(', '));
+        btn.classList.add('shared');
+        // Production: POST to proxy here
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+
+    btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
+  });
+})();
+</script>
+
+<!-- Feedback JS (production mirror) -->
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
+      sub=w.querySelector('.fb-submit');
+  var ph={feedback:'e.g. Papers section was great / too many LLM items',
+    edit_keyword:'e.g. add VLA / remove quantum computing',
+    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
+    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
+  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
+  sub.addEventListener('click',function(){
+    var v=val.value.trim();if(!v)return;
+    sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
+    });
+  });
 })();
 </script>
 
