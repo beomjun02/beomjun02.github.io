@@ -48,8 +48,80 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">10 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="010-canonical-matching-pipeline">
+<p class="page-meta">11 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="011-share-feature">
+<summary class="entry-title">011: Share Feature + Slack DM Notifications<span class="entry-meta"><span class="entry-date"> 2026-06-01</span><span class="entry-type"> Feature addition</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-06-01</p>
+<p><strong>Type:</strong> Feature addition</p>
+<h3>What</h3>
+<p>Per-item share button on all user pages. Users can share news items with specific colleagues. Recipients see shared items on their page + get a Slack DM notification.</p>
+<h3>Architecture</h3>
+<pre><code>
+[User clicks ➚] → dropdown (select recipients) → Send
+  → POST to Cloudflare Worker → Apps Script → Shares sheet + Slack DM
+[Page loads]
+  → GET shares from Worker → Apps Script reads Shares (24h window)
+  → JS renders: inline badge (item in feed) or &quot;Shared with you&quot; section (item not in feed)
+</code></pre>
+<h4>Data flow</h4>
+<pre><code>
+Shares sheet: Timestamp | Sender | Recipient | Date | ItemID | Link | Title
+Users sheet:  ... | SlackID (new column)
+</code></pre>
+<ul>
+<li>Share POST: one row per (sender, recipient, date, itemId), dedup on insert</li>
+<li>Share GET: filters by Timestamp within last 24 hours (rolling expiry)</li>
+<li>Slack DM: reads SlackID from Users sheet, sends via <code>chat.postMessage</code> bot API</li>
+</ul>
+<h4>Display — two cases</h4>
+<p><strong>Case A (item in recipient&#x27;s feed):</strong> Gold inline badge <code>↗ shared by Sender</code> below item-meta.</p>
+<p><strong>Case B (item NOT in recipient&#x27;s feed):</strong> Full item rendered in &quot;Shared with you&quot; section at page bottom, above feedback form.</p>
+<h3>Design decisions</h3>
+<h4>Share icon: SVG curved arrow (filled)</h4>
+<p>Started with text <code>↗</code> → CSS arrow → finally inline SVG. Text had cross-platform emoji rendering issues, CSS couldn&#x27;t pixel-match the upvote triangle. SVG <code>&lt;path&gt;</code> gives pixel-perfect filled shape matching upvote triangle weight.</p>
+<pre><code>
+&lt;svg width=&quot;15&quot; height=&quot;10&quot; viewBox=&quot;-0.5 -0.5 13 9&quot; fill=&quot;currentColor&quot;&gt;
+  &lt;path d=&quot;M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z&quot;/&gt;
+&lt;/svg&gt;
+</code></pre>
+<h4>Button sizing: fixed px</h4>
+<p>Vote and share buttons use <code>box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px;</code> for device-agnostic identical sizing. The <code>margin-top: 2px</code> aligns button center with first text line center.</p>
+<h4>Mobile layout: absolute positioning</h4>
+<p>At <code>≤600px</code>, buttons stack vertically via <code>position: absolute; right: 0; top: 0/22px</code>. Grid approach caused buttons to spread apart with long titles.</p>
+<h4>No cancel/unsend</h4>
+<p>Shares are send-only. Cancel would affect recipient&#x27;s page (side effect), and 24h expiry handles cleanup naturally.</p>
+<h4>24-hour rolling expiry</h4>
+<p><code>_getShares</code> filters by <code>Timestamp &lt; now - 24h</code>, not calendar date. No cleanup job needed — rows accumulate but only recent ones are returned.</p>
+<h4>Slack DM via Users sheet</h4>
+<p>SlackID stored in Users sheet instead of hardcoded map. <code>_getSlackUserMap()</code> reads dynamically. New users get auto-lookup from daily-news-beta Slack channel via <code>check_new_users.py</code>.</p>
+<h4>Upvotes on shared items</h4>
+<p>Shared items use the same canonical <code>data-id</code> — upvoting a shared item is indistinguishable from upvoting it directly. No vote fragmentation.</p>
+<h3>Edge cases handled</h3>
+<ul>
+<li><strong>Item already in feed + shared</strong>: inline badge only, no duplicate in bottom section</li>
+<li><strong>Multiple senders</strong>: combined as &quot;shared by john, kunwoong&quot;</li>
+<li><strong>Self-share prevented</strong>: sender excluded from dropdown user list</li>
+<li><strong>Already-sent recipients</strong>: pre-checked + disabled in dropdown</li>
+<li><strong>Outgoing state persists</strong>: re-opening dropdown shows who you already sent to</li>
+<li><strong>history.jsonl unaffected</strong>: shares are JS-only, independent of build pipeline</li>
+</ul>
+<h3>Files changed</h3>
+<table>
+<tr><th>File</th><th>Change</th></tr>
+<tr><td><code>scripts/post_html.py</code></td><td>Share button HTML + CSS + SHARE_JS in render pipeline</td></tr>
+<tr><td><code>scripts/feedback_webapp.gs</code></td><td>Shares sheet, <code>_insertShares</code>, <code>_getShares</code>, <code>_notifyShareDM</code>, <code>_updateSlackId</code>, <code>_getSlackUserMap</code></td></tr>
+<tr><td><code>scripts/check_new_users.py</code></td><td>Auto Slack ID lookup from daily-news-beta channel</td></tr>
+<tr><td><code>site/daily-news/dev/index.html</code></td><td>Design prototype (used for iteration before production)</td></tr>
+<tr><td><code>~/.config/daily-news/.slack-bot-token</code></td><td>Slack bot token (local file, not in repo)</td></tr>
+</table>
+<h3>Slack integration</h3>
+<ul>
+<li><strong>Bot</strong>: existing <code>daily-news</code> Slack App, added <code>chat:write</code>, <code>users:read</code>, <code>im:write</code>, <code>groups:read</code> scopes</li>
+<li><strong>Channel</strong>: <code>C0B5RLK19E3</code> (daily-news-beta, private)</li>
+<li><strong>DM format</strong>: <code>Shared with you by *Sender* — Title</code> (title is clickable link)</li>
+<li><strong>Token</strong>: stored in Apps Script (<code>_SLACK_BOT_TOKEN</code>) + server file (<code>.slack-bot-token</code>)</li>
+</ul></div>
+</details><details class="entry" id="010-canonical-matching-pipeline">
 <summary class="entry-title">010: Canonical Item Matching Pipeline<span class="entry-meta"><span class="entry-date"> 2026-05-31</span><span class="entry-type"> Feature</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-31</p>
 <p><strong>Type:</strong> Feature</p>
@@ -168,7 +240,7 @@ Phase 3 (~1min):
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
 <p><strong>Type:</strong> Fix</p>
 <h3>Problem</h3>
-<p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29360</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
+<p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29358</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
 <h3>Solution</h3>
 <p><code>parse_arxiv.py</code> — arXiv + HF HTML → JSON 사전 파싱 (Python, rule-based). LLM이 raw HTML 대신 <code>{id, url, title, abstract}</code> JSON 읽음. ID가 코드에서 추출되므로 hallucination 불가.</p>
 <ul>
