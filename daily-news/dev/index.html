@@ -354,7 +354,7 @@
     });
     dd.appendChild(send);
 
-    btn.style.position='relative';
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
     btn.appendChild(dd);
     activeDropdown=dd;
   });
