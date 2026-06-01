@@ -244,16 +244,14 @@
         title:'COBALT: Cloud-Native Teleoperation for Robot Learning at Scale',
         link:'https://arxiv.org/abs/2605.30100',
         meta:'arXiv cs.RO · 2026-05-30',
-        desc:'Cloud-native platform for large-scale robot demonstration collection via teleoperation, enabling distributed data gathering across multiple sites with consistent quality.',
-        keywords:'robot learning'
+        desc:'Cloud-native platform for large-scale robot demonstration collection via teleoperation, enabling distributed data gathering across multiple sites with consistent quality.'
       },
       'mock_hands':{
         senders:['john','kunwoong'],
         title:'Chris Paxton: The state of robot hands in 2026',
         link:'https://x.com/chris_j_paxton/status/2060019182066925601',
         meta:'@chris_j_paxton · 2026-05-28',
-        desc:'Widely-shared deep-dive on why dexterous robot hands are still hard to build commercially, covering compliance, sensing, cost, and the gap between lab demos and production.',
-        keywords:'dexterous manipulation'
+        desc:'Widely-shared deep-dive on why dexterous robot hands are still hard to build commercially, covering compliance, sensing, cost, and the gap between lab demos and production.'
       }
     },
     outgoing:{
@@ -293,13 +291,12 @@
     var ul=document.createElement('ul');
     notInFeed.forEach(function(item){
       var d=item.data;
-      var kwHtml=d.keywords?'<span class="item-keywords"> · '+d.keywords+'</span>':'';
       var li=document.createElement('li');
       li.innerHTML=
         '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
         +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
         +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">↗</button></div>'
-        +'<span class="item-meta">'+d.meta+kwHtml+'</span>'
+        +'<span class="item-meta">'+d.meta+'</span>'
         +'<span class="share-badge">↗ shared by '+d.senders.join(', ')+'</span>'
         +'<span class="item-desc">'+d.desc+'</span>';
       ul.appendChild(li);
