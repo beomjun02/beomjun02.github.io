@@ -323,11 +323,16 @@
 
     if(activeDropdown){closeDropdown();return;}
 
+    var itemId=btn.dataset.id;
+    var alreadySent=MOCK_SHARES.outgoing[itemId]||[];
     var dd=document.createElement('div');
     dd.className='share-dropdown';
     otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
       var lbl=document.createElement('label');
-      lbl.innerHTML='<input type="checkbox" value="'+u+'"> '+u.charAt(0).toUpperCase()+u.slice(1);
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1)+(sent?' ✓':'');
       dd.appendChild(lbl);
     });
     var send=document.createElement('button');
@@ -339,8 +344,10 @@
       var targets=[];
       checked.forEach(function(cb){targets.push(cb.value);});
       if(targets.length){
-        console.log('[SHARE]',btn.dataset.id,'→',targets.join(', '));
+        console.log('[SHARE]',itemId,'→',targets.join(', '));
         btn.classList.add('shared');
+        if(!MOCK_SHARES.outgoing[itemId])MOCK_SHARES.outgoing[itemId]=[];
+        targets.forEach(function(t){if(MOCK_SHARES.outgoing[itemId].indexOf(t)<0)MOCK_SHARES.outgoing[itemId].push(t);});
         // Production: POST to proxy here
       }
       closeDropdown();
