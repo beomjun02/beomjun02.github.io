@@ -14,7 +14,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.25em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -63,7 +63,7 @@
     grid-template-columns: 1fr auto;
     gap: 0.1em 0.25em;
   }
-  .daily-news .item-row .item-title { grid-column: 1; grid-row: 1 / 3; align-self: center; }
+  .daily-news .item-row .item-title { grid-column: 1; grid-row: 1 / 3; align-self: start; }
   .daily-news .item-row .vote-btn { grid-column: 2; grid-row: 1; }
   .daily-news .item-row .share-btn { grid-column: 2; grid-row: 2; }
 }
