@@ -168,7 +168,7 @@ Phase 3 (~1min):
 <div class="entry-body"><p><strong>Date:</strong> 2026-05-30</p>
 <p><strong>Type:</strong> Fix</p>
 <h3>Problem</h3>
-<p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29358</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
+<p>LLM이 arXiv HTML에서 ID를 추출할 때 hallucinate — MiraBench 논문 ID가 2자리 틀림 (<code>2605.29360</code> → 실제 <code>2605.29360</code>). 27개 중 1건.</p>
 <h3>Solution</h3>
 <p><code>parse_arxiv.py</code> — arXiv + HF HTML → JSON 사전 파싱 (Python, rule-based). LLM이 raw HTML 대신 <code>{id, url, title, abstract}</code> JSON 읽음. ID가 코드에서 추출되므로 hallucination 불가.</p>
 <ul>
