@@ -233,86 +233,76 @@
 })();
 </script>
 
-<!-- Share JS (prototype with mock data) -->
+<!-- Share JS (live API) -->
 <script>
 (function(){
   var dn=document.querySelector('.daily-news');if(!dn)return;
-  var user=dn.dataset.user;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
   var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
   var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
 
-  // Mock data — replace with fetch(proxy+'?action=shares&user='+user) in production
-  var MOCK_SHARES={
-    incoming:{
-      // Case A: Qwen-VLA is already in beomjun's feed
-      'da0612ad3f':{senders:['john']},
-      // Case B: items NOT in beomjun's feed
-      'mock_cobalt':{
-        senders:['john'],
-        title:'COBALT: Cloud-Native Teleoperation for Robot Learning at Scale',
-        link:'https://arxiv.org/abs/2605.30100',
-        meta:'arXiv cs.RO · 2026-05-30',
-        desc:'Cloud-native platform for large-scale robot demonstration collection via teleoperation, enabling distributed data gathering across multiple sites with consistent quality.'
-      },
-      'mock_hands':{
-        senders:['john','kunwoong'],
-        title:'Chris Paxton: The state of robot hands in 2026',
-        link:'https://x.com/chris_j_paxton/status/2060019182066925601',
-        meta:'@chris_j_paxton · 2026-05-28',
-        desc:'Widely-shared deep-dive on why dexterous robot hands are still hard to build commercially, covering compliance, sensing, cost, and the gap between lab demos and production.'
-      }
-    },
-    outgoing:{
-      'c5d8cb7875':['john']  // beomjun shared ElegantVLA to john
-    }
-  };
-
-  // 1. Mark outgoing shares
-  Object.keys(MOCK_SHARES.outgoing).forEach(function(id){
-    var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
-    if(btn)btn.classList.add('shared');
-  });
-
-  // 2. Inject inline badges + collect not-in-feed
-  var notInFeed=[];
-  Object.keys(MOCK_SHARES.incoming).forEach(function(id){
-    var entry=MOCK_SHARES.incoming[id];
-    var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
-    if(existing){
-      var li=existing.closest('li');
-      var meta=li.querySelector('.item-meta');
-      var badge=document.createElement('span');
-      badge.className='share-badge';
-      badge.textContent='↗︎ shared by '+entry.senders.join(', ');
-      if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
-      else if(meta){meta.parentNode.appendChild(badge);}
-    }else{
-      notInFeed.push({id:id,data:entry});
-    }
-  });
-
-  // 3. Render "Shared with you" section
-  if(notInFeed.length>0){
-    var sec=document.createElement('div');
-    sec.className='shared-section';
-    sec.innerHTML='<h2>Shared with you</h2>';
-    var ul=document.createElement('ul');
-    notInFeed.forEach(function(item){
-      var d=item.data;
-      var li=document.createElement('li');
-      li.innerHTML=
-        '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
-        +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
-        +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div>'
-        +'<span class="item-meta">'+d.meta+'</span>'
-        +'<span class="share-badge">↗︎ shared by '+d.senders.join(', ')+'</span>'
-        +'<span class="item-desc">'+d.desc+'</span>';
-      ul.appendChild(li);
+  function renderShares(){
+    // 1. Mark outgoing shares
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
     });
-    sec.appendChild(ul);
-    var fb=dn.querySelector('.feedback');
-    if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+
+    // 2. Inject inline badges + collect not-in-feed
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='↗︎ shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+
+    // 3. Render "Shared with you" section
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">↗︎ shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
   }
+
+  // Load shares from API
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.status==='ok'){
+        shareData=d;
+        renderShares();
+      }
+    }).catch(function(err){console.log('shares load failed',err);});
 
   // 4. Share button click handler
   var activeDropdown=null;
@@ -331,7 +321,7 @@
     if(activeDropdown){closeDropdown();return;}
 
     var itemId=btn.dataset.id;
-    var alreadySent=MOCK_SHARES.outgoing[itemId]||[];
+    var alreadySent=shareData.outgoing[itemId]||[];
     var dd=document.createElement('div');
     dd.className='share-dropdown';
     otherUsers.forEach(function(u){
@@ -347,15 +337,18 @@
     send.textContent='Send';
     send.addEventListener('click',function(ev){
       ev.stopPropagation();
-      var checked=dd.querySelectorAll('input:checked');
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
       var targets=[];
       checked.forEach(function(cb){targets.push(cb.value);});
       if(targets.length){
-        console.log('[SHARE]',itemId,'→',targets.join(', '));
         btn.classList.add('shared');
-        if(!MOCK_SHARES.outgoing[itemId])MOCK_SHARES.outgoing[itemId]=[];
-        targets.forEach(function(t){if(MOCK_SHARES.outgoing[itemId].indexOf(t)<0)MOCK_SHARES.outgoing[itemId].push(t);});
-        // Production: POST to proxy here
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
       }
       closeDropdown();
     });
