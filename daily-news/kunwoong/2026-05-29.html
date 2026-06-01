@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -71,28 +90,36 @@
 <p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29350">ConMoE: Expert-Pool Consolidation via Prototype Reassignment for MoE Compression</a></span> <button class="vote-btn" data-id="73094c0499" data-link="https://arxiv.org/abs/2605.29350" data-source="https://arxiv.org/abs/2605.29350" data-title="ConMoE: Expert-Pool Consolidation via Prototype Reassignment for MoE Compression" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-05-29<span class="item-keywords"> · MoE</span></span><span class="item-desc">A <strong>train-free compression framework</strong> for MoE language models that selects pretrained experts as reusable prototypes and remaps all original expert slots to them. <strong>Matches or outperforms</strong> pruning and merging baselines at <strong>25–50% routed-expert reduction</strong> on DeepSeek-MoE, Qwen3-30B-A3B, and OLMoE without any weight updates.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29251">Provably Secure Agent Guardrail</a></span> <button class="vote-btn" data-id="827561b1e7" data-link="https://arxiv.org/abs/2605.29251" data-source="https://arxiv.org/abs/2605.29251" data-title="Provably Secure Agent Guardrail" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-05-29<span class="item-keywords"> · agent · trustworthy</span></span><span class="item-desc">Identifies a <strong>fundamental security gap</strong> in agentic AI caused by unreliable semantic guardrails and proposes ePCA, a <strong>neural-symbolic isolation architecture</strong> that forces agents to formalize intentions into first-order logic before any physical action. Achieves <strong>zero attack success rate</strong> and zero false positives in adversarial evaluations.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29313">PatchBoard: Schema-Grounded State Mutation for Multi-Agent Collaboration</a></span> <button class="vote-btn" data-id="75723fb891" data-link="https://arxiv.org/abs/2605.29313" data-source="https://arxiv.org/abs/2605.29313" data-title="PatchBoard: Schema-Grounded State Mutation for Multi-Agent Collaboration" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-29<span class="item-keywords"> · agent · architecture</span></span><span class="item-desc">Replaces inter-agent natural-language dialogue with <strong>validated JSON Patch mutations</strong> over a shared structured state, enforced by a deterministic kernel. On 630 ALFWorld episodes, achieves <strong>84.6% success vs. 30.8% for LangGraph</strong> while cutting tokens per successful task from 368k to 45.5k.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29224">Relevance as a Vulnerability: How Web Retrieval Degrades Safety Alignment in LLM Agents</a></span> <button class="vote-btn" data-id="6efccdc238" data-link="https://arxiv.org/abs/2605.29224" data-source="https://arxiv.org/abs/2605.29224" data-title="Relevance as a Vulnerability: How Web Retrieval Degrades Safety Alignment in LLM Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-05-29<span class="item-keywords"> · agent · trustworthy</span></span><span class="item-desc">Introduces AgentREVEAL, a diagnostic framework revealing that web retrieval in LLM agent pipelines <strong>systematically weakens safety alignment</strong>, including a &quot;Safe Source Paradox&quot; where even safety-oriented sources <strong>increase harmful compliance by ~25%</strong>. Backed by HarmURLBench (1,405 real URLs, 320 harmful behaviors).</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29157">Parallax: Parameterized Local Linear Attention for Language Modeling</a></span> <button class="vote-btn" data-id="61e7335bb2" data-link="https://arxiv.org/abs/2605.29157" data-source="https://arxiv.org/abs/2605.29157" data-title="Parallax: Parameterized Local Linear Attention for Language Modeling" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-05-29<span class="item-keywords"> · architecture · test-time</span></span><span class="item-desc">A new attention <strong>architecture</strong> derived from the <strong>test-time regression framework</strong> that upgrades softmax attention to a local linear estimator with provably better bias-variance tradeoffs. Scaled to 1.7B parameters, it delivers <strong>consistent perplexity improvements</strong> over standard attention with a hardware-aware kernel outperforming FlashAttention 2/3.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29325">Multi-Stage VLM Pipeline for Zero-Shot Traffic Accident Understanding</a></span> <button class="vote-btn" data-id="1fc57e26ac" data-link="https://arxiv.org/abs/2605.29325" data-source="https://arxiv.org/abs/2605.29325" data-title="Multi-Stage VLM Pipeline for Zero-Shot Traffic Accident Understanding" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-05-29<span class="item-keywords"> · VLM · MoE</span></span><span class="item-desc">CVPR 2026 ACCIDENT challenge <strong>1st-place solution</strong> using a frozen Qwen3-VL-32B in a three-stage pipeline (joint prediction, time refinement, centroid grounding), <strong>blended with a 235B MoE model</strong>. Achieves +0.21 over the strongest host baseline.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.28816">Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players</a></span> <button class="vote-btn" data-id="39490e084d" data-link="https://arxiv.org/abs/2605.28816" data-source="https://x.com/_akhaliq/status/2059826321392357488" data-title="Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-29<span class="item-keywords"> · agent</span></span><span class="item-desc">A generative world model for <strong>multi-agent interactive video</strong> generation using simplex rotary agent encoding and <strong>sparse hub attention</strong> for scalable, permutation-symmetric interaction. Extends world modeling beyond two-player settings to complex multi-agent scenarios.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span> <button class="vote-btn" data-id="3c7fa56b81" data-link="https://arxiv.org/abs/2605.23904" data-source="https://x.com/_akhaliq/status/2060017094545055957" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-05-23<span class="item-keywords"> · agent</span></span><span class="item-desc">A text-space optimizer that trains <strong>evolving agent skills as external state</strong> with stable updates and <strong>zero deployment overhead</strong>. Top paper of the week with 192 upvotes on Hugging Face.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29350">ConMoE: Expert-Pool Consolidation via Prototype Reassignment for MoE Compression</a></span> <button class="vote-btn" data-id="73094c0499" data-link="https://arxiv.org/abs/2605.29350" data-source="https://arxiv.org/abs/2605.29350" data-title="ConMoE: Expert-Pool Consolidation via Prototype Reassignment for MoE Compression" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="73094c0499" data-link="https://arxiv.org/abs/2605.29350" data-title="ConMoE: Expert-Pool Consolidation via Prototype Reassignment for MoE Compression"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-05-29<span class="item-keywords"> · MoE</span></span><span class="item-desc">A <strong>train-free compression framework</strong> for MoE language models that selects pretrained experts as reusable prototypes and remaps all original expert slots to them. <strong>Matches or outperforms</strong> pruning and merging baselines at <strong>25–50% routed-expert reduction</strong> on DeepSeek-MoE, Qwen3-30B-A3B, and OLMoE without any weight updates.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29251">Provably Secure Agent Guardrail</a></span> <button class="vote-btn" data-id="827561b1e7" data-link="https://arxiv.org/abs/2605.29251" data-source="https://arxiv.org/abs/2605.29251" data-title="Provably Secure Agent Guardrail" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="827561b1e7" data-link="https://arxiv.org/abs/2605.29251" data-title="Provably Secure Agent Guardrail"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-05-29<span class="item-keywords"> · agent · trustworthy</span></span><span class="item-desc">Identifies a <strong>fundamental security gap</strong> in agentic AI caused by unreliable semantic guardrails and proposes ePCA, a <strong>neural-symbolic isolation architecture</strong> that forces agents to formalize intentions into first-order logic before any physical action. Achieves <strong>zero attack success rate</strong> and zero false positives in adversarial evaluations.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29313">PatchBoard: Schema-Grounded State Mutation for Multi-Agent Collaboration</a></span> <button class="vote-btn" data-id="75723fb891" data-link="https://arxiv.org/abs/2605.29313" data-source="https://arxiv.org/abs/2605.29313" data-title="PatchBoard: Schema-Grounded State Mutation for Multi-Agent Collaboration" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="75723fb891" data-link="https://arxiv.org/abs/2605.29313" data-title="PatchBoard: Schema-Grounded State Mutation for Multi-Agent Collaboration"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-05-29<span class="item-keywords"> · agent · architecture</span></span><span class="item-desc">Replaces inter-agent natural-language dialogue with <strong>validated JSON Patch mutations</strong> over a shared structured state, enforced by a deterministic kernel. On 630 ALFWorld episodes, achieves <strong>84.6% success vs. 30.8% for LangGraph</strong> while cutting tokens per successful task from 368k to 45.5k.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29224">Relevance as a Vulnerability: How Web Retrieval Degrades Safety Alignment in LLM Agents</a></span> <button class="vote-btn" data-id="6efccdc238" data-link="https://arxiv.org/abs/2605.29224" data-source="https://arxiv.org/abs/2605.29224" data-title="Relevance as a Vulnerability: How Web Retrieval Degrades Safety Alignment in LLM Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6efccdc238" data-link="https://arxiv.org/abs/2605.29224" data-title="Relevance as a Vulnerability: How Web Retrieval Degrades Safety Alignment in LLM Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-05-29<span class="item-keywords"> · agent · trustworthy</span></span><span class="item-desc">Introduces AgentREVEAL, a diagnostic framework revealing that web retrieval in LLM agent pipelines <strong>systematically weakens safety alignment</strong>, including a &quot;Safe Source Paradox&quot; where even safety-oriented sources <strong>increase harmful compliance by ~25%</strong>. Backed by HarmURLBench (1,405 real URLs, 320 harmful behaviors).</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29157">Parallax: Parameterized Local Linear Attention for Language Modeling</a></span> <button class="vote-btn" data-id="61e7335bb2" data-link="https://arxiv.org/abs/2605.29157" data-source="https://arxiv.org/abs/2605.29157" data-title="Parallax: Parameterized Local Linear Attention for Language Modeling" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="61e7335bb2" data-link="https://arxiv.org/abs/2605.29157" data-title="Parallax: Parameterized Local Linear Attention for Language Modeling"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.LG · 2026-05-29<span class="item-keywords"> · architecture · test-time</span></span><span class="item-desc">A new attention <strong>architecture</strong> derived from the <strong>test-time regression framework</strong> that upgrades softmax attention to a local linear estimator with provably better bias-variance tradeoffs. Scaled to 1.7B parameters, it delivers <strong>consistent perplexity improvements</strong> over standard attention with a hardware-aware kernel outperforming FlashAttention 2/3.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2605.29325">Multi-Stage VLM Pipeline for Zero-Shot Traffic Accident Understanding</a></span> <button class="vote-btn" data-id="1fc57e26ac" data-link="https://arxiv.org/abs/2605.29325" data-source="https://arxiv.org/abs/2605.29325" data-title="Multi-Stage VLM Pipeline for Zero-Shot Traffic Accident Understanding" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="1fc57e26ac" data-link="https://arxiv.org/abs/2605.29325" data-title="Multi-Stage VLM Pipeline for Zero-Shot Traffic Accident Understanding"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CV · 2026-05-29<span class="item-keywords"> · VLM · MoE</span></span><span class="item-desc">CVPR 2026 ACCIDENT challenge <strong>1st-place solution</strong> using a frozen Qwen3-VL-32B in a three-stage pipeline (joint prediction, time refinement, centroid grounding), <strong>blended with a 235B MoE model</strong>. Achieves +0.21 over the strongest host baseline.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.28816">Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players</a></span> <button class="vote-btn" data-id="31929bfca0" data-link="https://huggingface.co/papers/2605.28816" data-source="https://huggingface.co/papers/2605.28816" data-title="Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="31929bfca0" data-link="https://huggingface.co/papers/2605.28816" data-title="Gamma-World: Generative Multi-Agent World Modeling Beyond Two Players"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-05-29<span class="item-keywords"> · agent</span></span><span class="item-desc">A generative world model for <strong>multi-agent interactive video</strong> generation using simplex rotary agent encoding and <strong>sparse hub attention</strong> for scalable, permutation-symmetric interaction. Extends world modeling beyond two-player settings to complex multi-agent scenarios.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/papers/2605.23904">SkillOpt: Executive Strategy for Self-Evolving Agent Skills</a></span> <button class="vote-btn" data-id="b26ee0731c" data-link="https://huggingface.co/papers/2605.23904" data-source="https://huggingface.co/papers/2605.23904" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b26ee0731c" data-link="https://huggingface.co/papers/2605.23904" data-title="SkillOpt: Executive Strategy for Self-Evolving Agent Skills"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-05-23<span class="item-keywords"> · agent</span></span><span class="item-desc">A text-space optimizer that trains <strong>evolving agent skills as external state</strong> with stable updates and <strong>zero deployment overhead</strong>. Top paper of the week with 192 upvotes on Hugging Face.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/claude-opus-4-8">Introducing Claude Opus 4.8</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://x.com/claudeai/status/2060045358445576332" data-title="Introducing Claude Opus 4.8" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic&#x27;s latest Opus-class model with <strong>stronger performance across coding, agentic tasks, and professional work</strong>, plus the consistency to handle <strong>long-running autonomous work</strong>. An upgrade focused on reliability and sustained agent execution.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/claude-opus-4-8">Introducing Claude Opus 4.8</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://www.anthropic.com/news/claude-opus-4-8" data-title="Introducing Claude Opus 4.8" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-title="Introducing Claude Opus 4.8"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic&#x27;s latest Opus-class model with <strong>stronger performance across coding, agentic tasks, and professional work</strong>, plus the consistency to handle <strong>long-running autonomous work</strong>. An upgrade focused on reliability and sustained agent execution.</span></li>
 </ul>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/series-h">Anthropic raises $65B in Series H funding at $965B post-money valuation</a></span> <button class="vote-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-source="https://x.com/AnthropicAI/status/2060061348818518493" data-title="Anthropic raises $65B in Series H funding at $965B post-money valuation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">The <strong>largest funding round in AI history</strong>, valuing Anthropic at nearly <strong>$1 trillion</strong>. Signals continued massive capital inflow into frontier model development.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/milan-office-opening">Anthropic opens Milan office</a></span> <button class="vote-btn" data-id="60f808b7f1" data-link="https://www.anthropic.com/news/milan-office-opening" data-source="https://www.anthropic.com/news/milan-office-opening" data-title="Anthropic opens Milan office" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-27</span><span class="item-desc">Anthropic expands its European footprint with a <strong>new Milan office</strong> to support Italian enterprise, research, and developers — following the recent Seoul announcement.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/ibm-research/itbench-aa">ITBench-AA: Frontier Models Score Below 50% on Agentic Enterprise IT Tasks</a></span> <button class="vote-btn" data-id="6c6d47b510" data-link="https://huggingface.co/blog/ibm-research/itbench-aa" data-source="https://huggingface.co/blog/ibm-research/itbench-aa" data-title="ITBench-AA: Frontier Models Score Below 50% on Agentic Enterprise IT Tasks" title="upvote"><span class="tri"></span></button></div><span class="item-meta">IBM Research · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">The <strong>first benchmark for agentic enterprise IT</strong> by Artificial Analysis and IBM. Frontier models score <strong>below 50%</strong>, highlighting a significant gap in autonomous IT task completion.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/series-h">Anthropic raises $65B in Series H funding at $965B post-money valuation</a></span> <button class="vote-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-source="https://www.anthropic.com/news/series-h" data-title="Anthropic raises $65B in Series H funding at $965B post-money valuation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-title="Anthropic raises $65B in Series H funding at $965B post-money valuation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">The <strong>largest funding round in AI history</strong>, valuing Anthropic at nearly <strong>$1 trillion</strong>. Signals continued massive capital inflow into frontier model development.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/milan-office-opening">Anthropic opens Milan office</a></span> <button class="vote-btn" data-id="60f808b7f1" data-link="https://www.anthropic.com/news/milan-office-opening" data-source="https://www.anthropic.com/news/milan-office-opening" data-title="Anthropic opens Milan office" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="60f808b7f1" data-link="https://www.anthropic.com/news/milan-office-opening" data-title="Anthropic opens Milan office"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-27</span><span class="item-desc">Anthropic expands its European footprint with a <strong>new Milan office</strong> to support Italian enterprise, research, and developers — following the recent Seoul announcement.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/ibm-research/itbench-aa">ITBench-AA: Frontier Models Score Below 50% on Agentic Enterprise IT Tasks</a></span> <button class="vote-btn" data-id="6c6d47b510" data-link="https://huggingface.co/blog/ibm-research/itbench-aa" data-source="https://huggingface.co/blog/ibm-research/itbench-aa" data-title="ITBench-AA: Frontier Models Score Below 50% on Agentic Enterprise IT Tasks" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6c6d47b510" data-link="https://huggingface.co/blog/ibm-research/itbench-aa" data-title="ITBench-AA: Frontier Models Score Below 50% on Agentic Enterprise IT Tasks"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">IBM Research · 2026-05-28<span class="item-keywords"> · agent</span></span><span class="item-desc">The <strong>first benchmark for agentic enterprise IT</strong> by Artificial Analysis and IBM. Frontier models score <strong>below 50%</strong>, highlighting a significant gap in autonomous IT task completion.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="kunwoong" data-date="2026-05-29"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
+<div class="archive"><h3>Recent</h3>
+<ul>
+  <li><a href="2026-06-01.html">2026-06-01</a>: <span class="archive-headline">Scaling Monosemanticity Claude 3 · OISD Self-Distillation · DenseSteer · MechELK Latent Knowledge · RL vs SFT Forgetting · Context Distillation · Embodied3DBench · PRO-CUA · Model Merging Projection</span></li>
+  <li><a href="2026-05-31.html">2026-05-31</a>: <span class="archive-headline">Confidence Shortcut in Masked Diffusion · LLM Representational Geometry · Label-Free RL</span></li>
+  <li><a href="2026-05-30.html">2026-05-30</a>: <span class="archive-headline">LLM Reasoning Trace Dissociation · Agent Behavioral Reproducibility · WorldMemArena · Knowledge Offloading</span></li>
+  <li><a href="2026-05-28.html">2026-05-28</a>: <span class="archive-headline">Command A+ &amp; Qwen3.5-LiveTranslate ship · Cohere/Anthropic M&amp;A wave · MoE-VLM and test-time research uptick</span></li>
+  <li><a href="2026-05-27.html">2026-05-27</a>: <span class="archive-headline">Qwen3.7-Max agent foundation · NVIDIA Nemotron diffusion LMs · Anthropic Korea office</span></li>
+</ul>
+</div>
 </div>
 
 <script>
@@ -113,14 +140,121 @@
     }).catch(function(){});
   dn.addEventListener('click',function(e){
     var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
     var wasVoted=!!myVotes[id];
     if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
     else{myVotes[id]=1;btn.classList.add('voted');}
     fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,item_id:id,title:title})
+        value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
