@@ -57,17 +57,21 @@
   .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
 }
 
 /* ===== EXPERIMENTS: Share feature ===== */
 
 /* Share button */
+.daily-news .vote-btn, .daily-news .share-btn {
+  box-sizing: border-box;
+  width: 26px;
+  height: 20px;
+  padding: 0;
+}
 .daily-news .share-btn {
   background: none;
   border: 1px solid #aaa;
   border-radius: 3px;
-  padding: 0.2em 0.25em;
   cursor: pointer;
   color: #888;
   font-family: inherit;
@@ -154,9 +158,6 @@
   .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
   .daily-news .share-send { background: #555; }
   .daily-news .shared-section { border-top-color: #d4a017; }
-}
-@media (max-width: 600px) {
-  .daily-news .share-btn { padding: 0.25em 0.35em; }
 }
 </style>
 </head>
