@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -68,26 +87,27 @@
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-03">
 <h1>Daily News — 2026-06-03</h1>
 <div class="user-banner"><div class="user-handle">Sanghyeok</div><div class="user-categories">Language · Robotics</div><div class="user-kws">Gui agent · on policy rl · LLM</div></div>
-<p class="page-meta">11 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 
-
+<h2>Releases</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00390" target="_blank" rel="noopener">Zamba2-VL Technical Report</a></span> <button class="vote-btn" data-id="e7c688d747" data-link="https://arxiv.org/abs/2606.00390" data-source="https://arxiv.org/abs/2606.00390" data-title="Zamba2-VL Technical Report" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e7c688d747" data-link="https://arxiv.org/abs/2606.00390" data-title="Zamba2-VL Technical Report"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">A suite of hybrid Mamba2+transformer vision-language models at 1.2B, 2.7B, and 7B scales, released with inference code. Competitive with Qwen3-VL, Molmo2, and InternVL3.5 on image understanding, reasoning, and OCR benchmarks while delivering roughly an order of magnitude lower time-to-first-token thanks to Mamba2 near-linear prefill compute.</span></li>
+</ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.29860">ESPO: Early-Stopping Proximal Policy Optimization</a></span> <button class="vote-btn" data-id="f04d8619bb" data-link="https://huggingface.co/papers/2605.29860" data-source="https://huggingface.co/papers/2605.29860" data-title="ESPO: Early-Stopping Proximal Policy Optimization" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Alibaba / Peking Univ · 2026-05-29<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Detects failing LLM reasoning trajectories on-the-fly using the policy&#x27;s own logit gap and critic value, then terminates rollouts early to remove post-failure noise from PPO gradients. Surpasses both PPO and DAPO on math benchmarks (AIME24 46.3%, AMC23 85.8%) while saving 20%+ rollout tokens.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.29343">Draft-OPD: On-Policy Distillation for Speculative Draft Models</a></span> <button class="vote-btn" data-id="2e2420d7ad" data-link="https://huggingface.co/papers/2605.29343" data-source="https://huggingface.co/papers/2605.29343" data-title="Draft-OPD: On-Policy Distillation for Speculative Draft Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Shanghai AI Lab / SJTU / THU · 2026-05-29<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Proposes on-policy distillation for speculative decoding draft models by replaying drafting from verification-exposed error positions, closing the offline-to-inference gap that causes SFT to plateau. Achieves over 5x lossless acceleration for thinking models, improving over EAGLE-3 and DFlash by 23% and 13%.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2605.26114">MobileGym: A Verifiable and Highly Parallel Simulation Platform for Mobile GUI Agent Research</a></span> <button class="vote-btn" data-id="b43bce5997" data-link="https://huggingface.co/papers/2605.26114" data-source="https://huggingface.co/papers/2605.26114" data-title="MobileGym: A Verifiable and Highly Parallel Simulation Platform for Mobile GUI Agent Research" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF trending · 2026-05-28<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">A browser-hosted, lightweight environment for mobile GUI agents with deterministic state-based judging and scalable online RL via low-cost parallel rollouts (~400 MB per instance, ~3s cold start). GRPO training on Qwen3-VL-4B-Instruct gains +12.8 pt on a 256-task test set, with 95.1% sim-to-real transfer retention.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.02373">Harness-1: Reinforcement Learning for Search Agents with State-Externalizing Harnesses</a></span> <button class="vote-btn" data-id="040796a54a" data-link="https://huggingface.co/papers/2606.02373" data-source="https://huggingface.co/papers/2606.02373" data-title="Harness-1: Reinforcement Learning for Search Agents with State-Externalizing Harnesses" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF daily · 2026-06-02<span class="item-keywords"> · LLM</span></span><span class="item-desc">A 20B search agent trained with RL inside a stateful harness that maintains environment-side working memory — candidate pool, evidence links, verification records, and budget-aware context. Achieves 0.730 average curated recall across 8 retrieval benchmarks, outperforming the next strongest open search subagent by +11.4 points.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.02031">OpenWebRL: Demystifying Online Multi-turn Reinforcement Learning for Visual Web Agents</a></span> <button class="vote-btn" data-id="25386eca14" data-link="https://huggingface.co/papers/2606.02031" data-source="https://huggingface.co/papers/2606.02031" data-title="OpenWebRL: Demystifying Online Multi-turn Reinforcement Learning for Visual Web Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF daily · 2026-06-02<span class="item-keywords"> · Gui agent · on policy rl</span></span><span class="item-desc">An open framework for training visual web agents with online multi-turn RL directly on live websites. OpenWebRL-4B achieves 67.0% on Online-Mind2Web and 64.0% on DeepShop with only 0.4K initialization trajectories and 2.2K RL tasks, outperforming prior open agents and staying competitive with OpenAI CUA and Gemini CUA.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.01533">Multi-Agent Computer Use</a></span> <button class="vote-btn" data-id="06872cfa27" data-link="https://huggingface.co/papers/2606.01533" data-source="https://huggingface.co/papers/2606.01533" data-title="Multi-Agent Computer Use" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF daily · 2026-06-02<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Proposes a multi-agent system where a manager decomposes computer use tasks as a DAG and dispatches parallel CUA subagents, continuously revising the plan as findings arrive. Consistently improves over single-agent baselines by 3.4–25.5% on OSWorld, Online-Mind2Web, and WebTailBench, and speeds up long-horizon web navigation wall-clock time by ~1.5x.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00424">Weak Critics Make Strong Learners: On-Policy Critique Distillation for Scalable Oversight</a></span> <button class="vote-btn" data-id="23d06af7a2" data-link="https://arxiv.org/abs/2606.00424" data-source="https://arxiv.org/abs/2606.00424" data-title="Weak Critics Make Strong Learners: On-Policy Critique Distillation for Scalable Oversight" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-01<span class="item-keywords"> · on policy rl · LLM</span></span><span class="item-desc">Uses a weak model as a critic to provide revision directions rather than labels, then distills critic-guided behavior into a strong model via progressive on-policy distillation with adaptive self-teacher signals. Demonstrates that even weak-critic supervision can improve strong models on reasoning and alignment benchmarks, offering a practical path for scalable oversight.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00172">CAST: Non-Privileged Clipped Asymmetric Self-Teaching with Advantage Flipping for GRPO</a></span> <button class="vote-btn" data-id="4cfcb2ba5a" data-link="https://arxiv.org/abs/2606.00172" data-source="https://arxiv.org/abs/2606.00172" data-title="CAST: Non-Privileged Clipped Asymmetric Self-Teaching with Advantage Flipping for GRPO" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-01<span class="item-keywords"> · on policy rl · LLM</span></span><span class="item-desc">An answer-free self-distillation method for GRPO-style RLVR that shapes token-level advantages using a stop-gradient self-teacher according to trajectory correctness. Applies bidirectional local advantage sign reversal and handles zero-variance all-correct/all-wrong groups that standard GRPO skips, improving mathematical reasoning across benchmarks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00305">Bridging Reasoning Trajectories in On-Policy Distillation via Near-Future Guidance</a></span> <button class="vote-btn" data-id="d5c94edc06" data-link="https://arxiv.org/abs/2606.00305" data-source="https://arxiv.org/abs/2606.00305" data-title="Bridging Reasoning Trajectories in On-Policy Distillation via Near-Future Guidance" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-01<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Shows that on-policy distillation&#x27;s &quot;trajectory-sampled but token-learned&quot; mechanism cannot reliably bridge student trajectories toward teacher trajectories — ~30% of high-loss tokens are surface-form mismatches, not real reasoning forks. TOPD uses near-future trajectory information to identify real divergent states and distribute guidance across multiple future tokens, improving from 47.8% to 52.2% average accuracy.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00017">MindGames Arena: Delayed Per-Step Reward Attribution for Multi-Agent Strategic Interaction</a></span> <button class="vote-btn" data-id="6f42775b40" data-link="https://arxiv.org/abs/2606.00017" data-source="https://arxiv.org/abs/2606.00017" data-title="MindGames Arena: Delayed Per-Step Reward Attribution for Multi-Agent Strategic Interaction" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-01<span class="item-keywords"> · LLM</span></span><span class="item-desc">Introduces delayed per-step reward attribution with eligibility gating for RL training in multi-agent game environments. A single 8B open-source model trained with this method matched or surpassed GPT-5 in head-to-head play, taking first place in both Open and Efficient tracks of the MindGames Arena benchmark at NeurIPS 2025.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00229">Continuous Reasoning for Vision-Language-Action</a></span> <button class="vote-btn" data-id="ce8b2ad15b" data-link="https://arxiv.org/abs/2606.00229" data-source="https://arxiv.org/abs/2606.00229" data-title="Continuous Reasoning for Vision-Language-Action" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-01<span class="item-keywords"> · LLM</span></span><span class="item-desc">Argues that natural language is mismatched to the granularity of continuous robot control and proposes continuous reasoning — structured continuous thoughts as a shared Gaussian latent interface verified via a self-verification objective. Raises mean subtask success over π0.5 by 40.4% on TX-G2 and 26.3% on HSR real robots.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00305" target="_blank" rel="noopener">Trajectory-aware On-Policy Distillation via Near-Future Guidance</a></span> <button class="vote-btn" data-id="d5c94edc06" data-link="https://arxiv.org/abs/2606.00305" data-source="https://arxiv.org/abs/2606.00305" data-title="Trajectory-aware On-Policy Distillation via Near-Future Guidance" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d5c94edc06" data-link="https://arxiv.org/abs/2606.00305" data-title="Trajectory-aware On-Policy Distillation via Near-Future Guidance"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Shows that standard on-policy distillation for LLM reasoning suffers from a trajectory-sampled but token-learned disconnect â about 30 percent of high-loss tokens are surface-form mismatches, not real reasoning forks. Proposes TOPD, which uses near-future trajectory information to identify genuinely divergent states and distribute guidance, improving AIME24 from 60.0 to 63.3 percent and AIME25 from 46.7 to 53.3 percent.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00172" target="_blank" rel="noopener">CAST: Non-Privileged Clipped Asymmetric Self-Teaching with Advantage Flipping for GRPO</a></span> <button class="vote-btn" data-id="4cfcb2ba5a" data-link="https://arxiv.org/abs/2606.00172" data-source="https://arxiv.org/abs/2606.00172" data-title="CAST: Non-Privileged Clipped Asymmetric Self-Teaching with Advantage Flipping for GRPO" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4cfcb2ba5a" data-link="https://arxiv.org/abs/2606.00172" data-title="CAST: Non-Privileged Clipped Asymmetric Self-Teaching with Advantage Flipping for GRPO"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · on policy rl</span></span><span class="item-desc">An answer-free self-distillation method for GRPO-style verifiable-reward RL that shapes token-level advantages via a stop-gradient self-teacher. Applies bidirectional local advantage sign reversal so that zero-variance all-correct and all-wrong groups contribute meaningful gradient signal.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00424" target="_blank" rel="noopener">Weak Critics Make Strong Learners: On-Policy Critique Distillation for Scalable Oversight</a></span> <button class="vote-btn" data-id="23d06af7a2" data-link="https://arxiv.org/abs/2606.00424" data-source="https://arxiv.org/abs/2606.00424" data-title="Weak Critics Make Strong Learners: On-Policy Critique Distillation for Scalable Oversight" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="23d06af7a2" data-link="https://arxiv.org/abs/2606.00424" data-title="Weak Critics Make Strong Learners: On-Policy Critique Distillation for Scalable Oversight"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Studies weak-critic strong oversight: a weak model provides non-misleading revision directions rather than solving the task. Progressive on-policy critique distillation filters high-quality critiques and distills critic-guided behavior into the strong model via adaptive self-teacher signals, demonstrating an effective path for scalable oversight.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00510" target="_blank" rel="noopener">SelSkill: Learning Selective Skill Invocation in Agentic Tasks via Dual-Granularity Preference Learning</a></span> <button class="vote-btn" data-id="e2379f1c86" data-link="https://arxiv.org/abs/2606.00510" data-source="https://arxiv.org/abs/2606.00510" data-title="SelSkill: Learning Selective Skill Invocation in Agentic Tasks via Dual-Granularity Preference Learning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e2379f1c86" data-link="https://arxiv.org/abs/2606.00510" data-title="SelSkill: Learning Selective Skill Invocation in Agentic Tasks via Dual-Granularity Preference Learning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">Addresses whether a relevant skill should actually be invoked at the current decision point in LLM agent systems, since unhelpful invocations introduce irrelevant context and disrupt execution. Formulates skill-or-skip as dual-granularity preference learning, improving task success by 10.9pp on ALFWorld with Qwen3-8B and transferring zero-shot to new domains.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00593" target="_blank" rel="noopener">SPADER: Step-wise Peer Advantage with Diversity-Aware Exploration Rewards for Multi-Answer QA</a></span> <button class="vote-btn" data-id="85f17cfaa4" data-link="https://arxiv.org/abs/2606.00593" data-source="https://arxiv.org/abs/2606.00593" data-title="SPADER: Step-wise Peer Advantage with Diversity-Aware Exploration Rewards for Multi-Answer QA" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="85f17cfaa4" data-link="https://arxiv.org/abs/2606.00593" data-title="SPADER: Step-wise Peer Advantage with Diversity-Aware Exploration Rewards for Multi-Answer QA"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">A reinforcement learning framework for long-horizon tool use in multi-answer question answering. Introduces step-level credit assignment by aligning parallel trajectories at each decision step and a diversity-aware reward that upweights rare entity discoveries. Improves recall and F1 over prompting-based agents and outcome-supervised RL.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00660" target="_blank" rel="noopener">FineVerify: Scaling Test-Time Compute with Fine-Grained Self-Verification for Agentic Search</a></span> <button class="vote-btn" data-id="cbf3effc27" data-link="https://arxiv.org/abs/2606.00660" data-source="https://arxiv.org/abs/2606.00660" data-title="FineVerify: Scaling Test-Time Compute with Fine-Grained Self-Verification for Agentic Search" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="cbf3effc27" data-link="https://arxiv.org/abs/2606.00660" data-title="FineVerify: Scaling Test-Time Compute with Fine-Grained Self-Verification for Agentic Search"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">Decomposes each question into checkable sub-questions and verifies sampled agent trajectories against each, then selects the candidate with the highest aggregated score. With only 4 sampled trajectories, improves GPT-5-mini by 8.2 accuracy points; with 12 samples, enables GPT-5-mini to surpass frontier GPT-5 on BrowseComp-Plus.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00619" target="_blank" rel="noopener">MemPro: Agentic Memory Systems as Evolvable Programs</a></span> <button class="vote-btn" data-id="f6f7abe41a" data-link="https://arxiv.org/abs/2606.00619" data-source="https://arxiv.org/abs/2606.00619" data-title="MemPro: Agentic Memory Systems as Evolvable Programs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f6f7abe41a" data-link="https://arxiv.org/abs/2606.00619" data-title="MemPro: Agentic Memory Systems as Evolvable Programs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">Treats the entire memory construction-retrieval pipeline as an evolvable program rather than adapting only the memory bank. An Evolving Agent maintains a version tree of runnable implementations, iteratively diagnoses recurring failures, and creates improved child versions through failure-mode-guided refinement. Consistently outperforms static and prompt-level evolving baselines.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00726" target="_blank" rel="noopener">Latent Reward Steering: An Adaptive Inference-Time Framework for Reasoning LLMs</a></span> <button class="vote-btn" data-id="a6f924dd5f" data-link="https://arxiv.org/abs/2606.00726" data-source="https://arxiv.org/abs/2606.00726" data-title="Latent Reward Steering: An Adaptive Inference-Time Framework for Reasoning LLMs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a6f924dd5f" data-link="https://arxiv.org/abs/2606.00726" data-title="Latent Reward Steering: An Adaptive Inference-Time Framework for Reasoning LLMs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">Trains a latent reward model on reasoning traces to estimate quality of intermediate sparse-autoencoder latent states, then uses reward gradients to correct fragile states during inference. A reward-and-confidence gate restricts intervention to flagged states, implicitly promoting good cognitive behaviors without explicit behavior definitions.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00251" target="_blank" rel="noopener">Capability Self-Assessment: Teaching LLMs to Know Their Limits</a></span> <button class="vote-btn" data-id="a6af82d924" data-link="https://arxiv.org/abs/2606.00251" data-source="https://arxiv.org/abs/2606.00251" data-title="Capability Self-Assessment: Teaching LLMs to Know Their Limits" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a6af82d924" data-link="https://arxiv.org/abs/2606.00251" data-title="Capability Self-Assessment: Teaching LLMs to Know Their Limits"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta"><span class="item-keywords"> · LLM</span></span><span class="item-desc">Shows that modern LLMs systematically overestimate their competence and attempt queries they cannot solve. Formulates capability self-assessment as a policy-learning problem and finds that RL teaches it effectively, significantly outperforming SFT while preserving capabilities. The learned self-assessment generalizes out of distribution and improves local-cloud decision making.</span></li>
+  <li><div class="item-row"><span class="item-title">ð <a href="https://arxiv.org/abs/2606.00096" target="_blank" rel="noopener">Diversity Over Frequency: Rethinking Tool Use in Visual Chain-of-Thought Agents</a></span> <button class="vote-btn" data-id="ebe853a6dc" data-link="https://arxiv.org/abs/2606.00096" data-source="https://arxiv.org/abs/2606.00096" data-title="Diversity Over Frequency: Rethinking Tool Use in Visual Chain-of-Thought Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ebe853a6dc" data-link="https://arxiv.org/abs/2606.00096" data-title="Diversity Over Frequency: Rethinking Tool Use in Visual Chain-of-Thought Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-desc">Identifies a tool-use collapse phenomenon in visual reasoning agents: models progressively stop using tools while still achieving higher task accuracy. Completely eliminating tool use degrades performance, but incentivizing it yields only marginal gains due to reduced rollout diversity. Entropy regularization encouraging diverse exploration achieves the best reasoning performance despite declining tool usage.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-03"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
 
 <script>
@@ -116,6 +136,113 @@
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
         value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
