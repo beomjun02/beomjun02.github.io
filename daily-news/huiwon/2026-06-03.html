@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -68,23 +87,25 @@
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="huiwon" data-date="2026-06-03">
 <h1>Daily News — 2026-06-03</h1>
 <div class="user-banner"><div class="user-handle">Huiwon</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · long-term planning · VLA architecture · VLA generalization · world-action model · visual representation learning · visual tokenizer · video diffusion model</div></div>
-<p class="page-meta">8 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 
 
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00229">Continuous Reasoning for Vision-Language-Action</a></span> <button class="vote-btn" data-id="ce8b2ad15b" data-link="https://arxiv.org/abs/2606.00229" data-source="https://arxiv.org/abs/2606.00229" data-title="Continuous Reasoning for Vision-Language-Action" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA · VLA architecture</span></span><span class="item-desc">Proposes replacing natural language reasoning in VLA with continuous reasoning — a structured set of continuous thoughts that serve as shared context for chunk-structured action generation. A self-verification objective ensures the internal medium is shareable across model instances. Improves mean subtask success over π0.5 by 40.4% on TX-G2 and 26.3% on HSR real robots.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00537">PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking</a></span> <button class="vote-btn" data-id="8cb2fea77a" data-link="https://arxiv.org/abs/2606.00537" data-source="https://arxiv.org/abs/2606.00537" data-title="PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">A training-free test-time method that adaptively selects execution horizons for VLA action chunks by identifying low-speed transition points in the predicted motion profile. Plug-and-play with no retraining or access to policy internals needed. Raises average success from 57.8% to 64.2% on 50 RoboTwin2.0 tasks and from 50.7% to 70.4% on real-robot Franka/ALOHA platforms.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00269">CTRL-STEER: Closed-Loop Neural Activation Control in Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="b715fa7209" data-link="https://arxiv.org/abs/2606.00269" data-source="https://arxiv.org/abs/2606.00269" data-title="CTRL-STEER: Closed-Loop Neural Activation Control in Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Replaces fixed-coefficient activation steering in VLA models with closed-loop adaptive control. Steers along motion-aligned residual directions while a PID or RL-based controller adjusts intervention magnitude online. Achieves more stable concept regulation and a better steering–task success trade-off on four LIBERO task suites without modifying the base model.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00336">From Noise to Control: Parameterized Diffusion Policies</a></span> <button class="vote-btn" data-id="ecf9522331" data-link="https://arxiv.org/abs/2606.00336" data-source="https://arxiv.org/abs/2606.00336" data-title="From Noise to Control: Parameterized Diffusion Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-03<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Conditions diffusion policies on low-dimensional continuous parameters in a learned behavior manifold where distances reflect trajectory similarity, transforming stochastic diversity into precise behavior steering. Enables smooth interpolation between strategies and efficient adaptation to novel constraints without weight updates. Shows significant improvements on multimodal benchmarks in both simulated and real-robot experiments.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00083">From Demonstrations to Rewards: Test-Time Prompt Optimization for VLM Reward Models</a></span> <button class="vote-btn" data-id="1abdacb6d5" data-link="https://arxiv.org/abs/2606.00083" data-source="https://arxiv.org/abs/2606.00083" data-title="From Demonstrations to Rewards: Test-Time Prompt Optimization for VLM Reward Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-06-03<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Proposes Demo2Reward, a test-time adaptation technique that optimizes VLM reward model language instructions using 3–10 demonstrations to reduce false positives while preserving true positives. Requires no additional training or compute during policy learning. Consistently outperforms zero- and few-shot VLM reward baselines across simulated and real-world robotic tasks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00113">World Models for Robotic Manipulation: A Survey</a></span> <button class="vote-btn" data-id="c72c8f88c4" data-link="https://arxiv.org/abs/2606.00113" data-source="https://arxiv.org/abs/2606.00113" data-title="World Models for Robotic Manipulation: A Survey" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · world-action model</span></span><span class="item-desc">Surveys world models for manipulation through three questions: what is predicted, how prediction connects to action, and when prediction is used. Organizes work into five representation families, develops a functional taxonomy separating integrated prediction-action models from explicit predictive planners, and reviews 34 manipulation datasets. Highlights world models evolving from task-specific predictors into predictive infrastructure for robot learning.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00133">World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications</a></span> <button class="vote-btn" data-id="20017352de" data-link="https://arxiv.org/abs/2606.00133" data-source="https://arxiv.org/abs/2606.00133" data-title="World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-03<span class="item-keywords"> · world-action model</span></span><span class="item-desc">A broad multi-axis taxonomy covering architecture, methodology, reasoning strategy, and application domain. Traces the field from early cognitive-science foundations through PlaNet, Dreamer, MuZero, Sora, Cosmos, and Genie to the convergence of chain-of-thought reasoning with world-model imagination. Spans robotics, autonomous driving, video prediction, multimodal agents, and scientific modeling.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00262">When Softmax Fails at the Top: Extreme Value Corrections for InfoNCE</a></span> <button class="vote-btn" data-id="57033b0e5d" data-link="https://arxiv.org/abs/2606.00262" data-source="https://arxiv.org/abs/2606.00262" data-title="When Softmax Fails at the Top: Extreme Value Corrections for InfoNCE" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-06-03<span class="item-keywords"> · visual representation learning</span></span><span class="item-desc">Uses extreme value theory to show that InfoNCE&#x27;s softmax assumption is misaligned with normalized embeddings in contrastive learning. Proposes WEINCE, a simple correction that blends softmax logits with an endpoint shortfall term using anchor-wise online batch statistics, adding no trainable parameters. Yields consistent improvements across five vision benchmarks in frozen-feature evaluation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00229" target="_blank" rel="noopener">Continuous Reasoning for Vision-Language-Action</a></span> <button class="vote-btn" data-id="ce8b2ad15b" data-link="https://arxiv.org/abs/2606.00229" data-source="https://arxiv.org/abs/2606.00229" data-title="Continuous Reasoning for Vision-Language-Action" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ce8b2ad15b" data-link="https://arxiv.org/abs/2606.00229" data-title="Continuous Reasoning for Vision-Language-Action"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA · VLA architecture</span></span><span class="item-desc">Proposes replacing language-based chain-of-thought with continuous latent reasoning for VLA, using a structured Gaussian interface verified by a self-verification objective. Raises mean subtask success over π0.5 by 40.4% on AgiBot G2 and 26.3% on HSR.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00664" target="_blank" rel="noopener">SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models</a></span> <button class="vote-btn" data-id="d9a5d769c3" data-link="https://arxiv.org/abs/2606.00664" data-source="https://arxiv.org/abs/2606.00664" data-title="SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d9a5d769c3" data-link="https://arxiv.org/abs/2606.00664" data-title="SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · world-action model</span></span><span class="item-desc">Event-preserving sparse-to-dense world model framework that generates only task-relevant keyframes via sparse video diffusion, then interpolates gaps conditioned on actions. Generates dense rollouts 4.16x faster with 89% FVD reduction; π0.5 success drops only 1.3 pp when SKIP videos fully replace real demos.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00269" target="_blank" rel="noopener">Closed-Loop Neural Activation Control in Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="b715fa7209" data-link="https://arxiv.org/abs/2606.00269" data-source="https://arxiv.org/abs/2606.00269" data-title="Closed-Loop Neural Activation Control in Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b715fa7209" data-link="https://arxiv.org/abs/2606.00269" data-title="Closed-Loop Neural Activation Control in Vision-Language-Action Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces CTRL-STEER, a closed-loop framework replacing static intervention coefficients in VLA internal steering with adaptive PID or RL-based controllers. Achieves more stable concept regulation and better steering-task success trade-off on LIBERO without retraining the base model.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00054" target="_blank" rel="noopener">From Human Videos to Robot Manipulation: A Survey on Scalable VLA Learning with Human-Centric Data</a></span> <button class="vote-btn" data-id="f2dd790538" data-link="https://arxiv.org/abs/2606.00054" data-source="https://arxiv.org/abs/2606.00054" data-title="From Human Videos to Robot Manipulation: A Survey on Scalable VLA Learning with Human-Centric Data" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f2dd790538" data-link="https://arxiv.org/abs/2606.00054" data-title="From Human Videos to Robot Manipulation: A Survey on Scalable VLA Learning with Human-Centric Data"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA · robot foundation model</span></span><span class="item-desc">Unified survey of how human videos are transformed into VLA training signals, categorizing approaches into latent action representations, predictive world models, explicit 2D supervision, and explicit 3D reconstruction. Highlights open challenges in episode structuring, embodiment grounding, and transfer evaluation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00537" target="_blank" rel="noopener">PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking</a></span> <button class="vote-btn" data-id="8cb2fea77a" data-link="https://arxiv.org/abs/2606.00537" data-source="https://arxiv.org/abs/2606.00537" data-title="PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="8cb2fea77a" data-link="https://arxiv.org/abs/2606.00537" data-title="PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA architecture</span></span><span class="item-desc">Training-free test-time method that selects execution horizon online from predicted speed profiles, identifying low-speed transition points as replanning boundaries. Plug-and-play across diffusion and VLA policies; raises real-robot success from 50.7% to 70.4% on Franka and ALOHA.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00053" target="_blank" rel="noopener">VLAMotor: Test-Guided Enhancement of VLA Models via Agent-Based Data Synthesis</a></span> <button class="vote-btn" data-id="2f572d1b6e" data-link="https://arxiv.org/abs/2606.00053" data-source="https://arxiv.org/abs/2606.00053" data-title="VLAMotor: Test-Guided Enhancement of VLA Models via Agent-Based Data Synthesis" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2f572d1b6e" data-link="https://arxiv.org/abs/2606.00053" data-title="VLAMotor: Test-Guided Enhancement of VLA Models via Agent-Based Data Synthesis"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">First analysis-to-repair framework for VLAs: distance-aware testing exposes diverse failures (92.3% trigger rate), then agent-based synthesis converts failed trajectories into supervisory data. Fine-tuning improves VLA success by 49.25% in simulation and 57.50% on real hardware.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00515" target="_blank" rel="noopener">PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation</a></span> <button class="vote-btn" data-id="d0e420cd59" data-link="https://arxiv.org/abs/2606.00515" data-source="https://arxiv.org/abs/2606.00515" data-title="PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d0e420cd59" data-link="https://arxiv.org/abs/2606.00515" data-title="PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Recasts VLA outputs as task-level compliance proposals rather than direct motor commands, with a high-frequency passivity shield enforcing energy-tank accounting. Achieves superior precision and zero passivity violations in connector-insertion experiments.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00113" target="_blank" rel="noopener">World Models for Robotic Manipulation: A Survey</a></span> <button class="vote-btn" data-id="c72c8f88c4" data-link="https://arxiv.org/abs/2606.00113" data-source="https://arxiv.org/abs/2606.00113" data-title="World Models for Robotic Manipulation: A Survey" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c72c8f88c4" data-link="https://arxiv.org/abs/2606.00113" data-title="World Models for Robotic Manipulation: A Survey"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · world-action model</span></span><span class="item-desc">Surveys world models through three axes: predicted representation, action connection, and pipeline role. Organizes work into five representation families and a functional taxonomy separating integrated prediction-action models from explicit predictive planners, covering 34 manipulation datasets.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00252" target="_blank" rel="noopener">HOIST: Humanoid Optimization with Imitation and Sample-efficient Tuning for Suspended Loads</a></span> <button class="vote-btn" data-id="d398252543" data-link="https://arxiv.org/abs/2606.00252" data-source="https://arxiv.org/abs/2606.00252" data-title="HOIST: Humanoid Optimization with Imitation and Sample-efficient Tuning for Suspended Loads" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d398252543" data-link="https://arxiv.org/abs/2606.00252" data-title="HOIST: Humanoid Optimization with Imitation and Sample-efficient Tuning for Suspended Loads"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA · robot foundation model</span></span><span class="item-desc">Fine-tunes a VLA high-level policy from VR teleoperation demos on a humanoid, then applies iterative batched RL to improve placement accuracy for underactuated suspended-load tasks. Reduces translational error by 19.9 cm and angular error by 3.56 degrees over imitation-only baselines.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00773" target="_blank" rel="noopener">SafeVLA-Bench: A Benchmark for the Success-Safety Gap in VLA Models</a></span> <button class="vote-btn" data-id="f1ceec266f" data-link="https://arxiv.org/abs/2606.00773" data-source="https://arxiv.org/abs/2606.00773" data-title="SafeVLA-Bench: A Benchmark for the Success-Safety Gap in VLA Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f1ceec266f" data-link="https://arxiv.org/abs/2606.00773" data-title="SafeVLA-Bench: A Benchmark for the Success-Safety Gap in VLA Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Post-hoc safety evaluation framework using Signal Temporal Logic specifications for existing VLA benchmarks. Finds 13-15% unsafe-episode rates among high-success tabletop policies and 36-56% safety violations in successful kitchen rollouts, revealing that task success does not imply safe execution.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00133" target="_blank" rel="noopener">World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications</a></span> <button class="vote-btn" data-id="20017352de" data-link="https://arxiv.org/abs/2606.00133" data-source="https://arxiv.org/abs/2606.00133" data-title="World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="20017352de" data-link="https://arxiv.org/abs/2606.00133" data-title="World Models: A Comprehensive Survey of Architectures, Methodologies, Reasoning Paradigms, and Applications"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.LG · 2026-06-03<span class="item-keywords"> · world-action model</span></span><span class="item-desc">Multi-axis taxonomy of world models across architecture, methodology, reasoning strategy, and application domain. Traces the field from PlaNet through Dreamer, MuZero, Sora, and Cosmos, examining convergence of chain-of-thought reasoning with world-model imagination and outlining challenges in contact modeling and sim-to-real transfer.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="huiwon" data-date="2026-06-03"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
 
 <script>
@@ -113,6 +134,113 @@
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
         value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
