@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -69,7 +88,7 @@
 <h1>Daily News — archive</h1>
 <p class="page-meta">8 days · <a href="../">← latest</a></p>
 <ul>
-  <li><a href="../2026-06-03.html">2026-06-03</a>: <span class="archive-headline">Continuous Reasoning lifts VLA 40% over π0.5 · PaCo-VLA · Qwen3.7-Plus</span></li>
+  <li><a href="../2026-06-03.html">2026-06-03</a>: <span class="archive-headline">Continuous reasoning replaces language in VLA · Qwen3.7-Plus multimodal agent · Anthropic draft S-1</span></li>
   <li><a href="../2026-06-02.html">2026-06-02</a>: <span class="archive-headline">Wall-OSS-0.5 open-source VLA · Qwen3.7-Plus multimodal agent · NVIDIA Cosmos 3 physical AI</span></li>
   <li><a href="../2026-06-01.html">2026-06-01</a>: <span class="archive-headline">Phase-Conditioned IL Failure Recovery · CGPO Critic-Guided Diffusion Policy</span></li>
   <li><a href="../2026-05-31.html">2026-05-31</a>: <span class="archive-headline">VLAConf · DynaFLIP · LLM-Guided Exploration · MonoDuo · RoboWits · MARS Policy · VE2VF</span></li>
