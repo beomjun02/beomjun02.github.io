@@ -13,7 +13,8 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-title { font-weight: 500; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
 .daily-news .item-keywords { color: #d4a017; }
@@ -28,19 +29,37 @@
 .daily-news .archive-more { margin-top: 0.5em; }
 .daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
 .daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #aaa; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #aaa; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
+.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
 .daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
   .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
   .daily-news .item-title a { color: #64b5f6; }
   .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #888; }
+  .daily-news .item-desc { color: #ccc; }
   .daily-news .item-meta { color: #aaa; }
   .daily-news .page-meta { color: #aaa; }
   .daily-news .archive { border-top-color: #444; }
@@ -50,52 +69,47 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .users-list li { border-color: #333; }
-  .daily-news .users-list a { color: #64b5f6; }
-  .daily-news .users-list a:hover { color: #f09228; }
-  .daily-news .users-headline { color: #ddd; }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
-
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { flex: 1; min-width: 0; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-
+@media (max-width: 600px) {
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
+}
 </style>
 </head>
 <body>
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-05-27">
 <h1>Daily News — 2026-05-27</h1>
 <div class="user-banner"><div class="user-handle">Byungjun</div><div class="user-categories">Robotics</div><div class="user-kws">VLA · Subtask-aware VLA · Subtask · Robot Data annoatation · long-horizon planning · Hierarchical VLA</div></div>
-<p class="page-meta">14 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">14 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands">Figure Signs Agreement with Catalyst Brands to Scale Humanoid Operations</a></span> <button class="vote-btn" data-id="80a52d3dbe" data-link="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-source="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-title="Figure Signs Agreement with Catalyst Brands to Scale Humanoid Operations" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Figure AI · 2026-05-26</span><span class="item-desc">Figure inked a multi-year partnership with retail conglomerate Catalyst Brands to deploy Figure humanoids across its operations, locking in one of the largest commercial humanoid pilots announced to date. Read as the strongest signal yet that humanoid procurement is shifting from &quot;research curiosity&quot; to &quot;line-item contract.&quot;</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea">Anthropic appoints KiYoung Choi as Representative Director of Korea ahead of Seoul office opening</a></span> <button class="vote-btn" data-id="de7e3e42c7" data-link="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-source="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-title="Anthropic appoints KiYoung Choi as Representative Director of Korea ahead of Seoul office opening" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-26</span><span class="item-desc">Anthropic named former Coupang exec KiYoung Choi to head a new Seoul office, formalizing its Korea presence ahead of upcoming product/enterprise expansion in APAC. Relevant if you care about local Claude support, enterprise rollout, or Korean-language model behavior.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/research/glasswing-initial-update">Project Glasswing: An initial update</a></span> <button class="vote-btn" data-id="a6001065a4" data-link="https://www.anthropic.com/research/glasswing-initial-update" data-source="https://x.com/AnthropicAI/status/2057909104090169464" data-title="Project Glasswing: An initial update" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-05-22</span><span class="item-desc">First progress report from the AWS / Anthropic / Apple / Google / Microsoft / NVIDIA / Cisco / CrowdStrike / Palo Alto / JPMC coalition launched in April to harden critical software supply chains. Lays out the initial threat-model taxonomy and the first round of joint vulnerability findings.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/matthew-d-white/ai-in-china">Eight Days in China: What I Learned from the AI Labs, Robotics Startups and Academia</a></span> <button class="vote-btn" data-id="b4f93add20" data-link="https://huggingface.co/blog/matthew-d-white/ai-in-china" data-source="https://huggingface.co/blog/matthew-d-white/ai-in-china" data-title="Eight Days in China: What I Learned from the AI Labs, Robotics Startups and Academia" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-23</span><span class="item-desc">Trip report from Matthew White (HF) after a tour of Chinese AI labs, humanoid startups, and university groups. Useful as a quick read on where the Chinese open-source robotics/LLM stack actually stands beyond Qwen / DeepSeek headlines.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" target="_blank" rel="noopener">Figure Signs Agreement with Catalyst Brands to Scale Humanoid Operations</a></span> <button class="vote-btn" data-id="80a52d3dbe" data-link="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-source="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-title="Figure Signs Agreement with Catalyst Brands to Scale Humanoid Operations" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="80a52d3dbe" data-link="https://www.figure.ai/news/figure-signs-agreement-with-catalyst-brands" data-title="Figure Signs Agreement with Catalyst Brands to Scale Humanoid Operations"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Figure AI · 2026-05-26</span><span class="item-desc">Figure inked a multi-year partnership with retail conglomerate Catalyst Brands to deploy Figure humanoids across its operations, locking in one of the largest commercial humanoid pilots announced to date. Read as the strongest signal yet that humanoid procurement is shifting from &quot;research curiosity&quot; to &quot;line-item contract.&quot;</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" target="_blank" rel="noopener">Anthropic appoints KiYoung Choi as Representative Director of Korea ahead of Seoul office opening</a></span> <button class="vote-btn" data-id="de7e3e42c7" data-link="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-source="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-title="Anthropic appoints KiYoung Choi as Representative Director of Korea ahead of Seoul office opening" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="de7e3e42c7" data-link="https://www.anthropic.com/news/kiyoung-choi-representative-director-anthropic-korea" data-title="Anthropic appoints KiYoung Choi as Representative Director of Korea ahead of Seoul office opening"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-26</span><span class="item-desc">Anthropic named former Coupang exec KiYoung Choi to head a new Seoul office, formalizing its Korea presence ahead of upcoming product/enterprise expansion in APAC. Relevant if you care about local Claude support, enterprise rollout, or Korean-language model behavior.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/research/glasswing-initial-update" target="_blank" rel="noopener">Project Glasswing: An initial update</a></span> <button class="vote-btn" data-id="a6001065a4" data-link="https://www.anthropic.com/research/glasswing-initial-update" data-source="https://x.com/AnthropicAI/status/2057909104090169464" data-title="Project Glasswing: An initial update" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a6001065a4" data-link="https://www.anthropic.com/research/glasswing-initial-update" data-title="Project Glasswing: An initial update"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-22</span><span class="item-desc">First progress report from the AWS / Anthropic / Apple / Google / Microsoft / NVIDIA / Cisco / CrowdStrike / Palo Alto / JPMC coalition launched in April to harden critical software supply chains. Lays out the initial threat-model taxonomy and the first round of joint vulnerability findings.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/matthew-d-white/ai-in-china" target="_blank" rel="noopener">Eight Days in China: What I Learned from the AI Labs, Robotics Startups and Academia</a></span> <button class="vote-btn" data-id="b4f93add20" data-link="https://huggingface.co/blog/matthew-d-white/ai-in-china" data-source="https://huggingface.co/blog/matthew-d-white/ai-in-china" data-title="Eight Days in China: What I Learned from the AI Labs, Robotics Startups and Academia" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b4f93add20" data-link="https://huggingface.co/blog/matthew-d-white/ai-in-china" data-title="Eight Days in China: What I Learned from the AI Labs, Robotics Startups and Academia"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Hugging Face blog · 2026-05-23</span><span class="item-desc">Trip report from Matthew White (HF) after a tour of Chinese AI labs, humanoid startups, and university groups. Useful as a quick read on where the Chinese open-source robotics/LLM stack actually stands beyond Qwen / DeepSeek headlines.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://qwen.ai/research">Qwen3.7-Max: The Agent Frontier</a></span> <button class="vote-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-source="https://qwen.ai/research" data-title="Qwen3.7-Max: The Agent Frontier" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Qwen research · 2026-05-20<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Alibaba&#x27;s new proprietary flagship is positioned squarely as an &quot;agent foundation&quot;: coding, office-workflow automation, and long-horizon autonomous execution across hundreds-to-thousands of steps. Replaces Qwen3.6-Plus at the top of the Qwen lineup; agentic-coding and tool-use benches are the headline gains.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion">Towards Speed-of-Light Text Generation with Nemotron-Labs Diffusion Language Models</a></span> <button class="vote-btn" data-id="503a5ba4d2" data-link="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" data-source="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" data-title="Towards Speed-of-Light Text Generation with Nemotron-Labs Diffusion Language Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog (NVIDIA) · 2026-05-23</span><span class="item-desc">NVIDIA Nemotron-Labs releases a family of diffusion-based text models with their training/inference recipe, claiming substantial wall-clock speedups vs. autoregressive decoding at comparable quality. Worth tracking if you care about non-AR LLM alternatives — a direction NVIDIA hadn&#x27;t shipped weights in before.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid">LeRobot Humanoid: An Open, Low-Cost, 3D-Printed Humanoid for Robot Learning</a></span> <button class="vote-btn" data-id="16f6a517cf" data-link="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" data-source="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" data-title="LeRobot Humanoid: An Open, Low-Cost, 3D-Printed Humanoid for Robot Learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-21</span><span class="item-desc">An open, 3D-printable humanoid platform built on the LeRobot stack — BOM, CAD, firmware, and policies all public. Aimed at academic labs that want a humanoid testbed without buying a Unitree/G1 unit; fits naturally as a dataset-collection rig for VLA training.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/allenai/olmoearth-v1-1">OlmoEarth v1.1: A more efficient family of Earth observation models</a></span> <button class="vote-btn" data-id="63751fb3a3" data-link="https://huggingface.co/blog/allenai/olmoearth-v1-1" data-source="https://huggingface.co/blog/allenai/olmoearth-v1-1" data-title="OlmoEarth v1.1: A more efficient family of Earth observation models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog (AllenAI) · 2026-05-20</span><span class="item-desc">AllenAI&#x27;s open Earth-observation foundation models, retrained with a more efficient backbone and an expanded global-imagery corpus. Same Apache 2.0 license as v1.0; recommended drop-in for climate/agriculture/disaster pipelines built on the prior version.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/AlexWortega/borealis">Borealis — open data, code, weights recipe for training Audio LLM</a></span> <button class="vote-btn" data-id="3d3142f9b1" data-link="https://huggingface.co/blog/AlexWortega/borealis" data-source="https://huggingface.co/blog/AlexWortega/borealis" data-title="Borealis — open data, code, weights recipe for training Audio LLM" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Hugging Face blog · 2026-05-26</span><span class="item-desc">Full open-source recipe (data pipeline, training code, checkpoints) for an audio-conditioned LLM. Niche but useful as a reference if you want to compare against closed audio LLMs like Gemini-Audio.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://qwen.ai/research" target="_blank" rel="noopener">Qwen3.7-Max: The Agent Frontier</a></span> <button class="vote-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-source="https://qwen.ai/research" data-title="Qwen3.7-Max: The Agent Frontier" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="da0612ad3f" data-link="https://arxiv.org/abs/2605.30280" data-title="Qwen3.7-Max: The Agent Frontier"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Qwen research · 2026-05-20<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Alibaba&#x27;s new proprietary flagship is positioned squarely as an &quot;agent foundation&quot;: coding, office-workflow automation, and long-horizon autonomous execution across hundreds-to-thousands of steps. Replaces Qwen3.6-Plus at the top of the Qwen lineup; agentic-coding and tool-use benches are the headline gains.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" target="_blank" rel="noopener">Towards Speed-of-Light Text Generation with Nemotron-Labs Diffusion Language Models</a></span> <button class="vote-btn" data-id="503a5ba4d2" data-link="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" data-source="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" data-title="Towards Speed-of-Light Text Generation with Nemotron-Labs Diffusion Language Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="503a5ba4d2" data-link="https://huggingface.co/blog/nvidia/nemotron-labs-diffusion" data-title="Towards Speed-of-Light Text Generation with Nemotron-Labs Diffusion Language Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Hugging Face blog (NVIDIA) · 2026-05-23</span><span class="item-desc">NVIDIA Nemotron-Labs releases a family of diffusion-based text models with their training/inference recipe, claiming substantial wall-clock speedups vs. autoregressive decoding at comparable quality. Worth tracking if you care about non-AR LLM alternatives — a direction NVIDIA hadn&#x27;t shipped weights in before.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" target="_blank" rel="noopener">LeRobot Humanoid: An Open, Low-Cost, 3D-Printed Humanoid for Robot Learning</a></span> <button class="vote-btn" data-id="16f6a517cf" data-link="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" data-source="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" data-title="LeRobot Humanoid: An Open, Low-Cost, 3D-Printed Humanoid for Robot Learning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="16f6a517cf" data-link="https://huggingface.co/blog/VirgileBatto/lerobot-humanoid" data-title="LeRobot Humanoid: An Open, Low-Cost, 3D-Printed Humanoid for Robot Learning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Hugging Face blog · 2026-05-21</span><span class="item-desc">An open, 3D-printable humanoid platform built on the LeRobot stack — BOM, CAD, firmware, and policies all public. Aimed at academic labs that want a humanoid testbed without buying a Unitree/G1 unit; fits naturally as a dataset-collection rig for VLA training.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/allenai/olmoearth-v1-1" target="_blank" rel="noopener">OlmoEarth v1.1: A more efficient family of Earth observation models</a></span> <button class="vote-btn" data-id="63751fb3a3" data-link="https://huggingface.co/blog/allenai/olmoearth-v1-1" data-source="https://huggingface.co/blog/allenai/olmoearth-v1-1" data-title="OlmoEarth v1.1: A more efficient family of Earth observation models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="63751fb3a3" data-link="https://huggingface.co/blog/allenai/olmoearth-v1-1" data-title="OlmoEarth v1.1: A more efficient family of Earth observation models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Hugging Face blog (AllenAI) · 2026-05-20</span><span class="item-desc">AllenAI&#x27;s open Earth-observation foundation models, retrained with a more efficient backbone and an expanded global-imagery corpus. Same Apache 2.0 license as v1.0; recommended drop-in for climate/agriculture/disaster pipelines built on the prior version.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/AlexWortega/borealis" target="_blank" rel="noopener">Borealis — open data, code, weights recipe for training Audio LLM</a></span> <button class="vote-btn" data-id="3d3142f9b1" data-link="https://huggingface.co/blog/AlexWortega/borealis" data-source="https://huggingface.co/blog/AlexWortega/borealis" data-title="Borealis — open data, code, weights recipe for training Audio LLM" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="3d3142f9b1" data-link="https://huggingface.co/blog/AlexWortega/borealis" data-title="Borealis — open data, code, weights recipe for training Audio LLM"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Hugging Face blog · 2026-05-26</span><span class="item-desc">Full open-source recipe (data pipeline, training code, checkpoints) for an audio-conditioned LLM. Niche but useful as a reference if you want to compare against closed audio LLMs like Gemini-Audio.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27284">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span> <button class="vote-btn" data-id="d55a0093e9" data-link="https://arxiv.org/abs/2605.27284" data-source="https://arxiv.org/abs/2605.27284" data-title="FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Subtask-aware VLA</span></span><span class="item-desc">Argues that existing robot datasets pair trajectories with *coarse* goal-level language and proposes FineVLA, an open framework for action-aligned fine-grained instructions (active arm, approach direction, contact region). Directly addresses the subtask-level annotation gap that limits VLA steerability — closest item to your subtask-aware VLA thread this week.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26820">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span> <button class="vote-btn" data-id="d68213a218" data-link="https://arxiv.org/abs/2605.26820" data-source="https://arxiv.org/abs/2605.26820" data-title="Can VLA Models Learn from Real-World Data Continually without Forgetting?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds a real-world continual-learning benchmark for VLA models (most prior work used narrow sim) and reports that current VLAs lose substantial performance on earlier tasks as new ones are added. Useful diagnostic if you are planning long-running multi-task VLA training.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26349">Closing the Loop in Teleoperation: Episode-Level Data Quality Assessment and Feedback for High-Quality Demonstration Collection</a></span> <button class="vote-btn" data-id="209763edec" data-link="https://arxiv.org/abs/2605.26349" data-source="https://arxiv.org/abs/2605.26349" data-title="Closing the Loop in Teleoperation: Episode-Level Data Quality Assessment and Feedback for High-Quality Demonstration Collection" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Robot Data annoatation</span></span><span class="item-desc">Introduces an automatic episode-level quality scorer for teleoperated demonstrations and a feedback loop that flags low-quality episodes back to the operator in real time. Reports tangible downstream gains on policy learning from cleaner data — directly relevant if you&#x27;re scaling robot-data annotation.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26637">Enabling Extensible Embodied Capabilities with Tools</a></span> <button class="vote-btn" data-id="917ef87502" data-link="https://arxiv.org/abs/2605.26637" data-source="https://arxiv.org/abs/2605.26637" data-title="Enabling Extensible Embodied Capabilities with Tools" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Hierarchical VLA</span></span><span class="item-desc">Proposes &quot;Embodied Tool Protocol&quot;: decouple perception, reasoning, planning, and control into independently optimized tools that a hierarchical policy invokes at inference time, rather than baking everything into one parameterized model. Sits squarely in the hierarchical-VLA design space.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26371">Exploiting Local Dynamics Regularity for Reusable Skills in Offline Hierarchical RL</a></span> <button class="vote-btn" data-id="27ec88bcaa" data-link="https://arxiv.org/abs/2605.26371" data-source="https://arxiv.org/abs/2605.26371" data-title="Exploiting Local Dynamics Regularity for Reusable Skills in Offline Hierarchical RL" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-05-27<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Discovers reusable temporally-extended skills for long-horizon RL by exploiting the observation that local transitions across global contexts share similar action sequences. Targets the standard HRL failure mode where &quot;discovered skills&quot; don&#x27;t actually generalize — improves on prior offline-HRL baselines.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.27284" target="_blank" rel="noopener">FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies</a></span> <button class="vote-btn" data-id="d55a0093e9" data-link="https://arxiv.org/abs/2605.27284" data-source="https://arxiv.org/abs/2605.27284" data-title="FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d55a0093e9" data-link="https://arxiv.org/abs/2605.27284" data-title="FineVLA: Fine-Grained Instruction Alignment for Steerable Vision-Language-Action Policies"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Subtask-aware VLA</span></span><span class="item-desc">Argues that existing robot datasets pair trajectories with *coarse* goal-level language and proposes FineVLA, an open framework for action-aligned fine-grained instructions (active arm, approach direction, contact region). Directly addresses the subtask-level annotation gap that limits VLA steerability — closest item to your subtask-aware VLA thread this week.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26820" target="_blank" rel="noopener">Can VLA Models Learn from Real-World Data Continually without Forgetting?</a></span> <button class="vote-btn" data-id="d68213a218" data-link="https://arxiv.org/abs/2605.26820" data-source="https://arxiv.org/abs/2605.26820" data-title="Can VLA Models Learn from Real-World Data Continually without Forgetting?" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d68213a218" data-link="https://arxiv.org/abs/2605.26820" data-title="Can VLA Models Learn from Real-World Data Continually without Forgetting?"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · VLA</span></span><span class="item-desc">Builds a real-world continual-learning benchmark for VLA models (most prior work used narrow sim) and reports that current VLAs lose substantial performance on earlier tasks as new ones are added. Useful diagnostic if you are planning long-running multi-task VLA training.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26349" target="_blank" rel="noopener">Closing the Loop in Teleoperation: Episode-Level Data Quality Assessment and Feedback for High-Quality Demonstration Collection</a></span> <button class="vote-btn" data-id="209763edec" data-link="https://arxiv.org/abs/2605.26349" data-source="https://arxiv.org/abs/2605.26349" data-title="Closing the Loop in Teleoperation: Episode-Level Data Quality Assessment and Feedback for High-Quality Demonstration Collection" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="209763edec" data-link="https://arxiv.org/abs/2605.26349" data-title="Closing the Loop in Teleoperation: Episode-Level Data Quality Assessment and Feedback for High-Quality Demonstration Collection"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Robot Data annoatation</span></span><span class="item-desc">Introduces an automatic episode-level quality scorer for teleoperated demonstrations and a feedback loop that flags low-quality episodes back to the operator in real time. Reports tangible downstream gains on policy learning from cleaner data — directly relevant if you&#x27;re scaling robot-data annotation.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26637" target="_blank" rel="noopener">Enabling Extensible Embodied Capabilities with Tools</a></span> <button class="vote-btn" data-id="917ef87502" data-link="https://arxiv.org/abs/2605.26637" data-source="https://arxiv.org/abs/2605.26637" data-title="Enabling Extensible Embodied Capabilities with Tools" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="917ef87502" data-link="https://arxiv.org/abs/2605.26637" data-title="Enabling Extensible Embodied Capabilities with Tools"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-05-27<span class="item-keywords"> · Hierarchical VLA</span></span><span class="item-desc">Proposes &quot;Embodied Tool Protocol&quot;: decouple perception, reasoning, planning, and control into independently optimized tools that a hierarchical policy invokes at inference time, rather than baking everything into one parameterized model. Sits squarely in the hierarchical-VLA design space.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.26371" target="_blank" rel="noopener">Exploiting Local Dynamics Regularity for Reusable Skills in Offline Hierarchical RL</a></span> <button class="vote-btn" data-id="27ec88bcaa" data-link="https://arxiv.org/abs/2605.26371" data-source="https://arxiv.org/abs/2605.26371" data-title="Exploiting Local Dynamics Regularity for Reusable Skills in Offline Hierarchical RL" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="27ec88bcaa" data-link="https://arxiv.org/abs/2605.26371" data-title="Exploiting Local Dynamics Regularity for Reusable Skills in Offline Hierarchical RL"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-05-27<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Discovers reusable temporally-extended skills for long-horizon RL by exploiting the observation that local transitions across global contexts share similar action sequences. Targets the standard HRL failure mode where &quot;discovered skills&quot; don&#x27;t actually generalize — improves on prior offline-HRL baselines.</span></li>
 </ul>
 <h2>Watch list</h2>
 <ul>
@@ -104,6 +118,68 @@
 
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="byungjun" data-date="2026-05-27"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div></div>
+'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
+  });
+})();
+</script>
+
 
 <script>
 (function(){
@@ -129,37 +205,5 @@
   });
 })();
 </script>
-
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
 </body>
 </html>
