@@ -13,7 +13,7 @@
 .daily-news h3 { font-size: 1em; margin-top: 1em; }
 .daily-news ul { padding-left: 1.4em; }
 .daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-row { display: flex; align-items: flex-start; gap: 0.25em; }
 .daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
 .daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
 .daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
@@ -35,10 +35,24 @@
 .daily-news .fb-submit:hover { background: #555; }
 .daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
 .daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn, .daily-news .share-btn { box-sizing: border-box; width: 26px; height: 20px; padding: 0; margin-top: 2px; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .share-btn { background: none; border: 1px solid #aaa; border-radius: 3px; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .share-btn svg { display: block; pointer-events: none; fill: currentColor; }
+@media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn:active, .daily-news .share-btn:active { border-color: #d4a017; color: #d4a017; }
 .daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-btn.shared { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+.daily-news .share-dropdown { position: absolute; top: calc(100% + 4px); right: calc(-0.25em - 1px); background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.4em 0.4em; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.12); min-width: 0; white-space: nowrap; text-align: left; }
+.daily-news .share-dropdown label { display: block; padding: 0 0.3em; font-size: 0.85em; cursor: pointer; border-radius: 3px; line-height: 1.3; text-align: left; }
+.daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.08); }
+.daily-news .share-dropdown input[type="checkbox"] { margin-right: 0.2em; accent-color: #d4a017; }
+.daily-news .share-send { display: block; width: 100%; margin-top: 0.5em; background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.85em; font-family: inherit; cursor: pointer; }
+.daily-news .share-send:hover { background: #555; }
+.daily-news .share-badge { color: #d4a017; font-size: 0.82em; display: block; margin-top: 0.15em; }
+.daily-news .shared-section { margin-top: 0; }
+.daily-news .shared-section h2 { color: #d4a017; border-bottom-color: #d4a017; }
 @media (prefers-color-scheme: dark) {
   .daily-news { color: #f0f0f0; }
   .daily-news h1 { color: #f5f5f5; }
@@ -55,12 +69,17 @@
   .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
   .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+  .daily-news .vote-btn, .daily-news .share-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover, .daily-news .share-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted, .daily-news .share-btn.shared { background: rgba(212,160,23,0.15); }
+  .daily-news .share-dropdown { background: #1a1a1a; border-color: #555; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .daily-news .share-dropdown label:hover { background: rgba(212,160,23,0.12); }
+  .daily-news .share-send { background: #555; }
 }
 @media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+  .daily-news .item-row { position: relative; padding-right: 30px; }
+  .daily-news .item-row .vote-btn { position: absolute; right: 0; top: 0; }
+  .daily-news .item-row .share-btn { position: absolute; right: 0; top: 22px; }
 }
 </style>
 </head>
@@ -68,31 +87,32 @@
 <div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-03">
 <h1>Daily News — 2026-06-03</h1>
 <div class="user-banner"><div class="user-handle">Beomjun</div><div class="user-categories">Robotics · Language</div><div class="user-kws">VLA · robot foundation model · robot learning · dexterous manipulation · point-based policy · sim-to-real RL · embodied MLLM · world model · world-action model · LLM · VLM</div></div>
-<p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/expanding-project-glasswing">Expanding Project Glasswing</a></span> <button class="vote-btn" data-id="ef5fb5aae5" data-link="https://www.anthropic.com/news/expanding-project-glasswing" data-source="https://www.anthropic.com/news/expanding-project-glasswing" data-title="Expanding Project Glasswing" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-06-02</span><span class="item-desc">Anthropic expands Project Glasswing, the cross-industry initiative bringing together AWS, Apple, Broadcom, Cisco, Google, Microsoft, NVIDIA, and others to secure the world&#x27;s most critical software infrastructure.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/confidential-draft-s1-sec">Anthropic confidentially submits draft S-1 to the SEC</a></span> <button class="vote-btn" data-id="3a733f9823" data-link="https://www.anthropic.com/news/confidential-draft-s1-sec" data-source="https://www.anthropic.com/news/confidential-draft-s1-sec" data-title="Anthropic confidentially submits draft S-1 to the SEC" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-06-01</span><span class="item-desc">Anthropic files a confidential draft S-1 registration statement with the SEC, signaling preparation for an eventual IPO — a significant milestone for the AI safety lab now valued at $965B after its recent Series H round.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/confidential-draft-s1-sec" target="_blank" rel="noopener">Anthropic confidentially submits draft S-1 to the SEC</a></span> <button class="vote-btn" data-id="3a733f9823" data-link="https://www.anthropic.com/news/confidential-draft-s1-sec" data-source="https://www.anthropic.com/news/confidential-draft-s1-sec" data-title="Anthropic confidentially submits draft S-1 to the SEC" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="3a733f9823" data-link="https://www.anthropic.com/news/confidential-draft-s1-sec" data-title="Anthropic confidentially submits draft S-1 to the SEC"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-06-01</span><span class="item-desc">Anthropic files a confidential S-1 registration statement with the SEC, the most concrete step toward a public offering by any frontier AI lab. With run-rate revenue past $47B and the $65B Series H just closed, this positions Anthropic alongside OpenAI in the race to go public.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/expanding-project-glasswing" target="_blank" rel="noopener">Expanding Project Glasswing</a></span> <button class="vote-btn" data-id="ef5fb5aae5" data-link="https://www.anthropic.com/news/expanding-project-glasswing" data-source="https://www.anthropic.com/news/expanding-project-glasswing" data-title="Expanding Project Glasswing" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ef5fb5aae5" data-link="https://www.anthropic.com/news/expanding-project-glasswing" data-title="Expanding Project Glasswing"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-06-02</span><span class="item-desc">Claude Mythos Preview access extended to approximately 150 additional organizations across more than fifty countries. The cross-industry AI-security coalition now spans AWS, Apple, Google, Microsoft, NVIDIA, and others — growing from the initial dozen to a significantly broader footprint.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-openai-models-codex-generally-available/" target="_blank" rel="noopener">OpenAI models and Codex now generally available on Amazon Bedrock</a></span> <button class="vote-btn" data-id="9ebd793aff" data-link="https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-openai-models-codex-generally-available/" data-source="https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-openai-models-codex-generally-available/" data-title="OpenAI models and Codex now generally available on Amazon Bedrock" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9ebd793aff" data-link="https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-openai-models-codex-generally-available/" data-title="OpenAI models and Codex now generally available on Amazon Bedrock"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">OpenAI / AWS · 2026-06-01</span><span class="item-desc">GPT-5.5, GPT-5.4, and Codex go GA on Amazon Bedrock with pricing matching OpenAI rates, IAM/PrivateLink/CloudTrail integration, and GovCloud support. Enterprises can now run OpenAI and Anthropic models through the same API with unified governance.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/series-h" target="_blank" rel="noopener">Anthropic raises $65B in Series H funding at $965B valuation</a></span> <button class="vote-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-source="https://www.anthropic.com/news/series-h" data-title="Anthropic raises $65B in Series H funding at $965B valuation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6f8ddfea6a" data-link="https://www.anthropic.com/news/series-h" data-title="Anthropic raises $65B in Series H funding at $965B valuation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Anthropic closes a $65B round at a $965B post-money valuation, making it one of the largest private funding rounds in tech history. Scale of capital signals intensifying competition in frontier model development and enterprise deployment.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://qwen.ai/research">Qwen3.7-Plus: Multimodal Agent Intelligence</a></span> <button class="vote-btn" data-id="c89d517dbb" data-link="https://qwen.ai/research" data-source="https://qwen.ai/research" data-title="Qwen3.7-Plus: Multimodal Agent Intelligence" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Qwen/Alibaba · 2026-06-01</span><span class="item-desc">A multimodal agent model that unifies vision and language into a single versatile agent foundation, building on Qwen3.7&#x27;s text backbone with a comprehensive upgrade in vision-language capabilities for agentic tasks including coding, workflow automation, and sustained multi-step execution.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai">NVIDIA Cosmos 3: The First Open Omni-model for Physical AI</a></span> <button class="vote-btn" data-id="c07a24378d" data-link="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-source="https://huggingface.co/blog/nvidia/cosmos-3-for-physical-ai" data-title="NVIDIA Cosmos 3: The First Open Omni-model for Physical AI" title="upvote"><span class="tri"></span></button></div><span class="item-meta">NVIDIA/HF blog · 2026-06-01</span><span class="item-desc">NVIDIA releases Cosmos 3, an open omni-model designed for Physical AI that supports both world understanding and embodied action generation. Extends the Cosmos family to serve as a foundation for robotics and autonomous systems, combining reasoning over physical scenes with action-level outputs.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://openai.com/index/codex-for-every-role-tool-workflow/" target="_blank" rel="noopener">Codex for every role, tool, and workflow</a></span> <button class="vote-btn" data-id="02d6b79c3a" data-link="https://openai.com/index/codex-for-every-role-tool-workflow/" data-source="https://openai.com/index/codex-for-every-role-tool-workflow/" data-title="Codex for every role, tool, and workflow" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="02d6b79c3a" data-link="https://openai.com/index/codex-for-every-role-tool-workflow/" data-title="Codex for every role, tool, and workflow"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">OpenAI · 2026-06-02</span><span class="item-desc">Codex launches Sites (hosted interactive web apps shareable by URL), six role-specific plugins bundling 62 business apps, and in-place annotations. Non-developer usage growing 3x faster than engineers, with 5M+ weekly active users — a deliberate push from coding tool to general operating environment.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/claude-opus-4-8" target="_blank" rel="noopener">Introducing Claude Opus 4.8</a></span> <button class="vote-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-source="https://www.anthropic.com/news/claude-opus-4-8" data-title="Introducing Claude Opus 4.8" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="5f3a9a5193" data-link="https://www.anthropic.com/news/claude-opus-4-8" data-title="Introducing Claude Opus 4.8"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-05-28</span><span class="item-desc">Upgrade to Anthropic&#x27;s Opus class with stronger performance across coding, agentic tasks, and professional work, plus improved consistency for long-running autonomous workflows.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00229">Continuous Reasoning for Vision-Language-Action</a></span> <button class="vote-btn" data-id="ce8b2ad15b" data-link="https://arxiv.org/abs/2606.00229" data-source="https://arxiv.org/abs/2606.00229" data-title="Continuous Reasoning for Vision-Language-Action" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA · Subtask</span></span><span class="item-desc">Replaces language-level reasoning in VLAs with continuous Gaussian latents that operate at action-chunk granularity, trained with a self-verification objective where an EMA teacher must consume the student&#x27;s reasoning. Raises mean subtask success over π0.5 by 40.4% on TX-G2 and 26.3% on HSR in real-robot experiments.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00515">PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation</a></span> <button class="vote-btn" data-id="d0e420cd59" data-link="https://arxiv.org/abs/2606.00515" data-source="https://arxiv.org/abs/2606.00515" data-title="PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a passivity-shielded compliance layer that recasts the VLA interface for contact-rich tasks, bridging the semantic-to-control gap by regulating high-frequency contact dynamics while preserving the semantic generalization of vision-language models.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00053">VLAMotor: Test-Guided Enhancement of VLA Models via Agent-Based Data Synthesis</a></span> <button class="vote-btn" data-id="2f572d1b6e" data-link="https://arxiv.org/abs/2606.00053" data-source="https://arxiv.org/abs/2606.00053" data-title="VLAMotor: Test-Guided Enhancement of VLA Models via Agent-Based Data Synthesis" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">A testing-and-repair framework that exposes VLA failures via distance-aware uncertainty ranking, then synthesizes repair trajectories through inverse kinematics. Improves VLA success rate by 49.25% in simulation and 57.5% on real hardware after fine-tuning on the synthetic data.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00773">SafeVLA-Bench: A Benchmark for the Success-Safety Gap in VLA Models</a></span> <button class="vote-btn" data-id="f1ceec266f" data-link="https://arxiv.org/abs/2606.00773" data-source="https://arxiv.org/abs/2606.00773" data-title="SafeVLA-Bench: A Benchmark for the Success-Safety Gap in VLA Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">A post-hoc safety evaluation framework that formalizes task-aware safety requirements as Signal Temporal Logic constraints. Reveals that binary success metrics mask safety-relevant behaviors like excessive contact force, bystander disturbance, and robot self-collision.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00269">CTRL-STEER: Closed-Loop Neural Activation Control in VLA Models</a></span> <button class="vote-btn" data-id="b715fa7209" data-link="https://arxiv.org/abs/2606.00269" data-source="https://arxiv.org/abs/2606.00269" data-title="CTRL-STEER: Closed-Loop Neural Activation Control in VLA Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Replaces fixed-coefficient internal steering with a closed-loop controller that adapts VLA activation interventions based on evolving task state and concept error, addressing overcorrection and oscillation issues for temporal behaviors like speed and smoothness.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00664">SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models</a></span> <button class="vote-btn" data-id="d9a5d769c3" data-link="https://arxiv.org/abs/2606.00664" data-source="https://arxiv.org/abs/2606.00664" data-title="SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-03<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Reduces world model rollout cost by generating only sparse task-relevant keyframes (approach, contact, grasp, release) and interpolating between them, rather than frame-by-frame prediction — accelerating long-horizon manipulation video generation while preserving events that downstream policies need.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30877">Wall-OSS-0.5 Technical Report</a></span> <button class="vote-btn" data-id="6c71112942" data-link="https://arxiv.org/abs/2605.30877" data-source="https://arxiv.org/abs/2605.30877" data-title="Wall-OSS-0.5 Technical Report" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA</span></span><span class="item-desc">An open-source 4B VLA built on a 3B VLM backbone, pretrained across 20+ embodiments and 1M+ robot trajectories per epoch. Before any fine-tuning, the pretrained checkpoint achieves non-trivial zero-shot real-robot behavior; after fine-tuning it reaches 60.5% average task progress on 15 real-robot tasks, outperforming π0.5 by 17.5%.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.30695">Primitive Subspaces Mediate Few-Shot Transfer in VLAs</a></span> <button class="vote-btn" data-id="530e5ef887" data-link="https://arxiv.org/abs/2605.30695" data-source="https://arxiv.org/abs/2605.30695" data-title="Primitive Subspaces Mediate Few-Shot Transfer in VLAs" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-02<span class="item-keywords"> · VLA · Subtask</span></span><span class="item-desc">Training VLAs with primitive-segmented episodes creates a transferable sub-skill library enabling few-shot composition at inference time. Primitive-trained models reach 78% of fine-tuned performance with only 3 demonstrations versus 10 for flat-trained — a 3× sample efficiency gap replicated across seeds, architectures, and datasets. Ablating the primitive-decodable subspace degrades transfer by 32pp.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.01027" target="_blank" rel="noopener">τ₀-WM: A Unified Video-Action World Model for Robotic Manipulation</a></span> <button class="vote-btn" data-id="fb9abb6061" data-link="https://arxiv.org/abs/2606.01027" data-source="https://arxiv.org/abs/2606.01027" data-title="τ₀-WM: A Unified Video-Action World Model for Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="fb9abb6061" data-link="https://arxiv.org/abs/2606.01027" data-title="τ₀-WM: A Unified Video-Action World Model for Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-02<span class="item-keywords"> · world model</span></span><span class="item-desc">Unifies policy learning, video prediction, and action evaluation in a single video-diffusion framework. Trains on 27K+ hours of real teleop, UMI, egocentric human video, and rollout data; uses test-time re-denoising consistency ranking and simulator-based rectification for long-horizon, fine-grained manipulation tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00053" target="_blank" rel="noopener">VLAMotor: Test-Guided Enhancement of VLAs via Agent-Based Data Synthesis</a></span> <button class="vote-btn" data-id="2f572d1b6e" data-link="https://arxiv.org/abs/2606.00053" data-source="https://arxiv.org/abs/2606.00053" data-title="VLAMotor: Test-Guided Enhancement of VLAs via Agent-Based Data Synthesis" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2f572d1b6e" data-link="https://arxiv.org/abs/2606.00053" data-title="VLAMotor: Test-Guided Enhancement of VLAs via Agent-Based Data Synthesis"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">First analysis framework for systematically exposing and repairing VLA failure modes. Distance-aware testing triggers failures in 92% of generated test cases; synthesized repair trajectories improve real-hardware success rate by 57.5% over the original VLA model with no manual data collection.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00515" target="_blank" rel="noopener">PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation</a></span> <button class="vote-btn" data-id="d0e420cd59" data-link="https://arxiv.org/abs/2606.00515" data-source="https://arxiv.org/abs/2606.00515" data-title="PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d0e420cd59" data-link="https://arxiv.org/abs/2606.00515" data-title="PaCo-VLA: Passivity-Shielded Compliance Prior for Contact-Rich VLA Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-03<span class="item-keywords"> · VLA</span></span><span class="item-desc">Reinterprets VLA outputs as task-level compliance proposals instead of direct motor commands, adding a high-frequency passivity shield with energy-tank accounting. Achieves zero passivity violations even under adversarial compliance shifts in real-world connector-insertion tasks — a provably safe runtime contract for deploying foundation models in contact-rich settings.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00664" target="_blank" rel="noopener">SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models</a></span> <button class="vote-btn" data-id="d9a5d769c3" data-link="https://arxiv.org/abs/2606.00664" data-source="https://arxiv.org/abs/2606.00664" data-title="SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d9a5d769c3" data-link="https://arxiv.org/abs/2606.00664" data-title="SKIP: Sparse Keyframe Interpolation Paradigm for Efficient Embodied World Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-03<span class="item-keywords"> · world model</span></span><span class="item-desc">Event-preserving sparse-to-dense framework that synthesizes only task-relevant keyframes then interpolates gaps via action-conditioned interpolation. Produces 4.16x faster dense rollouts with 89% lower FVD; replacing real demonstrations with SKIP-generated videos drops pi-0.5 success by only 1.3pp in simulation and 6.7pp on real hardware.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.00113" target="_blank" rel="noopener">World Models for Robotic Manipulation: A Survey</a></span> <button class="vote-btn" data-id="c72c8f88c4" data-link="https://arxiv.org/abs/2606.00113" data-source="https://arxiv.org/abs/2606.00113" data-title="World Models for Robotic Manipulation: A Survey" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c72c8f88c4" data-link="https://arxiv.org/abs/2606.00113" data-title="World Models for Robotic Manipulation: A Survey"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-03<span class="item-keywords"> · world model</span></span><span class="item-desc">Comprehensive survey organizing world models into five representation families and three functional roles across pretraining, post-training, and inference. Reviews 34 manipulation datasets and identifies open challenges in contact modeling, hallucination control, action alignment, and benchmarking.</span></li>
 </ul>
-
+<h2>Watch list</h2>
+<ul>
+  <li><span class="item-title"><a href="https://www.orcahand.com/getting-started" target="_blank" rel="noopener">Orca Hand BoM/CAD/Assembly Guide release</a></span><span class="item-meta">stale</span><span class="item-desc">Target release date of June 1 has passed but the full BoM, CAD files, and assembly guide for the new orcahand remain unreleased. Only legacy orca v1 files are currently available; wiki is marked &#x27;IN PROGRESS — being actively updated.&#x27; Assembly guide preview (first 8 pages) is available.</span></li>
+</ul>
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-03"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
 
 <script>
@@ -121,6 +141,113 @@
       body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
         value:link,source:source,item_id:id,title:title})
     }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var user=dn.dataset.user,date=dn.dataset.date;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
+  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
+  var shareData={incoming:{},outgoing:{}};
+  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  function renderShares(){
+    Object.keys(shareData.outgoing).forEach(function(id){
+      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
+      if(btn)btn.classList.add('shared');
+    });
+    var notInFeed=[];
+    Object.keys(shareData.incoming).forEach(function(id){
+      var entry=shareData.incoming[id];
+      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
+      if(existing){
+        var li=existing.closest('li');
+        var meta=li.querySelector('.item-meta');
+        if(li.querySelector('.share-badge'))return;
+        var badge=document.createElement('span');
+        badge.className='share-badge';
+        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
+        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
+        else if(meta){meta.parentNode.appendChild(badge);}
+      }else{
+        notInFeed.push({id:id,data:entry});
+      }
+    });
+    var old=dn.querySelector('.shared-section');
+    if(old)old.remove();
+    if(notInFeed.length>0){
+      var sec=document.createElement('div');
+      sec.className='shared-section';
+      sec.innerHTML='<h2>Shared with you</h2>';
+      var ul=document.createElement('ul');
+      notInFeed.forEach(function(item){
+        var d=item.data;
+        var li=document.createElement('li');
+        li.innerHTML=
+          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      var fb=dn.querySelector('.feedback');
+      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
+    }
+  }
+  fetch(proxy+'?action=shares&user='+user+'&date='+date)
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
+    .catch(function(){});
+  var activeDropdown=null;
+  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+  document.addEventListener('click',function(e){
+    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
+  });
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.share-btn');
+    if(!btn||e.target.closest('.share-dropdown'))return;
+    if(activeDropdown){closeDropdown();return;}
+    var itemId=btn.dataset.id;
+    var alreadySent=shareData.outgoing[itemId]||[];
+    var dd=document.createElement('div');
+    dd.className='share-dropdown';
+    otherUsers.forEach(function(u){
+      var sent=alreadySent.indexOf(u)>=0;
+      var lbl=document.createElement('label');
+      if(sent){lbl.style.opacity='0.5';}
+      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
+        '> '+u.charAt(0).toUpperCase()+u.slice(1);
+      dd.appendChild(lbl);
+    });
+    var send=document.createElement('button');
+    send.className='share-send';
+    send.textContent='Send';
+    send.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
+      var targets=[];
+      checked.forEach(function(cb){targets.push(cb.value);});
+      if(targets.length){
+        btn.classList.add('shared');
+        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
+        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
+        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify({user:user,date:date,action:'share',
+            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
+            recipients:targets})
+        }).catch(function(){});
+      }
+      closeDropdown();
+    });
+    dd.appendChild(send);
+    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
+    btn.appendChild(dd);
+    activeDropdown=dd;
   });
 })();
 </script>
