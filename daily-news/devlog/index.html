@@ -48,8 +48,41 @@
 <body>
 <div class="devlog">
 <h1>Dev Log</h1>
-<p class="page-meta">11 entries · <a href="../">← daily news</a></p>
-<details class="entry" id="011-share-feature">
+<p class="page-meta">12 entries · <a href="../">← daily news</a></p>
+<details class="entry" id="012-pipeline-robustness">
+<summary class="entry-title">012: Pipeline Robustness Fixes<span class="entry-meta"><span class="entry-date"> 2026-06-02 ~ 06-03</span><span class="entry-type"> Fix</span></span></summary>
+<div class="entry-body"><p><strong>Date:</strong> 2026-06-02 ~ 06-03</p>
+<p><strong>Type:</strong> Fix</p>
+<h3>Problems Fixed</h3>
+<h4>1. Personalize data loss (mark-on-read)</h4>
+<p><code>_getPending</code> marked rows as Processed when returned, not when actually applied. If the LLM failed to update config.json, changes were lost silently. Caused 3 missed keyword updates (beomjun: world model, world-action model; sanghyeok: LLM).</p>
+<p><strong>Fix:</strong> Separated into read (<code>_getPending</code> returns <code>row_index</code>) + confirm (<code>mark_processed</code> POST). Same pattern applied to <code>_getPendingRegistrations</code> → <code>mark_registered</code>. SKILL.md §0.5 updated to call <code>mark_processed</code> after config.json write.</p>
+<h4>2. match_items timeout</h4>
+<p>Phase B prompt grew to ~7.6K tokens (269 registry entries). LLM call exceeded 120s timeout.</p>
+<p><strong>Fix:</strong> Timeout 120s → 300s. Also removed <code>first_seen</code> from PART 2 entries (title-only format) for ~30% token reduction.</p>
+<h4>3. Phase B pruning caused cross-URL match failure (τ0-WM)</h4>
+<p>Pruning Phase A matched canonicals from PART 2 meant the LLM couldn&#x27;t match new URL variants against them. τ0-WM (tweet URL on 6/2) was pruned, so the arXiv version on 6/3 created a duplicate canonical entry.</p>
+<p><strong>Fix:</strong> Reverted pruning entirely. <code>first_seen</code> removal provides sufficient token savings without the side effect.</p>
+<h4>4. _item_id wrong on manual re-render</h4>
+<p><code>post_html.py</code>&#x27;s <code>_item_id()</code> only checked <code>url_mapping.json</code> (from dedup.py prepare). Manual re-renders without running the batch had no url_mapping → tweet URLs got raw-hashed instead of canonical IDs.</p>
+<p><strong>Fix:</strong> <code>_item_id()</code> now checks canonical_registry.jsonl first (alt_urls + main link → canonical_id), then url_mapping, then raw hash. Manual re-renders produce correct IDs without match_items.</p>
+<h4>5. check_new_users.py wrong FEEDBACK_URL</h4>
+<p>Script had an old Apps Script URL. New user registration silently failed.</p>
+<p><strong>Fix:</strong> Updated to current FEEDBACK_URL.</p>
+<h4>6. News links same-tab</h4>
+<p>Users requested external links open in new tabs.</p>
+<p><strong>Fix:</strong> <code>inline_md_to_html</code> adds <code>target=&quot;_blank&quot; rel=&quot;noopener&quot;</code> to all markdown links. Internal navigation links (home, archive) remain same-tab.</p>
+<h3>Files changed</h3>
+<table>
+<tr><th>File</th><th>Change</th></tr>
+<tr><td><code>feedback_webapp.gs</code></td><td><code>mark_processed</code>, <code>mark_registered</code>, <code>_getPendingFeedback</code>, generic <code>_markProcessed(sheet)</code></td></tr>
+<tr><td><code>match_items.py</code></td><td>timeout 300s, no PART 2 pruning, title-only format</td></tr>
+<tr><td><code>post_html.py</code></td><td><code>_item_id</code> canonical_registry lookup, <code>target=&quot;_blank&quot;</code></td></tr>
+<tr><td><code>check_new_users.py</code></td><td>Fixed FEEDBACK_URL, <code>mark_registered</code> call after creation</td></tr>
+<tr><td><code>SKILL.md</code></td><td>§0.5 step e: <code>mark_processed</code> after config write</td></tr>
+<tr><td><code>CLAUDE.md</code></td><td>10 users, cron time, operational notes</td></tr>
+</table></div>
+</details><details class="entry" id="011-share-feature">
 <summary class="entry-title">011: Share Feature + Slack DM Notifications<span class="entry-meta"><span class="entry-date"> 2026-06-01</span><span class="entry-type"> Feature addition</span></span></summary>
 <div class="entry-body"><p><strong>Date:</strong> 2026-06-01</p>
 <p><strong>Type:</strong> Feature addition</p>
