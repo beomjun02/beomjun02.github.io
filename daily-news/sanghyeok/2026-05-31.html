@@ -106,8 +106,8 @@
         var li=document.createElement('li');
         li.innerHTML=
           '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
-          +' <button class="vote-btn" data-id="87d676e379" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
-          +' <button class="share-btn" data-id="87d676e379" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
+          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
+          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
           +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
         ul.appendChild(li);
       });
