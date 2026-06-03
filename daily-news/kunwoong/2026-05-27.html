@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="kunwoong" data-date="2026-05-27">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="kunwoong" data-date="2026-05-27" data-users="beomjun,byungjun,daewon,huiwon,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-05-27</h1>
 <div class="user-banner"><div class="user-handle">Kunwoong</div><div class="user-categories">Language · Vision</div><div class="user-kws">MoE · VLM · trustworthy · agent · fundamental · architecture · test-time · VLM · video</div></div>
 <p class="page-meta">14 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
@@ -37,7 +37,7 @@
   <li><div class="item-row"><span class="item-title"><a href="https://arxiv.org/abs/2605.21573" target="_blank" rel="noopener">Lens: Rethinking Training Efficiency for Foundational Text-to-Image Models</a></span> <button class="vote-btn" data-id="80112bbeda" data-link="https://arxiv.org/abs/2605.21573" data-source="https://arxiv.org/abs/2605.21573" data-title="Lens: Rethinking Training Efficiency for Foundational Text-to-Image Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="80112bbeda" data-link="https://arxiv.org/abs/2605.21573" data-title="Lens: Rethinking Training Efficiency for Foundational Text-to-Image Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv (HF, 97 upvotes) · 2026-05-27<span class="item-keywords"> · fundamental</span></span><span class="item-desc">A 3.8B-parameter text-to-image model that matches or beats &gt;6B-parameter SOTA on several benchmarks while using a fraction of the training compute. Most of the win comes from architectural changes to the conditioning path and a revised noise schedule.</span></li>
 </ul>
 
-<div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="kunwoong" data-date="2026-05-27"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycbzR-13IUxuI4DR_oSUCsbM0PtZuPgeJlcf864ALl82mYGMRgL1RYZ8isE76mEYleKsQ/exec" data-user="kunwoong" data-date="2026-05-27" data-users="beomjun,byungjun,daewon,huiwon,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
 
 </div>
 '
@@ -103,29 +103,6 @@
 </script>
 
 
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="yonghoon" data-date="2026-06-03">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="yonghoon" data-date="2026-06-03" data-users="beomjun,byungjun,daewon,huiwon,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-03</h1>
 <div class="user-banner"><div class="user-handle">Yonghoon</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · off-policy · reinforcement learning · robot foundation model · robot learning</div></div>
 <p class="page-meta">12 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
@@ -35,171 +35,13 @@
   <li><div class="item-row"><span class="item-title"><a href="https://x.com/chelseabfinn/status/2059788470898618614" target="_blank" rel="noopener">EXPO-FT: VLA fine-tuning via on-policy RL achieves 30/30 reliability</a></span> <button class="vote-btn" data-id="78e5bbd8e0" data-link="https://x.com/chelseabfinn/status/2059788470898618614" data-source="https://x.com/chelseabfinn/status/2059788470898618614" data-title="EXPO-FT: VLA fine-tuning via on-policy RL achieves 30/30 reliability" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="78e5bbd8e0" data-link="https://x.com/chelseabfinn/status/2059788470898618614" data-title="EXPO-FT: VLA fine-tuning via on-policy RL achieves 30/30 reliability"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X (@chelseabfinn) · 2026-06-02<span class="item-keywords"> · VLA · reinforcement learning</span></span><span class="item-desc">Extends EXPO to fine-tune VLAs in the real world using image observations, action chunking, and DAgger data. On π0.5, achieves perfect 30/30 success across all 8 tasks with only 19 minutes of RL data on average — reaching higher reliability with less data than prior methods.</span></li>
 </ul>
 
-<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="yonghoon" data-date="2026-06-03"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="yonghoon" data-date="2026-06-03" data-users="beomjun,byungjun,daewon,huiwon,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
 </div>
 
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
+<script src="/daily-news/share.js"></script>
 
 
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var user=dn.dataset.user,date=dn.dataset.date;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var ALL_USERS=['beomjun','byungjun','daewon','huiwon','john','kunwoong','myungkyu','sanghyeok','woomin'];
-  var otherUsers=ALL_USERS.filter(function(u){return u!==user;});
-  var shareData={incoming:{},outgoing:{}};
-  var svgIcon='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
-  function renderShares(){
-    Object.keys(shareData.outgoing).forEach(function(id){
-      var btn=document.querySelector('.share-btn[data-id="'+id+'"]');
-      if(btn)btn.classList.add('shared');
-    });
-    var notInFeed=[];
-    Object.keys(shareData.incoming).forEach(function(id){
-      var entry=shareData.incoming[id];
-      var existing=document.querySelector('.vote-btn[data-id="'+id+'"]');
-      if(existing){
-        var li=existing.closest('li');
-        var meta=li.querySelector('.item-meta');
-        if(li.querySelector('.share-badge'))return;
-        var badge=document.createElement('span');
-        badge.className='share-badge';
-        badge.textContent='\u2197\uFE0E shared by '+entry.senders.join(', ');
-        if(meta&&meta.nextSibling){meta.parentNode.insertBefore(badge,meta.nextSibling);}
-        else if(meta){meta.parentNode.appendChild(badge);}
-      }else{
-        notInFeed.push({id:id,data:entry});
-      }
-    });
-    var old=dn.querySelector('.shared-section');
-    if(old)old.remove();
-    if(notInFeed.length>0){
-      var sec=document.createElement('div');
-      sec.className='shared-section';
-      sec.innerHTML='<h2>Shared with you</h2>';
-      var ul=document.createElement('ul');
-      notInFeed.forEach(function(item){
-        var d=item.data;
-        var li=document.createElement('li');
-        li.innerHTML=
-          '<div class="item-row"><span class="item-title"><a href="'+d.link+'">'+d.title+'</a></span>'
-          +' <button class="vote-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'" title="upvote"><span class="tri"></span></button>'
-          +' <button class="share-btn" data-id="'+item.id+'" data-link="'+d.link+'" data-title="'+d.title+'">'+svgIcon+'</button></div>'
-          +'<span class="share-badge">\u2197\uFE0E shared by '+d.senders.join(', ')+'</span>';
-        ul.appendChild(li);
-      });
-      sec.appendChild(ul);
-      var fb=dn.querySelector('.feedback');
-      if(fb){dn.insertBefore(sec,fb);}else{dn.appendChild(sec);}
-    }
-  }
-  fetch(proxy+'?action=shares&user='+user+'&date='+date)
-    .then(function(r){return r.json()})
-    .then(function(d){if(d.status==='ok'){shareData=d;renderShares();}})
-    .catch(function(){});
-  var activeDropdown=null;
-  function closeDropdown(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
-  document.addEventListener('click',function(e){
-    if(activeDropdown&&!e.target.closest('.share-dropdown')&&!e.target.closest('.share-btn')){closeDropdown();}
-  });
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.share-btn');
-    if(!btn||e.target.closest('.share-dropdown'))return;
-    if(activeDropdown){closeDropdown();return;}
-    var itemId=btn.dataset.id;
-    var alreadySent=shareData.outgoing[itemId]||[];
-    var dd=document.createElement('div');
-    dd.className='share-dropdown';
-    otherUsers.forEach(function(u){
-      var sent=alreadySent.indexOf(u)>=0;
-      var lbl=document.createElement('label');
-      if(sent){lbl.style.opacity='0.5';}
-      lbl.innerHTML='<input type="checkbox" value="'+u+'"'+(sent?' checked disabled':'')+
-        '> '+u.charAt(0).toUpperCase()+u.slice(1);
-      dd.appendChild(lbl);
-    });
-    var send=document.createElement('button');
-    send.className='share-send';
-    send.textContent='Send';
-    send.addEventListener('click',function(ev){
-      ev.stopPropagation();
-      var checked=dd.querySelectorAll('input:checked:not(:disabled)');
-      var targets=[];
-      checked.forEach(function(cb){targets.push(cb.value);});
-      if(targets.length){
-        btn.classList.add('shared');
-        if(!shareData.outgoing[itemId])shareData.outgoing[itemId]=[];
-        targets.forEach(function(t){if(shareData.outgoing[itemId].indexOf(t)<0)shareData.outgoing[itemId].push(t);});
-        fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-          body:JSON.stringify({user:user,date:date,action:'share',
-            item_id:itemId,value:btn.dataset.link,title:btn.dataset.title,
-            recipients:targets})
-        }).catch(function(){});
-      }
-      closeDropdown();
-    });
-    dd.appendChild(send);
-    if(getComputedStyle(btn).position==='static')btn.style.position='relative';
-    btn.appendChild(dd);
-    activeDropdown=dd;
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
+<script src="/daily-news/feedback.js"></script>
 
 </body>
 </html>
