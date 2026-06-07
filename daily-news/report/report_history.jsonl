@@ -1,4 +1,4 @@
-{"date": "2026-06-08", "n_users": 8, "n_ok": 8, "n_errors": 0, "n_new": 0, "avg_duration": 284}
+{"date": "2026-06-08", "n_users": 10, "n_ok": 10, "n_errors": 0, "n_new": 0, "avg_duration": 252}
 {"date": "2026-06-07", "n_users": 10, "n_ok": 10, "n_errors": 0, "n_new": 0, "avg_duration": 272}
 {"date": "2026-06-06", "n_users": 10, "n_ok": 10, "n_errors": 0, "n_new": 0, "avg_duration": 233}
 {"date": "2026-06-05", "n_users": 10, "n_ok": 10, "n_errors": 0, "n_new": 0, "avg_duration": 198}
