@@ -6,148 +6,38 @@
 <title>Daily News — 2026-06-13</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-13">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-13" data-users="beomjun,byungjun,daewon,huiwon,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-13</h1>
 <div class="user-banner"><div class="user-handle">John</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · robot learning · world models · JEPA models · world action models · video generative models · diffusion modeling · multimodal generation models</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/GoogleDeepMind/status/2065388989146628563">DeepMind Robotics Accelerator launches with 15 startups</a></span> <button class="vote-btn" data-id="e9a7a40f90" data-link="https://x.com/GoogleDeepMind/status/2065388989146628563" data-source="https://x.com/GoogleDeepMind/status/2065388989146628563" data-title="DeepMind Robotics Accelerator launches with 15 startups" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Google DeepMind · 2026-06-12<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Three-month program connecting 15 European startups with Google DeepMind&#x27;s robotics team, cloud infrastructure, and mentorship to shape the next wave of physical AI — a clear signal that DeepMind is investing in the European robotics ecosystem beyond its own labs.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/googlegemma/status/2065405385389830358">Google Gemma: real-time social robotics with Gemini Live</a></span> <button class="vote-btn" data-id="477fc848af" data-link="https://x.com/googlegemma/status/2065405385389830358" data-source="https://x.com/googlegemma/status/2065405385389830358" data-title="Google Gemma: real-time social robotics with Gemini Live" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Google · 2026-06-12<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Demo of Gemini Live powering seamless voice conversation with Reachy Mini, first on cloud then running locally on-device. Shows the cloud-to-edge pipeline for deploying foundation models on physical robots in real time — the kind of embodied LLM integration that makes robot interaction feel natural.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2065418904118206719">Chris Paxton: RL is the path to robust robot performance</a></span> <button class="vote-btn" data-id="e7fe907ffc" data-link="https://x.com/chris_j_paxton/status/2065418904118206719" data-source="https://x.com/chris_j_paxton/status/2065418904118206719" data-title="Chris Paxton: RL is the path to robust robot performance" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-12<span class="item-keywords"> · robot learning · world models</span></span><span class="item-desc">Widely-shared thread arguing that reinforcement learning remains the best way to achieve robust, high-quality robot performance — but doing RL in the real world or traditional simulation has major limitations. Frames world models as the bridge: learning in imagination, then deploying in reality.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/GoogleDeepMind/status/2065388989146628563" target="_blank" rel="noopener">DeepMind Robotics Accelerator launches with 15 EU startups</a></span> <button class="vote-btn" data-id="e9a7a40f90" data-link="https://x.com/GoogleDeepMind/status/2065388989146628563" data-source="https://x.com/GoogleDeepMind/status/2065388989146628563" data-title="DeepMind Robotics Accelerator launches with 15 EU startups" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e9a7a40f90" data-link="https://x.com/GoogleDeepMind/status/2065388989146628563" data-title="DeepMind Robotics Accelerator launches with 15 EU startups"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Google DeepMind · 2026-06-12<span class="item-keywords"> · robot learning</span></span><span class="item-desc">DeepMind launched a three-month Robotics Accelerator program connecting 15 European startups with access to its AI stack, Gemini Robotics models, and hands-on engineering support — the first cohort focused on shaping physical AI in Europe.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/googlegemma/status/2065405385389830358" target="_blank" rel="noopener">Gemma 4 runs real-time social robotics on Reachy Mini</a></span> <button class="vote-btn" data-id="477fc848af" data-link="https://x.com/googlegemma/status/2065405385389830358" data-source="https://x.com/googlegemma/status/2065405385389830358" data-title="Gemma 4 runs real-time social robotics on Reachy Mini" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="477fc848af" data-link="https://x.com/googlegemma/status/2065405385389830358" data-title="Gemma 4 runs real-time social robotics on Reachy Mini"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Google · 2026-06-12<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Google&#x27;s DevX team demoed Gemini Live for voice chat on a Reachy Mini robot, then showed the same robot running locally on Gemma 4 — demonstrating the path from cloud to on-device for social robotics applications.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/GoogleDeepMind/status/2065031279213441309" target="_blank" rel="noopener">DeepMind and Schmidt Sciences launch $10M multi-agent AI research fund</a></span> <button class="vote-btn" data-id="1fcde5b3fc" data-link="https://x.com/GoogleDeepMind/status/2065031279213441309" data-source="https://x.com/GoogleDeepMind/status/2065031279213441309" data-title="DeepMind and Schmidt Sciences launch $10M multi-agent AI research fund" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="1fcde5b3fc" data-link="https://x.com/GoogleDeepMind/status/2065031279213441309" data-title="DeepMind and Schmidt Sciences launch $10M multi-agent AI research fund"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Google DeepMind · 2026-06-11</span><span class="item-desc">A new $10M research fund with Schmidt Sciences, Cooperative AI, ARIA, and Google.org to study collective behaviors that emerge when millions of AI agents interact. Relevant beyond multi-agent games — implications for decentralized robot fleets and collaborative physical AI systems.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/michellelsun/status/2065060850743054380" target="_blank" rel="noopener">Pete Florence data tier list for humanoid foundation models</a></span> <button class="vote-btn" data-id="31beaf8b7b" data-link="https://x.com/michellelsun/status/2065060850743054380" data-source="https://x.com/michellelsun/status/2065060850743054380" data-title="Pete Florence data tier list for humanoid foundation models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="31beaf8b7b" data-link="https://x.com/michellelsun/status/2065060850743054380" data-title="Pete Florence data tier list for humanoid foundation models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Generalist AI · 2026-06-11<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Pete Florence (CEO of Generalist, ex-DeepMind) shared a live data tier list for training humanoid and robotics foundation models: S-tier is real-world robot experience (especially glove/sensor data), with human video and simulation data ranking below. A useful reference for data strategy decisions.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/almond_robotics/status/2064735457691488260">Axol: dual-arm robot for physical AI teams</a></span> <button class="vote-btn" data-id="f548280459" data-link="https://x.com/almond_robotics/status/2064735457691488260" data-source="https://x.com/almond_robotics/status/2064735457691488260" data-title="Axol: dual-arm robot for physical AI teams" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Almond Robotics · 2026-06-12</span><span class="item-desc">Almond Robotics announces Axol, a dual-arm robot platform designed for teams building physical AI. Built and manufactured in the US, positioned as an open research platform for real-world manipulation rather than staged demos. Chris Paxton endorsed it as the kind of low-cost capable hardware the field needs.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/novita_labs/status/2065457715380629708" target="_blank" rel="noopener">MiniMax M3 open weights</a></span> <button class="vote-btn" data-id="07134ed4d4" data-link="https://x.com/novita_labs/status/2065457715380629708" data-source="https://x.com/novita_labs/status/2065457715380629708" data-title="MiniMax M3 open weights" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="07134ed4d4" data-link="https://x.com/novita_labs/status/2065457715380629708" data-title="MiniMax M3 open weights"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">MiniMax · 2026-06-12</span><span class="item-desc">MiniMax released M3 with open weights on Hugging Face: ~428B total parameters with ~23B activated via mixture-of-experts, designed for the agent era. Available for local deployment and fine-tuning.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/svlevine/status/2065285875223953809">Flow Reversal Steering allows steering diffusion-based VLAs</a></span> <button class="vote-btn" data-id="3b26b24576" data-link="https://arxiv.org/abs/2606.13675" data-source="https://x.com/svlevine/status/2065285875223953809" data-title="Flow Reversal Steering allows steering diffusion-based VLAs" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Levine Lab (UC Berkeley) · 2026-06-12<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a method to steer diffusion-based VLA policies with high-level actions — e.g., from VLM reasoning outputs. Critically, this also enables running RL directly in the diffusion policy&#x27;s action space, opening a path to reinforcement-learned diffusion VLAs. Project page available at flow-reversal-steering.github.io.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13672">WEAVER: An Effective World Model for Robotic Manipulation</a></span> <button class="vote-btn" data-id="40a4835194" data-link="https://arxiv.org/abs/2606.13672" data-source="https://arxiv.org/abs/2606.13672" data-title="WEAVER: An Effective World Model for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · world models</span></span><span class="item-desc">Multi-view world model trained via flow-matching loss that simultaneously achieves fidelity, long-horizon consistency, and speed for robotic manipulation. Applied on real hardware: 0.870 correlation with real-world success for policy evaluation, 38% real-world success improvement on top of the π0.5 robot foundation model, and 14% improvement for test-time planning at 5–10x speedup over prior world models. Code and models available.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12690">EWAM: Enhanced World Action Model for Closed-Loop Adaptation on Cosmos3</a></span> <button class="vote-btn" data-id="f2cb6ebd2c" data-link="https://arxiv.org/abs/2606.12690" data-source="https://arxiv.org/abs/2606.12690" data-title="EWAM: Enhanced World Action Model for Closed-Loop Adaptation on Cosmos3" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · world action models</span></span><span class="item-desc">Inference-time co-reasoning architecture built on a fully frozen Cosmos3 backbone. Inserts four lightweight neural layers — experience memory, anomaly detection, policy routing, and action correction — into the DiT forward path. Zero-shot task adaptation with no extra demonstrations or backbone fine-tuning, all performance gains from the inserted modules alone.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12497">μVLA: Recurrent Memory for Partially Observable Manipulation</a></span> <button class="vote-btn" data-id="6eedff18a3" data-link="https://arxiv.org/abs/2606.12497" data-source="https://arxiv.org/abs/2606.12497" data-title="μVLA: Recurrent Memory for Partially Observable Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · VLA</span></span><span class="item-desc">Controlled isolation study showing that minimal in-backbone recurrence — a small set of learnable memory tokens carried across timesteps — doubles VLA success rate under partial observability (0.42 → 0.84) with no auxiliary losses or architectural changes. On LIBERO, the recurrent variant reaches 96.2% average success, confirming no regression under full observability.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12604">EgoEngine: From Egocentric Human Videos to Dexterous Robot Demonstrations</a></span> <button class="vote-btn" data-id="34adffff81" data-link="https://arxiv.org/abs/2606.12604" data-source="https://arxiv.org/abs/2606.12604" data-title="EgoEngine: From Egocentric Human Videos to Dexterous Robot Demonstrations" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Scalable framework converting egocentric human manipulation videos into high-fidelity robot data by bridging the visual gap (human-to-robot observation) and action gap (human motion to executable trajectory). First zero-shot visuomotor dexterous policy learned from egocentric human videos without any real-robot demonstrations. Project website available.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/pathak2206/status/2065101898911502673">FACTR 2: Force-Aware Commodity Robot Manipulation</a></span> <button class="vote-btn" data-id="38a3eb18b5" data-link="https://x.com/pathak2206/status/2065101898911502673" data-source="https://x.com/pathak2206/status/2065101898911502673" data-title="FACTR 2: Force-Aware Commodity Robot Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Pathak Lab (CMU) · 2026-06-11<span class="item-keywords"> · robot learning</span></span><span class="item-desc">From the Pathak lab at CMU: turns any commodity robot into a force-aware system without force sensors. A tiny force network trains in under 1 minute from less than 10 minutes of data. Key insight: most of a trajectory is free-space motion, but success or failure is determined by critical contact moments — force finds those moments. No code release announced yet.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/svlevine/status/2065285875223953809" target="_blank" rel="noopener">Flow Reversal Steering: steering diffusion-based VLAs with high-level actions</a></span> <button class="vote-btn" data-id="fbc9ace791" data-link="https://x.com/svlevine/status/2065285875223953809" data-source="https://x.com/svlevine/status/2065285875223953809" data-title="Flow Reversal Steering: steering diffusion-based VLAs with high-level actions" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="fbc9ace791" data-link="https://x.com/svlevine/status/2065285875223953809" data-title="Flow Reversal Steering: steering diffusion-based VLAs with high-level actions"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">UC Berkeley · 2026-06-12<span class="item-keywords"> · VLA</span></span><span class="item-desc">Sergey Levine&#x27;s group introduces Flow Reversal Steering (FRS), which refines coarse high-level actions (e.g. from VLM reasoning) into precise, in-distribution motions for diffusion-based VLAs. Also enables RL in the diffusion noise space guided by semantic reasoning — &quot;think through a task, then practice it.&quot; Code available at flow-reversal-steering.github.io.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13672" target="_blank" rel="noopener">WEAVER: An Effective World Model for Robotic Manipulation</a></span> <button class="vote-btn" data-id="40a4835194" data-link="https://arxiv.org/abs/2606.13672" data-source="https://arxiv.org/abs/2606.13672" data-title="WEAVER: An Effective World Model for Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="40a4835194" data-link="https://arxiv.org/abs/2606.13672" data-title="WEAVER: An Effective World Model for Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · world models · robot foundation model</span></span><span class="item-desc">Addresses the three requirements a world model must jointly satisfy for real robotics deployment: high fidelity, fast inference, and long-horizon stability. WEAVER is positioned as a practical world model unlocking policy evaluation, policy improvement, and test-time planning with limited real-world interaction.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12497" target="_blank" rel="noopener">μVLA: Recurrent Memory for Partially Observable Manipulation</a></span> <button class="vote-btn" data-id="6eedff18a3" data-link="https://arxiv.org/abs/2606.12497" data-source="https://arxiv.org/abs/2606.12497" data-title="μVLA: Recurrent Memory for Partially Observable Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6eedff18a3" data-link="https://arxiv.org/abs/2606.12497" data-title="μVLA: Recurrent Memory for Partially Observable Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · VLA</span></span><span class="item-desc">Isolates the contribution of recurrent memory in VLA models under partial observability — conditions where the current observation alone is insufficient for action. Disentangles recurrence from retrieval and compression to identify what actually helps when key information is no longer visible.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13053" target="_blank" rel="noopener">EA-WM: Event-Aware World Models for Long-Horizon Manipulation</a></span> <button class="vote-btn" data-id="4d8d9d10a6" data-link="https://arxiv.org/abs/2606.13053" data-source="https://arxiv.org/abs/2606.13053" data-title="EA-WM: Event-Aware World Models for Long-Horizon Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4d8d9d10a6" data-link="https://arxiv.org/abs/2606.13053" data-title="EA-WM: Event-Aware World Models for Long-Horizon Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · world models</span></span><span class="item-desc">Extends world models with event-aware progress signals that are relational, predicate-level, and physically grounded — addressing the gap where visual prediction alone cannot determine whether an imagined future satisfies task-relevant milestones during long-horizon manipulation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12604" target="_blank" rel="noopener">EgoEngine: From Egocentric Human Videos to High-Fidelity Dexterous Robot Demonstrations</a></span> <button class="vote-btn" data-id="34adffff81" data-link="https://arxiv.org/abs/2606.12604" data-source="https://arxiv.org/abs/2606.12604" data-title="EgoEngine: From Egocentric Human Videos to High-Fidelity Dexterous Robot Demonstrations" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="34adffff81" data-link="https://arxiv.org/abs/2606.12604" data-title="EgoEngine: From Egocentric Human Videos to High-Fidelity Dexterous Robot Demonstrations"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Bridges the visual gap between human and robot observations to turn egocentric human videos into usable dexterous robot demonstrations at scale, targeting the data collection bottleneck that limits dexterous manipulation learning.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13494" target="_blank" rel="noopener">NavWAM: A Navigation World Action Model for Goal-Conditioned Visual Navigation</a></span> <button class="vote-btn" data-id="467772b32d" data-link="https://arxiv.org/abs/2606.13494" data-source="https://arxiv.org/abs/2606.13494" data-title="NavWAM: A Navigation World Action Model for Goal-Conditioned Visual Navigation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="467772b32d" data-link="https://arxiv.org/abs/2606.13494" data-title="NavWAM: A Navigation World Action Model for Goal-Conditioned Visual Navigation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-13<span class="item-keywords"> · world action models</span></span><span class="item-desc">Turns navigation world models from pure prediction modules into actionable planners: NavWAM jointly anticipates how ego motion changes the future view and whether that change reaches the goal, closing the loop between world model foresight and navigation actions under partial observability.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-13"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
