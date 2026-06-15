@@ -6,151 +6,41 @@
 <title>Daily News — 2026-06-16</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-16">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-16" data-users="beomjun,byungjun,daewon,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-16</h1>
-<div class="user-banner"><div class="user-handle">Beomjun</div><div class="user-categories">Robotics · Language</div><div class="user-kws">VLA · robot foundation model · robot learning · dexterous manipulation · point-based policy · sim-to-real RL · embodied MLLM · world model · world-action model · LLM · VLM</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<div class="user-banner"><div class="user-handle">Beomjun</div><div class="user-categories">Robotics · Language</div><div class="user-kws">VLA · robot foundation model · robot learning · dexterous manipulation · point-based model · sim-to-real RL · embodied MLLM · world model · world-action model</div></div>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2065171343872524588">DeepSeek full-parameter post-training on 1k Huawei GPU cluster</a></span> <button class="vote-btn" data-id="b12e5bfd4f" data-link="https://x.com/chris_j_paxton/status/2065171343872524588" data-source="https://x.com/chris_j_paxton/status/2065171343872524588" data-title="DeepSeek full-parameter post-training on 1k Huawei GPU cluster" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-11</span><span class="item-desc">Full-parameter post-training of DeepSeek completed on a 1,000-GPU Huawei cluster with zero NVIDIA hardware — a milestone for non-NVIDIA AI training infrastructure. Paxton: &quot;probably good enough at last for a real training run,&quot; with implications for Chinese frontier model development.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://www.anthropic.com/news/fable-mythos-access">US gov suspends Fable 5/Mythos access for foreign nationals</a></span> <button class="vote-btn" data-id="e8bdc06332" data-link="https://www.anthropic.com/news/fable-mythos-access" data-source="https://www.anthropic.com/news/fable-mythos-access" data-title="US gov suspends Fable 5/Mythos access for foreign nationals" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Anthropic · 2026-06-12</span><span class="item-desc">A June 12 US gov directive suspends Anthropic&#x27;s Fable 5 and Mythos 5 access for all foreign nationals. Paxton predicts this will accelerate open-source AI development and alternative compute pathways — directly relevant to international researchers relying on frontier models.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/KyleVedder/status/2066289445188546753" target="_blank" rel="noopener">Cargo cults, data flywheels, and novelty pumps</a></span> <button class="vote-btn" data-id="b6a681e2b0" data-link="https://x.com/KyleVedder/status/2066289445188546753" data-source="https://x.com/KyleVedder/status/2066289445188546753" data-title="Cargo cults, data flywheels, and novelty pumps" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b6a681e2b0" data-link="https://x.com/KyleVedder/status/2066289445188546753" data-title="Cargo cults, data flywheels, and novelty pumps"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X (@KyleVedder) · 2026-06-14<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Opinion piece arguing that &quot;deployment data flywheels&quot; miss the key insight: scale should provide novelty, and deploying robots on a known task wrings most novelty out of generated data. Proposes that diverse operations teams acting as &quot;novelty pumps&quot; are the only path past the data plateau.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/vipulved/status/2066025256163405828">DeepSeek V4 Pro on Together AI</a></span> <button class="vote-btn" data-id="fd331a3fbc" data-link="https://x.com/vipulved/status/2066025256163405828" data-source="https://x.com/vipulved/status/2066025256163405828" data-title="DeepSeek V4 Pro on Together AI" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-14<span class="item-keywords"> · LLM</span></span><span class="item-desc">DeepSeek V4 Pro achieves #1 on both latency and speed benchmarks on Together AI&#x27;s inference platform, now available for dedicated and serverless deployment alongside B200 and B300 GPU options.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/almond_robotics/status/2064735457691488260" target="_blank" rel="noopener">Almond Robotics Axol dual-arm robot</a></span> <button class="vote-btn" data-id="f548280459" data-link="https://x.com/almond_robotics/status/2064735457691488260" data-source="https://x.com/almond_robotics/status/2064735457691488260" data-title="Almond Robotics Axol dual-arm robot" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f548280459" data-link="https://x.com/almond_robotics/status/2064735457691488260" data-title="Almond Robotics Axol dual-arm robot"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X (@almond_robotics) · 2026-06-10</span><span class="item-desc">Axol is a bimanual mobile manipulator designed for physical AI teams, priced at ~$8k and manufactured in the US. It targets builders who need a research-grade platform that works in real environments rather than staged demos.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13769">μ₀: A Scalable 3D Interaction-Trace World Model</a></span> <button class="vote-btn" data-id="a62ffaa372" data-link="https://arxiv.org/abs/2606.13769" data-source="https://arxiv.org/abs/2606.13769" data-title="μ₀: A Scalable 3D Interaction-Trace World Model" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-16<span class="item-keywords"> · world model</span></span><span class="item-desc">A 3D world model that tracks how actions induce physical change through interaction traces rather than pixel-space video reconstruction. Avoids the compute waste of dense appearance modeling while remaining embodiment-agnostic, enabling scalable robot learning without embodiment-specific action labels.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14409">Hy-Embodied-0.5-VLA: From VLA Models to a Real-World Robot Learning Stack</a></span> <button class="vote-btn" data-id="6a83052697" data-link="https://arxiv.org/abs/2606.14409" data-source="https://arxiv.org/abs/2606.14409" data-title="Hy-Embodied-0.5-VLA: From VLA Models to a Real-World Robot Learning Stack" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">End-to-end system spanning the full robot learning stack: data collection, model design, continued pre-training, supervised fine-tuning, RL post-training, and real-world deployment. Each component is documented as a distinct module, providing a replicable reference architecture for VLA-based systems.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/pathak2206/status/2065101898911502673">FACTR 2: Force-Aware Robot Learning Without Force Sensors</a></span> <button class="vote-btn" data-id="38a3eb18b5" data-link="https://x.com/pathak2206/status/2065101898911502673" data-source="https://x.com/pathak2206/status/2065101898911502673" data-title="FACTR 2: Force-Aware Robot Learning Without Force Sensors" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-13<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Pathak introduces FACTR 2, which turns any commodity robot into a force-aware system without force sensors by training a compact model to infer contact forces from proprioception and vision. Addresses a critical blind spot in modern robot learning where force information is largely ignored.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13886">PhysVLA: Towards Physically-Grounded VLA for Embodied Robotic Manipulation</a></span> <button class="vote-btn" data-id="731356c2db" data-link="https://arxiv.org/abs/2606.13886" data-source="https://arxiv.org/abs/2606.13886" data-title="PhysVLA: Towards Physically-Grounded VLA for Embodied Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">Injects fundamental physical principles — rigid-body dynamics, contact constraints — into VLA training, addressing the physics gap where standard temporal smoothing fails to enforce physical plausibility. Moves VLA outputs from purely data-fitted to physically grounded.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.12366">APT: Action Expert Pretraining Improves Instruction Generalization of VLA Policies</a></span> <button class="vote-btn" data-id="77d4015d6b" data-link="https://arxiv.org/abs/2606.12366" data-source="https://arxiv.org/abs/2606.12366" data-title="APT: Action Expert Pretraining Improves Instruction Generalization of VLA Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-15<span class="item-keywords"> · VLA</span></span><span class="item-desc">Identifies a structural imbalance in VLA training data where language diversity is far less varied than visual and action content. Pretraining an action expert module separately improves out-of-distribution instruction generalization without requiring more diverse data.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14561">ORCA: A Platform for Open-Source Dexterity Research</a></span> <button class="vote-btn" data-id="76fd8f3f9a" data-link="https://arxiv.org/abs/2606.14561" data-source="https://arxiv.org/abs/2606.14561" data-title="ORCA: A Platform for Open-Source Dexterity Research" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-16<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">Open-source platform for dexterous manipulation research beyond parallel grippers. Anthropomorphic hands enable richer manipulation — reorientation, in-hand manipulation, and fine-grained contact control — with integrated teleoperation and data collection pipelines.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/litian_liang/status/2066541466286215570">UME: Universal Manipulation Exoskeleton</a></span> <button class="vote-btn" data-id="6cfb4187f9" data-link="https://x.com/litian_liang/status/2066541466286215570" data-source="https://x.com/litian_liang/status/2066541466286215570" data-title="UME: Universal Manipulation Exoskeleton" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-15<span class="item-keywords"> · robot learning</span></span><span class="item-desc">A low-cost exoskeleton with real-time haptic torque feedback for collecting high-quality manipulation demonstrations. Directly addresses the data bottleneck for autonomous policy learning — Paxton: &quot;Better robot data is everything.&quot;</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13769" target="_blank" rel="noopener">μ₀: A Scalable 3D Interaction-Trace World Model</a></span> <button class="vote-btn" data-id="a62ffaa372" data-link="https://arxiv.org/abs/2606.13769" data-source="https://arxiv.org/abs/2606.13769" data-title="μ₀: A Scalable 3D Interaction-Trace World Model" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a62ffaa372" data-link="https://arxiv.org/abs/2606.13769" data-title="μ₀: A Scalable 3D Interaction-Trace World Model"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · world model · point-based model</span></span><span class="item-desc">A world model that forecasts 3D trajectories for salient interaction points (hands, tools, contacts) rather than dense pixels or explicit actions, yielding an embodiment-agnostic motion interface. Pretrained from diverse video without action labels, trace-conditioned policies are competitive with π0 — establishing 3D traces as a transferable cross-embodiment representation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14218" target="_blank" rel="noopener">Universal Manipulation Exoskeleton (UME)</a></span> <button class="vote-btn" data-id="3eb8c867cb" data-link="https://arxiv.org/abs/2606.14218" data-source="https://arxiv.org/abs/2606.14218" data-title="Universal Manipulation Exoskeleton (UME)" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="3eb8c867cb" data-link="https://arxiv.org/abs/2606.14218" data-title="Universal Manipulation Exoskeleton (UME)"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · robot learning · dexterous manipulation</span></span><span class="item-desc">A low-cost upper-limb exoskeleton providing real-time haptic torque feedback for teleoperation and whole-arm configuration recording. Enables learning bimanual, whole-body, and actively compliant policies that work in highly constrained spaces — operators can even unsheathe kinematically constrained objects blindfolded. Retargets to OpenArm, Franka, and X-ARM.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13886" target="_blank" rel="noopener">PhysVLA: Towards Physically-Grounded VLA</a></span> <button class="vote-btn" data-id="731356c2db" data-link="https://arxiv.org/abs/2606.13886" data-source="https://arxiv.org/abs/2606.13886" data-title="PhysVLA: Towards Physically-Grounded VLA" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="731356c2db" data-link="https://arxiv.org/abs/2606.13886" data-title="PhysVLA: Towards Physically-Grounded VLA"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">A plug-and-play inference-time framework that wraps any frozen VLA with physics-aware corrections — a phase-aware FSM for task structure and a selective Euler-Lagrange gate for kinodynamic consistency. Adds &lt;1 ms overhead per step and boosts success rates by up to 17% on LIBERO-Spatial and up to 50% on real hardware, with no retraining or weight access.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14255" target="_blank" rel="noopener">ReactVLA: Fast and Lightweight Reactive VLA</a></span> <button class="vote-btn" data-id="feb94e2697" data-link="https://arxiv.org/abs/2606.14255" data-source="https://arxiv.org/abs/2606.14255" data-title="ReactVLA: Fast and Lightweight Reactive VLA" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="feb94e2697" data-link="https://arxiv.org/abs/2606.14255" data-title="ReactVLA: Fast and Lightweight Reactive VLA"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">Reduces multi-step diffusion sampling to one-to-few-step generation via improved Mean Flow, combined with dynamic depth-wise feature routing (AttnRes). Outperforms SmolVLA and π0 at similar size, achieves up to 1.65x task improvement and &gt;4x inference speedup, with real-world latency below 38.6 ms.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13877" target="_blank" rel="noopener">ContactWorld: Vision-Tactile World Models for Contact-Rich Manipulation</a></span> <button class="vote-btn" data-id="c8883f2123" data-link="https://arxiv.org/abs/2606.13877" data-source="https://arxiv.org/abs/2606.13877" data-title="ContactWorld: Vision-Tactile World Models for Contact-Rich Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c8883f2123" data-link="https://arxiv.org/abs/2606.13877" data-title="ContactWorld: Vision-Tactile World Models for Contact-Rich Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · world model</span></span><span class="item-desc">A benchmark and systematic study of vision-tactile world models across 12 contact-rich manipulation tasks. Finds that spatially structured, temporally continuous representations work best: point-cloud observations improve planning success from ~21% to 32%, and adding tactile force-fields pushes it to 36%. Tactile sensing importance grows with planning horizon.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14084" target="_blank" rel="noopener">Self-Improving VLA Policies via Selected Diffusion Noise</a></span> <button class="vote-btn" data-id="ee1ae6b63d" data-link="https://arxiv.org/abs/2606.14084" data-source="https://arxiv.org/abs/2606.14084" data-title="Self-Improving VLA Policies via Selected Diffusion Noise" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ee1ae6b63d" data-link="https://arxiv.org/abs/2606.14084" data-title="Self-Improving VLA Policies via Selected Diffusion Noise"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">A training-free test-time method that improves diffusion-based VLA robustness by selecting maximally separated noise vectors that mitigate spurious visual correlations and yield more coherent action trajectories. Consistently improves success rates by +8% in simulation and +10% in real-world settings across π0, Groot-N1.5, and Groot-N1.6.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.13856" target="_blank" rel="noopener">Output-Level Regularization Eliminates the Seed Lottery in VLA Fine-Tuning</a></span> <button class="vote-btn" data-id="125b240dc9" data-link="https://arxiv.org/abs/2606.13856" data-source="https://arxiv.org/abs/2606.13856" data-title="Output-Level Regularization Eliminates the Seed Lottery in VLA Fine-Tuning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="125b240dc9" data-link="https://arxiv.org/abs/2606.13856" data-title="Output-Level Regularization Eliminates the Seed Lottery in VLA Fine-Tuning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · VLA</span></span><span class="item-desc">Identifies a hidden danger in single-GPU VLA fine-tuning: 1 in 13 random seeds silently degrades success by 29 pp due to output collapse. Traces the cause to the Jacobian null-space and shows that output-level regularizers (VICReg, Dropout, halved LR) eliminate every catastrophic seed, while weight-level methods (L2, EWC) do not.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.14250" target="_blank" rel="noopener">SyLink Hand: Synergy-Inspired Linkage-Driven Anthropomorphic Hand</a></span> <button class="vote-btn" data-id="1617445e5d" data-link="https://arxiv.org/abs/2606.14250" data-source="https://arxiv.org/abs/2606.14250" data-title="SyLink Hand: Synergy-Inspired Linkage-Driven Anthropomorphic Hand" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="1617445e5d" data-link="https://arxiv.org/abs/2606.14250" data-title="SyLink Hand: Synergy-Inspired Linkage-Driven Anthropomorphic Hand"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-16<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">An anthropomorphic dexterous hand integrating biomechanical synergy principles with linkage-driven transmission. 19 joints driven by 11 actuators, 520g total mass, ~$400 manufacturing cost. A novel spherical four-bar linkage achieves decoupled flexion/extension and abduction/adduction in a compact form factor.</span></li>
+  <li><div class="item-row"><span class="item-title"><a href="https://x.com/svlevine/status/2065285875223953809" target="_blank" rel="noopener">Flow Reversal Steering: steering diffusion-based VLAs with VLM reasoning</a></span> <button class="vote-btn" data-id="3b26b24576" data-link="https://x.com/svlevine/status/2065285875223953809" data-source="https://x.com/svlevine/status/2065285875223953809" data-title="Flow Reversal Steering: steering diffusion-based VLAs with VLM reasoning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="3b26b24576" data-link="https://x.com/svlevine/status/2065285875223953809" data-title="Flow Reversal Steering: steering diffusion-based VLAs with VLM reasoning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X (@svlevine) · 2026-06-12<span class="item-keywords"> · VLA</span></span><span class="item-desc">Steers diffusion-based VLAs by reversing the flow process with high-level actions from VLM reasoning. Also enables RL in diffusion noise space with exploration guided by language reasoning — think through a task, then practice it.</span></li>
 </ul>
 <h2>Watch list</h2>
 <ul>
-  <li><span class="item-title">🆕 Orca Hand BoM/CAD/Assembly Guide — <strong>released!</strong> BoM (Google Sheet), CAD files, and assembly preview are now publicly available. Ordering is live through the configurator with ~3 week lead time. Step-by-step assembly video coming soon. <a href="https://www.orcahand.com/getting-started">Getting Started</a></span></li>
+  <li><span class="item-title"><a href="https://www.orcahand.com/getting-started" target="_blank" rel="noopener">Orca Hand BoM/CAD/Assembly Guide release</a></span><span class="item-meta"><span class="item-keywords">update</span></span><span class="item-desc">BoM (Google Sheet) and CAD files are now marked &quot;AVAILABLE NOW&quot; on the getting-started page, with open-source hardware on GitHub. The step-by-step assembly video for the orcahand is listed as &quot;coming soon&quot; and the wiki is still marked &quot;IN PROGRESS.&quot;</span></li>
 </ul>
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="beomjun" data-date="2026-06-16"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
