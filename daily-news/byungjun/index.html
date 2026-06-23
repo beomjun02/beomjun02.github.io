@@ -6,153 +6,37 @@
 <title>Daily News — 2026-06-24</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-24">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-24" data-users="beomjun,byungjun,daewon,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-24</h1>
 <div class="user-banner"><div class="user-handle">Byungjun</div><div class="user-categories">Robotics</div><div class="user-kws">VLA · Subtask-aware VLA · Subtask · Robot Data annoatation · long-horizon planning · Hierarchical VLA</div></div>
-<p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">12 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20781">World Action Models: A Survey</a></span> <button class="vote-btn" data-id="f0b54e1f6a" data-link="https://arxiv.org/abs/2606.20781" data-source="https://arxiv.org/abs/2606.20781" data-title="World Action Models: A Survey" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · world-action model</span></span><span class="item-desc">A comprehensive survey of world-action models covering architectures that combine environment prediction with action generation for robot policy learning. Timely consolidation of the WAM paradigm as the field rapidly converges on this approach.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20905">Vesta: A Generalist Embodied Reasoning Model</a></span> <button class="vote-btn" data-id="dfbd708a58" data-link="https://arxiv.org/abs/2606.20905" data-source="https://arxiv.org/abs/2606.20905" data-title="Vesta: A Generalist Embodied Reasoning Model" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">A generalist model for embodied reasoning that integrates perception, planning, and action across diverse robot manipulation and navigation tasks, targeting the intersection of foundation models and embodied intelligence.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20698">SafeDojo: Safe Reinforcement Learning for VLA via Interactive World Model</a></span> <button class="vote-btn" data-id="b637604bfb" data-link="https://arxiv.org/abs/2606.20698" data-source="https://arxiv.org/abs/2606.20698" data-title="SafeDojo: Safe Reinforcement Learning for VLA via Interactive World Model" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA · sim-to-real RL</span></span><span class="item-desc">Combines safe reinforcement learning with VLA fine-tuning through an interactive world model, enabling safe policy exploration in simulation before real deployment — directly addressing the safety gap in RL-based VLA training.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21264">NAC: Neural Action Codec for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="c618f4fc0b" data-link="https://arxiv.org/abs/2606.21264" data-source="https://arxiv.org/abs/2606.21264" data-title="NAC: Neural Action Codec for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">A neural codec for encoding and decoding robot actions in VLA models, improving action representation quality and efficiency for manipulation tasks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21086">MV-WAM: Manifold-Aware World Action Model with Value Augmentation</a></span> <button class="vote-btn" data-id="e39e94ca53" data-link="https://arxiv.org/abs/2606.21086" data-source="https://arxiv.org/abs/2606.21086" data-title="MV-WAM: Manifold-Aware World Action Model with Value Augmentation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · world-action model</span></span><span class="item-desc">A world-action model that operates on manifold-aware latent spaces with value-based augmentation for more accurate dynamics prediction and better action generation in complex manipulation environments.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/RussTedrake/status/2068280490361073785">Russ Tedrake on data quality for diffusion policies and VLAs</a></span> <button class="vote-btn" data-id="e1180e6a5e" data-link="https://x.com/RussTedrake/status/2068280490361073785" data-source="https://x.com/RussTedrake/status/2068280490361073785" data-title="Russ Tedrake on data quality for diffusion policies and VLAs" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@RussTedrake) · 2026-06-20<span class="item-keywords"> · VLA</span></span><span class="item-desc">Tedrake argues that the robotics community&#x27;s practice of heavily filtering training data for diffusion policies, VLAs, and large behavior models is inefficient. Points toward new directions for leveraging all available data rather than discarding imperfect demonstrations.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/bhawna_paliwal_/status/2067693826643542353">&quot;Do As I Do&quot;: Human Video to Dexterous Robot Manipulation</a></span> <button class="vote-btn" data-id="6258ac3398" data-link="https://x.com/bhawna_paliwal_/status/2067693826643542353" data-source="https://x.com/bhawna_paliwal_/status/2067693826643542353" data-title="&quot;Do As I Do&quot;: Human Video to Dexterous Robot Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@bhawna_paliwal_) · 2026-06-18<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">A modular pipeline that converts everyday RGB human videos into dexterous robot manipulation trajectories. Unlike prior work limited to lab demos, egocentric-only views, or closed object sets, this handles in-the-wild videos with open-vocabulary objects.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/QingxuZhu/status/2067621607288492299">MindOn: multi-embodiment robot control from human-centric learning</a></span> <button class="vote-btn" data-id="372315f57c" data-link="https://x.com/QingxuZhu/status/2067621607288492299" data-source="https://x.com/QingxuZhu/status/2067621607288492299" data-title="MindOn: multi-embodiment robot control from human-centric learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@QingxuZhu) · 2026-06-18<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">A single model controls two humanoid robots and two dual-arm robots in a shared logistics workflow, from picking to packing. Trained entirely on human-centric learning with no robot-collected data, demonstrating cross-embodiment generalization.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20867" target="_blank" rel="noopener">FOCA: Future-Oriented Conditioning for Data-Efficient VLA Adaptation</a></span> <button class="vote-btn" data-id="d8b32910a0" data-link="https://arxiv.org/abs/2606.20867" data-source="https://arxiv.org/abs/2606.20867" data-title="FOCA: Future-Oriented Conditioning for Data-Efficient VLA Adaptation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d8b32910a0" data-link="https://arxiv.org/abs/2606.20867" data-title="FOCA: Future-Oriented Conditioning for Data-Efficient VLA Adaptation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CV · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces future-oriented conditioning for few-shot VLA adaptation by predicting task-grounded future interaction embeddings in latent space. Achieves 95.7% success with just 20 demonstrations on LIBERO, improves 7–12% on RoboCasa, and delivers up to 26% absolute gains on real robots — a new state of the art in few-shot VLA adaptation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20698" target="_blank" rel="noopener">SafeDojo: Safe RL for VLA via Interactive World Model</a></span> <button class="vote-btn" data-id="b637604bfb" data-link="https://arxiv.org/abs/2606.20698" data-source="https://arxiv.org/abs/2606.20698" data-title="SafeDojo: Safe RL for VLA via Interactive World Model" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b637604bfb" data-link="https://arxiv.org/abs/2606.20698" data-title="SafeDojo: Safe RL for VLA via Interactive World Model"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">The first model-based safe reinforcement learning framework for VLA policies. Performs online RL inside an interactive video world model, using a decoupled task-reward and safety-cost signal balanced through Lagrangian-constrained GRPO. Achieves the best safe-success rate on SafeLIBERO and validates on real-world Franka deployment across five tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21264" target="_blank" rel="noopener">NAC: Neural Action Codec for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="c618f4fc0b" data-link="https://arxiv.org/abs/2606.21264" data-source="https://arxiv.org/abs/2606.21264" data-title="NAC: Neural Action Codec for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c618f4fc0b" data-link="https://arxiv.org/abs/2606.21264" data-title="NAC: Neural Action Codec for Vision-Language-Action Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Repurposes neural audio codec architecture (multi-scale RVQGAN) to tokenize robot action trajectories for VLAs. Replaces mel-spectrogram losses with time-domain and spectral reconstruction, achieving lower reconstruction error and higher task success than binning, FAST, and prior VQ tokenizers across LIBERO-10, RoboMimic, and real-world tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20781" target="_blank" rel="noopener">World Action Models: A Survey</a></span> <button class="vote-btn" data-id="f0b54e1f6a" data-link="https://arxiv.org/abs/2606.20781" data-source="https://arxiv.org/abs/2606.20781" data-title="World Action Models: A Survey" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f0b54e1f6a" data-link="https://arxiv.org/abs/2606.20781" data-title="World Action Models: A Survey"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Comprehensive survey clarifying the boundaries among world models, video generation models, VLA policies, and World Action Models. Organizes the field through two views — what each method generates and how it couples prediction to action — revealing a design pattern where WAMs generate less of the future while preserving what control requires.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20905" target="_blank" rel="noopener">Vesta: A Generalist Embodied Reasoning Model</a></span> <button class="vote-btn" data-id="dfbd708a58" data-link="https://arxiv.org/abs/2606.20905" data-source="https://arxiv.org/abs/2606.20905" data-title="Vesta: A Generalist Embodied Reasoning Model" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="dfbd708a58" data-link="https://arxiv.org/abs/2606.20905" data-title="Vesta: A Generalist Embodied Reasoning Model"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Unifies localization, spatial reasoning, navigation, and long-horizon planning into a single foundation model with a multimodal memory harness. Beats individual SOTA baselines by &gt;20% on average and an ensemble of per-category-best baselines by &gt;10%. Improves real-world robotic task success by &gt;35% on tasks requiring memory and reasoning.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20679" target="_blank" rel="noopener">MemoryVAM: Integrating Memory into Video Action Model for Robot Manipulation</a></span> <button class="vote-btn" data-id="7254eb82af" data-link="https://arxiv.org/abs/2606.20679" data-source="https://arxiv.org/abs/2606.20679" data-title="MemoryVAM: Integrating Memory into Video Action Model for Robot Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="7254eb82af" data-link="https://arxiv.org/abs/2606.20679" data-title="MemoryVAM: Integrating Memory into Video Action Model for Robot Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Adds episodic memory to video-world-model policies via a Perceiver-based Recap Compressor and Cue Gate. On LIBERO-Mem, improves success from 5% to 42.5%; on real robots achieves 78.3% on counting tasks, 80% on spatial recall, and 75% on sequential tracking. Works with both UNet and DiT backbones.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21165" target="_blank" rel="noopener">CAMP: Compressed Action Memory for Partially Observable Manipulation</a></span> <button class="vote-btn" data-id="fec7cdbc7e" data-link="https://arxiv.org/abs/2606.21165" data-source="https://arxiv.org/abs/2606.21165" data-title="CAMP: Compressed Action Memory for Partially Observable Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="fec7cdbc7e" data-link="https://arxiv.org/abs/2606.21165" data-title="CAMP: Compressed Action Memory for Partially Observable Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">Introduces a compressed representation of the robot&#x27;s own action history as a self-supervised memory signal for long-horizon, contact-rich manipulation. First policy to demonstrate substantial success on contact-rich partially observable tasks purely through learned memory, with gains across four real-robot setups and two novel simulation benchmarks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.22174" target="_blank" rel="noopener">OpenHLM: An Empirical Recipe for Whole-Body Humanoid Loco-Manipulation</a></span> <button class="vote-btn" data-id="c93d4d0d8a" data-link="https://huggingface.co/papers/2606.22174" data-source="https://huggingface.co/papers/2606.22174" data-title="OpenHLM: An Empirical Recipe for Whole-Body Humanoid Loco-Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c93d4d0d8a" data-link="https://huggingface.co/papers/2606.22174" data-title="OpenHLM: An Empirical Recipe for Whole-Body Humanoid Loco-Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Systematic study asking what it takes to build a whole-body native VLA model that maps language and pixels directly to all of a humanoid&#x27;s degrees of freedom. Finds that decoupling upper and lower body yields behaviors similar to a wheeled dual-arm platform, and that whole-body native training is necessary for true humanoid coordination.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.23680" target="_blank" rel="noopener">CoorDex: Coordinated Dexterous Humanoid Loco-Manipulation</a></span> <button class="vote-btn" data-id="c82772db98" data-link="https://huggingface.co/papers/2606.23680" data-source="https://huggingface.co/papers/2606.23680" data-title="CoorDex: Coordinated Dexterous Humanoid Loco-Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c82772db98" data-link="https://huggingface.co/papers/2606.23680" data-title="CoorDex: Coordinated Dexterous Humanoid Loco-Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-24</span><span class="item-desc">Converts high-dimensional body and dexterous hand control into coordinated latent residual control, enabling high-DoF dexterous loco-manipulation on the move rather than the typical stop-and-go approach. Demonstrates continuous walking while performing dexterous grasps with multi-fingered hands.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.22540" target="_blank" rel="noopener">PolicyTrim: Boosting Intrinsic Policy Efficiency of VLA Models</a></span> <button class="vote-btn" data-id="c24308891f" data-link="https://huggingface.co/papers/2606.22540" data-source="https://huggingface.co/papers/2606.22540" data-title="PolicyTrim: Boosting Intrinsic Policy Efficiency of VLA Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c24308891f" data-link="https://huggingface.co/papers/2606.22540" data-title="PolicyTrim: Boosting Intrinsic Policy Efficiency of VLA Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Addresses the underexplored intrinsic policy efficiency of VLA models — the effective executable length of predicted action chunks and total physical execution time. Proposes methods to improve both factors, reducing wasted compute and physical execution time without sacrificing task success.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.23085" target="_blank" rel="noopener">Foresight: Failure Detection for Long-Horizon Robotic Manipulation</a></span> <button class="vote-btn" data-id="e6b818669d" data-link="https://huggingface.co/papers/2606.23085" data-source="https://huggingface.co/papers/2606.23085" data-title="Foresight: Failure Detection for Long-Horizon Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e6b818669d" data-link="https://huggingface.co/papers/2606.23085" data-title="Foresight: Failure Detection for Long-Horizon Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · long-horizon planning</span></span><span class="item-desc">A failure detection framework that monitors manipulation trajectories using latent representations from an action-conditioned world model. Trained using only final success/failure labels without dense temporal annotations, addressing the ambiguous failure-onset problem in long-horizon tasks.</span></li>
 </ul>
-<h2>Releases</h2>
-<ul>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/stevencheng/status/2068337804569203183">Unitree Qmini: fully open-sourced bipedal robot</a></span> <button class="vote-btn" data-id="27ac44efd9" data-link="https://x.com/stevencheng/status/2068337804569203183" data-source="https://x.com/stevencheng/status/2068337804569203183" data-title="Unitree Qmini: fully open-sourced bipedal robot" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@stevencheng) · 2026-06-20</span><span class="item-desc">Unitree releases Qmini, a low-cost bipedal robot that can be entirely 3D printed by individual users. Fully open-sourced hardware, making bipedal robotics accessible to hobbyists and researchers.</span></li>
-  <li><div class="item-row"><span class="item-title"><a href="https://x.com/litian_liang/status/2067993853022367886">UME: human-centered hardware design for teleoperation</a></span> <button class="vote-btn" data-id="4d71a11127" data-link="https://x.com/litian_liang/status/2067993853022367886" data-source="https://x.com/litian_liang/status/2067993853022367886" data-title="UME: human-centered hardware design for teleoperation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@litian_liang) · 2026-06-19<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">Clarification on UME&#x27;s hardware design philosophy: designed for humans rather than robots, keeping human operators at the center of the teleoperation loop. Cuts through noise by focusing on ergonomic, human-first interfaces for robot data collection.</span></li>
-</ul>
+
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2069447230730227732">AGIBot deploys humanoid fleet on tablet factory line</a></span> <button class="vote-btn" data-id="424801cfc2" data-link="https://x.com/chris_j_paxton/status/2069447230730227732" data-source="https://x.com/chris_j_paxton/status/2069447230730227732" data-title="AGIBot deploys humanoid fleet on tablet factory line" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@chris_j_paxton) · 2026-06-23<span class="item-keywords"> · robot learning</span></span><span class="item-desc">AGIBot has deployed a fleet of humanoid robots on a factory production line packing tablets alongside human workers for roughly 6 days. Paxton notes the setup resembles traditional system integration with custom end effectors — functional deployment rather than staged demos.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/almond_robotics/status/2069448506717417691">Almond Robotics Axol completes first autonomous production task</a></span> <button class="vote-btn" data-id="c60e466d2a" data-link="https://x.com/almond_robotics/status/2069448506717417691" data-source="https://x.com/almond_robotics/status/2069448506717417691" data-title="Almond Robotics Axol completes first autonomous production task" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X (@almond_robotics) · 2026-06-23</span><span class="item-desc">Axol autonomously completed a task from Almond&#x27;s own production line for the first time — deburring a metal part the same way human operators do, a milestone toward self-manufacturing robots.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/introducing-claude-tag" target="_blank" rel="noopener">Introducing Claude Tag</a></span> <button class="vote-btn" data-id="4efb5feb36" data-link="https://www.anthropic.com/news/introducing-claude-tag" data-source="https://www.anthropic.com/news/introducing-claude-tag" data-title="Introducing Claude Tag" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4efb5feb36" data-link="https://www.anthropic.com/news/introducing-claude-tag" data-title="Introducing Claude Tag"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-06-23</span><span class="item-desc">Anthropic launches Claude Tag, a new collaborative feature for teams to work with Claude. Expands the platform&#x27;s tooling beyond individual use toward team-level AI workflows.</span></li>
 </ul>
-<h2>Watch list</h2>
-<ul>
-  <li><span class="item-title">🆕 Orca Hand BoM/CAD/Assembly Guide — <strong>released (BOM + CAD).</strong> Full BOM (Google Sheet) and CAD files are now available on <a href="https://github.com/orcahand/orcahand_hardware">GitHub</a></span></li>
-</ul>
+
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-24"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
