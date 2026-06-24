@@ -6,148 +6,39 @@
 <title>Daily News — 2026-06-25</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-25">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-25" data-users="beomjun,byungjun,daewon,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-25</h1>
 <div class="user-banner"><div class="user-handle">John</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · robot foundation model · robot learning · world models · JEPA models · world action models · video generative models · diffusion modeling · multimodal generation models</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">12 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/samcharrington/status/2069878355671838909">Qualcomm × HuggingFace: open models on Qualcomm platforms</a></span> <button class="vote-btn" data-id="7d76a732d4" data-link="https://x.com/samcharrington/status/2069878355671838909" data-source="https://x.com/samcharrington/status/2069878355671838909" data-title="Qualcomm × HuggingFace: open models on Qualcomm platforms" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-24</span><span class="item-desc">Qualcomm and HuggingFace announced a partnership to bring open models to Qualcomm platforms and beyond, enabling users to take any model and deploy it on Qualcomm hardware. A significant move toward on-device open-model inference at scale.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2069843541291827322">Humanoid long-horizon demo: cooking mapo tofu autonomously</a></span> <button class="vote-btn" data-id="ce1debe53a" data-link="https://x.com/chris_j_paxton/status/2069843541291827322" data-source="https://x.com/chris_j_paxton/status/2069843541291827322" data-title="Humanoid long-horizon demo: cooking mapo tofu autonomously" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Live demonstrations of humanoid robots completing complex, multi-step household tasks like cooking mapo tofu — a strong signal that affordable, capable home robots are approaching viability.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/mattparlmer/status/2069808851038490760">Industry outlook: parallel grippers + small models for 95% factory tasks by EOY</a></span> <button class="vote-btn" data-id="ff087211fe" data-link="https://x.com/mattparlmer/status/2069808851038490760" data-source="https://x.com/mattparlmer/status/2069808851038490760" data-title="Industry outlook: parallel grippers + small models for 95% factory tasks by EOY" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Industry perspective arguing that parallel grippers combined with relatively small models will handle 95% of factory and warehouse tasks by end of year, without requiring humanoid complexity.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/samcharrington/status/2069878355671838909" target="_blank" rel="noopener">Qualcomm × HuggingFace partnership to deploy open models on edge</a></span> <button class="vote-btn" data-id="7d76a732d4" data-link="https://x.com/samcharrington/status/2069878355671838909" data-source="https://x.com/samcharrington/status/2069878355671838909" data-title="Qualcomm × HuggingFace partnership to deploy open models on edge" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="7d76a732d4" data-link="https://x.com/samcharrington/status/2069878355671838909" data-title="Qualcomm × HuggingFace partnership to deploy open models on edge"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X · 2026-06-24</span><span class="item-desc">Qualcomm and HuggingFace announced a partnership at Qualcomm investor day to bring open models to Qualcomm platforms. Users will be able to take any model and deploy on Qualcomm silicon, expanding the open-model ecosystem beyond cloud-only inference.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2069843541291827322" target="_blank" rel="noopener">Humanoid robots cooking mapo tofu — long-horizon multi-step task</a></span> <button class="vote-btn" data-id="ce1debe53a" data-link="https://x.com/chris_j_paxton/status/2069843541291827322" data-source="https://x.com/chris_j_paxton/status/2069843541291827322" data-title="Humanoid robots cooking mapo tofu — long-horizon multi-step task" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ce1debe53a" data-link="https://x.com/chris_j_paxton/status/2069843541291827322" data-title="Humanoid robots cooking mapo tofu — long-horizon multi-step task"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Chris Paxton highlights a demo of humanoid robots completing a full multi-step cooking task autonomously, noting that affordable, capable home robots are increasingly plausible as long-horizon task execution improves.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/mattparlmer/status/2069808851038490760" target="_blank" rel="noopener">Parallel grippers + small models → 95% of factory tasks by EoY</a></span> <button class="vote-btn" data-id="ff087211fe" data-link="https://x.com/mattparlmer/status/2069808851038490760" data-source="https://x.com/mattparlmer/status/2069808851038490760" data-title="Parallel grippers + small models → 95% of factory tasks by EoY" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="ff087211fe" data-link="https://x.com/mattparlmer/status/2069808851038490760" data-title="Parallel grippers + small models → 95% of factory tasks by EoY"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">X · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Industry commentary: parallel grippers paired with relatively small robot learning models may handle the vast majority of factory and warehouse tasks by end of year, suggesting the field is closer to practical deployment than humanoid form factors alone would suggest.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/_akhaliq/status/2069830898522951821">Qwen-AgentWorld: Language World Models for General Agents</a></span> <button class="vote-btn" data-id="2dd79fa626" data-link="https://arxiv.org/abs/2606.24597" data-source="https://x.com/_akhaliq/status/2069830898522951821" data-title="Qwen-AgentWorld: Language World Models for General Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Qwen (Alibaba) · 2026-06-23<span class="item-keywords"> · world models</span></span><span class="item-desc">Open-source native language world model that simulates agent environments across seven domains (MCP, Search, Terminal, SWE, and more). Environment modeling is the training objective from continual pretraining through RL — not a post-hoc adaptation. Code and weights available.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/BitRobotNetwork/status/2069767641892520003">BitRobot HIW-500: largest open-source humanoid teleop dataset</a></span> <button class="vote-btn" data-id="41ad1afac7" data-link="https://x.com/BitRobotNetwork/status/2069767641892520003" data-source="https://x.com/BitRobotNetwork/status/2069767641892520003" data-title="BitRobot HIW-500: largest open-source humanoid teleop dataset" title="upvote"><span class="tri"></span></button></div><span class="item-meta">BitRobot × Unitree × HuggingFace · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">HIW-500 (Humanoids-in-the-Wild 500) is the largest open-source humanoid teleoperation dataset — 500+ hours, 23K+ episodes, 10+ TB across 12 real homes in Southeast Asia covering 10+ household tasks. Built with Unitree robots. Dataset available on HuggingFace.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/blog/kogai/kog-laneformer-2b-the-latency-first-model">Kog Laneformer 2B: open-source latency-first model at 3,000+ tok/s</a></span> <button class="vote-btn" data-id="46bee58e86" data-link="https://huggingface.co/blog/kogai/kog-laneformer-2b-the-latency-first-model" data-source="https://huggingface.co/blog/kogai/kog-laneformer-2b-the-latency-first-model" data-title="Kog Laneformer 2B: open-source latency-first model at 3,000+ tok/s" title="upvote"><span class="tri"></span></button></div><span class="item-meta">Kog AI × HuggingFace · 2026-06-24</span><span class="item-desc">Open-sourced 2B parameter model optimized for inference latency, demonstrating 3,000+ tokens per second. Weights and blog post available on HuggingFace. A push toward making fast inference accessible for real-time applications.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/BitRobotNetwork/status/2069767641892520003" target="_blank" rel="noopener">HIW-500: largest open humanoid teleop dataset (500+ hrs, 23K+ episodes)</a></span> <button class="vote-btn" data-id="41ad1afac7" data-link="https://x.com/BitRobotNetwork/status/2069767641892520003" data-source="https://x.com/BitRobotNetwork/status/2069767641892520003" data-title="HIW-500: largest open humanoid teleop dataset (500+ hrs, 23K+ episodes)" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="41ad1afac7" data-link="https://x.com/BitRobotNetwork/status/2069767641892520003" data-title="HIW-500: largest open humanoid teleop dataset (500+ hrs, 23K+ episodes)"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">BitRobot × Unitree × HuggingFace · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">The largest open-source humanoid teleoperation dataset collected in real homes — 500+ hours, 23K+ episodes, 10+ TB across 12 homes in Southeast Asia, covering 10+ household tasks on Unitree hardware. LeRobot re-encoded the full dataset to LeRobot format (10TB → 2TB) with no fidelity loss. Available on HuggingFace.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24597" target="_blank" rel="noopener">Qwen-AgentWorld: language world models for general agents</a></span> <button class="vote-btn" data-id="2406602e3e" data-link="https://huggingface.co/papers/2606.24597" data-source="https://huggingface.co/papers/2606.24597" data-title="Qwen-AgentWorld: language world models for general agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2406602e3e" data-link="https://huggingface.co/papers/2606.24597" data-title="Qwen-AgentWorld: language world models for general agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Alibaba/Qwen · 2026-06-23<span class="item-keywords"> · world models</span></span><span class="item-desc">Qwen releases the first language world models capable of simulating agentic environments across seven domains (MCP, Search, Terminal, SWE, and more). Two sizes: 35B-A3B and 397B-A17B, trained with native world modeling from continual pretraining through RL. Open weights available.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/ClementDelangue/status/2069839095577084364" target="_blank" rel="noopener">Kog Laneformer 2B: latency-first model running at 3000+ tok/s</a></span> <button class="vote-btn" data-id="f3fa16f82f" data-link="https://x.com/ClementDelangue/status/2069839095577084364" data-source="https://x.com/ClementDelangue/status/2069839095577084364" data-title="Kog Laneformer 2B: latency-first model running at 3000+ tok/s" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f3fa16f82f" data-link="https://x.com/ClementDelangue/status/2069839095577084364" data-title="Kog Laneformer 2B: latency-first model running at 3000+ tok/s"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Kog AI × HuggingFace · 2026-06-24</span><span class="item-desc">Kog open-sourced the 2B model behind their 3000+ tokens-per-second inference demo. Open weights on HuggingFace, targeting extremely fast inference for latency-sensitive applications.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/pika_labs/status/2069900688147325080" target="_blank" rel="noopener">Pika Seedance 2.0 in native 4K via MCP</a></span> <button class="vote-btn" data-id="80b3b8cc43" data-link="https://x.com/pika_labs/status/2069900688147325080" data-source="https://x.com/pika_labs/status/2069900688147325080" data-title="Pika Seedance 2.0 in native 4K via MCP" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="80b3b8cc43" data-link="https://x.com/pika_labs/status/2069900688147325080" data-title="Pika Seedance 2.0 in native 4K via MCP"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Pika Labs · 2026-06-24<span class="item-keywords"> · video generative models</span></span><span class="item-desc">Seedance 2.0 is now available in native 4K resolution through Pika MCP integration, enabling high-fidelity video generation directly from agent toolchains.</span></li>
 </ul>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24472">G³VLA: Geometric inductive bias for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-source="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric inductive bias for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces a camera-aware geometric module that injects calibrated structure into pretrained VLAs without changing the action space. Combines intrinsic-conditioned ray embeddings, projective positional encoding (PRoPE), and cross-view fusion. Evaluated on π₀, π₀.₅, and GR00T 1.5 across LIBERO, RoboCasa24, RoboTwin2.0, and real-robot settings. Submitted to CoRL 2026.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24742">World Value Models for Robotic Manipulation</a></span> <button class="vote-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-source="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · world models</span></span><span class="item-desc">Combines world models with value estimation, grounding current belief using historical context and planning over future outcomes. Introduces Suboptimal-Value-Bench — 800 suboptimal trajectories with human-labeled annotations across multiple embodiments. Achieves state-of-the-art value-order correlation and improves manipulation in both sim and real.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24049">SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies</a></span> <button class="vote-btn" data-id="76cd0b0998" data-link="https://arxiv.org/abs/2606.24049" data-source="https://arxiv.org/abs/2606.24049" data-title="SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Proposes Cartesian state delta as a universal action representation across different robots plus an Action Adapter that converts predictions into robot-specific control. Substantially outperforms direct control-command policies when trained on cross-embodiment data and proves robust under dynamics shifts at deployment.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24152">Autonomous Video Generation with Counterfactual Controllability for Self-Evolving World Models</a></span> <button class="vote-btn" data-id="9adc876351" data-link="https://arxiv.org/abs/2606.24152" data-source="https://arxiv.org/abs/2606.24152" data-title="Autonomous Video Generation with Counterfactual Controllability for Self-Evolving World Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-06-25<span class="item-keywords"> · world models</span></span><span class="item-desc">Proposes a framework for autonomous video generation where counterfactual scenarios can be controllably generated, enabling world models to self-evolve by learning from diverse hypothetical outcomes without human supervision.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24472" target="_blank" rel="noopener">G³VLA: Geometric inductive bias for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-source="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric inductive bias for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric inductive bias for Vision-Language-Action Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Proposes a camera-aware geometric module that injects calibrated 3D structure into VLA visual tokens without altering the pretrained backbone. Addresses the fundamental mismatch where multi-camera VLA setups process views as independent 2D images despite known intrinsics and extrinsics.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24884" target="_blank" rel="noopener">InSight: Self-Guided Skill Acquisition via Steerable VLAs</a></span> <button class="vote-btn" data-id="cdbf62e07c" data-link="https://arxiv.org/abs/2606.24884" data-source="https://arxiv.org/abs/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="cdbf62e07c" data-link="https://arxiv.org/abs/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Makes VLAs steerable at the primitive-action level (&quot;move gripper to bowl,&quot; &quot;lift upward&quot;), then uses this steerability for autonomous skill acquisition beyond the training data. A VLM decomposes tasks into primitives, the steerable VLA executes them, and new skills emerge without additional demonstrations.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24742" target="_blank" rel="noopener">World Value Models for Robotic Manipulation</a></span> <button class="vote-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-source="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · world models</span></span><span class="item-desc">Uses world model backbones instead of VLM backbones for robotic value estimation, arguing that world models inherent temporal reasoning ability makes them better suited for value prediction than VLMs trained on static observations. Enables scaling policy learning from large-scale, mixed-quality data.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.20092" target="_blank" rel="noopener">EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLAs</a></span> <button class="vote-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-source="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLAs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLAs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HuggingFace Papers · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Addresses the memory bottleneck in long-horizon VLA policies by introducing event-driven selective memory that retains task-relevant visual evidence rather than accumulating massive visual redundancies. Avoids the latency penalty of dual-system approaches.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24152" target="_blank" rel="noopener">Autonomous Video Generation with Counterfactual Controllability for Self-Evolving World Models</a></span> <button class="vote-btn" data-id="9adc876351" data-link="https://arxiv.org/abs/2606.24152" data-source="https://arxiv.org/abs/2606.24152" data-title="Autonomous Video Generation with Counterfactual Controllability for Self-Evolving World Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9adc876351" data-link="https://arxiv.org/abs/2606.24152" data-title="Autonomous Video Generation with Counterfactual Controllability for Self-Evolving World Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CV · 2026-06-25<span class="item-keywords"> · world models</span></span><span class="item-desc">Challenges the claim that video generation equals world modeling — argues current models learn partial, implicit spatiotemporal models but not fully grounded or controllable ones. Proposes counterfactual controllability as a mechanism for world models that can self-evolve through autonomous video generation.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="john" data-date="2026-06-25"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
