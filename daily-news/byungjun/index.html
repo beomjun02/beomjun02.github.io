@@ -6,151 +6,37 @@
 <title>Daily News — 2026-06-25</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-25">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-25" data-users="beomjun,byungjun,daewon,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-25</h1>
 <div class="user-banner"><div class="user-handle">Byungjun</div><div class="user-categories">Robotics</div><div class="user-kws">VLA · Subtask-aware VLA · Subtask · Robot Data annoatation · long-horizon planning · Hierarchical VLA</div></div>
-<p class="page-meta">13 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">10 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24467">CompressKV: Semantic-Retrieval-Guided KV-Cache Compression</a></span> <button class="vote-btn" data-id="c3696688f7" data-link="https://arxiv.org/abs/2606.24467" data-source="https://arxiv.org/abs/2606.24467" data-title="CompressKV: Semantic-Retrieval-Guided KV-Cache Compression" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-25<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">Proposes head-aware KV cache compression that accounts for functional heterogeneity across GQA attention heads. Unlike methods applying uniform heuristic scoring, CompressKV uses semantic retrieval signals to identify critical tokens per head, reducing memory footprint while preserving long-context performance.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.23961">Forget Without Compromise: Nexus Sampling for Streaming KV-Cache Eviction</a></span> <button class="vote-btn" data-id="e0853207db" data-link="https://arxiv.org/abs/2606.23961" data-source="https://arxiv.org/abs/2606.23961" data-title="Forget Without Compromise: Nexus Sampling for Streaming KV-Cache Eviction" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-06-25<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">Addresses irreversible token eviction in streaming KV-cache under fixed memory budgets. Introduces Nexus Sampling — a probabilistic strategy replacing deterministic top-K eviction — to avoid permanently discarding subtly important tokens in agentic and long-context workloads.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24033">RoPE-Aware Bit Allocation for KV-Cache Quantization</a></span> <button class="vote-btn" data-id="ad7cd67e9f" data-link="https://arxiv.org/abs/2606.24033" data-source="https://arxiv.org/abs/2606.24033" data-title="RoPE-Aware Bit Allocation for KV-Cache Quantization" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-06-25<span class="item-keywords"> · kv cache compression</span></span><span class="item-desc">Observes that under RoPE, key contributions decompose into position-dependent 2D frequency blocks with varying quantization sensitivity. Introduces Block-GTQ, a RoPE-aware bit allocator that assigns more bits to high-energy blocks, improving KV-cache quantization over flat-vector methods.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24597">Qwen-AgentWorld: Language World Models for General Agents</a></span> <button class="vote-btn" data-id="2dd79fa626" data-link="https://arxiv.org/abs/2606.24597" data-source="https://arxiv.org/abs/2606.24597" data-title="Qwen-AgentWorld: Language World Models for General Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF Papers · 2026-06-25<span class="item-keywords"> · agent</span></span><span class="item-desc">From Alibaba&#x27;s Qwen team, proposes language-based world models for building general-purpose agents. Top-ranked paper on HF daily (82 upvotes), representing a major push toward agents that reason about world dynamics through language rather than task-specific rewards.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24437">ReM-MoA: Reasoning Memory Sustains Mixture-of-Agents Scaling</a></span> <button class="vote-btn" data-id="f6ce26f563" data-link="https://arxiv.org/abs/2606.24437" data-source="https://arxiv.org/abs/2606.24437" data-title="ReM-MoA: Reasoning Memory Sustains Mixture-of-Agents Scaling" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-25<span class="item-keywords"> · agent · routing</span></span><span class="item-desc">Identifies that existing Mixture-of-Agents architectures degrade as depth increases. Proposes memory-augmented MoA with a Ranked Reasoning Memory that stores traces across layers and a Reviewer Agent for comparative evaluation — sustaining scaling gains where vanilla MoA saturates.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20945">Grouped Query Experts: Mixture-of-Experts on GQA Self-Attention</a></span> <button class="vote-btn" data-id="9cafa9dc4c" data-link="https://arxiv.org/abs/2606.20945" data-source="https://arxiv.org/abs/2606.20945" data-title="Grouped Query Experts: Mixture-of-Experts on GQA Self-Attention" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF Papers · 2026-06-21<span class="item-keywords"> · routing</span></span><span class="item-desc">Applies the Mixture-of-Experts paradigm directly to Grouped Query Attention in transformer self-attention. Enables dynamic expert routing at the attention head level rather than the feed-forward layer — a new axis for scaling attention capacity with controlled compute. 59 upvotes on HF weekly.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24133">Holistic Data Scheduler for LLM Pre-training via Multi-Objective RL</a></span> <button class="vote-btn" data-id="42aaa3ebcf" data-link="https://arxiv.org/abs/2606.24133" data-source="https://arxiv.org/abs/2606.24133" data-title="Holistic Data Scheduler for LLM Pre-training via Multi-Objective RL" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.LG · 2026-06-25<span class="item-keywords"> · efficient training</span></span><span class="item-desc">Frames online data mixing for LLM pre-training as a multi-objective RL problem. Dynamically adjusts data source mixtures during training to simultaneously optimize multiple quality dimensions, going beyond single-objective approaches that miss the inherently multi-faceted nature of pre-training.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24102">Metis: Bridging Text and Code Memory for Self-Evolving Agents</a></span> <button class="vote-btn" data-id="260131b956" data-link="https://arxiv.org/abs/2606.24102" data-source="https://arxiv.org/abs/2606.24102" data-title="Metis: Bridging Text and Code Memory for Self-Evolving Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-25<span class="item-keywords"> · agent</span></span><span class="item-desc">First controlled experiment comparing text-based vs code-based experience representations for self-evolving agents. Finds the optimal choice depends on experience characteristics and proposes a framework that dynamically selects between injecting text into context or exposing code as callable tools.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24884" target="_blank" rel="noopener">InSight: Self-Guided Skill Acquisition via Steerable VLAs</a></span> <button class="vote-btn" data-id="cdbf62e07c" data-link="https://arxiv.org/abs/2606.24884" data-source="https://arxiv.org/abs/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="cdbf62e07c" data-link="https://arxiv.org/abs/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · VLA · Subtask</span></span><span class="item-desc">Decomposes demonstrations into labeled primitives via VLM plan decomposition and end-effector segmentation, then uses a VLM-guided data flywheel to identify missing primitives for novel tasks and autonomously attempt them — turning VLAs into self-improving learners that grow beyond their training data.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.20092" target="_blank" rel="noopener">EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon Vision-Language-Action Policies</a></span> <button class="vote-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-source="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon Vision-Language-Action Policies" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon Vision-Language-Action Policies"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25<span class="item-keywords"> · VLA · long-horizon planning</span></span><span class="item-desc">Addresses the memory bottleneck in long-horizon manipulation by introducing selective, event-driven visual evidence buffering. Avoids the latency of decoupled dual systems and the redundancy of unselective history buffers — keeps only task-relevant visual cues across extended manipulation sequences.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24472" target="_blank" rel="noopener">G³VLA: Geometric inductive bias for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-source="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric inductive bias for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric inductive bias for Vision-Language-Action Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Injects calibrated camera geometry into VLA visual tokens via ray embeddings, projective positional encoding, and cross-view fusion — without altering the action space or training objective. Especially useful for multi-camera setups where views are coupled by known extrinsics but processed as independent images.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24742" target="_blank" rel="noopener">World Value Models for Robotic Manipulation</a></span> <button class="vote-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-source="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv/HF · 2026-06-25</span><span class="item-desc">Marries world models with value estimation for scaling policy learning from mixed-quality data. Argues that VLM backbones lack the temporal modeling capability needed for accurate value estimation, while world models naturally excel at future planning — making them better foundations for generalist value functions.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24448" target="_blank" rel="noopener">Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos</a></span> <button class="vote-btn" data-id="07fd41c178" data-link="https://arxiv.org/abs/2606.24448" data-source="https://arxiv.org/abs/2606.24448" data-title="Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="07fd41c178" data-link="https://arxiv.org/abs/2606.24448" data-title="Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Identifies an &quot;Asymmetric Preservation Principle&quot; in human-to-robot video generation: visible geometry (where) survives generation while control signals (how) are lost. Proposes supervising only the geometry that survives rather than recovering pseudo-actions from synthesized pixels.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24338" target="_blank" rel="noopener">RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning</a></span> <button class="vote-btn" data-id="842bab632e" data-link="https://arxiv.org/abs/2606.24338" data-source="https://arxiv.org/abs/2606.24338" data-title="RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="842bab632e" data-link="https://arxiv.org/abs/2606.24338" data-title="RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · Subtask · long-horizon planning</span></span><span class="item-desc">Formulates manipulation as step-wise state transitions over object-centric scene graphs, enforcing subtask dependencies and supporting causal reasoning over preconditions, effects, and goal states. Disentangles high-level task reasoning from raw inputs for flexible long-horizon planning.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.23680" target="_blank" rel="noopener">CoorDex: Coordinating Body and Hand Priors for Continuous Dexterous Humanoid Loco-Manipulation</a></span> <button class="vote-btn" data-id="c82772db98" data-link="https://huggingface.co/papers/2606.23680" data-source="https://huggingface.co/papers/2606.23680" data-title="CoorDex: Coordinating Body and Hand Priors for Continuous Dexterous Humanoid Loco-Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="c82772db98" data-link="https://huggingface.co/papers/2606.23680" data-title="CoorDex: Coordinating Body and Hand Priors for Continuous Dexterous Humanoid Loco-Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25</span><span class="item-desc">Replaces stop-and-go humanoid manipulation with continuous dexterous loco-manipulation. Converts high-DoF body and hand control into coordinated latent residual control, enabling dexterous manipulation while walking — not just grasp-then-walk.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.22136" target="_blank" rel="noopener">Wh0: Generative World Models as Scalable Sources of Egocentric Human Hand Manipulation Data</a></span> <button class="vote-btn" data-id="862da4259c" data-link="https://huggingface.co/papers/2606.22136" data-source="https://huggingface.co/papers/2606.22136" data-title="Wh0: Generative World Models as Scalable Sources of Egocentric Human Hand Manipulation Data" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="862da4259c" data-link="https://huggingface.co/papers/2606.22136" data-title="Wh0: Generative World Models as Scalable Sources of Egocentric Human Hand Manipulation Data"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25</span><span class="item-desc">Uses generative video world models to produce scene-aligned dexterous manipulation data at scale, bridging the gap between cheap egocentric human video and expensive teleoperation. A practical path to scaling manipulation training data without the sim-to-real gap or teleoperation cost.</span></li>
 </ul>
 <h2>Releases</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/stevencheng/status/2068337804569203183">Unitree Qmini: fully open-sourced bipedal robot</a></span> <button class="vote-btn" data-id="27ac44efd9" data-link="https://x.com/stevencheng/status/2068337804569203183" data-source="https://x.com/stevencheng/status/2068337804569203183" data-title="Unitree Qmini: fully open-sourced bipedal robot" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-20</span><span class="item-desc">Unitree releases Qmini, a low-cost bipedal robot that can be entirely 3D printed by individual users. Fully open-sourced hardware, making bipedal robotics accessible to hobbyists and researchers.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/BitRobotNetwork/status/2069767641892520003">HIW-500: largest open-source humanoid teleop dataset</a></span> <button class="vote-btn" data-id="41ad1afac7" data-link="https://x.com/BitRobotNetwork/status/2069767641892520003" data-source="https://x.com/BitRobotNetwork/status/2069767641892520003" data-title="HIW-500: largest open-source humanoid teleop dataset" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-24</span><span class="item-desc">BitRobot releases HIW-500, the largest open-source humanoid teleoperation dataset collected in real homes. Built with Unitree Robotics across 12 homes in Southeast Asia: 500+ hours, 23K+ episodes, 10+ TB, hosted on HuggingFace.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24597" target="_blank" rel="noopener">Qwen-AgentWorld: Language World Models for General Agents</a></span> <button class="vote-btn" data-id="2406602e3e" data-link="https://huggingface.co/papers/2606.24597" data-source="https://huggingface.co/papers/2606.24597" data-title="Qwen-AgentWorld: Language World Models for General Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2406602e3e" data-link="https://huggingface.co/papers/2606.24597" data-title="Qwen-AgentWorld: Language World Models for General Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Qwen/Alibaba · 2026-06-23</span><span class="item-desc">First language world models for simulating agentic environments across 7 domains (MCP, Search, Terminal, SWE, and more). Two open-source MoE models released: 35B-A3B and 397B-A17B. Native world modeling built from continual pretraining through RL, not post-hoc adaptation.</span></li>
 </ul>
 <h2>News</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/karpathy/status/2069547676849557725">Karpathy on Claude&#x27;s inline paradigm</a></span> <button class="vote-btn" data-id="a89aa49fd4" data-link="https://x.com/karpathy/status/2069547676849557725" data-source="https://x.com/karpathy/status/2069547676849557725" data-title="Karpathy on Claude&#x27;s inline paradigm" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-23<span class="item-keywords"> · agent</span></span><span class="item-desc">Karpathy highlights a &quot;new paradigm for interacting with Claude&quot; that integrates AI inline with all organizational activity, rather than as a separate tool. He emphasizes the significant engineering work required to make this seamless across tools, integrations, and compute — fundamentally changing how humans and AI collaborate org-wide.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/hardmaru/status/2068884466056225025">hardmaru: AI as collective intelligence</a></span> <button class="vote-btn" data-id="98d3147078" data-link="https://x.com/hardmaru/status/2068884466056225025" data-source="https://x.com/hardmaru/status/2068884466056225025" data-title="hardmaru: AI as collective intelligence" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-22</span><span class="item-desc">David Ha argues that human intelligence is fundamentally collective, built on cultural networks across generations. He proposes that the strongest AI systems will follow the same pattern — becoming a collective intelligence that amplifies human capability rather than replacing individuals. 2.6K likes signal broad resonance.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/chris_j_paxton/status/2069447230730227732">AGIBot deploys humanoid fleet on tablet factory line</a></span> <button class="vote-btn" data-id="424801cfc2" data-link="https://x.com/chris_j_paxton/status/2069447230730227732" data-source="https://x.com/chris_j_paxton/status/2069447230730227732" data-title="AGIBot deploys humanoid fleet on tablet factory line" title="upvote"><span class="tri"></span></button></div><span class="item-meta">X · 2026-06-23</span><span class="item-desc">AGIBot has deployed a fleet of humanoid robots on a factory production line packing tablets alongside human workers for roughly 6 days. Paxton notes the setup resembles traditional system integration with custom end effectors — functional deployment rather than staged demos.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://www.anthropic.com/news/introducing-claude-tag" target="_blank" rel="noopener">Introducing Claude Tag</a></span> <button class="vote-btn" data-id="4efb5feb36" data-link="https://www.anthropic.com/news/introducing-claude-tag" data-source="https://www.anthropic.com/news/introducing-claude-tag" data-title="Introducing Claude Tag" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4efb5feb36" data-link="https://www.anthropic.com/news/introducing-claude-tag" data-title="Introducing Claude Tag"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">Anthropic · 2026-06-23</span><span class="item-desc">Anthropic launches Claude Tag, described as a new way for teams to work with Claude. Expands the Claude product surface beyond individual chat and Claude Code into team-oriented collaboration workflows.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="byungjun" data-date="2026-06-25"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
