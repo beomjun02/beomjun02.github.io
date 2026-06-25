@@ -6,147 +6,34 @@
 <title>Daily News — 2026-06-25</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="hojin" data-date="2026-06-25">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="hojin" data-date="2026-06-25" data-users="beomjun,byungjun,daewon,hojin,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-25</h1>
-<div class="user-banner"><div class="user-handle">Hojin</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · WAM · robot foundation model · robot learning · embodied MLLM · dexterous manipulation · sim-to real RL · VLM · benchmark · perception · video understanding</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<div class="user-banner"><div class="user-handle">Hojin</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · WAM · robot foundation model · robot learning · embodied MLLM · dexterous manipulation · sim-to-real RL · VLM · benchmark · perception · video understanding</div></div>
+<p class="page-meta">11 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 
 
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24597">Qwen-AgentWorld: Language World Models for General Agents</a></span> <button class="vote-btn" data-id="2dd79fa626" data-link="https://arxiv.org/abs/2606.24597" data-source="https://arxiv.org/abs/2606.24597" data-title="Qwen-AgentWorld: Language World Models for General Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · WAM</span></span><span class="item-desc">First language world models (35B-A3B and 397B-A17B) capable of simulating agentic environments across 7 domains via long chain-of-thought reasoning, trained on 10M+ interaction trajectories through a three-stage CPT→SFT→RL pipeline. Demonstrates two deployment paradigms: as a decoupled environment simulator enabling scalable agentic RL, and as a unified agent foundation model where world-model training improves downstream performance across 7 agentic benchmarks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24472">G³VLA: Geometric Inductive Bias for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-source="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric Inductive Bias for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Injects calibrated 3D structure into VLA visual tokens via ray embeddings, projective positional encoding (PRoPE), and bidirectional cross-view fusion — built on π₀ with no action-space changes. Shows consistent gains on LIBERO, RoboCasa24, RoboTwin2.0, and real-robot settings; validated on π₀.₅ and GR00T 1.5.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24049">SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies</a></span> <button class="vote-btn" data-id="76cd0b0998" data-link="https://arxiv.org/abs/2606.24049" data-source="https://arxiv.org/abs/2606.24049" data-title="SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">Proposes Cartesian state delta as a universal action representation and an Action Adapter that converts geometric end-effector displacement into robot-specific commands. Handles dynamics variation across different embodiments, hardware units of the same embodiment, and single-robot deployment shifts (control frequency, object weight, controller gains).</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24884">InSight: Self-Guided Skill Acquisition via Steerable VLAs</a></span> <button class="vote-btn" data-id="cdbf62e07c" data-link="https://arxiv.org/abs/2606.24884" data-source="https://arxiv.org/abs/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Makes VLAs steerable at the primitive-action level (move, lift, pour) and introduces a VLM-guided data flywheel that identifies missing primitives for novel tasks, autonomously attempts them, and integrates successful demos into VLA training. Demonstrated on block flipping, drawer closing, sweeping, twisting, and pouring without human demonstrations of target skills.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24448">Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos</a></span> <button class="vote-btn" data-id="07fd41c178" data-link="https://arxiv.org/abs/2606.24448" data-source="https://arxiv.org/abs/2606.24448" data-title="Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Argues that generated robot videos preserve geometry (spatial trajectory) but lose control signals, so synthetic data should only supervise visual perception while real demos handle action learning. GRA extracts 2D end-effector waypoints from source video and routes them to the VLA vision backbone as a spatial anchor, outperforming pseudo-action baselines under matched data budgets.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20092">EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLA Policies</a></span> <button class="vote-btn" data-id="f3d8c4b4c6" data-link="https://arxiv.org/abs/2606.20092" data-source="https://arxiv.org/abs/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLA Policies" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Tackles the memory bottleneck in long-horizon manipulation where task cues become occluded over time. Introduces Keyframe Evidence Memory that predicts future keyframe probabilities from VLA latent embeddings, enabling foresight-driven observation selection. Achieves +40% average success improvement over SOTA memory-augmented VLAs on 17 simulation and 4 real bimanual tasks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24742">World Value Models for Robotic Manipulation</a></span> <button class="vote-btn" data-id="f1ef7502e8" data-link="https://arxiv.org/abs/2606.24742" data-source="https://arxiv.org/abs/2606.24742" data-title="World Value Models for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · WAM</span></span><span class="item-desc">Combines world models with value estimation for a generalist robotic value model, leveraging temporal modeling and future planning for accurate task-progress assessment and data-quality estimation. Introduces Suboptimal-Value-Bench (800 suboptimal trajectories with human annotations) and shows strong sim-to-real transfer.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.23085">Foresight: Failure Detection for Long-Horizon Robotic Manipulation with Action-Conditioned World Model Latents</a></span> <button class="vote-btn" data-id="6f53b2bf7f" data-link="https://arxiv.org/abs/2606.23085" data-source="https://arxiv.org/abs/2606.23085" data-title="Foresight: Failure Detection for Long-Horizon Robotic Manipulation with Action-Conditioned World Model Latents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">HF papers · 2026-06-24<span class="item-keywords"> · WAM · robot learning</span></span><span class="item-desc">Monitors manipulation trajectories using latent representations from an action-conditioned world model, trained with only task-level success/failure labels. Calibrates detection thresholds via functional conformal prediction. Validated on LIBERO-Long, ManiSkill-Long, BEHAVIOR-1K and real robots (ReactorX-200, Franka).</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24450">NoContactNoWorries: Estimating Contact through Vision and Proprioception for In-Hand Dexterous Manipulation</a></span> <button class="vote-btn" data-id="d027bf4c02" data-link="https://arxiv.org/abs/2606.24450" data-source="https://arxiv.org/abs/2606.24450" data-title="NoContactNoWorries: Estimating Contact through Vision and Proprioception for In-Hand Dexterous Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">Estimates binary contact states as a pseudo-tactile signal by fusing RGB-D vision with proprioception via a transformer, offering a scalable alternative to tactile hardware. Trained across multiple objects, the inferred contact enables RL agents to perform in-hand reorientation generalizing to novel objects. Accepted at IROS 2026.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24633">Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation</a></span> <button class="vote-btn" data-id="dcc91bbc24" data-link="https://arxiv.org/abs/2606.24633" data-source="https://arxiv.org/abs/2606.24633" data-title="Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Learns mistake-sensitive value functions from mixed-quality demonstrations using retry events as sparse supervision. Combines global progress calibration with local pairwise preference learning to capture degradation-and-recovery patterns, reweighting demonstration chunks for behavior cloning to reduce harmful errors while preserving useful corrections.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24472" target="_blank" rel="noopener">G³VLA: Geometric Inductive Bias for Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-source="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric Inductive Bias for Vision-Language-Action Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4666365596" data-link="https://arxiv.org/abs/2606.24472" data-title="G³VLA: Geometric Inductive Bias for Vision-Language-Action Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Injects calibrated camera geometry (intrinsics and extrinsics) into VLA visual tokens via a camera-aware module, improving multi-camera spatial grounding without altering the pretrained backbone. Addresses the 2D-to-3D mismatch that limits current VLAs in multi-view robot setups.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24884" target="_blank" rel="noopener">InSight: Self-Guided Skill Acquisition via Steerable VLAs</a></span> <button class="vote-btn" data-id="5397dc0144" data-link="https://huggingface.co/papers/2606.24884" data-source="https://huggingface.co/papers/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="5397dc0144" data-link="https://huggingface.co/papers/2606.24884" data-title="InSight: Self-Guided Skill Acquisition via Steerable VLAs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25<span class="item-keywords"> · VLA · robot learning</span></span><span class="item-desc">Makes VLAs steerable at the primitive-action level (&quot;move gripper to bowl,&quot; &quot;lift upward&quot;) to enable autonomous skill acquisition beyond the training distribution. An automated pipeline segments demonstrations into labeled primitives for compositional task execution.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.20092" target="_blank" rel="noopener">EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLA Policies</a></span> <button class="vote-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-source="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLA Policies" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="354bdb35f0" data-link="https://huggingface.co/papers/2606.20092" data-title="EventVLA: Event-Driven Visual Evidence Memory for Long-Horizon VLA Policies"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Introduces event-driven visual memory that selectively retains task-relevant frames, avoiding the information bottleneck and redundancy of existing memory-augmented VLAs. Targets long-horizon manipulation where key cues become occluded over time.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24448" target="_blank" rel="noopener">Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos</a></span> <button class="vote-btn" data-id="07fd41c178" data-link="https://arxiv.org/abs/2606.24448" data-source="https://arxiv.org/abs/2606.24448" data-title="Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="07fd41c178" data-link="https://arxiv.org/abs/2606.24448" data-title="Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA</span></span><span class="item-desc">Argues that generated robot videos capture geometry (spatial trajectory) but not control (motor commands), and proposes supervising only the geometric component that reliably survives video generation. Offers a scalable path to VLA training without expensive teleoperation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24742" target="_blank" rel="noopener">World Value Models for Robotic Manipulation</a></span> <button class="vote-btn" data-id="049df47f65" data-link="https://huggingface.co/papers/2606.24742" data-source="https://huggingface.co/papers/2606.24742" data-title="World Value Models for Robotic Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="049df47f65" data-link="https://huggingface.co/papers/2606.24742" data-title="World Value Models for Robotic Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Builds value models for robotic manipulation that ground temporal understanding via world-model pretraining, addressing the gap where VLM backbones lack dynamic reasoning needed for accurate value estimation from mixed-quality data.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.23754" target="_blank" rel="noopener">FEARL: Verifiable Foundation Models for Robot Safety</a></span> <button class="vote-btn" data-id="631e2c7c71" data-link="https://arxiv.org/abs/2606.23754" data-source="https://arxiv.org/abs/2606.23754" data-title="FEARL: Verifiable Foundation Models for Robot Safety" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="631e2c7c71" data-link="https://arxiv.org/abs/2606.23754" data-title="FEARL: Verifiable Foundation Models for Robot Safety"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · VLA · sim-to-real RL</span></span><span class="item-desc">Decomposes VLA-based robot policies into a large Controller for perception/reasoning and a small Safety module for formal verification of constraints like collision avoidance and workspace bounds. Demonstrates sim-to-real transfer on a physical robot.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24049" target="_blank" rel="noopener">SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies</a></span> <button class="vote-btn" data-id="76cd0b0998" data-link="https://arxiv.org/abs/2606.24049" data-source="https://arxiv.org/abs/2606.24049" data-title="SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="76cd0b0998" data-link="https://arxiv.org/abs/2606.24049" data-title="SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Proposes Cartesian state delta as a universal action representation across robot embodiments, with an Action Adapter handling dynamics variation at three levels: across embodiments, hardware units, and within a single robot during operation. Robust under frequency, weight, and gain shifts.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.22136" target="_blank" rel="noopener">Wh0: Generative World Models as Scalable Sources of Egocentric Hand Manipulation Data</a></span> <button class="vote-btn" data-id="862da4259c" data-link="https://huggingface.co/papers/2606.22136" data-source="https://huggingface.co/papers/2606.22136" data-title="Wh0: Generative World Models as Scalable Sources of Egocentric Hand Manipulation Data" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="862da4259c" data-link="https://huggingface.co/papers/2606.22136" data-title="Wh0: Generative World Models as Scalable Sources of Egocentric Hand Manipulation Data"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25<span class="item-keywords"> · dexterous manipulation · sim-to-real RL</span></span><span class="item-desc">Uses generative video world models to produce scalable, scene-aligned egocentric hand manipulation data, bridging the gap between expensive teleoperation and sim-to-real-limited approaches. Targets the core data bottleneck for learning dexterous manipulation skills.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24450" target="_blank" rel="noopener">NoContactNoWorries: Estimating Contact through Vision and Proprioception for In-Hand Dexterous Manipulation</a></span> <button class="vote-btn" data-id="d027bf4c02" data-link="https://arxiv.org/abs/2606.24450" data-source="https://arxiv.org/abs/2606.24450" data-title="NoContactNoWorries: Estimating Contact through Vision and Proprioception for In-Hand Dexterous Manipulation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d027bf4c02" data-link="https://arxiv.org/abs/2606.24450" data-title="NoContactNoWorries: Estimating Contact through Vision and Proprioception for In-Hand Dexterous Manipulation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">Learns to infer binary contact from vision and proprioception alone — without tactile sensors — inspired by human embodied perception. Offers a scalable, hardware-free alternative for contact estimation in dexterous manipulation tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.24338" target="_blank" rel="noopener">RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning</a></span> <button class="vote-btn" data-id="842bab632e" data-link="https://arxiv.org/abs/2606.24338" data-source="https://arxiv.org/abs/2606.24338" data-title="RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="842bab632e" data-link="https://arxiv.org/abs/2606.24338" data-title="RoBoSR: Structured Scene Representations for Embodied Robotic Reasoning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.RO · 2026-06-25<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Introduces an object-centric scene-graph representation for manipulation that models states and spatial relations, disentangling task reasoning from raw inputs. Trained on a 1.6M-sample dataset (Manip-Cognition-1.6M), it outperforms prompting and classical TAMP baselines in zero-shot generalization.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.23885" target="_blank" rel="noopener">Mind the Heads: Topological Representation Alignment for Multimodal LLMs</a></span> <button class="vote-btn" data-id="be5c7282f4" data-link="https://arxiv.org/abs/2606.23885" data-source="https://arxiv.org/abs/2606.23885" data-title="Mind the Heads: Topological Representation Alignment for Multimodal LLMs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="be5c7282f4" data-link="https://arxiv.org/abs/2606.23885" data-title="Mind the Heads: Topological Representation Alignment for Multimodal LLMs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CV · 2026-06-25<span class="item-keywords"> · VLM</span></span><span class="item-desc">Proposes head-wise cross-modal alignment (HeRA) that preserves local neighborhood structure at individual attention heads in multimodal LLMs. Counterintuitively, aligning the least-aligned heads yields the largest gains on vision-centric tasks and reduces visual hallucinations across 18 benchmarks.</span></li>
 </ul>
-<h2>Watch list</h2>
-<ul>
-  <li><span class="item-title">(no items configured)</span></li>
-</ul>
+
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="hojin" data-date="2026-06-25"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
