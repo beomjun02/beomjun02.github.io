@@ -6,144 +6,33 @@
 <title>Daily News — 2026-06-26</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-26">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-26" data-users="beomjun,byungjun,daewon,hojin,huiwon,jimin,john,kunwoong,myungkyu,sanghyeok,woomin,yonghoon">
 <h1>Daily News — 2026-06-26</h1>
 <div class="user-banner"><div class="user-handle">Sanghyeok</div><div class="user-categories">Language · Robotics</div><div class="user-kws">Gui agent · on policy rl · LLM</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">10 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 
 
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24775">Are We Ready For An Agent-Native Memory System?</a></span> <button class="vote-btn" data-id="e47803d6fe" data-link="https://huggingface.co/papers/2606.24775" data-source="https://huggingface.co/papers/2606.24775" data-title="Are We Ready For An Agent-Native Memory System?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · LLM</span></span><span class="item-desc">Benchmarks 12 agent memory systems across 5 workloads spanning 11 datasets, finding no single architecture dominates — effectiveness depends on matching memory structure to workload bottleneck. Ablation studies show localized maintenance is more cost-efficient than global reorganization.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25331">iLLaDA: Improved Large Language Diffusion Models</a></span> <button class="vote-btn" data-id="2436296cc2" data-link="https://arxiv.org/abs/2606.25331" data-source="https://arxiv.org/abs/2606.25331" data-title="iLLaDA: Improved Large Language Diffusion Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">An 8B masked diffusion language model trained from scratch with fully bidirectional attention, scaling pre-training to 12T tokens and SFT on a 25B-token instruction corpus. Introduces variable-length generation and confidence-based scoring, substantially outperforming the original LLaDA across reasoning and general benchmarks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25319">V-Zero: Answer-Label-Free On-Policy Distillation with Contrastive Evidence Gating for Fine-Grained Visual Reasoning</a></span> <button class="vote-btn" data-id="312ebc06c2" data-link="https://arxiv.org/abs/2606.25319" data-source="https://arxiv.org/abs/2606.25319" data-title="V-Zero: Answer-Label-Free On-Policy Distillation with Contrastive Evidence Gating for Fine-Grained Visual Reasoning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-06-26<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Eliminates the need for answer labels in on-policy distillation for visual reasoning by introducing contrastive evidence gating — the student learns to identify task-relevant visual evidence from its own trajectories, avoiding costly exploration and hand-designed verification rules.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.23104">ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation</a></span> <button class="vote-btn" data-id="cb5efbac76" data-link="https://huggingface.co/papers/2606.23104" data-source="https://huggingface.co/papers/2606.23104" data-title="ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-25<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Discovers that incorrect student-generated outputs are more informative than correct ones for on-policy distillation. Uses student-to-teacher probability ratio to identify pivotal wrong-reasoning tokens and upweight their sample importance, achieving up to +8.9% relative gain on Qwen3-1.7B math reasoning.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25552">BiPACE: Bisimulation-Guided Policy Optimization with Action Counterfactual Estimation for LLM Agents</a></span> <button class="vote-btn" data-id="4963efe074" data-link="https://arxiv.org/abs/2606.25552" data-source="https://arxiv.org/abs/2606.25552" data-title="BiPACE: Bisimulation-Guided Policy Optimization with Action Counterfactual Estimation for LLM Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Identifies a fundamental credit-assignment mismatch in stepwise group-based RL for long-horizon LLM agents: observation-hash partitions create singleton groups with zero step-level signal. Proposes bisimulation-based state grouping with action counterfactual estimation to restore meaningful per-step advantages.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25674">OPERA: Aligning Open-Ended Reasoning via Objective Perplexity-based Reinforcement Learning</a></span> <button class="vote-btn" data-id="8a9937b88e" data-link="https://arxiv.org/abs/2606.25674" data-source="https://arxiv.org/abs/2606.25674" data-title="OPERA: Aligning Open-Ended Reasoning via Objective Perplexity-based Reinforcement Learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Replaces unreliable LLM-as-judge reward models with intrinsic perplexity-based signals for RL on open-ended tasks like creative writing. The perplexity dynamics capture reasoning quality without the stylistic biases and positional inconsistencies that make external judges unstable supervisors.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25705">GUI agent: Guided Exploration of User-Sensitive Screens</a></span> <button class="vote-btn" data-id="bad1875aaf" data-link="https://arxiv.org/abs/2606.25705" data-source="https://arxiv.org/abs/2606.25705" data-title="GUI agent: Guided Exploration of User-Sensitive Screens" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-26<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Introduces a dataset and taxonomy for user-sensitive states in GUI environments — screens involving passwords, payments, or personal data where agent-to-human handoff is necessary. Addresses a key reliability gap for deploying GUI agents in real-world settings.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25964">WinDOM: Self-Family Distillation for Small-Model GUI Grounding</a></span> <button class="vote-btn" data-id="140a7600d5" data-link="https://arxiv.org/abs/2606.25964" data-source="https://arxiv.org/abs/2606.25964" data-title="WinDOM: Self-Family Distillation for Small-Model GUI Grounding" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-26<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">A training recipe for ~2B GUI-grounding agents that harvests 54K bounding-box records from a headless Windows 11 web reimplementation under Playwright, eliminating expensive human annotation. Combines SFT with RL to push small-model grounding performance for on-device deployment.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25383">Beyond Next-Observation Prediction: Agent-Authored World Modeling for Sequential Decision Making</a></span> <button class="vote-btn" data-id="c26e34ddf9" data-link="https://arxiv.org/abs/2606.25383" data-source="https://arxiv.org/abs/2606.25383" data-title="Beyond Next-Observation Prediction: Agent-Authored World Modeling for Sequential Decision Making" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Proposes Agent-Authored World Modeling (AAWM) where training supervision comes from the policy&#x27;s own decision needs rather than what a transition happens to reveal. At each state, the agent identifies what it needs to understand before acting, generating targeted world-model training signals.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25178">Transferability for General Reasoning: An Automated Curriculum for Multi-Domain RLVR</a></span> <button class="vote-btn" data-id="e6c2fb4355" data-link="https://arxiv.org/abs/2606.25178" data-source="https://arxiv.org/abs/2606.25178" data-title="Transferability for General Reasoning: An Automated Curriculum for Multi-Domain RLVR" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-26<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Proposes Transfer-Aware Curriculum (TAC), a bandit-style method for multi-domain RLVR that measures how training on one domain (math, programming, science) benefits the remaining domains. Addresses the limitation that existing learnability-based curricula are blind to cross-domain transfer.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.23104" target="_blank" rel="noopener">ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation</a></span> <button class="vote-btn" data-id="cb5efbac76" data-link="https://huggingface.co/papers/2606.23104" data-source="https://huggingface.co/papers/2606.23104" data-title="ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="cb5efbac76" data-link="https://huggingface.co/papers/2606.23104" data-title="ReNIO: Reweighting Negative Trajectory Importance for LLM On-Policy Distillation"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF Papers · 2026-06-26<span class="item-keywords"> · on policy rl · LLM</span></span><span class="item-desc">On-policy distillation for LLM reasoning treats all student-generated outputs equally, but incorrect outputs are far more informative. ReNIO reweights negative trajectories by informativeness, achieving consistent gains over standard OPD and OPSD on reasoning benchmarks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25319" target="_blank" rel="noopener">V-Zero: Answer-Label-Free On-Policy Distillation with Contrastive Evidence Gating for Fine-Grained Visual Reasoning</a></span> <button class="vote-btn" data-id="312ebc06c2" data-link="https://arxiv.org/abs/2606.25319" data-source="https://arxiv.org/abs/2606.25319" data-title="V-Zero: Answer-Label-Free On-Policy Distillation with Contrastive Evidence Gating for Fine-Grained Visual Reasoning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="312ebc06c2" data-link="https://arxiv.org/abs/2606.25319" data-title="V-Zero: Answer-Label-Free On-Policy Distillation with Contrastive Evidence Gating for Fine-Grained Visual Reasoning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CV · 2026-06-26<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Removes the need for answer labels in on-policy distillation for multimodal LLMs by using contrastive evidence gating — the model learns to identify task-relevant visual regions through self-generated reasoning traces rather than external supervision.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25705" target="_blank" rel="noopener">GUI agent: Guided Exploration of User-Sensitive Screens</a></span> <button class="vote-btn" data-id="bad1875aaf" data-link="https://arxiv.org/abs/2606.25705" data-source="https://arxiv.org/abs/2606.25705" data-title="GUI agent: Guided Exploration of User-Sensitive Screens" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="bad1875aaf" data-link="https://arxiv.org/abs/2606.25705" data-title="GUI agent: Guided Exploration of User-Sensitive Screens"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.AI · 2026-06-26<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Addresses a blind spot in GUI agents: handling screens with user-sensitive information. Current agents are fine-tuned to complete tasks regardless of safety implications. This work introduces guided exploration strategies that let agents recognize when user takeover is needed, improving real-world deployment reliability.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25331" target="_blank" rel="noopener">iLLaDA: Improved Large Language Diffusion Models</a></span> <button class="vote-btn" data-id="2436296cc2" data-link="https://arxiv.org/abs/2606.25331" data-source="https://arxiv.org/abs/2606.25331" data-title="iLLaDA: Improved Large Language Diffusion Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="2436296cc2" data-link="https://arxiv.org/abs/2606.25331" data-title="iLLaDA: Improved Large Language Diffusion Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">An 8B masked diffusion language model trained from scratch with fully bidirectional attention on 12T tokens. Keeps the masked diffusion objective through both pre-training and SFT, introducing variable-length generation and controllable-quality decoding. A strong proof-of-concept that non-autoregressive LLMs can scale.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25552" target="_blank" rel="noopener">BiPACE: Bisimulation-Guided Policy Optimization with Action Counterfactual Estimation for LLM Agents</a></span> <button class="vote-btn" data-id="4963efe074" data-link="https://arxiv.org/abs/2606.25552" data-source="https://arxiv.org/abs/2606.25552" data-title="BiPACE: Bisimulation-Guided Policy Optimization with Action Counterfactual Estimation for LLM Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="4963efe074" data-link="https://arxiv.org/abs/2606.25552" data-title="BiPACE: Bisimulation-Guided Policy Optimization with Action Counterfactual Estimation for LLM Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Exposes a state-action credit mismatch in stepwise group-based RL for long-horizon LLM agents: observation-hash partitions are too fine on the state side, creating singleton groups with zero variance. BiPACE uses bisimulation to cluster behaviorally equivalent states and counterfactual estimation to isolate action-level contributions.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25674" target="_blank" rel="noopener">OPERA: Aligning Open-Ended Reasoning via Objective Perplexity-based Reinforcement Learning</a></span> <button class="vote-btn" data-id="8a9937b88e" data-link="https://arxiv.org/abs/2606.25674" data-source="https://arxiv.org/abs/2606.25674" data-title="OPERA: Aligning Open-Ended Reasoning via Objective Perplexity-based Reinforcement Learning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="8a9937b88e" data-link="https://arxiv.org/abs/2606.25674" data-title="OPERA: Aligning Open-Ended Reasoning via Objective Perplexity-based Reinforcement Learning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Tackles RL for open-ended LLM tasks (creative writing, open QA) where LLM-as-judge rewards are unreliable. Replaces external judges with intrinsic perplexity-based rewards derived from the model&#x27;s own reflective assessment, sidestepping the stylistic biases and positional inconsistencies of reward models.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.22953" target="_blank" rel="noopener">Plans Don&#x27;t Persist: Why Context Management Is Load Bearing for LLM Agents</a></span> <button class="vote-btn" data-id="0ce17c5de7" data-link="https://huggingface.co/papers/2606.22953" data-source="https://huggingface.co/papers/2606.22953" data-title="Plans Don&#x27;t Persist: Why Context Management Is Load Bearing for LLM Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="0ce17c5de7" data-link="https://huggingface.co/papers/2606.22953" data-title="Plans Don&#x27;t Persist: Why Context Management Is Load Bearing for LLM Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF Papers · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Shows that context compression in long-horizon agents silently discards plans — information written early but needed throughout execution. Introduces replay pairing to measure the gap, finding that on Llama-3.1-70B plans are evicted before they are internalized, causing downstream task failures.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.25568" target="_blank" rel="noopener">Constraint Tax in Open-Weight LLMs: Tool Calling Suppression Under Structured Output Constraints</a></span> <button class="vote-btn" data-id="e56dbc9efd" data-link="https://arxiv.org/abs/2606.25568" data-source="https://arxiv.org/abs/2606.25568" data-title="Constraint Tax in Open-Weight LLMs: Tool Calling Suppression Under Structured Output Constraints" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e56dbc9efd" data-link="https://arxiv.org/abs/2606.25568" data-title="Constraint Tax in Open-Weight LLMs: Tool Calling Suppression Under Structured Output Constraints"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv cs.CL · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Documents a reproducible failure in production agent systems: enabling both tool calling and JSON Schema constraints simultaneously causes open-weight LLMs to stop invoking tools while maintaining high schema compliance. A practical concern for anyone building agentic pipelines with structured output.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24775" target="_blank" rel="noopener">Are We Ready For An Agent-Native Memory System?</a></span> <button class="vote-btn" data-id="e47803d6fe" data-link="https://huggingface.co/papers/2606.24775" data-source="https://huggingface.co/papers/2606.24775" data-title="Are We Ready For An Agent-Native Memory System?" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="e47803d6fe" data-link="https://huggingface.co/papers/2606.24775" data-title="Are We Ready For An Agent-Native Memory System?"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF Papers · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Argues that end-to-end task metrics (F1, BLEU) are insufficient for evaluating LLM agent memory — the underlying storage, retrieval, update, and lifecycle management need their own benchmarks. Proposes a component-level evaluation framework for agent memory as a first-class data management system.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24428" target="_blank" rel="noopener">Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning</a></span> <button class="vote-btn" data-id="9f8023a5ea" data-link="https://huggingface.co/papers/2606.24428" data-source="https://huggingface.co/papers/2606.24428" data-title="Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9f8023a5ea" data-link="https://huggingface.co/papers/2606.24428" data-title="Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF Papers · 2026-06-26<span class="item-keywords"> · LLM</span></span><span class="item-desc">Identifies a fundamental flaw in single-agent experience learning: when the same agent executes, summarizes, and stores experience, wrong-but-self-consistent trajectories get reinforced. Proposes separating execution, distillation, and verification across agents to break the self-confirmation loop.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-26"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
