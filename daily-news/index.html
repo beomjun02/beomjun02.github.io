@@ -6,141 +6,31 @@
 <title>Daily News</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-
-.daily-news .announcement { color: inherit; font-size: 0.9em; margin: 1.5em 0; text-align: center; }
-.daily-news .users-list { list-style: none; padding-left: 0; }
-.daily-news .users-list li { margin-bottom: 1em; padding: 0.7em 0.9em; border: 1px solid #eee; border-radius: 4px; }
-.daily-news .users-list a { text-decoration: none; }
-.daily-news .users-list strong { font-size: 1.1em; color: inherit; }
-.daily-news .users-date { color: #888; font-size: 0.85em; margin-left: 0.5em; }
-.daily-news .users-headline { color: #666; display: block; margin-top: 0.25em; font-size: 0.95em; }
-@media (prefers-color-scheme: dark) {
-  .daily-news .users-list li { border-color: #333; }
-  .daily-news .users-list a { color: #64b5f6; }
-  .daily-news .users-list a:hover { color: #f09228; }
-  .daily-news .users-date { color: #aaa; }
-  .daily-news .users-headline { color: #ccc; }
-}
-
-.daily-news .trending { margin-bottom: 2em; }
-.daily-news .trending h2 { font-size: 1.15em; border-bottom: 1px solid #d4a017; padding-bottom: 0.3em; color: #d4a017; }
-.daily-news .trending ul { list-style: none; padding-left: 0; }
-.daily-news .trending li { margin-bottom: 0.8em; padding: 0.5em 0.7em; border-left: 3px solid #d4a017; background: rgba(212,160,23,0.04); }
-.daily-news .trending .t-score { font-weight: 600; color: #d4a017; margin-right: 0.5em; }
-.daily-news .trending .t-title a { text-decoration: none; color: inherit; }
-.daily-news .trending .t-title a:hover { color: #d4a017; }
-.daily-news .trending .t-voters { font-size: 0.8em; color: #888; display: block; margin-top: 0.2em; }
-.daily-news .trending-loading { color: #888; font-size: 0.9em; }
-@media (prefers-color-scheme: dark) {
-  .daily-news .trending li { background: rgba(212,160,23,0.06); }
-  .daily-news .trending .t-title a { color: #f0f0f0; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
 <div class="daily-news">
 <h1>Daily News</h1>
-<p class="announcement">🎉 Upvotes are added! (Thanks to Byungjun)</p>
+<p class="announcement">⚙️ 6/16 HF papers fetching bug fixed — more papers from tomorrow!<br>🎉 6/1 Shares are added! (Thanks to Daewon)<br>🎉 5/29 Upvotes are added! (Thanks to Byungjun)</p>
 <div class="trending" id="trending-section" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-date="2026-06-30"><h2>Trending</h2><p class="trending-loading">Loading...</p></div>
-<p class="page-meta">9 reader(s) · <a href="devlog/">dev log</a></p>
+<p class="page-meta">14 reader(s) · <a href="devlog/">dev log</a></p>
 <ul class="users-list">
-  <li><a href="beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">GPT-5.6 Sol announced · physics world simulator for manipulation · Meta Brain2Qwerty v2 in Nature</span></li>
+  <li><a href="beomjun/"><strong>Beomjun</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">GPT-5.6 Sol launched · Qwen-RobotManip robotics FM · VLA + world-model papers surge</span></li>
   <li><a href="byungjun/"><strong>Byungjun</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">S²-VLA long-horizon VLA · DIM-WAM event memory for world-action models</span></li>
   <li><a href="daewon/"><strong>Daewon</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">OpenAI GPT-5.6 Sol/Terra/Luna preview · entropy-guided speculative decoding · cascaded cost-aware LLM routing</span></li>
   <li><a href="hojin/"><strong>Hojin</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">SCORE: sim-to-real dexterous RL 37.8%→89.9% · DexCompose multi-task fingers · DIM-WAM long-horizon memory</span></li>
   <li><a href="huiwon/"><strong>Huiwon</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">3D-point injection boosts VLA generalization · memory-augmented WAM hits 69.8% · half VLA language layers redundant</span></li>
+  <li><a href="jimin/"><strong>Jimin</strong></a><span class="users-date">2026-06-29</span><span class="users-headline">LA4VLA vision-free VLA pretraining · WatchAct behavior-grounded VLA benchmark · ReStruct inference-time VLA steering</span></li>
   <li><a href="john/"><strong>John</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">CHORD learns dexterous grasps from human contact wrench · DIM-WAM boosts long-horizon manipulation via memory-augmented world-action modeling</span></li>
+  <li><a href="jonghoon/"><strong>Jonghoon</strong></a><span class="users-date">2026-06-29</span><span class="users-headline">LA4VLA vision-free VLA pretraining · PhysEditWorld physics-editable world models · Humanoid-DART self-evolving loco-manipulation</span></li>
   <li><a href="kunwoong/"><strong>Kunwoong</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">Context-Ready Transformer · Prism head schedules · Qwen-AgentWorld</span></li>
+  <li><a href="myungkyu/"><strong>Myungkyu</strong></a><span class="users-date">2026-06-29</span><span class="users-headline">LA4VLA language-action pretraining · ReStruct inference-time VLA steering · Play2Perfect zero-shot dexterous assembly</span></li>
   <li><a href="sanghyeok/"><strong>Sanghyeok</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">Qwen-Image GRPO post-training · on-policy agent distillation (ATOD) · tandem RLVR</span></li>
+  <li><a href="taeyoung/"><strong>Taeyoung</strong></a><span class="users-date">2026-06-29</span><span class="users-headline">Apollo 2 humanoid revealed · LA4VLA language-action pretraining · AGIBOT 15K units shipped</span></li>
   <li><a href="woomin/"><strong>Woomin</strong></a><span class="users-date">2026-06-30</span><span class="users-headline">Meta Brain2Qwerty v2 in Nature · context-ready transformer · entropy-guided MTP</span></li>
+  <li><a href="yonghoon/"><strong>Yonghoon</strong></a><span class="users-date">2026-06-29</span><span class="users-headline">LA4VLA vision-free pretraining · SSI-Policy structured scene interfaces for VLA manipulation</span></li>
 </ul>
 </div>
-
-<script>
-(function(){
-  var sec=document.getElementById('trending-section');if(!sec)return;
-  var url=sec.dataset.url,date=sec.dataset.date;
-  if(!url)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  fetch(proxy+'?action=trending')
-    .then(function(r){return r.json()})
-    .then(function(d){
-      if(!d.items||!d.items.length){
-        sec.querySelector('.trending-loading').textContent='No trending items yet.';
-        return;
-      }
-      var ul=document.createElement('ul');
-      d.items.forEach(function(it){
-        var li=document.createElement('li');
-        li.innerHTML='<span class="t-score">+'+it.score+'</span>'
-          +'<span class="t-title"><a href="'+it.link+'">'+it.title+'</a></span>'
-          +'<span class="t-voters">voted by '+it.voters.join(', ')+'</span>';
-        ul.appendChild(li);
-      });
-      var loading=sec.querySelector('.trending-loading');
-      if(loading)loading.remove();
-      sec.appendChild(ul);
-    }).catch(function(){
-      sec.querySelector('.trending-loading').textContent='Could not load trending.';
-    });
-})();
-</script>
-
+<script src="/daily-news/trending.js"></script>
 </body>
 </html>
