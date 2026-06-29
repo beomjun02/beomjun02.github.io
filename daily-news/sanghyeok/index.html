@@ -6,144 +6,33 @@
 <title>Daily News — 2026-06-30</title>
 <link rel="stylesheet" href="/stylesheet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-<style>
-.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
-.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
-.daily-news h3 { font-size: 1em; margin-top: 1em; }
-.daily-news ul { padding-left: 1.4em; }
-.daily-news li { margin-bottom: 1em; line-height: 1.5; }
-.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
-.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
-.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
-.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
-.daily-news .item-keywords { color: #d4a017; }
-.daily-news .page-meta { color: #888; font-size: 0.85em; }
-.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
-.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
-.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
-.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
-.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
-.daily-news .archive ul { list-style: none; padding-left: 0; }
-.daily-news .archive li { margin-bottom: 0.3em; }
-.daily-news .archive-more { margin-top: 0.5em; }
-.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
-.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
-.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
-.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
-.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
-.daily-news .fb-submit:hover { background: #555; }
-.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
-.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
-.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
-@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
-@media (prefers-color-scheme: dark) {
-  .daily-news { color: #f0f0f0; }
-  .daily-news h1 { color: #f5f5f5; }
-  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
-  .daily-news .item-title a { color: #64b5f6; }
-  .daily-news .item-title a:hover { color: #f09228; }
-  .daily-news .item-desc { color: #ccc; }
-  .daily-news .item-meta { color: #aaa; }
-  .daily-news .page-meta { color: #aaa; }
-  .daily-news .archive { border-top-color: #444; }
-  .daily-news .archive a { color: #64b5f6; }
-  .daily-news .archive a:hover { color: #f09228; }
-  .daily-news .feedback { border-top-color: #444; }
-  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
-  .daily-news .fb-submit { background: #555; }
-  .daily-news .vote-btn { border-color: #888; color: #aaa; }
-  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
-  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
-}
-@media (max-width: 600px) {
-  .daily-news .vote-btn { padding: 0.25em 0.35em; }
-}
-</style>
+<link rel="stylesheet" href="/daily-news/style.css">
 </head>
 <body>
-<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-30">
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-30" data-users="beomjun,byungjun,daewon,hojin,huiwon,jimin,john,jonghoon,kunwoong,myungkyu,sanghyeok,taeyoung,woomin,yonghoon">
 <h1>Daily News — 2026-06-30</h1>
 <div class="user-banner"><div class="user-handle">Sanghyeok</div><div class="user-categories">Language · Robotics</div><div class="user-kws">Gui agent · on policy rl · LLM</div></div>
-<p class="page-meta">10 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<p class="page-meta">10 items · last 7 days · <a href="../">← home</a> · <a href="list/">archive</a></p>
 
 
 <h2>Papers</h2>
 <ul>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27608">Qwen-Image-2.0-RL Technical Report</a></span> <button class="vote-btn" data-id="2510565941" data-link="https://arxiv.org/abs/2606.27608" data-source="https://arxiv.org/abs/2606.27608" data-title="Qwen-Image-2.0-RL Technical Report" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-06-30<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Alibaba applies GRPO-based RL and on-policy distillation to improve the Qwen-Image-2.0 diffusion model&#x27;s visual quality and instruction-following. Task-specific composite reward models are built by fine-tuning VLMs with pointwise scoring and chain-of-thought reasoning. A hybrid CFG strategy preserves pre-trained knowledge during RL. The pipeline merges T2I and editing specialists via on-policy distillation into a single model, gaining +2.61 overall score and +78/+93 Elo in text-to-image/editing arenas.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27814">ATOD: Annealed Turn-aware On-policy Distillation for Multi-turn Autonomous Agents</a></span> <button class="vote-btn" data-id="a3da4073da" data-link="https://arxiv.org/abs/2606.27814" data-source="https://arxiv.org/abs/2606.27814" data-title="ATOD: Annealed Turn-aware On-policy Distillation for Multi-turn Autonomous Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-30<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Proposes a hybrid online distillation algorithm that combines on-policy distillation (OPD) and RL with an annealing schedule: OPD dominates early to reach teacher-level behavior, then RL gradually strengthens for reward-based exploration. Turn-level disagreement-uncertainty reweighting amplifies high-utility turns in long trajectories. Outperforms OPD by +3.03 and GRPO by +23.62 success rate points on ALFWorld, WebShop, and Search-QA.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.28166">Tandem Reinforcement Learning with Verifiable Rewards</a></span> <button class="vote-btn" data-id="9d0b678dee" data-link="https://arxiv.org/abs/2606.28166" data-source="https://arxiv.org/abs/2606.28166" data-title="Tandem Reinforcement Learning with Verifiable Rewards" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-30<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Introduces tandem training into RLVR: a trained senior model and a frozen weaker junior alternate stochastically to co-generate reasoning chains, then both are rewarded as a team. Training Qwen3-4B on competition math, TRL matches vanilla GRPO on solo capability while producing chains that are more robust, less distribution-drifted, and more legible to the junior — addressing the compatibility problem where RLVR drifts reasoning toward idiosyncratic patterns.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27483">Internalizing the Future: A Unified Agentic Training Paradigm for World Model Planning</a></span> <button class="vote-btn" data-id="255089f4a6" data-link="https://arxiv.org/abs/2606.27483" data-source="https://arxiv.org/abs/2606.27483" data-title="Internalizing the Future: A Unified Agentic Training Paradigm for World Model Planning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.AI · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Trains a single autoregressive LLM to verbalize both prospective state rollouts and plan-conditioned success estimates — a textual analogue of Q-values for look-ahead planning. Identifies a format-capability gap: simply fine-tuning on look-ahead traces leads to superficial mimicry. A three-stage pipeline (World Model Mid-Training → Format-Eliciting SFT → Foresight-Conditioned RL) grounds the internal world model and consistently outperforms baselines on search and math reasoning tasks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27472">Supersede: Diagnosing and Training the Memory-Update Gap in LLM Agents</a></span> <button class="vote-btn" data-id="6f87e27d9e" data-link="https://arxiv.org/abs/2606.27472" data-source="https://arxiv.org/abs/2606.27472" data-title="Supersede: Diagnosing and Training the Memory-Update Gap in LLM Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Isolates temporal fact-currency as a distinct, unsolved failure mode in LLM agents: replacing full context with self-maintained memory drops accuracy from 92% to 77% on a frontier model, and the gap persists across model scale. Releases an open RL environment where agents are rewarded for using current facts and penalized for stale ones. GRPO fine-tuning Qwen2.5-3B nearly doubles supersession accuracy (9.0% → 16.7%), the first evidence this gap is trainable.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27872">S²-VLA: State-Space Guided Vision-Language-Action Models for Long-Horizon Manipulation</a></span> <button class="vote-btn" data-id="ba715f1496" data-link="https://arxiv.org/abs/2606.27872" data-source="https://arxiv.org/abs/2606.27872" data-title="S²-VLA: State-Space Guided Vision-Language-Action Models for Long-Horizon Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Introduces a State-Space Guided Adaptive Attention mechanism for VLA models that maintains a belief state tracking task progression and generates dynamic gating weights to adaptively fuse visual, language, and temporal action features. Despite its compact 2B parameter size, S²-VLA outperforms larger 7B-scale models and achieves SOTA on LIBERO and SimplerEnv long-horizon manipulation benchmarks.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27595">Ko-WideSearch: A Korean Breadth-Search Benchmark for Exhaustive Set Enumeration by Web Agents</a></span> <button class="vote-btn" data-id="b862c0d5dc" data-link="https://arxiv.org/abs/2606.27595" data-source="https://arxiv.org/abs/2606.27595" data-title="Ko-WideSearch: A Korean Breadth-Search Benchmark for Exhaustive Set Enumeration by Web Agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-30<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Introduces the first benchmark targeting breadth-search capabilities of web agents — exhaustively enumerating a closed set and filling per-item attributes, rather than finding one answer behind a chain of constraints. Spans 228 tables over 190 entities across 16 categories with three difficulty tiers. Across 20 web agents, all recover the set but not the full rows (Item-F1 92.8 vs Row-F1 53.7), with accuracy falling steadily as difficulty increases.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27755">Drop-Then-Recovery: How Redundant Are Vision-Language-Action Models?</a></span> <button class="vote-btn" data-id="64315158f5" data-link="https://arxiv.org/abs/2606.27755" data-source="https://arxiv.org/abs/2606.27755" data-title="Drop-Then-Recovery: How Redundant Are Vision-Language-Action Models?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Studies architectural redundancy in VLA models by removing transformer blocks and fine-tuning. Discovers a strong asymmetry: language backbones are highly redundant for standard robotic manipulation, while vision and action pathways are far less tolerant to removal. On LIBERO, removing half of the LLM blocks improves OpenVLA-OFT from 95.0% to 98.3%, suggesting current VLA benchmarks exert limited pressure on deep language grounding.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27538">The Context-Ready Transformer</a></span> <button class="vote-btn" data-id="d1655b16c5" data-link="https://arxiv.org/abs/2606.27538" data-source="https://arxiv.org/abs/2606.27538" data-title="The Context-Ready Transformer" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CL · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">A new recurrent architecture built from a D-layer transformer block that pre-contextualizes each token via a correction network before it enters the block. A D=5 model beats a 12-layer transformer while generating 1.7x faster on an A100. With K=10 unrolling, a single-layer (D=1) model beats a 6-layer transformer at 2.6x speedup. Pretrained transformers can be converted by adding a zero-initialized correction FFN and fine-tuning.</span></li>
-  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.28128">PhysisForcing: Physics Reinforced World Simulator for Robotic Manipulation</a></span> <button class="vote-btn" data-id="4fc5e11438" data-link="https://arxiv.org/abs/2606.28128" data-source="https://arxiv.org/abs/2606.28128" data-title="PhysisForcing: Physics Reinforced World Simulator for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-30</span><span class="item-desc">Targets physical implausibility in video-based world simulators for robotic manipulation — discontinuous motion trajectories and inconsistent robot-object interactions. Proposes pixel-level trajectory alignment and semantic-level relational alignment losses to strengthen physical consistency. Improves the Wan2.2 and Cosmos3-Nano base models by 22.3% and 9.2% on R-Bench, with the Cosmos3-Nano variant achieving best overall score. As a world model, raises closed-loop success rate from 16.0% to 24.0%.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27814" target="_blank" rel="noopener">ATOD: Annealed Turn-aware On-policy Distillation for Multi-turn Autonomous Agents</a></span> <button class="vote-btn" data-id="a3da4073da" data-link="https://arxiv.org/abs/2606.27814" data-source="https://arxiv.org/abs/2606.27814" data-title="ATOD: Annealed Turn-aware On-policy Distillation for Multi-turn Autonomous Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="a3da4073da" data-link="https://arxiv.org/abs/2606.27814" data-title="ATOD: Annealed Turn-aware On-policy Distillation for Multi-turn Autonomous Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Proposes an on-policy distillation framework that anneals between dense teacher guidance and reward-driven improvement across turns, enabling small language-model agents to handle long-horizon interactive tasks. Addresses cascading errors in multi-turn episodes that standard OPD misses.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27595" target="_blank" rel="noopener">Ko-WideSearch: A Korean Breadth-Search Benchmark for Exhaustive Set Enumeration by Web Agents</a></span> <button class="vote-btn" data-id="b862c0d5dc" data-link="https://arxiv.org/abs/2606.27595" data-source="https://arxiv.org/abs/2606.27595" data-title="Ko-WideSearch: A Korean Breadth-Search Benchmark for Exhaustive Set Enumeration by Web Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="b862c0d5dc" data-link="https://arxiv.org/abs/2606.27595" data-title="Ko-WideSearch: A Korean Breadth-Search Benchmark for Exhaustive Set Enumeration by Web Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30<span class="item-keywords"> · Gui agent</span></span><span class="item-desc">Introduces a breadth-first web agent benchmark requiring exhaustive enumeration of closed sets, contrasting existing depth-focused benchmarks that test finding one answer behind multiple constraints. Current web agents struggle significantly when required to cover all items rather than locate a single target.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27472" target="_blank" rel="noopener">Supersede: Diagnosing and Training the Memory-Update Gap in LLM Agents</a></span> <button class="vote-btn" data-id="6f87e27d9e" data-link="https://arxiv.org/abs/2606.27472" data-source="https://arxiv.org/abs/2606.27472" data-title="Supersede: Diagnosing and Training the Memory-Update Gap in LLM Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="6f87e27d9e" data-link="https://arxiv.org/abs/2606.27472" data-title="Supersede: Diagnosing and Training the Memory-Update Gap in LLM Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Identifies the &quot;memory-update gap&quot; where LLM agents fail to override stale facts during long multi-session interactions, then proposes a training method that improves agents&#x27; ability to correctly use updated information when prior knowledge becomes outdated.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27483" target="_blank" rel="noopener">Internalizing the Future: A Unified Agentic Training Paradigm for World Model Planning</a></span> <button class="vote-btn" data-id="255089f4a6" data-link="https://arxiv.org/abs/2606.27483" data-source="https://arxiv.org/abs/2606.27483" data-title="Internalizing the Future: A Unified Agentic Training Paradigm for World Model Planning" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="255089f4a6" data-link="https://arxiv.org/abs/2606.27483" data-title="Internalizing the Future: A Unified Agentic Training Paradigm for World Model Planning"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Moves LLM agents from reactive decision-making to proactive &quot;what-if&quot; planning by training them to internalize a world model, unifying imagination-based planning with policy optimization in a single framework for long-horizon tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.28166" target="_blank" rel="noopener">Tandem Reinforcement Learning with Verifiable Rewards</a></span> <button class="vote-btn" data-id="9d0b678dee" data-link="https://arxiv.org/abs/2606.28166" data-source="https://arxiv.org/abs/2606.28166" data-title="Tandem Reinforcement Learning with Verifiable Rewards" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9d0b678dee" data-link="https://arxiv.org/abs/2606.28166" data-title="Tandem Reinforcement Learning with Verifiable Rewards"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30</span><span class="item-desc">Extends RLVR beyond domains with easy-to-verify answers (math, code) by pairing an RL-trained policy with a tandem verifier, enabling reward-driven improvement of LLM reasoning in broader settings where ground-truth verification was previously impractical.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.28187" target="_blank" rel="noopener">GBC: Gradient-Based Connections for Optimizing Multi-Agent Systems</a></span> <button class="vote-btn" data-id="f912eef57b" data-link="https://huggingface.co/papers/2606.28187" data-source="https://huggingface.co/papers/2606.28187" data-title="GBC: Gradient-Based Connections for Optimizing Multi-Agent Systems" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="f912eef57b" data-link="https://huggingface.co/papers/2606.28187" data-title="GBC: Gradient-Based Connections for Optimizing Multi-Agent Systems"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Introduces gradient-based optimization for the connection topology in LLM multi-agent systems, treating agent interaction structure as a learnable component rather than a fixed design choice. Outperforms hand-designed agent communication patterns on complex collaborative tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.27378" target="_blank" rel="noopener">Formalizing Latent Thoughts: Four Axioms of Thought Representation in LLMs</a></span> <button class="vote-btn" data-id="9c62714262" data-link="https://huggingface.co/papers/2606.27378" data-source="https://huggingface.co/papers/2606.27378" data-title="Formalizing Latent Thoughts: Four Axioms of Thought Representation in LLMs" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="9c62714262" data-link="https://huggingface.co/papers/2606.27378" data-title="Formalizing Latent Thoughts: Four Axioms of Thought Representation in LLMs"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-30<span class="item-keywords"> · LLM</span></span><span class="item-desc">Proposes four axioms for evaluating how LLMs internally represent thoughts, providing metrics independent of downstream benchmark scores that reveal representational failures invisible to task-level evaluation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.24893" target="_blank" rel="noopener">AgentOdyssey: Open-Ended Long-Horizon Text Game Generation for Test-Time Continual Learning Agents</a></span> <button class="vote-btn" data-id="60d3801bb3" data-link="https://huggingface.co/papers/2606.24893" data-source="https://huggingface.co/papers/2606.24893" data-title="AgentOdyssey: Open-Ended Long-Horizon Text Game Generation for Test-Time Continual Learning Agents" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="60d3801bb3" data-link="https://huggingface.co/papers/2606.24893" data-title="AgentOdyssey: Open-Ended Long-Horizon Text Game Generation for Test-Time Continual Learning Agents"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-25</span><span class="item-desc">Generates procedural open-ended text games to evaluate continual learning in LLM agents, testing whether agents can explore effectively, acquire new skills, and retain relevant experiences across long sequences of novel tasks at test time.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://huggingface.co/papers/2606.26978" target="_blank" rel="noopener">To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair</a></span> <button class="vote-btn" data-id="df2e32760f" data-link="https://huggingface.co/papers/2606.26978" data-source="https://huggingface.co/papers/2606.26978" data-title="To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="df2e32760f" data-link="https://huggingface.co/papers/2606.26978" data-title="To Run or Not to Run: Analyzing the Cost-Effectiveness of Code Execution in LLM-Based Program Repair"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">HF papers · 2026-06-27<span class="item-keywords"> · LLM</span></span><span class="item-desc">Systematically analyzes when iterative code execution actually improves LLM-based program repair versus when a single generate-and-submit pass suffices, finding that the prevailing &quot;generate-run-revise&quot; paradigm provides diminishing returns for many bug categories.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.27617" target="_blank" rel="noopener">Masked Language Flow Models</a></span> <button class="vote-btn" data-id="d0518ba364" data-link="https://arxiv.org/abs/2606.27617" data-source="https://arxiv.org/abs/2606.27617" data-title="Masked Language Flow Models" title="upvote"><span class="tri"></span></button> <button class="share-btn" data-id="d0518ba364" data-link="https://arxiv.org/abs/2606.27617" data-title="Masked Language Flow Models"><svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg></button></div><span class="item-meta">arXiv · 2026-06-30</span><span class="item-desc">Addresses a key limitation of masked diffusion models for parallel text generation: the position-independent reverse transition breaks down in few-step sampling. Introduces a flow-based formulation that preserves cross-position dependencies for faster, higher-quality parallel generation.</span></li>
 </ul>
 
 <div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-30"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
-
 </div>
-
-<script>
-(function(){
-  var dn=document.querySelector('.daily-news');if(!dn)return;
-  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
-  if(!url||!user)return;
-  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
-  var myVotes={};
-  fetch(proxy+'?action=votes&user='+user)
-    .then(function(r){return r.json()})
-    .then(function(d){
-      myVotes=d.my_votes||{};
-      Object.keys(myVotes).forEach(function(id){
-        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
-        if(b)b.classList.add('voted');
-      });
-    }).catch(function(){});
-  dn.addEventListener('click',function(e){
-    var btn=e.target.closest('.vote-btn');if(!btn)return;
-    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
-    var wasVoted=!!myVotes[id];
-    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
-    else{myVotes[id]=1;btn.classList.add('voted');}
-    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
-        value:link,source:source,item_id:id,title:title})
-    }).catch(function(){});
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  var w=document.querySelector('.feedback');if(!w)return;
-  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
-  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
-      sub=w.querySelector('.fb-submit');
-  var ph={feedback:'e.g. Papers section was great / too many LLM items',
-    edit_keyword:'e.g. add VLA / remove quantum computing',
-    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
-    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
-  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
-  sub.addEventListener('click',function(){
-    var v=val.value.trim();if(!v)return;
-    sub.disabled=true;sub.textContent='...';
-    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
-    }).then(function(){
-      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
-    }).catch(function(){
-      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
-    });
-  });
-})();
-</script>
-
+<script src="/daily-news/vote.js"></script>
+<script src="/daily-news/share.js"></script>
+<script src="/daily-news/feedback.js"></script>
 </body>
 </html>
