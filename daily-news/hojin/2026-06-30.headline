@@ -1,1 +1,1 @@
-SCORE: sim-to-real dexterous RL 37.8%→89.9% · DexCompose multi-task fingers · DIM-WAM long-horizon memory
+SCORE dexterous sim-to-real 90% · DiM-WAM memory-augmented WAMs · 3D point injection for VLAs
