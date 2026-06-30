@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-07-01</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
+.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+@media (prefers-color-scheme: dark) {
+  .daily-news { color: #f0f0f0; }
+  .daily-news h1 { color: #f5f5f5; }
+  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
+  .daily-news .item-title a { color: #64b5f6; }
+  .daily-news .item-title a:hover { color: #f09228; }
+  .daily-news .item-desc { color: #ccc; }
+  .daily-news .item-meta { color: #aaa; }
+  .daily-news .page-meta { color: #aaa; }
+  .daily-news .archive { border-top-color: #444; }
+  .daily-news .archive a { color: #64b5f6; }
+  .daily-news .archive a:hover { color: #f09228; }
+  .daily-news .feedback { border-top-color: #444; }
+  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-submit { background: #555; }
+  .daily-news .vote-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+}
+</style>
+</head>
+<body>
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="junyoung" data-date="2026-07-01">
+<h1>Daily News — 2026-07-01</h1>
+<div class="user-banner"><div class="user-handle">Junyoung</div><div class="user-categories">Robotics · Language</div><div class="user-kws">VLA · robot foundation model · robot learning · dexterous manipulation · WAM · reasoning · RL · synthetic data · human data · efficiency · LLM · VLM · reasoning · RL · agent</div></div>
+<p class="page-meta">13 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+<h2>News</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/claudeai/status/2072017450611142835">Claude Sonnet 5: Anthropic&#x27;s most agentic model yet</a></span> <button class="vote-btn" data-id="afe8852c61" data-link="https://x.com/claudeai/status/2072017450611142835" data-source="https://x.com/claudeai/status/2072017450611142835" data-title="Claude Sonnet 5: Anthropic&#x27;s most agentic model yet" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@claudeai · 2026-06-30<span class="item-keywords"> · reasoning</span></span><span class="item-desc">Anthropic launches Claude Sonnet 5, designed for autonomous tool use, planning, and multi-step execution at a level that previously required larger models. 26K+ likes signal widespread industry attention as the agentic capabilities gap between model tiers continues to shrink.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/Etched/status/2071972062202343590">Etched comes out of stealth with custom AI inference chips</a></span> <button class="vote-btn" data-id="3f8ea1d7d5" data-link="https://x.com/Etched/status/2071972062202343590" data-source="https://x.com/Etched/status/2071972062202343590" data-title="Etched comes out of stealth with custom AI inference chips" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@Etched · 2026-06-30<span class="item-keywords"> · efficiency</span></span><span class="item-desc">Etched reveals its first racks after a successful A0 tapeout, announcing $1B+ in customer contracts and $800M raised. Early customer tests show SOTA throughput and latency by hardcoding attention into silicon — a direct challenge to GPU-based inference that Tri Dao calls &quot;wild&quot; for a 2-year timeline.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/FlexionRobotics/status/2071609635971408077">Flexion humanoid completes long-horizon real-world task</a></span> <button class="vote-btn" data-id="11905fac21" data-link="https://x.com/FlexionRobotics/status/2071609635971408077" data-source="https://x.com/FlexionRobotics/status/2071609635971408077" data-title="Flexion humanoid completes long-horizon real-world task" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@FlexionRobotics · 2026-06-29</span><span class="item-desc">Flexion&#x27;s humanoid retrieves a parcel using stairs, rides the elevator, then unpacks items and stocks a shelf — an end-to-end autonomous demo combining navigation, manipulation, and multi-step planning that drew 376 likes and 149 retweets from the robotics community.</span></li>
+</ul>
+<h2>Releases</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/_fracapuano/status/2071970782792868243">Orca: open-source software stack for dexterity research</a></span> <button class="vote-btn" data-id="0690987312" data-link="https://x.com/_fracapuano/status/2071970782792868243" data-source="https://x.com/_fracapuano/status/2071970782792868243" data-title="Orca: open-source software stack for dexterity research" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@_fracapuano · 2026-06-30<span class="item-keywords"> · dexterous manipulation</span></span><span class="item-desc">Fully open-source software stack built on the OrcaHand for dexterous manipulation research. Includes teleoperation, sim-to-real, and policy training pipelines — lowering the barrier to entry for hand manipulation work.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/AntonioSitongLi/status/2072026687169323274">Nori L2: most capable robot under $1288, shipping now</a></span> <button class="vote-btn" data-id="35ec06b9fa" data-link="https://x.com/AntonioSitongLi/status/2072026687169323274" data-source="https://x.com/AntonioSitongLi/status/2072026687169323274" data-title="Nori L2: most capable robot under $1288, shipping now" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@AntonioSitongLi · 2026-06-30<span class="item-keywords"> · robot learning</span></span><span class="item-desc">A low-cost robot platform made in the US, now available for purchase. Aims to democratize robot learning research by providing capable hardware at an accessible price point.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/RekaAILabs/status/2071970771233038475">CS2-10k: 600K+ egocentric gameplay videos on HuggingFace</a></span> <button class="vote-btn" data-id="70761f828e" data-link="https://x.com/RekaAILabs/status/2071970771233038475" data-source="https://x.com/RekaAILabs/status/2071970771233038475" data-title="CS2-10k: 600K+ egocentric gameplay videos on HuggingFace" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@RekaAILabs · 2026-06-30<span class="item-keywords"> · human data</span></span><span class="item-desc">Over 10,000 hours of egocentric gameplay data with paired keyboard, mouse, and 3D position labels. Useful for action-conditioned world model training and agent behavior learning from large-scale human interaction data.</span></li>
+</ul>
+<h2>Papers</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/DrJimFan/status/2072004190856212902">ASPIRE: self-evolving robot skills via coding agents</a></span> <button class="vote-btn" data-id="c2780df7e5" data-link="https://x.com/DrJimFan/status/2072004190856212902" data-source="https://x.com/DrJimFan/status/2072004190856212902" data-title="ASPIRE: self-evolving robot skills via coding agents" title="upvote"><span class="tri"></span></button></div><span class="item-meta">NVIDIA · 2026-06-30<span class="item-keywords"> · robot learning</span></span><span class="item-desc">A skills library where a coding agent observes robot task attempts and writes reusable skill code that compounds over time. A robot solving its 100th task leverages all prior skill discoveries, shifting from single-task learning to cumulative robot intelligence. Collaboration between NVIDIA GEAR lab, UMich, Berkeley, and CMU.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/ahadj0/status/2071597152329966045">Neural Action Codec: treating robot actions like audio waveforms for VLA</a></span> <button class="vote-btn" data-id="18758534bf" data-link="https://x.com/ahadj0/status/2071597152329966045" data-source="https://x.com/ahadj0/status/2071597152329966045" data-title="Neural Action Codec: treating robot actions like audio waveforms for VLA" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@ahadj0 · 2026-06-29<span class="item-keywords"> · VLA</span></span><span class="item-desc">Proposes a compressed action vocabulary by encoding robot actions via a neural codec analogous to audio compression. The discrete action tokens enable more efficient VLA policy training and potentially better generalization across embodiments.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.29089">TAP-VLA: Tactile Annotation Prompting for Vision Language Action Models</a></span> <button class="vote-btn" data-id="9cffc93559" data-link="https://arxiv.org/abs/2606.29089" data-source="https://arxiv.org/abs/2606.29089" data-title="TAP-VLA: Tactile Annotation Prompting for Vision Language Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-30<span class="item-keywords"> · VLA · dexterous manipulation</span></span><span class="item-desc">Overlays tactile shear fields as vectors onto RGB images, feeding tactile feedback to VLAs through visual augmentation without architectural changes. Achieves 78% success across four contact-rich tasks vs. under 50% for vision-only fine-tuning.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/Runyi_Ingrid_Yu/status/2071961140880707958">OmniContact: Contact Flow for generalizable loco-manipulation</a></span> <button class="vote-btn" data-id="17cfedf26c" data-link="https://x.com/Runyi_Ingrid_Yu/status/2071961140880707958" data-source="https://x.com/Runyi_Ingrid_Yu/status/2071961140880707958" data-title="OmniContact: Contact Flow for generalizable loco-manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@Runyi_Ingrid_Yu · 2026-06-30<span class="item-keywords"> · RL</span></span><span class="item-desc">Introduces a framework built on &quot;Contact Flow&quot; to tackle generalizable loco-manipulation and long-horizon task planning for humanoids. Code, model, and data are released — addressing the gap between free-space locomotion and contact-rich manipulation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/_akhaliq/status/2071627520894455866">PhysisForcing: Physics Reinforced World Simulator for Robotic Manipulation</a></span> <button class="vote-btn" data-id="929f57d0ec" data-link="https://x.com/_akhaliq/status/2071627520894455866" data-source="https://x.com/_akhaliq/status/2071627520894455866" data-title="PhysisForcing: Physics Reinforced World Simulator for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@_akhaliq · 2026-06-29<span class="item-keywords"> · synthetic data</span></span><span class="item-desc">A world model that integrates physics priors as a reinforcement signal, improving physical plausibility of generated rollouts for robot manipulation. Bridges the gap between pure visual world models and physics simulators for more reliable synthetic training data.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://x.com/eric_srchen/status/2071608281827782955">SceneBot: unified RL for humanoid locomotion and object interaction</a></span> <button class="vote-btn" data-id="7ba7b85172" data-link="https://x.com/eric_srchen/status/2071608281827782955" data-source="https://x.com/eric_srchen/status/2071608281827782955" data-title="SceneBot: unified RL for humanoid locomotion and object interaction" title="upvote"><span class="tri"></span></button></div><span class="item-meta">@eric_srchen · 2026-06-29<span class="item-keywords"> · RL</span></span><span class="item-desc">First unified RL framework handling free-space locomotion, terrain traversal, and object interaction for humanoids. Conditions a single policy on event-based contact signals, eliminating the need for separate locomotion and manipulation controllers.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.28813">Human2Any: human-to-robot transfer via compositional planning</a></span> <button class="vote-btn" data-id="110d101b84" data-link="https://arxiv.org/abs/2606.28813" data-source="https://arxiv.org/abs/2606.28813" data-title="Human2Any: human-to-robot transfer via compositional planning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-30<span class="item-keywords"> · human data · robot learning</span></span><span class="item-desc">Learns reusable object-centric interaction priors from human videos without requiring robot demonstrations. Composes learned priors with robot-side feasibility reasoning and validates on Franka tabletop and RBY-1 humanoid setups.</span></li>
+</ul>
+
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="junyoung" data-date="2026-07-01"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,source:source,item_id:id,title:title})
+    }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
+      sub=w.querySelector('.fb-submit');
+  var ph={feedback:'e.g. Papers section was great / too many LLM items',
+    edit_keyword:'e.g. add VLA / remove quantum computing',
+    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
+    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
+  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
+  sub.addEventListener('click',function(){
+    var v=val.value.trim();if(!v)return;
+    sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
