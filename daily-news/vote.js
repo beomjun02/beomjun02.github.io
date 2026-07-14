@@ -1,5 +1,37 @@
 (function(){
   var dn=document.querySelector('.daily-news');if(!dn)return;
+
+  // ── Inject vote + share buttons into item rows (chrome built client-side) ──
+  // The server emits only content + data hooks (data-id/link/source/title) on
+  // each .item-row; the buttons are created here so button UI changes need no
+  // page re-render. Old pages (buttons baked into HTML, no data-id on the row)
+  // are skipped and keep their existing buttons — fully backward compatible.
+  var SHARE_SVG='<svg width="15" height="10" viewBox="-0.5 -0.5 13 9" fill="currentColor" stroke="none"><path d="M7 0 L12 4 L7 8 L7 5.5 C4 5.5, 2 6.5, 0.5 8 C0.5 4.5, 3 2.5, 7 2.5 Z"/></svg>';
+  try{
+    var rows=dn.querySelectorAll('.item-row[data-id]');
+    for(var i=0;i<rows.length;i++){
+      try{
+        var row=rows[i];
+        if(row.querySelector('.vote-btn'))continue; // idempotent / already present
+        var id=row.getAttribute('data-id'),link=row.getAttribute('data-link'),
+            source=row.getAttribute('data-source')||'',title=row.getAttribute('data-title')||'';
+        var vb=document.createElement('button');
+        vb.className='vote-btn';vb.title='upvote';
+        vb.setAttribute('data-id',id);vb.setAttribute('data-link',link);
+        vb.setAttribute('data-source',source);vb.setAttribute('data-title',title);
+        vb.innerHTML='<span class="tri"></span>';
+        var sb=document.createElement('button');
+        sb.className='share-btn';
+        sb.setAttribute('data-id',id);sb.setAttribute('data-link',link);
+        sb.setAttribute('data-title',title);
+        sb.innerHTML=SHARE_SVG;
+        row.appendChild(document.createTextNode(' '));row.appendChild(vb);
+        row.appendChild(document.createTextNode(' '));row.appendChild(sb);
+      }catch(e){}
+    }
+  }catch(e){}
+
+  // ── Vote behavior (event delegation; works for baked-in or injected buttons) ──
   var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
   if(!url||!user)return;
   var proxy='https://daily-news-api.bullbum1126.workers.dev/';
