@@ -7,7 +7,7 @@ This file is the contract for any agent adding content here. Follow it exactly.
 
 ```
 experiments/
-├── index.html            dashboard: project cards + recent-logs feed
+├── index.html            dashboard: Ongoing (latest log per project) + Archive (all logs, month-grouped)
 ├── logs.json             single registry — every log has one entry here
 ├── assets/lab.css|lab.js shared design system (tokens, components, theme toggle, feed renderer)
 ├── README.md             this file
@@ -28,8 +28,8 @@ experiments/
 3. Media go in the log's own `assets/` (never reference another log's folder):
    - video: H.264 mp4, ≤ ~5 MB each, `autoplay loop muted playsinline preload="metadata"` + a `poster` jpg
    - stills: jpg/png, ≤ ~500 KB; add `loading="lazy"` below the fold
-4. Append one entry to `experiments/logs.json` (schema documented in the file). The dashboard and hub feeds render from it.
-5. Also add a static `<li>` for the new log to the fallback list in `experiments/index.html` (keeps the no-JS view current). Keep only ~10 static entries; the JSON feed shows everything.
+4. Append one entry to `experiments/logs.json` (schema documented in the file). Both dashboard sections — Ongoing (latest per project) and Archive (time-ordered, month-grouped) — render from it automatically.
+5. Also refresh the static fallbacks in `experiments/index.html` (the no-JS view): add an Archive `<li>` for the new log (under its month header; keep only ~10 static entries) and update your project card's `.latest` link in Ongoing.
 
 ## New project
 

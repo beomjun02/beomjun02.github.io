@@ -33,29 +33,35 @@
 <main>
   <section>
     <div class="wrap">
-      <h2>Projects</h2>
-      <p class="sub">Each project has a hub page with its story so far, plus dated logs underneath.</p>
-      <div class="proj-grid">
-        <a class="proj-card" href="dex-pointwam/">
-          <h3>Dex-PointWAM</h3>
+      <h2>Ongoing</h2>
+      <p class="sub">The latest log from each project. Project names link to the hub pages.</p>
+      <div class="proj-grid" data-projects data-root=".">
+        <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
+        <div class="proj-card">
+          <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
           <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
-          <span class="stats">experiments/dex-pointwam/</span>
-        </a>
-        <a class="proj-card" href="dex-point-policy/">
-          <h3>Dexterous Point Policy</h3>
+          <a class="latest" href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
+            <span class="ldate">2026-07-29</span>
+            <span class="pill warn"><span class="dot"></span>closed</span>
+            <span class="lt">Closed-loop sim eval — reach transfers, grasp pose doesn't</span>
+          </a>
+        </div>
+        <div class="proj-card">
+          <h3><a href="dex-point-policy/">Dexterous Point Policy</a></h3>
           <p>Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.</p>
-          <span class="stats">experiments/dex-point-policy/</span>
-        </a>
+          <span class="latest none">no logs yet</span>
+        </div>
       </div>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>Recent logs</h2>
-      <p class="sub">Newest first, across all projects. Rendered from <code>logs.json</code>.</p>
+      <h2>Archive</h2>
+      <p class="sub">Every log, newest first, grouped by month. Rendered from <code>logs.json</code>.</p>
       <ul class="log-feed" data-feed data-root=".">
         <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
+        <li class="month-h">2026-07</li>
         <li><a href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
           <span class="ldate">2026-07-29</span>
           <span class="lmain"><span class="lproj">Dex-PointWAM</span>

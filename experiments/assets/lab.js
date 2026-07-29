@@ -26,30 +26,64 @@
     });
   });
 
-  // ── index feeds ────────────────────────────────────────────
-  // <ul class="log-feed" data-feed data-root="." data-project="dex-pointwam">
+  // ── index rendering from logs.json ─────────────────────────
+  // <div class="proj-grid" data-projects data-root=".">  latest log per project
+  // <ul class="log-feed" data-feed data-root="." [data-project="slug"]>  archive
   // data-root: relative path from the page to experiments/ (where logs.json lives).
-  // data-project: optional filter; omit on the dashboard to show all projects.
+  // Static markup inside these containers is the no-JS / fetch-failed fallback.
+  var PILL = { done: 'ok', closed: 'warn', blocked: 'bad', failed: 'bad', running: 'acc' };
+
   document.addEventListener('DOMContentLoaded', function () {
     var feed = document.querySelector('[data-feed]');
-    if (!feed || !window.fetch) return;
-    var rootPath = feed.getAttribute('data-root') || '.';
-    var only = feed.getAttribute('data-project');
+    var grid = document.querySelector('[data-projects]');
+    if ((!feed && !grid) || !window.fetch) return;
+    var rootPath = (feed && feed.getAttribute('data-root')) ||
+                   (grid && grid.getAttribute('data-root')) || '.';
+
+    function pill(status) {
+      return '<span class="pill ' + (PILL[status] || '') + '"><span class="dot"></span>' + status + '</span>';
+    }
+
     fetch(rootPath + '/logs.json').then(function (r) { return r.json(); }).then(function (db) {
-      var logs = db.logs.filter(function (l) { return !only || l.project === only; });
-      logs.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-      if (!logs.length) return;
-      feed.innerHTML = logs.map(function (l) {
-        var proj = (db.projects[l.project] || {}).title || l.project;
-        var pillClass = { done: 'ok', closed: 'warn', blocked: 'bad', failed: 'bad', running: 'acc' }[l.status] || '';
-        return '<li><a href="' + rootPath + '/' + l.path + '">' +
-          '<span class="ldate">' + l.date + '</span>' +
-          '<span class="lmain">' + (only ? '' : '<span class="lproj">' + proj + '</span>') +
-          '<span class="lt">' + l.title + '</span>' +
-          '<span class="ltl">' + (l.tldr || '') + '</span></span>' +
-          '<span class="pill ' + pillClass + '"><span class="dot"></span>' + l.status + '</span>' +
-          '</a></li>';
-      }).join('');
-    }).catch(function () { /* noscript fallback links remain */ });
+      var logs = db.logs.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+
+      if (grid) {
+        var latestBy = {};
+        logs.forEach(function (l) { if (!latestBy[l.project]) latestBy[l.project] = l; });
+        var slugs = Object.keys(db.projects).sort(function (a, b) {
+          var da = latestBy[a] ? latestBy[a].date : '', dbb = latestBy[b] ? latestBy[b].date : '';
+          return da < dbb ? 1 : -1;
+        });
+        grid.innerHTML = slugs.map(function (s) {
+          var p = db.projects[s], l = latestBy[s];
+          var latest = l
+            ? '<a class="latest" href="' + rootPath + '/' + l.path + '">' +
+              '<span class="ldate">' + l.date + '</span>' + pill(l.status) +
+              '<span class="lt">' + l.title + '</span></a>'
+            : '<span class="latest none">no logs yet</span>';
+          return '<div class="proj-card"><h3><a href="' + rootPath + '/' + p.path + '">' + p.title + '</a></h3>' +
+                 '<p>' + p.tagline + '</p>' + latest + '</div>';
+        }).join('');
+      }
+
+      if (feed) {
+        var only = feed.getAttribute('data-project');
+        var list = logs.filter(function (l) { return !only || l.project === only; });
+        if (!list.length) return;
+        var out = '', lastMonth = '';
+        list.forEach(function (l) {
+          var m = l.date.slice(0, 7);
+          if (m !== lastMonth) { out += '<li class="month-h">' + m + '</li>'; lastMonth = m; }
+          var proj = (db.projects[l.project] || {}).title || l.project;
+          out += '<li><a href="' + rootPath + '/' + l.path + '">' +
+            '<span class="ldate">' + l.date + '</span>' +
+            '<span class="lmain">' + (only ? '' : '<span class="lproj">' + proj + '</span>') +
+            '<span class="lt">' + l.title + '</span>' +
+            '<span class="ltl">' + (l.tldr || '') + '</span></span>' +
+            pill(l.status) + '</a></li>';
+        });
+        feed.innerHTML = out;
+      }
+    }).catch(function () { /* static fallback markup remains */ });
   });
 })();
