@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lab Notebook · beomjun</title>
+<meta name="description" content="Experiment logs — dexterous manipulation, point-cloud policies, world models.">
+<link rel="stylesheet" href="assets/lab.css">
+<script src="assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/">beomjun02.github.io</a><span class="sep">/</span><span class="here">experiments</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Lab Notebook</p>
+    <h1>Experiments</h1>
+    <p class="lede">Running record of experiments across projects — dexterous manipulation,
+      point-cloud policies, world models. Each log is a self-contained page: verdict first,
+      then the evidence.</p>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>Projects</h2>
+      <p class="sub">Each project has a hub page with its story so far, plus dated logs underneath.</p>
+      <div class="proj-grid">
+        <a class="proj-card" href="dex-pointwam/">
+          <h3>Dex-PointWAM</h3>
+          <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
+          <span class="stats">experiments/dex-pointwam/</span>
+        </a>
+        <a class="proj-card" href="dex-point-policy/">
+          <h3>Dexterous Point Policy</h3>
+          <p>Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.</p>
+          <span class="stats">experiments/dex-point-policy/</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Recent logs</h2>
+      <p class="sub">Newest first, across all projects. Rendered from <code>logs.json</code>.</p>
+      <ul class="log-feed" data-feed data-root=".">
+        <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
+        <li><a href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
+          <span class="ldate">2026-07-29</span>
+          <span class="lmain"><span class="lproj">Dex-PointWAM</span>
+            <span class="lt">Closed-loop sim eval — reach transfers, grasp pose doesn't</span>
+            <span class="ltl">Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD.</span></span>
+          <span class="pill warn"><span class="dot"></span>closed</span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="page">
+  <div class="wrap">beomjun02.github.io/experiments · logs are written as they happen; verdicts may be revised</div>
+</footer>
+
+</body>
+</html>

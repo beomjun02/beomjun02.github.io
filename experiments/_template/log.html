@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YYYY-MM-DD · TITLE — PROJECT</title>
+<meta name="description" content="Experiment log: one-sentence outcome.">
+<link rel="stylesheet" href="../../../assets/lab.css">
+<script src="../../../assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="../../../">experiments</a><span class="sep">/</span>
+      <a href="../../">PROJECT-SLUG</a><span class="sep">/</span>
+      <span class="here">YYYY-MM-DD · SLUG</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · PROJECT</p>
+    <h1>Outcome-first title — what happened, not what was attempted</h1>
+    <p class="lede">One or two sentences of context: what was run, against what baseline, on what setup.</p>
+
+    <dl class="record">
+      <!-- status pill: running=acc · done=ok · closed=warn · blocked/failed=bad -->
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>YYYY-MM-DD → MM-DD</dd></div>
+      <div><dt>Outcome</dt><dd>headline metric</dd></div>
+      <div><dt>Env</dt><dd class="mono">cluster · sim/hw · versions</dd></div>
+      <div><dt>Checkpoint</dt><dd class="mono">path/to/ckpt</dd></div>
+      <div><dt>Full report</dt><dd class="mono">path/to/source.md · wandb · job id</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>The TL;DR a reader gets in 10 seconds: what happened, the key number, and what it means.
+         Write it last; put it first.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Hero evidence — the clip, image, or number that shows the outcome.</p>
+      <figure>
+        <video class="vid" src="assets/CLIP.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/POSTER.jpg"></video>
+        <figcaption>CLIP.mp4 · condition · duration · view</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Setup</h2>
+      <p class="sub">Goal and success criteria, then the config.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Component</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Model</td><td class="mono">…</td></tr>
+            <tr><td>Data</td><td class="mono">…</td></tr>
+            <tr><td>Baseline</td><td class="mono">…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Results vs baseline</h2>
+      <p class="sub">The comparison that answers the question. Real numbers only.</p>
+      <!-- horizontal bars: --v is the fill %; .ghost = unverified claim; .zero = zero bar -->
+      <div class="chart" role="img" aria-label="Describe every bar and value here.">
+        <div class="crow">
+          <span class="clabel">Series A<span class="cnote">n, source</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:64%"></span></span><span class="cval">64%</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Series B<span class="cnote">n, source</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:27%"></span></span><span class="cval">27%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Diagnosis</h2>
+      <p class="sub">Why the result is what it is. Ruled-out causes as a checklist (mk ok / mk x / mk i).</p>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Cause ruled out.</span><span class="ld">Evidence.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Actual cause.</span><span class="ld">Evidence.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Timeline</h2>
+      <!-- li class: ok / bad / acc colors the dot; entries may embed small figures -->
+      <ul class="timeline">
+        <li class="acc">
+          <span class="tdate">YYYY-MM-DD</span>
+          <span class="tt">What changed</span>
+          <p>What happened and what it showed.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Next step.</span><span class="ld">Why, and what it needs.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Checkpoint / code / launcher / report</span><span class="ld mono">exact paths, env vars, job ids</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged YYYY-MM-DD · beomjun · experiments/PROJECT-SLUG/logs/YYYY-MM-DD-SLUG</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "_schema": {
+    "projects": "slug → {title, tagline, path}",
+    "logs": "append one entry per experiment log; date YYYY-MM-DD; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+    "note": "Index pages render from this file. Agents: append your entry here after creating <project>/logs/<date>-<slug>/index.html."
+  },
+  "projects": {
+    "dex-pointwam": {
+      "title": "Dex-PointWAM",
+      "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
+      "path": "dex-pointwam/"
+    },
+    "dex-point-policy": {
+      "title": "Dexterous Point Policy",
+      "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
+      "path": "dex-point-policy/"
+    }
+  },
+  "logs": [
+    {
+      "project": "dex-pointwam",
+      "date": "2026-07-29",
+      "slug": "closed-loop-eval",
+      "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
+      "status": "closed",
+      "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
+      "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
+      "tags": ["sim", "closed-loop", "OOD", "isaac"]
+    }
+  ]
+}

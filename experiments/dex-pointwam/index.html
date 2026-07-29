@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dex-PointWAM → Sim · Closed-loop pick-and-place</title>
+<meta name="description" content="Bringing a PointWAM dexterous-hand world-model into the OpenArm Isaac sim, closed-loop vs DPP. Reach transfers; grasp pose is a real→sim OOD limit.">
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121722; --panel2:#161c28; --line:#232c3b;
+    --txt:#e6ebf2; --mut:#98a4b6; --mut2:#6b788c;
+    --acc:#4cc2ff; --acc2:#7c86ff; --ok:#43d17a; --warn:#f2b13c; --bad:#f2685e;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.62;
+       -webkit-font-smoothing:antialiased;font-size:16px}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px}
+  .mono{font-family:var(--mono);font-size:.86em}
+  code{font-family:var(--mono);background:#0f1520;border:1px solid var(--line);border-radius:5px;
+       padding:.08em .38em;font-size:.85em;color:#cbd6e6}
+  /* header */
+  header{padding:64px 0 30px;border-bottom:1px solid var(--line);
+    background:radial-gradient(1200px 400px at 50% -140px,rgba(76,194,255,.10),transparent 60%)}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin:0 0 14px}
+  h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;margin:0 0 14px;letter-spacing:-.02em;font-weight:750}
+  h1 .arrow{color:var(--mut2);font-weight:400}
+  .lede{font-size:clamp(16px,2.4vw,19px);color:var(--mut);max-width:70ch;margin:0 0 22px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:12.5px;color:var(--mut2)}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;
+    padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .b-ok .dot{background:var(--ok)} .b-warn .dot{background:var(--warn)} .b-bad .dot{background:var(--bad)}
+  .b-ok{color:#b7f0cd;border-color:#1f5a38} .b-warn{color:#f6d79a;border-color:#5a4620} .b-bad{color:#f7c2bd;border-color:#5a2b28}
+  /* sections */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:23px;letter-spacing:-.01em;margin:0 0 6px;font-weight:700}
+  h2 .n{font-family:var(--mono);font-size:14px;color:var(--acc);margin-right:10px;font-weight:600}
+  .sub{color:var(--mut);margin:0 0 22px;max-width:74ch}
+  p{margin:0 0 14px}
+  .muted{color:var(--mut)}
+  /* media */
+  figure{margin:0}
+  .vid{width:100%;border-radius:12px;border:1px solid var(--line);background:#000;display:block}
+  figcaption{font-size:13.5px;color:var(--mut2);margin-top:10px;font-family:var(--mono)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.two{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:9px}
+  .tag{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--line);color:var(--mut)}
+  .tag.ok{color:#b7f0cd;border-color:#1f5a38;background:#10251a}
+  .tag.bad{color:#f7c2bd;border-color:#5a2b28;background:#241312}
+  /* callout */
+  .callout{background:linear-gradient(180deg,rgba(124,134,255,.09),rgba(124,134,255,.03));
+    border:1px solid #2c3350;border-left:3px solid var(--acc2);border-radius:12px;padding:20px 22px}
+  .callout .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc2);margin:0 0 8px}
+  .callout p{margin:0;font-size:16.5px}
+  /* fix / checklist lists */
+  ul.clean{list-style:none;padding:0;margin:0}
+  ul.clean li{padding:11px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+  ul.clean li:last-child{border-bottom:0}
+  .mk{flex:0 0 auto;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;margin-top:2px}
+  .mk.ok{background:#10251a;color:var(--ok);border:1px solid #1f5a38}
+  .mk.x{background:#241312;color:var(--bad);border:1px solid #5a2b28}
+  .mk.i{background:#0f1b28;color:var(--acc);border:1px solid #22405a}
+  li .lt{font-weight:600} li .ld{color:var(--mut);display:block;font-size:14.5px}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut2);font-weight:600}
+  td.mono{font-family:var(--mono)}
+  tr:hover td{background:var(--panel)}
+  .strike{color:var(--mut2);text-decoration:line-through}
+  /* steps */
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .steps .card{display:flex;gap:14px}
+  .steps .card::before{counter-increment:s;content:counter(s);font-family:var(--mono);font-weight:700;color:var(--acc);
+    background:#0f1b28;border:1px solid #22405a;border-radius:9px;width:30px;height:30px;display:grid;place-items:center;flex:0 0 auto}
+  footer{padding:34px 0 60px;color:var(--mut2);font-size:13.5px}
+  .kbd{font-family:var(--mono);font-size:12.5px;color:var(--mut)}
+  .frames{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .frames img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}
+  @media(max-width:560px){.frames{grid-template-columns:repeat(2,1fr)}}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Experiment · Dexterous world-model → sim</p>
+    <h1>Dex-PointWAM <span class="arrow">→</span> OpenArm Sim</h1>
+    <p class="lede">Bringing a PointWAM dexterous-hand <b>world-action model</b> (EgoDex-pretrained, PnP-500 finetuned) into
+      the OpenArm Isaac-Sim pick-and-place benchmark, closed-loop, head-to-head with <b>DPP</b>. Short version: the
+      <b>reach transfers</b> zero-shot; the <b>grasp pose does not</b> — a clean real→sim out-of-distribution boundary.</p>
+    <div class="meta">
+      <span>2026-07-28 → 07-29</span><span>·</span><span>beomjun</span><span>·</span>
+      <span>openarm-sim · PointWAM <span class="mono">dex-point-wam</span></span>
+    </div>
+    <div class="badges">
+      <span class="badge b-ok"><span class="dot"></span>Tier-0 reach — achieved</span>
+      <span class="badge b-bad"><span class="dot"></span>Tier-1 grasp — 0/24</span>
+      <span class="badge b-warn"><span class="dot"></span>Sim validated · DPP ≈ 27%</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO VIDEO -->
+  <section>
+    <h2><span class="n">01</span>The result, in one clip</h2>
+    <p class="sub">Dex-PointWAM in closed loop (ego head-camera view). The arm travels straight from its rest pose to the
+      bottle and the fingers arrive on the object — a <b>sensible, purposeful reach</b>. This is what "말이 되는 움직임"
+      (a motion that makes sense) looks like, and it is the milestone we set out to hit.</p>
+    <figure>
+      <video class="vid" src="assets/reach.mp4" autoplay loop muted playsinline poster="assets/reach_f240.jpg"></video>
+      <figcaption>reach.mp4 · Dex-PointWAM (rate + hand-mask fixes) · bottle · 30&nbsp;s · ego view</figcaption>
+    </figure>
+    <div class="frames">
+      <img src="assets/reach_f010.jpg" alt="t=0 start"><img src="assets/reach_f240.jpg" alt="approach">
+      <img src="assets/reach_f400.jpg" alt="near object"><img src="assets/reach_f590.jpg" alt="arrived">
+    </div>
+  </section>
+
+  <!-- GOAL -->
+  <section>
+    <h2><span class="n">02</span>Goal</h2>
+    <p class="sub">Make Dex-PointWAM succeed in the sim "like DPP" — at minimum produce a sensible motion (no weird
+      thrashing), and ideally reach DPP-level task success. Three tiers:</p>
+    <ul class="clean">
+      <li><span class="mk ok">✓</span><span><span class="lt">Tier-0 — sensible reach.</span><span class="ld">The arm moves purposefully toward the object instead of spinning in place.</span></span></li>
+      <li><span class="mk x">✗</span><span><span class="lt">Tier-1 — DPP-level success.</span><span class="ld"><code>success_at_end</code> comparable to the DPP baseline on the same objects/seed.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Tier-2 — iterate up.</span><span class="ld">Once succeeding, push the success rate higher.</span></span></li>
+    </ul>
+  </section>
+
+  <!-- BEFORE / AFTER -->
+  <section>
+    <h2><span class="n">03</span>Before → after</h2>
+    <p class="sub">The starting point (07-22) was a hand that just <b>rotated in place</b> and never reached — 0/24 on every
+      object. Two deploy-side bugs were masking the model's real behavior. Fixing them revived the reach.</p>
+    <div class="two">
+      <figure class="card">
+        <h3><span class="tag bad">before · 07-22</span> rotate-in-place</h3>
+        <video class="vid" src="assets/before_rotate.mp4" autoplay loop muted playsinline></video>
+        <figcaption>Hand spins, wrist never translates → 0/24. Caused by a phantom idle-hand attended by the model + a 2× playback bug.</figcaption>
+      </figure>
+      <figure class="card">
+        <h3><span class="tag ok">after · 07-28</span> sensible reach</h3>
+        <video class="vid" src="assets/reach.mp4" autoplay loop muted playsinline></video>
+        <figcaption>Arm reaches straight to the bottle, fingers arrive on it. Tier-0 met. Wrist displacement 14 cm → 4 cm (converging).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- WHAT WE FIXED -->
+  <section>
+    <h2><span class="n">04</span>What we fixed</h2>
+    <p class="sub">Every fix is deploy-side (bridge / policy / launcher) — the WIP model files were never touched.</p>
+    <ul class="clean">
+      <li><span class="mk ok">✓</span><span><span class="lt">Rate bug — 2× too-fast replay.</span><span class="ld">The policy advanced one predicted step per control step (<code>si = t % Q</code>), replaying a 1.0&nbsp;s / 10-step chunk in 0.5&nbsp;s. Now each predicted step is held for 2 control steps (10&nbsp;Hz prediction vs 20&nbsp;Hz control).</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Phantom-hand mask.</span><span class="ld">The bimanual model was attending to a zero-padded idle hand. Masking it via <code>robot_exists</code> is what actually revived the reach — this was the true cause of the 07-22 "rotate collapse", not a training problem.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Reach telemetry.</span><span class="ld">Added a per-chunk <code>[pwam-disp]</code> log of net predicted wrist displacement — turned "it rotates" into a measurable 14&nbsp;cm→4&nbsp;cm reach signal.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Contact-head finetune + grip wiring.</span><span class="ld">Trained a per-finger contact head (<code>contact_ft</code>, robot_l2 3.5&nbsp;cm), made the bridge return it and the policy drive a DPP-style grip ramp. The head fires strongly — but grip alone does not recover the grasp (see below).</span></span></li>
+    </ul>
+  </section>
+
+  <!-- DIAGNOSIS -->
+  <section>
+    <h2><span class="n">05</span>Why the grasp still fails</h2>
+    <p class="sub">The hand reaches the object and even touches it (11/24 episodes nudge/partially lift the bottle), but the
+      fingers close <b>beside</b> the object, not around it — the predicted <b>hand orientation is palm-up</b>, so a standing
+      bottle can't be grasped no matter how the grip closes.</p>
+    <figure style="margin-bottom:22px">
+      <video class="vid" src="assets/contactgrip.mp4" autoplay loop muted playsinline></video>
+      <figcaption>contactgrip.mp4 · reach + trained contact grip · the fist closes but the bottle ends up outside it → 0/24. The grip is not the bottleneck; the grasp pose is.</figcaption>
+    </figure>
+    <p class="sub" style="margin-bottom:14px">Before blaming the model, we ruled out every deploy-side cause — one by one, with data:</p>
+    <ul class="clean">
+      <li><span class="mk ok">✓</span><span><span class="lt">Sim is correct.</span><span class="ld">Canonical DPP in our sim = 17–29% (num-envs-dependent), which <b>matches seunghoon's own reruns</b> (~27%). The "70%" was a single non-reproducible README row — see the table below.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Coordinate frame is right.</span><span class="ld">The training data is camera-frame (WDS <code>extrinsic = I</code>, scene Z = depth). Feeding the real world-frame extrinsic actually <i>broke</i> the reach — so identity is correct.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Camera geometry matches training.</span><span class="ld">The PnP-500 table-plane normal sits 25.6° off the optical axis; the sim head camera is pitched 25.5° from vertical. Same viewpoint — no tilt to explain the flip.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Keypoint order &amp; hand chirality correct.</span><span class="ld">Traced end-to-end: sim → obs → bridge → training converter → readback. No transposed fingers, no left/right swap.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Same IK + start pose as DPP.</span><span class="ld">DPP uses the identical KeypointIK and initial joint state and grasps fine — so the divergence is purely PointWAM's <i>predicted trajectory</i>.</span></span></li>
+      <li><span class="mk x">→</span><span><span class="lt">Conclusion: it's the model's prediction.</span><span class="ld">On sim (out-of-distribution) input the model predicts a palm-up grasp. Reach = gross translation survives OOD; the fine grasp <i>orientation</i> does not.</span></span></li>
+    </ul>
+  </section>
+
+  <!-- DPP TABLE -->
+  <section>
+    <h2><span class="n">06</span>Recalibrating the DPP baseline</h2>
+    <p class="sub">A key mid-course correction: the DPP number we were chasing (70%) turned out to be a myth. The realistic,
+      reproducible baseline in this benchmark is ~27% — and success swings a lot with <code>num_envs</code> (PhysX
+      parallel-solver non-determinism, which the benchmark's own README flags).</p>
+    <table>
+      <thead><tr><th>DPP · bottle</th><th>success_at_end</th><th>source</th></tr></thead>
+      <tbody>
+        <tr><td class="strike">README table</td><td class="mono strike">70% (28/40)</td><td class="muted">single non-reproducible row</td></tr>
+        <tr><td>our sim · N24</td><td class="mono">29% (7/24)</td><td class="muted">eval_job.sbatch</td></tr>
+        <tr><td>our sim · N40</td><td class="mono">17.5% (7/40)</td><td class="muted">eval_job.sbatch</td></tr>
+        <tr><td>seunghoon · parallel-eval</td><td class="mono">26.7% (544/2040)</td><td class="muted">his own N2048 log</td></tr>
+        <tr><td>seunghoon · deployment</td><td class="mono">6–12.5%</td><td class="muted">real DPP + SAM3 + ZED noise</td></tr>
+        <tr><td><b>Dex-PointWAM</b></td><td class="mono"><b>0/24</b></td><td class="muted">reaches, palm-up grasp</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:14px;font-size:14.5px">Versions and physics config are byte-identical between the two
+      stacks (Isaac Sim 5.1.0-rc.19, Isaac Lab 0.53.1). Our sim faithfully reproduces the reference — there was nothing to fix.</p>
+  </section>
+
+  <!-- FINDING -->
+  <section>
+    <div class="callout">
+      <p class="k">The finding</p>
+      <p>An EgoDex-pretrained PointWAM world-model <b>transfers reach to sim zero-shot</b> (sensible cm-scale approach), but
+      its dexterous <b>grasp pose does not transfer</b> — a palm-up orientation collapse under real→sim OOD. This is a
+      model / training boundary, not a deploy, sim, harness, frame, or IK bug: all of those were verified correct.</p>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <section>
+    <h2><span class="n">07</span>If resumed</h2>
+    <p class="sub">Closing at Tier-0 by decision. The grasp-pose gap is a training-level problem; the tractable directions:</p>
+    <div class="steps">
+      <div class="card"><div><b>Domain-randomize the real training.</b><br><span class="muted">Add point-cloud jitter / dropout (currently absent) + a longer, grasp-focused PnP-500 finetune, to make the predicted grasp orientation robust to sim-cloud OOD.</span></div></div>
+      <div class="card"><div><b>Change the output space.</b><br><span class="muted">Give the model a DPP-style raw / absolute-coordinate head, or an explicit grasp-orientation loss — a model-code change.</span></div></div>
+      <div class="card"><div><b>In-domain sim demos.</b><br><span class="muted">Blocked today: no scripted/teleop demonstrations of these objects exist to finetune on.</span></div></div>
+    </div>
+  </section>
+
+  <!-- ARTIFACTS -->
+  <section style="border-bottom:0">
+    <h2><span class="n">08</span>Artifacts</h2>
+    <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt">Checkpoints</span><span class="ld mono">dpp_ckpts_1p9s/pnp500_ft_ext1/model-best.pt (reach) · dexpointwam/contact_ft/model-best.pt (contact head, robot_l2 0.0349)</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Deploy code</span><span class="ld mono">openarm_sim/parallel_eval/policy_pointwam.py · PointWAM/deploy/dpp_bridge_server.py</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Eval launcher</span><span class="ld mono">scripts/eval_pointwam_rlwrld.sbatch — env: PWAM_CKPT · PWAM_USE_CONTACT_GRIP · PWAM_GRIP_ARRIVE_CM · PWAM_TAG · PWAM_REAL_EXTRINSICS</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Full report</span><span class="ld mono">openarm-sim/DEXPOINTWAM_SIM_CAMPAIGN.md — chronological log + final report</span></span></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Dex-PointWAM sim campaign · documented 2026-07-29 ·
+    <span class="kbd">beomjun02.github.io/experiments/dex-pointwam</span>
+  </div>
+</footer>
+
+</body>
+</html>
