@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "Target-object clouds built end to end: 0/24 at 128 pts, at 2048 pts, and at 2048 with the sim's ring erosion removed (which turned out not to change the point density at all). The EgoDex-PT ckpt with no finetune reaches 26.1 cm per chunk vs 4.0 cm finetuned, so the small motions are imposed by a 3000-step finetune that saw 1/64 of the pretrain's samples — a longer run is training in 3 h resumable chunks. Also ships a measured metric-depth pipeline shared with DPP.",
+      "tldr": "Target-object clouds built end to end: 0/24 at 128 pts, 2048 pts, 2048 with the sim's ring erosion removed, and 0/24 on the ball too — so the failure is not bottle-specific. New palm metric does NOT reproduce the palm-up story: the prediction tracks the observed palm within 3 deg and never drifts toward palm-up (DPP reference eval running). PT-only reaches 26.1 cm vs 4.0 cm finetuned; a longer finetune is training in 3 h resumable chunks. Ships a measured metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
