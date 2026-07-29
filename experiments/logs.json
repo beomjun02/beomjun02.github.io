@@ -66,9 +66,9 @@
       "project": "dex-point-policy",
       "date": "2026-07-29",
       "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes to PnP/Tool; sim success retracted",
+      "title": "Contact generalizes to PnP/Tool; object clouds smear; 2 sim claims retracted",
       "status": "running",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave low F1 is a thumb-free GT artifact). Wuji/Sharpa load+actuate in Isaac, but the first \"3/3 lift\" number is withdrawn (object was pinned to the hand) — DPP x PnP per hand is running.",
+      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). Two sim claims withdrawn (pinned-object \"3/3 lift\"; a closed-loop clip where the arm never reached the bottle) — and the debugging found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). DPP x PnP per hand is running.",
       "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
       "tags": [
         "contact",

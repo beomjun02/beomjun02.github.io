@@ -28,13 +28,14 @@
     <h1>Contact prediction generalizes past BMW — and a retracted sim "success" number</h1>
     <p class="lede">Two threads. (1) The learned tactile-contact model, already shown on BMW, measured on
       <b>PnP</b> and <b>Tool</b>. (2) The two new hand swaps (<b>Wuji 20-DOF</b>, <b>Sharpa 22-DOF</b>) exercised in
-      the OpenArm Isaac sim — where the first attempt produced a <b>bogus success rate</b> that is retracted below,
-      and the correct experiment (DPP policy in the PnP task, per hand) is now running.</p>
+      the OpenArm Isaac sim — where two claims from the first attempt (<b>a success rate and a closed-loop clip</b>) are
+      retracted below, the correct experiment (DPP policy in the PnP task, per hand) is now running, and the debugging
+      turned up a real data problem: <b>object clouds that smear</b>.</p>
 
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
       <div><dt>Dates</dt><dd>2026-07-29 → 07-30</dd></div>
-      <div><dt>Outcome</dt><dd>contact F1 0.70 (PnP) · hands actuate · sim success retracted</dd></div>
+      <div><dt>Outcome</dt><dd>contact F1 0.70 (PnP) · obj-cloud smear 14.2 % · 2 sim claims retracted</dd></div>
       <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · HaWoR-tactile v1</dd></div>
       <div><dt>Tactile ckpt</dt><dd class="mono">hawor_tactile_v1_ws_150k.ckpt</dd></div>
       <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/contact_analysis/REPORT.md · sim_rollout/REPORT.md</dd></div>
@@ -47,7 +48,11 @@
         grasp just has to load the finger. On the sim side, all three hands <b>load and actuate every finger</b>, but the
         "3/3 lift" success number from the first attempt is <b>withdrawn</b>: that scene pinned the bottle to the hand each
         step, so it measured a scripted carry, not a grasp. The real test — <b>DPP rolled out in the PnP task on each
-        hand</b>, scored by the eval harness's own <code>success_at_end</code> — is running now.</p>
+        hand</b>, scored by the eval harness's own <code>success_at_end</code> — is running now.
+        A first closed-loop clip published here is <b>also withdrawn</b> (the arm never reached the bottle), and chasing
+        that produced the most useful number of the day: in the fine-tune data the <b>bottle's object cloud smears past
+        30&nbsp;cm on 14.2&nbsp;% of frames</b> (median 8.3&nbsp;cm) — a missing depth-gradient filter, and now the prime
+        suspect for deployment failures.</p>
     </div>
   </div>
 </header>
@@ -57,20 +62,13 @@
   <section>
     <div class="wrap">
       <h2><span class="n">01</span>Result</h2>
-      <p class="sub">The two results that stand: learned contact firing on the right fingers as a hand closes, and the
-        full DPP stack driving the sim closed-loop.</p>
-      <div class="grid2">
-        <figure class="card">
-          <h3><span class="tag">contact</span>Learned tactile · PnP</h3>
-          <video class="vid" src="assets/pnp_bottle_ep37.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/pnp_bottle_ep37.jpg"></video>
-          <figcaption>Bottle grasp (per-ep F1 0.87) — thumb/index/middle/ring light at closure, pinky correctly off.</figcaption>
-        </figure>
-        <figure class="card">
-          <h3><span class="tag">policy</span>Real closed-loop DPP · Inspire</h3>
-          <video class="vid" src="assets/rollout_inspire_dpp.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_inspire_dpp_poster.jpg"></video>
-          <figcaption>The trained DPP policy driving the sim through the inference server + IK — 200/200 steps, 0 IK/obs failures, wrist driven 9&nbsp;cm.</figcaption>
-        </figure>
-      </div>
+      <p class="sub">The result that stands: learned contact firing on the right fingers as the hand closes on the
+        object, now measured outside BMW.</p>
+      <figure>
+        <video class="vid" src="assets/pnp_bottle_ep37.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/pnp_bottle_ep37.jpg"></video>
+        <figcaption>pnp_bottle_ep37.mp4 · learned tactile on a PnP bottle grasp (per-ep F1 0.87) —
+          thumb/index/middle/ring light at closure, pinky correctly off.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -178,7 +176,7 @@
         </table>
       </div>
       <p class="muted small" style="margin-top:14px">Mean commanded-vs-reached finger angle in parentheses. <code>success_at_end</code>
-        will be filled by the DPP × PnP run described in section 06.</p>
+        will be filled by the DPP × PnP run described in section 07.</p>
 
       <div class="grid2" style="margin-top:24px">
         <figure class="card">
@@ -197,12 +195,56 @@
         <figcaption>rollout_comparison.mp4 · Inspire | Wuji | Sharpa — the three hands driven by the same scripted motion.
           Useful as an integration signal only; the object motion is scripted.</figcaption>
       </figure>
+
+      <h3 style="margin-top:30px">The closed-loop attempt was degenerate — and why</h3>
+      <p class="sub">A first closed-loop run of the trained policy (Inspire, ckpt <code>410000.pt</code>) was also
+        published here as working. It wasn't: the arm never approaches the bottle. Retracted, but kept because the
+        diagnosis is the useful part.</p>
+      <figure>
+        <video class="vid" src="assets/rollout_inspire_dpp.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_inspire_dpp_poster.jpg"></video>
+        <figcaption>rollout_inspire_dpp.mp4 · the pose at step 3 and step 197 is essentially identical — the wrist only
+          drifts ~8&nbsp;cm laterally over the whole episode and the bottle is never touched.</figcaption>
+      </figure>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">The policy was commanding "stay".</span>
+          <span class="ld">Per-step target vs current wrist was 0.2–1.3 cm for all 200 steps, so nothing was asked of the arm.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">It was fed a frozen training point cloud.</span>
+          <span class="ld"><code>--override-obj-pts train_obj_pts_cellA_t0_from_h5.npy</code> is a <code>(4,128,3)</code> cloud captured at t0 of a <i>training</i> episode — never updated during the rollout and unrelated to the live sim scene. In that particular frame the container slot is smeared to a 47 cm z-extent; two slots are zero padding.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The loop also ran 34× too slow.</span>
+          <span class="ld"><code>rate_violations=200/200</code>, 1.68 s per step against an intended ~20 Hz. Contributing, but secondary to having no sensible object observation.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">IK was fine.</span>
+          <span class="ld">Wrist 0.3–0.4 cm / finger 0.7–0.9 cm residuals sit inside our normal operating band (~8 mm); the <code>ik_failures=0</code> counter only counts exceptions, so it is not a health check.</span></span></li>
+      </ul>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05</span>Reads &amp; caveats</h2>
+      <h2><span class="n">05</span>Side finding — the object clouds smear</h2>
+      <p class="sub">Chasing the frozen cloud above led somewhere more useful: the fine-tune data's own object points
+        blow up on a sizeable minority of frames. Measured on <code>0501_pnp_500_v2_b0_shrink20/rlwrld_final.h5</code>,
+        20 bottle episodes / 359 sampled frames, as the z-extent of each 128-point object cloud.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>object slot</th><th>median z-extent</th><th>p90</th><th>p99</th><th>max</th><th>frames &gt; 30 cm</th></tr></thead>
+          <tbody>
+            <tr class="hero-row"><td>slot 0 — bottle</td><td class="mono">0.083 m</td><td class="mono">0.357 m</td><td class="mono">0.491 m</td><td class="mono">0.596 m</td><td class="mono">14.2 %</td></tr>
+            <tr><td>slot 1 — container</td><td class="mono">0.183 m</td><td class="mono">0.218 m</td><td class="mono">0.358 m</td><td class="mono">0.468 m</td><td class="mono">2.5 %</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">A bottle is ~25 cm tall and this bin ~18 cm, so the medians are right — but
+        <b>the bottle cloud exceeds 30 cm on 14.2 % of frames</b> (3–6× the object, up to 60 cm). That is the flying-pixel /
+        depth-bleed signature: this h5 family has mask-side cleanup (<code>b0</code>, <code>shrink20</code>) but
+        <b>no depth-gradient filter</b>. The <code>--grad_thresh 0.010</code> filter built for the pretraining rebuild is
+        the obvious fix to port onto the fine-tune extraction — and point quality, not IK and not the hand, is now the
+        prime suspect for deployment failures.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Reads &amp; caveats</h2>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Contact prediction is not BMW-specific.</span>
           <span class="ld">PnP micro-F1 0.70 vs manual GT; contact lands on the correct fingers at closure across five object types.</span></span></li>
@@ -216,6 +258,10 @@
           <span class="ld">It marks 11.5 % of frames and never labels the thumb — the microwave clip shows a correct door-handle grasp scored as disagreement. Use the auto/proximity reference for Tool.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">PnP pinky recall is low (0.08).</span>
           <span class="ld">Under-fires the pinky in pinch grasps; precision stays high (0.80), so it is a miss-rate, not a false-alarm, issue.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">The closed-loop DPP clip is retracted too.</span>
+          <span class="ld">Fed a frozen training object cloud, the policy commanded ≤1.3 cm per step and never reached the bottle; the loop also ran 34× under rate. IK was not the problem.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Object point quality is the new prime suspect.</span>
+          <span class="ld">Bottle cloud z-extent &gt; 30 cm on 14.2 % of fine-tune frames (median 8.3 cm). Port the <code>--grad_thresh 0.010</code> flying-pixel filter onto the fine-tune extraction.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Tool coverage is thin.</span>
           <span class="ld">microwave 10 eps, spray 3 eps; sweep and pour_coffee not run.</span></span></li>
       </ul>
@@ -224,7 +270,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">06</span>The experiment being run now</h2>
+      <h2><span class="n">07</span>The experiment being run now</h2>
       <p class="sub">The comparison that actually answers the dexterity question, in place of the retracted scene.</p>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">DPP rolled out in the PnP task, once per hand.</span>
@@ -239,8 +285,10 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>Next</h2>
+      <h2><span class="n">08</span>Next</h2>
       <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Port the depth-gradient filter to the fine-tune data.</span>
+          <span class="ld">Re-extract object points with <code>--grad_thresh 0.010</code> and re-measure the smear rate; then check whether eval success moves.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Finish the Tool sweep.</span>
           <span class="ld">Run tactile on sweep + pour_coffee for a complete PnP / BMW / Tool picture; more spray episodes.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Fix the Tool reference labels.</span>
@@ -253,7 +301,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <h2><span class="n">09</span>Artifacts &amp; repro</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">Contact analysis</span>
           <span class="ld mono">DPP-ICLR2027/contact_analysis/ — REPORT.md · overlays/ (9 mp4) · pnp_stats · tool_stats · tool tactile npz</span></span></li>
