@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-07-29 · Target-object cloud conditioning — Dex-PointWAM</title>
-<meta name="description" content="Experiment plan: add a DPP-style target-object point cloud (2048 pts/obj, PointNet) + object-name conditioning to Dex-PointWAM to fix the real→sim grasp-pose OOD. Resolution check + architecture + two-track run.">
+<meta name="description" content="Experiment plan: add a DPP-style target-object point cloud (128 pts/obj, PointNet) + object-name conditioning to Dex-PointWAM to fix the real→sim grasp-pose OOD. Resolution check + architecture + two-track run.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <script src="/experiments/assets/lab.js" defer></script>
 <style>
@@ -50,7 +50,7 @@
       <p>Dex-PointWAM already conditions on language (a frozen CLIP text encoder) — so the untested gap vs DPP is not
       text, it is the <b>target-object geometry</b>. The object of interest is a tiny minority of the ~8.5 k scene
       points, and the model has to guess which points matter from language alone. We add a <b>per-object cloud
-      (2048 pts, PointNet)</b> and pair it with <b>object-name embeddings from the same CLIP encoder</b> — no new
+      (128 pts, PointNet)</b> and pair it with <b>object-name embeddings from the same CLIP encoder</b> — no new
       language weights — and test whether the grasp orientation stops collapsing.</p>
     </div>
   </div>
@@ -78,6 +78,10 @@
         <li><span class="mk ok">✓</span><span><span class="lt">Language is not the gap.</span><span class="ld">Dex-PointWAM already feeds the instruction through a frozen <code>openai/clip-vit-large-patch14</code> text tower into the DiT via cross-attention. DPP's own text embedding is a sentence encoder (MiniLM), not an LLM — the only LLM in DPP (Qwen3-VL) is used to <i>detect</i> objects for segmentation, not to embed language.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">Object geometry is the gap.</span><span class="ld">DPP gets a segmented cloud per object in dedicated slots; Dex-PointWAM's deploy bridge even reserves an <code>obj_pts</code> field but sends zeros and discards it. The target object is never handed to the model as a distinct entity.</span></span></li>
       </ul>
+      <figure>
+        <img src="assets/obj-overlay.png" alt="Bottle (128-pt blue cluster) and white container (128-pt orange cluster) object clouds overlaid on the scene cloud, co-registered; robot keypoints sit near the bottle." loading="lazy">
+        <figcaption>obj-overlay.png · the clouds we will add — <b>bottle</b> and <b>white container</b>, 128 pts each — overlaid on the scene. Verified co-registered: the clip's robot keypoints chamfer-match <code>joints_worldspace</code> to <b>0.0 cm</b>, so the object clouds land exactly on their objects. This isolated, identity-tagged geometry is what the model is currently missing.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -97,7 +101,7 @@
       </figure>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">1.5 cm is appropriate — keep it.</span><span class="ld">At 1.5 cm the object and hand keep their shape with ~7–9 k points/scene (well under the 12 k cap); 3.0 cm reduces the object to a handful of points. Voxel size is not the problem.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">But scene resolution ≠ object resolution.</span><span class="ld">A denser <i>object-only</i> cloud (2048 pts on the object alone) gives far more grasp-relevant geometry than the object's ~1–2 % slice of the scene grid.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">But scene resolution ≠ object resolution.</span><span class="ld">A dedicated <i>object-only</i> cloud (128 pts on the object alone, isolated) gives far more grasp-relevant geometry than the object's handful of points buried in the ~1–2 % it occupies of the scene grid.</span></span></li>
       </ul>
     </div>
   </section>
@@ -110,7 +114,7 @@
       <figure>
         <div class="dgm">
 <svg viewBox="0 0 1040 600" width="100%" role="img" xmlns="http://www.w3.org/2000/svg"
-     aria-label="Dex-PointWAM architecture: current inputs (scene cloud, robot cloud, language) plus the two components added in this experiment — per-object 2048-point clouds through a PointNet object encoder, and object names through the same frozen CLIP text encoder — feeding the RobotTrajDiT predictor.">
+     aria-label="Dex-PointWAM architecture: current inputs (scene cloud, robot cloud, language) plus the two components added in this experiment — per-object 128-point clouds through a PointNet object encoder, and object names through the same frozen CLIP text encoder — feeding the RobotTrajDiT predictor.">
   <style>
     .bx{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
     .bx2{fill:var(--panel2);stroke:var(--line);stroke-width:1.5}
@@ -162,8 +166,8 @@
   <rect x="196" y="240" width="44" height="15" rx="7.5" fill="var(--ok)"/>
   <text x="204" y="251" class="badge">＋NEW</text>
   <text class="t" x="32" y="264">Target object clouds</text>
-  <text class="s" x="32" y="284">M objects × 2048 pts</text>
-  <text class="s" x="32" y="298">segmented (Qwen3-VL→SAM3)</text>
+  <text class="s" x="32" y="284">2 objects × 128 pts</text>
+  <text class="s" x="32" y="298">segmented (SAM3, from DPP)</text>
   <rect class="bx"  x="16" y="316" width="232" height="66" rx="9"/>
   <text class="t" x="32" y="342">Language instruction</text>
   <text class="s" x="32" y="362">task text</text>
@@ -213,10 +217,10 @@
   <text class="t" x="886" y="330">Contact</text>
   <text class="s" x="886" y="350">5-finger sigmoid</text>
   <rect x="16" y="556" width="16" height="16" rx="4" fill="var(--ok-bg)" stroke="var(--ok-line)" stroke-width="1.5"/>
-  <text class="s" x="40" y="569">＋ added in this experiment — target object clouds (2048 pts/obj, PointNet) and object-name conditioning via the existing CLIP text encoder</text>
+  <text class="s" x="40" y="569">＋ added in this experiment — target object clouds (128 pts/obj, PointNet) and object-name conditioning via the existing CLIP text encoder</text>
 </svg>
         </div>
-        <figcaption>Dex-PointWAM with the two additions highlighted. PointNet is set-based (per-point MLP → max-pool), so 2048 pts/obj is fine — point count and order don't matter to the encoder.</figcaption>
+        <figcaption>Dex-PointWAM with the two additions highlighted. PointNet is set-based (per-point MLP → max-pool), so point count and order don't matter — the DPP source gives 128 pts/obj (already denser than the object's ~tens of points in the 1.5 cm scene); denser 2048 clouds would need re-running SAM3.</figcaption>
       </figure>
     </div>
   </section>
@@ -242,7 +246,7 @@
         <table>
           <thead><tr><th>Component</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Object cloud</td><td class="mono">M objects × 2048 pts (DPP source truncated/padded to 2048)</td></tr>
+            <tr><td>Object cloud</td><td class="mono">M=4 slots (2 real: object + bin) × 128 pts (DPP object_points_3d)</td></tr>
             <tr><td>Object encoder</td><td class="mono">per-object PointNet (set-based, count-invariant)</td></tr>
             <tr><td>Object semantics</td><td class="mono">object names → existing frozen CLIP text encoder, slot-paired</td></tr>
             <tr><td>Language</td><td class="mono">unchanged — same CLIP encoder as the task instruction</td></tr>
@@ -259,7 +263,7 @@
       <h2><span class="n">05</span>Action items</h2>
       <p class="sub">Ordered; Track B first. Model files are edited directly (this PointWAM clone is local, single-user).</p>
       <ul class="clean">
-        <li><span class="mk i">1</span><span><span class="lt">Plumb PnP-500 object clouds into the WDS.</span><span class="ld">Write <code>object_points</code> (M×2048×3) + <code>object_names</code> + slot mask into each sample from DPP's <code>object_points_3d</code>; extend the data pipeline / decoders / collate to carry them.</span></span></li>
+        <li><span class="mk i">1</span><span><span class="lt">Plumb PnP-500 object clouds into the WDS.</span><span class="ld">Write <code>object_points</code> (M×128×3) + <code>object_names</code> + slot mask into each sample from DPP's <code>object_points_3d</code>; extend the data pipeline / decoders / collate to carry them.</span></span></li>
         <li><span class="mk i">2</span><span><span class="lt">Add the object path to the model.</span><span class="ld">Per-object PointNet encoder → object tokens into the DiT geometry stream; object names → CLIP → slot-paired semantic; whitelist the new config keys.</span></span></li>
         <li><span class="mk i">3</span><span><span class="lt">Track B run.</span><span class="ld">Finetune from the EgoDex-PT ckpt with the object head fresh; sim-eval on bottle vs DPP; 30-min monitor over 24 h.</span></span></li>
         <li><span class="mk i">4</span><span><span class="lt">PT-only zero-shot baseline (side quest).</span><span class="ld">Render the EgoDex-PT ckpt (no PnP FT) in sim — isolates whether palm-up comes from the pretrain prior or the shallow finetune. Not yet in the log.</span></span></li>
