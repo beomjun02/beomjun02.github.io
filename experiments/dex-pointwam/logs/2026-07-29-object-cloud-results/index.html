@@ -34,10 +34,10 @@
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running · 2048 variant</span></dd></div>
       <div><dt>Dates</dt><dd>2026-07-29</dd></div>
-      <div><dt>Outcome</dt><dd>0/24 · conditioning verified live</dd></div>
-      <div><dt>Env</dt><dd class="mono">PointWAM FT 3000 steps · OpenArm Isaac · bottle · N=24</dd></div>
-      <div><dt>Checkpoint</dt><dd class="mono">dexpointwam/objcloud_ft/model-best.pt</dd></div>
-      <div><dt>Jobs</dt><dd class="mono">FT 48494 · eval 48573 · FT-2048 48613</dd></div>
+      <div><dt>Outcome</dt><dd>0/24 at 128 and 2048 pts</dd></div>
+      <div><dt>Env</dt><dd class="mono">PointWAM FT · OpenArm Isaac · bottle · N=24</dd></div>
+      <div><dt>Checkpoints</dt><dd class="mono">objcloud_ft (128, 3000 steps, val 0.0381) · objcloud_ft2048 (2457 steps, val 0.0337)</dd></div>
+      <div><dt>Jobs</dt><dd class="mono">FT 48494 / 48621 · eval 48573 / 48777</dd></div>
     </dl>
 
     <div class="verdict">
@@ -47,9 +47,11 @@
       object head trained. It does <b>not</b> rescue the grasp: <b>0/24</b>, identical to the reach-only
       baseline, with per-chunk wrist displacement 3.2 cm vs the baseline's 4.0 cm. The
       train–inference conditioning gap was real but was <b>not</b> what blocks the palm-up grasp.
-      One caveat on this run: those 128-pt clouds came from the stereo sensor depth, which reads 12%
-      deeper than the VGGT field the scene is built from, so the object sat 2.5–4.4 cm off the observed
-      surface (§03). The rebuilt, scene-consistent version is training now.</p>
+      A denser 2048-point version is also <b>0/24</b>, though its eval is density-confounded (sim supplied
+      only 403 real points per manipuland against 2048 in training, §01) and its checkpoint stopped at
+      2457 of 3000 steps. What the round did produce is a measured, defensible depth pipeline (§05) —
+      metric from the sensor, holes filled from VGGT, no mask erosion, 2048 real points — which DPP will
+      train on too.</p>
     </div>
   </div>
 </header>
@@ -67,6 +69,10 @@
           <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
         </div>
         <div class="crow zero">
+          <span class="clabel">Object-cloud (2048 pts)<span class="cnote">n=24 · job 48777 · density-confounded</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
+        </div>
+        <div class="crow zero">
           <span class="clabel">Reach-only baseline<span class="cnote">n=24 · job 46770</span></span>
           <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
         </div>
@@ -80,13 +86,16 @@
           <thead><tr><th>Run</th><th>success_at_end</th><th>wrist displacement / chunk</th><th>conditioning</th></tr></thead>
           <tbody>
             <tr><td>Object-cloud 128 pts</td><td class="mono">0/24</td><td class="mono">3.24 cm mean · 8.26 max</td><td class="mono">verified ON</td></tr>
+            <tr><td>Object-cloud 2048 pts</td><td class="mono">0/24</td><td class="mono">5.74 cm mean · 15.13 max</td><td class="mono">ON · 403/2048 real</td></tr>
             <tr><td>Reach-only baseline</td><td class="mono">0/24</td><td class="mono">4.04 cm mean · 6.92 max</td><td class="mono">none</td></tr>
           </tbody>
         </table>
       </div>
       <ul class="clean" style="margin-top:18px">
         <li><span class="mk ok">✓</span><span><span class="lt">Conditioning was genuinely live, not silently off.</span><span class="ld">The eval log prints <code>[pwam-obj] object cloud (24, 2, 128, 3) (camera frame, slots [manip, container])</code> — 24 envs × 2 object slots. This check existed because the model gates conditioning on the key being present, so a wiring slip would have produced a silently unconditioned run that looked like a null result.</span></span></li>
-        <li><span class="mk x">✗</span><span><span class="lt">No effect on the grasp.</span><span class="ld">0/24, and the reach is within noise of the baseline (3.2 vs 4.0 cm per chunk — same order, no collapse and no gain).</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">No effect on the grasp, at either density.</span><span class="ld">0/24 for 128 pts and 0/24 for 2048 pts. The 2048 run does move the reach — 5.74 cm mean and 15.13 cm max per chunk, the largest of any run — but it never converts into a grasp.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The 2048 eval is density-confounded, and the instrumentation says so.</span><span class="ld">The eval logs <code>distinct pts env0 = [403, 2048] / 2048</code>: in sim only <b>403</b> of the manipuland's 2048 points are real, the rest padded, while the checkpoint was trained on 2048 real ones. Raising the mesh-candidate pool was not enough — occlusion plus the ring erosion leaves too few survivors. So this run does not yet answer whether density helps.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">And that erosion is now calibrated against retired data.</span><span class="ld"><code>MATCH_RING_PX</code> was tuned to match the rotation-invariant diameters of the <i>shrink20</i> clouds (bottle 13.47 cm, ball 3.25, box 6.97). Those clouds are exactly what §05 replaced, and the new ones are larger and denser — so the sim should erode less. Recalibrating it is a prerequisite for a clean density test.</span></span></li>
       </ul>
     </div>
   </section>
@@ -249,6 +258,7 @@
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48621).</span><span class="ld">Scene-consistent clouds from the clip's own VGGT depth, 2048 pts/obj. Then sim eval on bottle · N=24. This is also the run that tells us whether the 0/24 above was partly an artefact of the depth mismatch.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path downsampled object clouds to 128 (<code>batched_to_128_cam</code>); now selectable via <code>PWAM_OBJ_PTS</code> (default 128, so the DPP baseline is untouched) with more mesh candidates, and the eval logs how many points are real rather than padded.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Recalibrate the sim's ring erosion to the new clouds.</span><span class="ld">Measure the rotation-invariant diameter per object in the rebuilt dataset and re-tune <code>MATCH_RING_PX</code> (plus the candidate pool) until the sim delivers ~2048 real points. Without this, any density comparison is confounded — 403 real points in sim against 2048 in training.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Multi-view object clouds, BMW-style.</span><span class="ld">The principled fix for a 54%-occluded manipuland: reconstruct the scene from several views, take the points inside each object mask, and reject boundary/flying pixels with the depth-gradient test. A hole in one view is filled by another — no interpolation, and the sensor stays the metric reference.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">If 2048 also fails.</span><span class="ld">Then the lever is the grasp prior itself — domain-randomised real training, a grasp-orientation loss, or in-domain sim demos — not the observation.</span></span></li>
       </ul>

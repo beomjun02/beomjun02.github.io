@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "DPP-style target-object clouds built end to end and verified live in sim — still 0/24, reach unchanged. Chasing density then exposed a real defect: the clouds came from the stereo depth, 12% deeper than the VGGT field the scene uses, so they sat 2.5–4.4 cm off the observed surface. Rebuilt scene-consistent (0.58 cm, 2048 real pts) and retraining.",
+      "tldr": "Target-object clouds built end to end and verified live in sim: 0/24 at 128 pts and 0/24 at 2048 pts (the 2048 eval density-confounded — sim gave 403 real pts vs 2048 in training). The round's real output is a measured depth pipeline: sensor sets the metre (scale-only fit, 8.0mm), VGGT fills its 26% holes, no mask erosion, 92% of clips reach 2048 real points. Shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
