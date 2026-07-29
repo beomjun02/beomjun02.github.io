@@ -1,10 +1,36 @@
 <!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════════
+  EXPERIMENT LOG TEMPLATE — produces the house design automatically.
+  Full contract: experiments/README.md
+
+  To add a log:
+    1. mkdir -p <project>/logs/YYYY-MM-DD-<slug>/assets
+    2. cp this file → that folder as index.html
+    3. Replace every ALL-CAPS placeholder; delete sections that don't apply.
+       Optional components are provided commented-out below — uncomment
+       what you need, invent nothing new. All styling comes from lab.css.
+    4. Append one entry to experiments/logs.json
+    5. Add a static fallback <li> in experiments/index.html, then push.
+
+  NOTE: relative paths (../../../assets/lab.css) only resolve after the
+  file is copied into <project>/logs/<date-slug>/ — this file previews
+  unstyled from _template/.
+
+  House rules (short version):
+    · verdict first — write it last, put it first
+    · real numbers only; provisional numbers say so in the caption
+    · status pill: running=acc · done=ok · closed=warn · blocked/failed=bad
+    · charts: one measure = one hue (accent); .ghost = unverified claim,
+      .zero = zero bar; never dual-axis; ok/warn/bad reserved for state
+    · media: H.264 mp4 ≤5MB + poster jpg, autoplay loop muted playsinline;
+      stills ≤500KB with loading="lazy" below the fold
+═══════════════════════════════════════════════════════════════════ -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>YYYY-MM-DD · TITLE — PROJECT</title>
+<title>YYYY-MM-DD · SHORT-TITLE — PROJECT</title>
 <meta name="description" content="Experiment log: one-sentence outcome.">
 <link rel="stylesheet" href="../../../assets/lab.css">
 <script src="../../../assets/lab.js" defer></script>
@@ -29,7 +55,6 @@
     <p class="lede">One or two sentences of context: what was run, against what baseline, on what setup.</p>
 
     <dl class="record">
-      <!-- status pill: running=acc · done=ok · closed=warn · blocked/failed=bad -->
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
       <div><dt>Dates</dt><dd>YYYY-MM-DD → MM-DD</dd></div>
       <div><dt>Outcome</dt><dd>headline metric</dd></div>
@@ -40,8 +65,7 @@
 
     <div class="verdict">
       <p class="k">Verdict</p>
-      <p>The TL;DR a reader gets in 10 seconds: what happened, the key number, and what it means.
-         Write it last; put it first.</p>
+      <p>The TL;DR a reader gets in 10 seconds: what happened, the key number, and what it means.</p>
     </div>
   </div>
 </header>
@@ -56,6 +80,30 @@
         <video class="vid" src="assets/CLIP.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/POSTER.jpg"></video>
         <figcaption>CLIP.mp4 · condition · duration · view</figcaption>
       </figure>
+
+      <!-- OPTIONAL keyframe strip (4 stills; collapses to 2×2 on phones):
+      <div class="frames">
+        <img src="assets/f0.jpg" alt="start" loading="lazy">
+        <img src="assets/f1.jpg" alt="mid" loading="lazy">
+        <img src="assets/f2.jpg" alt="late" loading="lazy">
+        <img src="assets/f3.jpg" alt="end" loading="lazy">
+      </div>
+      -->
+
+      <!-- OPTIONAL side-by-side comparison (before/after, ours/baseline):
+      <div class="grid2">
+        <figure class="card">
+          <h3><span class="tag">before</span> CONDITION-A</h3>
+          <video class="vid" src="assets/A.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/A.jpg"></video>
+          <figcaption>what this shows</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">after</span> CONDITION-B</h3>
+          <video class="vid" src="assets/B.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/B.jpg"></video>
+          <figcaption>what this shows</figcaption>
+        </figure>
+      </div>
+      -->
     </div>
   </section>
 
@@ -69,7 +117,9 @@
           <tbody>
             <tr><td>Model</td><td class="mono">…</td></tr>
             <tr><td>Data</td><td class="mono">…</td></tr>
+            <tr><td>Benchmark / protocol</td><td class="mono">… · N episodes · metric</td></tr>
             <tr><td>Baseline</td><td class="mono">…</td></tr>
+            <tr><td>Launcher</td><td class="mono">path/to/job.sbatch</td></tr>
           </tbody>
         </table>
       </div>
@@ -80,24 +130,52 @@
     <div class="wrap">
       <h2><span class="n">03</span>Results vs baseline</h2>
       <p class="sub">The comparison that answers the question. Real numbers only.</p>
-      <!-- horizontal bars: --v is the fill %; .ghost = unverified claim; .zero = zero bar -->
-      <div class="chart" role="img" aria-label="Describe every bar and value here.">
+      <div class="chart" role="img" aria-label="Describe every bar and its value here for screen readers.">
         <div class="crow">
-          <span class="clabel">Series A<span class="cnote">n, source</span></span>
+          <span class="clabel">Ours<span class="cnote">n, source</span></span>
           <span class="ctrack"><span class="cbar" style="--v:64%"></span></span><span class="cval">64%</span>
         </div>
         <div class="crow">
-          <span class="clabel">Series B<span class="cnote">n, source</span></span>
+          <span class="clabel">Baseline<span class="cnote">n, source</span></span>
           <span class="ctrack"><span class="cbar" style="--v:27%"></span></span><span class="cval">27%</span>
         </div>
+        <!-- .ghost = reported-but-unverified claim · .zero = zero result:
+        <div class="crow ghost">
+          <span class="clabel">Paper claim<span class="cnote">not reproduced</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:70%"></span></span><span class="cval">70%</span>
+        </div>
+        <div class="crow zero">
+          <span class="clabel">Ablation X<span class="cnote">n=24</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
+        </div>
+        -->
       </div>
+
+      <!-- OPTIONAL full results table (use .strike for retracted rows):
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Variant</th><th>metric</th><th>source</th></tr></thead>
+          <tbody>
+            <tr><td>…</td><td class="mono">…</td><td class="muted">…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      -->
+
+      <!-- OPTIONAL scorecard against pre-registered goals (mk ok / x / i):
+      <h3 style="margin-top:26px">Scorecard</h3>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Goal met.</span><span class="ld">Evidence.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">Goal missed.</span><span class="ld">Evidence.</span></span></li>
+      </ul>
+      -->
     </div>
   </section>
 
   <section>
     <div class="wrap">
       <h2><span class="n">04</span>Diagnosis</h2>
-      <p class="sub">Why the result is what it is. Ruled-out causes as a checklist (mk ok / mk x / mk i).</p>
+      <p class="sub">Why the result is what it is. Ruled-out causes as a checklist.</p>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Cause ruled out.</span><span class="ld">Evidence.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">Actual cause.</span><span class="ld">Evidence.</span></span></li>
@@ -108,12 +186,17 @@
   <section>
     <div class="wrap">
       <h2><span class="n">05</span>Timeline</h2>
-      <!-- li class: ok / bad / acc colors the dot; entries may embed small figures -->
       <ul class="timeline">
-        <li class="acc">
+        <li class="acc"><!-- dot color: ok / bad / acc / (none)=neutral -->
           <span class="tdate">YYYY-MM-DD</span>
           <span class="tt">What changed</span>
-          <p>What happened and what it showed.</p>
+          <p>What happened and what it showed. Entries may embed a small figure:</p>
+          <!--
+          <figure>
+            <video class="vid" src="assets/moment.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/moment.jpg"></video>
+            <figcaption>moment.mp4 · caption</figcaption>
+          </figure>
+          -->
         </li>
       </ul>
     </div>
@@ -132,8 +215,13 @@
     <div class="wrap">
       <h2><span class="n">07</span>Artifacts &amp; repro</h2>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">Checkpoint / code / launcher / report</span><span class="ld mono">exact paths, env vars, job ids</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Checkpoint</span><span class="ld mono">exact path</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Code / launcher</span><span class="ld mono">paths · env vars · job ids</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Full report</span><span class="ld mono">source md / wandb link</span></span></li>
       </ul>
+      <!-- OPTIONAL exact repro command:
+      <pre><code>sbatch scripts/JOB.sbatch  # ENV_VAR=… ENV_VAR2=…</code></pre>
+      -->
     </div>
   </section>
 
