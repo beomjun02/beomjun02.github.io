@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>2026-07-29 · Contact generalizes to PnP/Tool; hand-swap integration — Dexterous Point Policy</title>
-<meta name="description" content="Experiment log: the learned tactile-contact model transfers to PnP and Tool tasks. Wuji/Sharpa load and actuate in the OpenArm sim; the per-hand DPP PnP comparison is being run properly after a retracted first attempt.">
+<title>2026-07-29 · Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale — Dexterous Point Policy</title>
+<meta name="description" content="Experiment log: the learned tactile-contact model transfers to PnP and Tool (micro-F1 0.70). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire and 0% with Wuji/Sharpa — finger reach, not DOF count. Two earlier claims retracted.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <script src="/experiments/assets/lab.js" defer></script>
 </head>
@@ -25,17 +25,17 @@
 <header class="page">
   <div class="wrap">
     <p class="eyebrow">Experiment log · Dexterous Point Policy</p>
-    <h1>Contact prediction generalizes past BMW — and a retracted sim "success" number</h1>
+    <h1>Contact prediction generalizes past BMW; the 6-point abstraction survives DOF but not hand scale</h1>
     <p class="lede">Two threads. (1) The learned tactile-contact model, already shown on BMW, measured on
       <b>PnP</b> and <b>Tool</b>. (2) The two new hand swaps (<b>Wuji 20-DOF</b>, <b>Sharpa 22-DOF</b>) exercised in
-      the OpenArm Isaac sim — where two claims from the first attempt (<b>a success rate and a closed-loop clip</b>) are
-      retracted below, the correct experiment (DPP policy in the PnP task, per hand) is now running, and the debugging
-      turned up a real data problem: <b>object clouds that smear</b>.</p>
+      the OpenArm Isaac sim, then <b>DPP rolled out in the PnP benchmark with each hand</b> and scored by the harness's own
+      <code>success_at_end</code>. Two claims from the first attempt (a success rate and a closed-loop clip) are retracted
+      below, and the debugging turned up a real data problem: <b>object clouds that smear</b>.</p>
 
     <dl class="record">
-      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
       <div><dt>Dates</dt><dd>2026-07-29 → 07-30</dd></div>
-      <div><dt>Outcome</dt><dd>contact F1 0.70 (PnP) · obj-cloud smear 14.2 % · 2 sim claims retracted</dd></div>
+      <div><dt>Outcome</dt><dd>contact F1 0.70 (PnP) · 6-point survives DOF but not scale (29.2 / 0 / 0 %) · obj-cloud smear 14.2 %</dd></div>
       <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · HaWoR-tactile v1</dd></div>
       <div><dt>Tactile ckpt</dt><dd class="mono">hawor_tactile_v1_ws_150k.ckpt</dd></div>
       <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/contact_analysis/REPORT.md · sim_rollout/REPORT.md</dd></div>
@@ -45,14 +45,16 @@
       <p class="k">Verdict</p>
       <p>The tactile model validated on BMW <b>transfers to PnP (micro-F1 0.70 vs manual GT) and to Tool</b>, and on the
         spray power-grip it <b>recovers the ring and pinky</b> it under-fires on PnP pinches — it is not pinky-blind, the
-        grasp just has to load the finger. On the sim side, all three hands <b>load and actuate every finger</b>, but the
-        "3/3 lift" success number from the first attempt is <b>withdrawn</b>: that scene pinned the bottle to the hand each
-        step, so it measured a scripted carry, not a grasp. The real test — <b>DPP rolled out in the PnP task on each
-        hand</b>, scored by the eval harness's own <code>success_at_end</code> — is running now.
-        A first closed-loop clip published here is <b>also withdrawn</b> (the arm never reached the bottle), and chasing
-        that produced the most useful number of the day: in the fine-tune data the <b>bottle's object cloud smears past
-        30&nbsp;cm on 14.2&nbsp;% of frames</b> (median 8.3&nbsp;cm) — a missing depth-gradient filter, and now the prime
-        suspect for deployment failures.</p>
+        grasp just has to load the finger. On the sim side, DPP rolled out in the actual PnP benchmark scores
+        <b>29.2&nbsp;% with Inspire</b> (reproducing the ≈27&nbsp;% baseline bit-for-bit) and <b>0&nbsp;% with both Wuji
+        (20-DOF) and Sharpa (22-DOF)</b> — and the cause is <b>finger reach, not DOF count</b>: the retargeting IK
+        displaces the wrist by 2.8–5.4&nbsp;cm to absorb the mismatch. Rescaling the fingertip targets fixes the IK
+        (wrist residual → 0.4&nbsp;cm, 94–96&nbsp;% convergence) and still scores 0/24, because DPP's <i>input</i> is six
+        points too. <b>The 6-point abstraction is hand-agnostic in form but not in scale, on both sides.</b>
+        Two claims from the first attempt are <b>withdrawn</b> below (a pinned-object "3/3 lift", and a closed-loop clip
+        where the arm never reached the bottle); chasing the second produced the most useful number of the day: in the
+        fine-tune data the <b>bottle's object cloud smears past 30&nbsp;cm on 14.2&nbsp;% of frames</b> (median
+        8.3&nbsp;cm) — a missing depth-gradient filter, and now the prime suspect for deployment failures.</p>
     </div>
   </div>
 </header>
@@ -85,7 +87,7 @@
             <tr><td>Contact tasks</td><td class="mono">PnP 479 eps (manual GT) · Tool microwave 10 + spray 3 (tactile freshly run)</td></tr>
             <tr><td>Hands</td><td class="mono">Inspire 6-DOF (24 jt, coupled) · Wuji 20-DOF · Sharpa 22-DOF (indep)</td></tr>
             <tr><td>Sim (this log)</td><td class="mono">load + actuate check · scripted motion — NOT a grasp benchmark</td></tr>
-            <tr><td>Sim (running)</td><td class="mono">DPP policy · PnP task · success_at_end per hand · parallel_eval harness</td></tr>
+            <tr><td>Sim benchmark</td><td class="mono">DPP policy · PnP task · N=24 num_envs=24 1200 steps seed 42 · success_at_end · parallel_eval</td></tr>
             <tr><td>Code</td><td class="mono">tools/{contact_reduce,overlay_contact,tool_analysis}.py · tools/sim_rollout_hand.py</td></tr>
           </tbody>
         </table>
@@ -152,49 +154,93 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">04</span>Hands in sim — integration only (success retracted)</h2>
-      <p class="sub">What this section can and cannot claim.</p>
+      <h2><span class="n">04</span>Hands in sim — DPP in the PnP task, per hand</h2>
+      <p class="sub">The real experiment: the same DPP checkpoint rolled out in the openarm-sim PnP benchmark with the
+        hand swapped, scored by the harness's own <code>success_at_end</code> (object inside the container at the last
+        step). Nothing pins, attaches or teleports the object.</p>
 
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Hand</th><th>finger DOF</th><th>success_at_end</th><th>per cell (2×2 grid)</th><th>object moved &gt;1 cm</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire RH56F1 (baseline)</td><td class="mono">12 (6 indep + 6 coupled)</td><td class="mono"><b>7/24 = 29.2 %</b></td><td class="mono">0/6 · 2/6 · 0/6 · 5/6</td><td class="mono">24/24</td></tr>
+            <tr><td>Wuji</td><td class="mono">20 independent</td><td class="mono">0/24 = 0.0 %</td><td class="mono">0 · 0 · 0 · 0</td><td class="mono">0/24</td></tr>
+            <tr><td>Sharpa</td><td class="mono">22 independent</td><td class="mono">0/24 = 0.0 %</td><td class="mono">0 · 0 · 0 · 0</td><td class="mono">0/24</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">N = 24 episodes, <code>num_envs</code> 24, 1200 steps, seed 42, one
+        object (bottle). Inspire's 29.2 % lands on the documented ≈27 % DPP baseline, and the run was done twice — once
+        with the untouched benchmark driver <code>scripts/eval.py</code> and once with the diagnostics driver — with
+        <b>bit-identical per-episode outcomes</b> (same seven <code>ep_id</code>s: 3, 7, 9, 13, 15, 19, 23). Spot-checked
+        against the raw records: successes end with the bottle inside the container footprint
+        (|Δx| ≤ 10 cm, |Δy| ≤ 5 cm of the bin centre at z ≈ 0.946), failures far outside.</p>
+
+      <h3 style="margin-top:30px">Why the two new hands score zero</h3>
+      <p class="sub">Not the policy going idle, and not the DOF count. The retargeting IK cannot deliver what the policy
+        asks, so the loop deadlocks before the hand ever touches the bottle.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Hand</th><th>cmd Δ per step</th><th>IK wrist resid</th><th>IK converged</th><th>wrist→object first / min / last (cm)</th><th>fingertip reach past wrist</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire</td><td class="mono">0.69 cm</td><td class="mono">0.47 cm</td><td class="mono">23 %</td><td class="mono">29.3 / <b>19.8</b> / 52.3</td><td class="mono">16.6 cm</td></tr>
+            <tr><td>Wuji</td><td class="mono">0.26 cm</td><td class="mono"><b>5.43 cm</b></td><td class="mono">0 %</td><td class="mono">29.1 / 26.9 / 27.0</td><td class="mono">8.5 cm</td></tr>
+            <tr><td>Sharpa</td><td class="mono">0.27 cm</td><td class="mono"><b>2.77 cm</b></td><td class="mono">0.4 %</td><td class="mono">29.8 / 29.0 / 29.8</td><td class="mono">12.2 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">A CPU-only retargeting study (1024 Inspire-FK target sets) predicted
+        this before any rollout: mean wrist residual 0.19 cm (Inspire) / 1.51 (Sharpa) / 4.42 (Wuji), with all six sites
+        inside the ~8 mm success band for 100 % / 74 % / <b>1.7 %</b> of targets. The equal-weight IK pays for the
+        finger-length mismatch by displacing the wrist. Palm orientation and curl direction were checked at 0 / 50 / 90 %
+        flexion and are correct on all three.</p>
+
+      <div class="verdict" style="margin-top:24px">
+        <p class="k">The finding that matters for the 6-point abstraction</p>
+        <p>Shrinking the commanded fingertip targets about the wrist by each hand's finger-reach ratio collapses the IK
+          error to Inspire-class — Wuji wrist residual 5.43 → <b>0.39 cm</b> with 94 % convergence, Sharpa 2.77 →
+          <b>0.48 cm</b> with 96 % — and the arm then moves decisively. It still scores <b>0/24</b>, in the wrong
+          direction: DPP's <i>input</i> is also six points, so a scale-normalised small hand is out of distribution on the
+          observation side too. <b>The 6-point interface is hand-agnostic in form but not in scale, on both the action and
+          the observation side.</b> That is the concrete answer to decision D1 — Option A ("keep the abstraction") needs a
+          scale-canonicalisation step on both sides, not just a retargeting fix.</p>
+      </div>
+
+      <figure style="margin-top:24px">
+        <video class="vid" src="assets/dpp_pnp_comparison.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/dpp_pnp_comparison_poster.jpg"></video>
+        <figcaption>dpp_pnp_comparison.mp4 · Inspire | Wuji | Sharpa, same checkpoint, same task. Wuji and Sharpa stall at
+          ~27–29 cm from the bottle and never move it (0.0 cm object motion, matching their scored behaviour).</figcaption>
+      </figure>
+      <div class="grid2" style="margin-top:20px">
+        <figure class="card">
+          <h3><span class="tag">12 DOF</span>Inspire</h3>
+          <video class="vid" src="assets/dpp_pnp_inspire.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/dpp_pnp_inspire_poster.jpg"></video>
+          <figcaption>Single-env replay — a different PhysX batch composition from the scored run, so this clip
+            <b>understates</b> Inspire: it grasps and carries the bottle 14.3 cm but misses the bin, while the scored
+            24-env run places it 7/24.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">20 DOF</span>Wuji</h3>
+          <video class="vid" src="assets/dpp_pnp_wuji.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/dpp_pnp_wuji_poster.jpg"></video>
+          <figcaption>Replay matches the scored behaviour exactly: the arm is driven, the IK cannot place the wrist, the
+            bottle is never reached.</figcaption>
+        </figure>
+      </div>
+
+      <p style="margin-top:24px">Two integration bugs had to be fixed to get here, both worth remembering for the next
+        hand: the MJCF-converted hand USDs nest links as <code>…/Robot/openarm_base/&lt;link&gt;</code> where Inspire has
+        <code>…/Robot/&lt;link&gt;</code>, which breaks the contact sensor's last-<code>/</code> path split; and
+        <code>activate.sh</code> cannot auto-detect Isaac Lab on these nodes, so <code>ISAACLAB</code> must be exported.</p>
+
+      <h3 style="margin-top:34px">Two claims from the first attempt, withdrawn</h3>
       <div class="verdict" style="margin-bottom:22px">
         <p class="k">Retraction</p>
         <p>An earlier version of this log reported "3/3 lift" per hand with a mean Δz. That number is <b>withdrawn</b>. The
           scene called <code>write_root_state_to_sim()</code> every step to hold the bottle at a fixed offset from the hand
           through the close and lift, so the object rose because the script moved it — the metric measured its own teleport,
-          not a grasp. It also was not the task that matters (the PnP benchmark). No success rate should be read off that scene.</p>
+          not a grasp. It also was not the task that matters (the PnP benchmark). No success rate should be read off that
+          scene; the table at the top of this section replaces it.</p>
       </div>
-
-      <p>What the scene does support is the narrow integration claim, which the Isaac smoke tests already showed
-        independently: each hand config loads as a single articulation and every finger joint tracks a commanded target.</p>
-      <div class="tbl">
-        <table>
-          <thead><tr><th>Hand</th><th>DOF</th><th>finger joints</th><th>loads</th><th>all fingers actuate</th><th>success_at_end</th></tr></thead>
-          <tbody>
-            <tr><td>Inspire (baseline)</td><td class="mono">6</td><td class="mono">12 (6+6 coupled)</td><td>✓</td><td>✓ (1.06 rad)</td><td class="muted">pending</td></tr>
-            <tr><td>Wuji</td><td class="mono">20</td><td class="mono">20 (indep)</td><td>✓</td><td>✓ (1.12 rad)</td><td class="muted">pending</td></tr>
-            <tr><td>Sharpa</td><td class="mono">22</td><td class="mono">22 (indep)</td><td>✓</td><td>✓ (0.99 rad)</td><td class="muted">pending</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="muted small" style="margin-top:14px">Mean commanded-vs-reached finger angle in parentheses. <code>success_at_end</code>
-        will be filled by the DPP × PnP run described in section 07.</p>
-
-      <div class="grid2" style="margin-top:24px">
-        <figure class="card">
-          <h3><span class="tag">20-DOF</span>Wuji</h3>
-          <video class="vid" src="assets/rollout_wuji.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_wuji_poster.jpg"></video>
-          <figcaption>Scripted arm+finger motion. The bottle is script-carried, not grasped — watch the fingers, not the object.</figcaption>
-        </figure>
-        <figure class="card">
-          <h3><span class="tag">22-DOF</span>Sharpa</h3>
-          <video class="vid" src="assets/rollout_sharpa.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_sharpa_poster.jpg"></video>
-          <figcaption>Same scripted motion. Wrist-mount orientation is untuned (reuses the Wuji quaternion).</figcaption>
-        </figure>
-      </div>
-      <figure style="margin-top:20px">
-        <video class="vid" src="assets/rollout_comparison.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_comparison_poster.jpg"></video>
-        <figcaption>rollout_comparison.mp4 · Inspire | Wuji | Sharpa — the three hands driven by the same scripted motion.
-          Useful as an integration signal only; the object motion is scripted.</figcaption>
-      </figure>
 
       <h3 style="margin-top:30px">The closed-loop attempt was degenerate — and why</h3>
       <p class="sub">A first closed-loop run of the trained policy (Inspire, ckpt <code>410000.pt</code>) was also
@@ -270,15 +316,19 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>The experiment being run now</h2>
-      <p class="sub">The comparison that actually answers the dexterity question, in place of the retracted scene.</p>
+      <h2><span class="n">07</span>Caveats on the per-hand numbers</h2>
+      <p class="sub">What the 29.2 / 0 / 0 does and does not support.</p>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">DPP rolled out in the PnP task, once per hand.</span>
-          <span class="ld">Inspire / Wuji / Sharpa, same task, objects and seed, scored by the eval harness's own <code>success_at_end</code> — plus a rollout video per hand and a 3-up comparison.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Why it is the right test.</span>
-          <span class="ld">DPP predicts a hand-agnostic 6-point action (wrist + 5 fingertips); retargeting it onto 20/22-DOF hands by IK is exactly the claim that the 6-point abstraction survives higher DOF. Baseline for calibration: canonical DPP on bottle ≈ 27 %.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">What has to be extended.</span>
-          <span class="ld">Per-hand fingertip keypoint sites + FK/IK against each hand's MJCF, and an action mapping for N independent finger joints instead of Inspire's 6→12 coupling.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">0 % is a floor, not a point estimate.</span>
+          <span class="ld">N = 24, one object, one seed, one <code>num_envs</code>. Inspire's 29.2 % is credible because it reproduces the documented baseline bit-for-bit; the zeros only say "never once succeeded in 24 tries", and their <i>cause</i> is what the diagnostics establish.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The new hands were given Inspire's finger gains.</span>
+          <span class="ld">PD gains and torque limits were matched to Inspire deliberately — optimistic for 20/22 independent joints, and moot here since they never reach the object.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Object points were verified live, not cached.</span>
+          <span class="ld">Recomputed every 100 steps through the harness's own call: 128/128 populated, camera-depth extent 8.43 cm at t=0 and never above 8.5 cm — no smear, no <code>--override-obj-pts</code> anywhere. This was the killer in the retracted attempt below.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">No control-rate issue in this harness.</span>
+          <span class="ld"><code>parallel_eval</code> is a synchronous batch loop — the sim advances only when the policy returns, so the 34× rate violation from the retracted run cannot occur. Throughput 31.4 / 59.9 / 57.9 env-steps/s.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Minor asymmetries between hands.</span>
+          <span class="ld">The new hands' fingers start at 0 rad and their occluder meshes are lower-resolution; palm self-occlusion is absent for all three equally.</span></span></li>
       </ul>
     </div>
   </section>
@@ -287,8 +337,10 @@
     <div class="wrap">
       <h2><span class="n">08</span>Next</h2>
       <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Scale-canonicalise the 6 points on both sides.</span>
+          <span class="ld">Section 04 shows retargeting alone is not enough — the observation is six points too, so a small hand is OOD on input. Normalising fingertip offsets by hand reach on <i>both</i> the action and the observation, then re-running this comparison, is the direct test of D1 Option A.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Port the depth-gradient filter to the fine-tune data.</span>
-          <span class="ld">Re-extract object points with <code>--grad_thresh 0.010</code> and re-measure the smear rate; then check whether eval success moves.</span></span></li>
+          <span class="ld">Re-extract object points with <code>--grad_thresh 0.010</code> and re-measure the smear rate; then check whether eval success moves. <b>Running</b> — 2048 pts/object with sensor-metric depth fusion; the paired check on the first episodes already shows the &gt;30 cm smear rate going 22.9 % → 0.0 %.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Finish the Tool sweep.</span>
           <span class="ld">Run tactile on sweep + pour_coffee for a complete PnP / BMW / Tool picture; more spray episodes.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Fix the Tool reference labels.</span>
@@ -307,8 +359,8 @@
           <span class="ld mono">DPP-ICLR2027/contact_analysis/ — REPORT.md · overlays/ (9 mp4) · pnp_stats · tool_stats · tool tactile npz</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Sim exercises (retracted metric)</span>
           <span class="ld mono">DPP-ICLR2027/sim_rollout/ — {inspire,wuji,sharpa}.mp4 · comparison.mp4 · inspire_dpp_closedloop.mp4 · REPORT.md</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">DPP × PnP per hand (running)</span>
-          <span class="ld mono">DPP-ICLR2027/dpp_pnp_3hands/ · harness openarm-sim/openarm_sim/parallel_eval/ (policy_dpp · keypoint_ik · eval_env)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">DPP × PnP per hand</span>
+          <span class="ld mono">DPP-ICLR2027/dpp_pnp_3hands/ — REPORT.md · {inspire,wuji,sharpa,comparison}.mp4 · results.json · retarget_floor.json · retarget_scale_sweep.json; raw records /rlwrld-unified-checkpoints/beomjun/dpp_iclr2027_sim/3hands/*.jsonl; harness openarm-sim/openarm_sim/parallel_eval/ (policy_dpp · keypoint_ik · eval_env)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Robot configs</span>
           <span class="ld mono">openarm_sim/robot_cfg.py — OPENARM_{RH56F1,WUJI,SHARPA}_CFG · MJCF openarm_{wuji,sharpa}.xml</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Tactile model</span>

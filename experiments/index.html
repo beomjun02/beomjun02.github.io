@@ -51,8 +51,8 @@
           <p>Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.</p>
           <a class="latest" href="dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/">
             <span class="ldate">2026-07-29</span>
-            <span class="pill acc"><span class="dot"></span>running</span>
-            <span class="lt">Contact generalizes to PnP/Tool; object clouds smear</span>
+            <span class="pill ok"><span class="dot"></span>done</span>
+            <span class="lt">Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale</span>
           </a>
         </div>
       </div>
@@ -90,9 +90,9 @@
         <li><a href="dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/">
           <span class="ldate">2026-07-29</span>
           <span class="lmain"><span class="lproj">Dexterous Point Policy</span>
-            <span class="lt">Contact generalizes to PnP/Tool; object clouds smear</span>
-            <span class="ltl">Learned tactile-contact transfers to PnP (F1 0.70) and Tool; the spray power-grip recovers the ring+pinky it under-fires on PnP. Two sim claims withdrawn (pinned-object "3/3 lift"; a closed-loop clip that never reached the bottle) — and the debugging found the bottle cloud smears past 30 cm on 14.2% of fine-tune frames. DPP x PnP per hand is running.</span></span>
-          <span class="pill acc"><span class="dot"></span>running</span>
+            <span class="lt">Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale</span>
+            <span class="ltl">Learned tactile-contact transfers to PnP (F1 0.70) and Tool. DPP in the openarm-sim PnP benchmark: 29.2% with Inspire (reproduces the ~27% baseline bit-for-bit), 0/24 with Wuji (20-DOF) and Sharpa (22-DOF) — finger reach, not DOF count. Rescaling fingertip targets fixes the IK and still scores 0/24, because the policy input is six points too. Two earlier sim claims withdrawn; the bottle cloud smears past 30 cm on 14.2% of fine-tune frames.</span></span>
+          <span class="pill ok"><span class="dot"></span>done</span>
         </a></li>
       </ul>
     </div>

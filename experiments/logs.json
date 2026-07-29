@@ -1,82 +1,85 @@
 {
-  "_schema": {
-    "projects": "slug → {title, tagline, path}",
-    "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
-    "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ "_schema": {
+  "projects": "slug → {title, tagline, path}",
+  "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+  "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ },
+ "projects": {
+  "dex-pointwam": {
+   "title": "Dex-PointWAM",
+   "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
+   "path": "dex-pointwam/"
   },
-  "projects": {
-    "dex-pointwam": {
-      "title": "Dex-PointWAM",
-      "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
-      "path": "dex-pointwam/"
-    },
-    "dex-point-policy": {
-      "title": "Dexterous Point Policy",
-      "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
-      "path": "dex-point-policy/"
-    }
+  "dex-point-policy": {
+   "title": "Dexterous Point Policy",
+   "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
+   "path": "dex-point-policy/"
+  }
+ },
+ "logs": [
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-results",
+   "title": "Handing the model the object doesn't fix the grasp",
+   "status": "running",
+   "tldr": "Target-object clouds built end to end: 0/24 at 128 pts and at 2048 pts (the latter density-confounded). New control — the EgoDex-PT ckpt with no finetune reaches 26.1 cm per chunk vs 4.0 cm finetuned, so the small motions are imposed by a 3000-step batch-16 finetune that saw 1/64 of the pretrain's samples; a PT-matched run (4 GPU, batch 64) is training. Also ships a measured metric-depth pipeline shared with DPP.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
+   "tags": [
+    "result",
+    "object-cloud",
+    "ablation",
+    "depth-gradient"
+   ]
   },
-  "logs": [
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-results",
-      "title": "Handing the model the object doesn't fix the grasp",
-      "status": "running",
-      "tldr": "Target-object clouds built end to end: 0/24 at 128 pts and at 2048 pts (the latter density-confounded). New control — the EgoDex-PT ckpt with no finetune reaches 26.1 cm per chunk vs 4.0 cm finetuned, so the small motions are imposed by a 3000-step batch-16 finetune that saw 1/64 of the pretrain's samples; a PT-matched run (4 GPU, batch 64) is training. Also ships a measured metric-depth pipeline shared with DPP.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
-      "tags": [
-        "result",
-        "object-cloud",
-        "ablation",
-        "depth-gradient"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-conditioning",
-      "title": "Give the model the object — target-object cloud conditioning",
-      "status": "done",
-      "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
-      "tags": [
-        "plan",
-        "architecture",
-        "object-cloud",
-        "conditioning"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "closed-loop-eval",
-      "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
-      "status": "closed",
-      "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
-      "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
-      "tags": [
-        "sim",
-        "closed-loop",
-        "OOD",
-        "isaac"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-29",
-      "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes to PnP/Tool; object clouds smear; 2 sim claims retracted",
-      "status": "running",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). Two sim claims withdrawn (pinned-object \"3/3 lift\"; a closed-loop clip where the arm never reached the bottle) — and the debugging found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). DPP x PnP per hand is running.",
-      "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
-      "tags": [
-        "contact",
-        "tactile",
-        "sim",
-        "isaac",
-        "hand-swap"
-      ]
-    }
-  ]
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-conditioning",
+   "title": "Give the model the object — target-object cloud conditioning",
+   "status": "done",
+   "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
+   "tags": [
+    "plan",
+    "architecture",
+    "object-cloud",
+    "conditioning"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "closed-loop-eval",
+   "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
+   "status": "closed",
+   "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
+   "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
+   "tags": [
+    "sim",
+    "closed-loop",
+    "OOD",
+    "isaac"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-29",
+   "slug": "contact-and-hand-rollouts",
+   "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
+   "status": "done",
+   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter).",
+   "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
+   "tags": [
+    "contact",
+    "tactile",
+    "sim",
+    "isaac",
+    "hand-swap",
+    "6-point",
+    "retraction"
+   ],
+   "updated": "2026-07-30"
+  }
+ ]
 }
