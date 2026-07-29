@@ -40,10 +40,10 @@
         <div class="proj-card">
           <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
           <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
-          <a class="latest" href="dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">
+          <a class="latest" href="dex-pointwam/logs/2026-07-29-object-cloud-results/">
             <span class="ldate">2026-07-29</span>
             <span class="pill acc"><span class="dot"></span>running</span>
-            <span class="lt">Give the model the object — target-object cloud conditioning</span>
+            <span class="lt">Handing the model the object doesn't fix the grasp</span>
           </a>
         </div>
         <div class="proj-card">
@@ -66,19 +66,19 @@
       <ul class="log-feed" data-feed data-root=".">
         <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
         <li class="month-h">2026-07</li>
-        <li><a href="dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/">
+        <li><a href="dex-pointwam/logs/2026-07-29-object-cloud-results/">
           <span class="ldate">2026-07-29</span>
-          <span class="lmain"><span class="lproj">Dexterous Point Policy</span>
-            <span class="lt">Contact generalizes past BMW + three hands roll out in sim</span>
-            <span class="ltl">Learned tactile-contact transfers to PnP (F1 0.70) and Tool; the spray power-grip recovers the ring+pinky it under-fires on PnP; Inspire/Wuji/Sharpa each complete a scripted pick-lift 3/3 in the OpenArm sim.</span></span>
-          <span class="pill ok"><span class="dot"></span>done</span>
+          <span class="lmain"><span class="lproj">Dex-PointWAM</span>
+            <span class="lt">Handing the model the object doesn't fix the grasp</span>
+            <span class="ltl">DPP-style target-object clouds built end to end and verified live in sim — still 0/24, reach unchanged. Denser 2048-pt clouds via a depth-gradient filter now training.</span></span>
+          <span class="pill acc"><span class="dot"></span>running</span>
         </a></li>
         <li><a href="dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">
           <span class="ldate">2026-07-29</span>
           <span class="lmain"><span class="lproj">Dex-PointWAM</span>
             <span class="lt">Give the model the object — target-object cloud conditioning</span>
-            <span class="ltl">Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder; object cloud verified co-registered; 1.5 cm voxel validated; two-track 24 h run.</span></span>
-          <span class="pill acc"><span class="dot"></span>running</span>
+            <span class="ltl">Adds a DPP-style per-object cloud + object-name conditioning via the existing CLIP encoder; object cloud verified co-registered; 1.5 cm voxel validated.</span></span>
+          <span class="pill ok"><span class="dot"></span>done</span>
         </a></li>
         <li><a href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
           <span class="ldate">2026-07-29</span>
@@ -86,6 +86,13 @@
             <span class="lt">Closed-loop sim eval — reach transfers, grasp pose doesn't</span>
             <span class="ltl">Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD.</span></span>
           <span class="pill warn"><span class="dot"></span>closed</span>
+        </a></li>
+        <li><a href="dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/">
+          <span class="ldate">2026-07-29</span>
+          <span class="lmain"><span class="lproj">Dexterous Point Policy</span>
+            <span class="lt">Contact generalizes past BMW + three hands roll out in sim</span>
+            <span class="ltl">Learned tactile-contact transfers to PnP (F1 0.70) and Tool; the spray power-grip recovers the ring+pinky it under-fires on PnP; Inspire/Wuji/Sharpa each complete a scripted pick-lift 3/3 in the OpenArm sim.</span></span>
+          <span class="pill ok"><span class="dot"></span>done</span>
         </a></li>
       </ul>
     </div>

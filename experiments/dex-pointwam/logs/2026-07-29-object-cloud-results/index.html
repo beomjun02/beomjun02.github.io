@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-07-29 · Object-cloud conditioning result — Dex-PointWAM</title>
+<meta name="description" content="Experiment log: giving Dex-PointWAM a DPP-style target-object point cloud does not fix the palm-up grasp — 0/24 with conditioning verified live. Denser 2048-pt clouds with a depth-gradient filter now training.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-07-29 · object-cloud-results</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dex-PointWAM</p>
+    <h1>Handing the model the object doesn't fix the grasp</h1>
+    <p class="lede">The one structural input Dex-PointWAM lacked versus DPP — a segmented target-object
+      point cloud — was built end to end and trained in. It changes nothing: still 0/24, with the reach
+      unchanged. A 10× denser cloud built on a better filter is training now.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running · 2048 variant</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-29</dd></div>
+      <div><dt>Outcome</dt><dd>0/24 · conditioning verified live</dd></div>
+      <div><dt>Env</dt><dd class="mono">PointWAM FT 3000 steps · OpenArm Isaac · bottle · N=24</dd></div>
+      <div><dt>Checkpoint</dt><dd class="mono">dexpointwam/objcloud_ft/model-best.pt</dd></div>
+      <div><dt>Jobs</dt><dd class="mono">FT 48494 · eval 48573 · FT-2048 48613</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>Object-cloud conditioning works mechanically — the sim sourced clouds, the bridge co-registered
+      them, the model consumed them (<code>object cloud (24, 2, 128, 3)</code> logged live) and the new
+      object head trained. It does <b>not</b> rescue the grasp: <b>0/24</b>, identical to the reach-only
+      baseline, with per-chunk wrist displacement 3.2 cm vs the baseline's 4.0 cm. The
+      train–inference conditioning gap was real but was <b>not</b> what blocks the palm-up grasp.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Same objects, seed, IK and start pose as every other run in this campaign.
+        DPP is the reproducible baseline (the README's "70%" was retired last log).</p>
+      <div class="chart" role="img" aria-label="success_at_end: object-cloud conditioning 0 percent, reach-only baseline 0 percent, canonical DPP 27 percent.">
+        <div class="crow zero">
+          <span class="clabel">Object-cloud (128 pts)<span class="cnote">n=24 · job 48573</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
+        </div>
+        <div class="crow zero">
+          <span class="clabel">Reach-only baseline<span class="cnote">n=24 · job 46770</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:0%"></span></span><span class="cval">0%</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Canonical DPP<span class="cnote">n=24 · same harness</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:27%"></span></span><span class="cval">27%</span>
+        </div>
+      </div>
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Run</th><th>success_at_end</th><th>wrist displacement / chunk</th><th>conditioning</th></tr></thead>
+          <tbody>
+            <tr><td>Object-cloud 128 pts</td><td class="mono">0/24</td><td class="mono">3.24 cm mean · 8.26 max</td><td class="mono">verified ON</td></tr>
+            <tr><td>Reach-only baseline</td><td class="mono">0/24</td><td class="mono">4.04 cm mean · 6.92 max</td><td class="mono">none</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk ok">✓</span><span><span class="lt">Conditioning was genuinely live, not silently off.</span><span class="ld">The eval log prints <code>[pwam-obj] object cloud (24, 2, 128, 3) (camera frame, slots [manip, container])</code> — 24 envs × 2 object slots. This check existed because the model gates conditioning on the key being present, so a wiring slip would have produced a silently unconditioned run that looked like a null result.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">No effect on the grasp.</span><span class="ld">0/24, and the reach is within noise of the baseline (3.2 vs 4.0 cm per chunk — same order, no collapse and no gain).</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>What was built</h2>
+      <p class="sub">The gap was real: DPP gets per-object segmented clouds in dedicated slots, Dex-PointWAM
+        saw only the full scene. Closing it touched data, model, and both sides of the deploy path.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Layer</th><th>Change</th></tr></thead>
+          <tbody>
+            <tr><td>Data</td><td class="mono">object_points (M=4,P,3) + object_mask + object_names written into the PnP-500 WDS (479 eps, 3634 train / 230 test clips)</td></tr>
+            <tr><td>Model</td><td class="mono">per-object PointNet → object tokens appended to the DiT self-attention set (masked for empty slots); names via the existing frozen CLIP encoder</td></tr>
+            <tr><td>Checkpoint</td><td class="mono">partial load — 26 new object params keep their init, everything else loads</td></tr>
+            <tr><td>Sim</td><td class="mono">reuses DPP's ObsAssembler (mesh-sample + live Isaac pose + occlusion) → camera-frame clouds into the obs</td></tr>
+            <tr><td>Bridge</td><td class="mono">lifts object clouds with the same E_c2w and re-centers by the same shift as the scene cloud</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:16px">Language was left untouched — it was already there (frozen CLIP text
+        tower into DiT cross-attention), so object names reuse it and add no new language weights.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>A denser, better-filtered cloud</h2>
+      <p class="sub">128 pts/obj is what the DPP preprocessing happened to store. The masks are full-res
+        (720×1280, 6–8 k px on the bottle, 28–75 k on the container), so a 16× denser cloud is real
+        information, not duplicated points — and the old 20 px mask erosion could be dropped for the
+        BMW-style depth-gradient filter.</p>
+      <figure>
+        <img src="assets/obj-128-vs-2048.png" alt="Side by side: 128-point object clouds versus 2048-point clouds, both overlaid on the scene cloud; the 2048 container cloud fills in densely while both sit on the correct objects." loading="lazy">
+        <figcaption>obj-128-vs-2048.png · same PnP-500 bottle episode, same frame. Both land on the right
+          objects (bottle = blue, container = orange); the 2048 version resolves the container's surface
+          instead of sampling it sparsely. Hand keypoints in red for scale.</figcaption>
+      </figure>
+      <p class="sub" style="margin-top:18px">Two attempts failed before the method held up — both caught by
+        measuring against the trusted 128-pt cloud rather than by eyeballing:</p>
+      <ul class="clean">
+        <li><span class="mk x">✗</span><span><span class="lt">Depth gradient alone (10 mm) leaks the background.</span><span class="ld">14% of bottle points landed in a tight cluster ~18 cm behind the object: mask spill onto the table, whose surface is locally smooth so the gradient test passes it. The 20 px erosion had been hiding this by discarding the object's outer shell too.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">"Keep the largest connected component" made it worse.</span><span class="ld">Stereo depth has holes <i>on</i> the object, so the gradient-cleaned mask fragments; the largest fragment was a 1430 px flat table patch, beating the bottle's 1116 px. It selected the table and reported a confident 2.3 cm "object".</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Nearest significant depth cluster.</span><span class="ld">An object always sits in front of whatever it occludes, so it is the nearest depth mode. 1 cm histogram bins, gaps ≤3 cm merged (one curved surface stays one cluster), first cluster holding ≥10% of pixels wins. No erosion at all — the object interior is kept in full.</span></span></li>
+      </ul>
+      <div class="tbl" style="margin-top:18px">
+        <table>
+          <thead><tr><th>Validation vs the trusted 128-pt cloud</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Depth of the selected surface</td><td class="mono">Δ 0.0–0.3 cm across frames and objects</td></tr>
+            <tr><td>Background spill (&gt;10 cm from the core)</td><td class="mono">0.0%</td></tr>
+            <tr><td>Distinct points per object</td><td class="mono">bottle 880–2048 · container 2048</td></tr>
+            <tr><td>Coverage</td><td class="mono">479/479 episodes, 0 skipped, all (frame, slot) pairs filled</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>What this rules out</h2>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Not a missing-object-input problem.</span><span class="ld">The model now receives the same class of input DPP does — segmented, identity-tagged, co-registered — and still fails at the same point.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Not a language gap.</span><span class="ld">Instruction conditioning was already present; DPP's own text embedding is a sentence encoder, not an LLM.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Point density: still open.</span><span class="ld">128 pts is sparse for a grasp-relevant surface. The 2048-pt run answers whether density was the limit; if it also lands at 0/24, density is excluded and the palm-up failure is squarely a learned-prior problem, not an observation problem.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48613).</span><span class="ld">Same recipe, 16× denser clouds from the depth-gradient extraction. Then sim eval on bottle · N=24.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path FPS-downsamples object clouds to 128 (<code>batched_to_128_cam</code>); a 2048 variant is needed so the 2048 checkpoint is evaluated on what it was trained on.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">If 2048 also fails.</span><span class="ld">Then the lever is the grasp prior itself — domain-randomised real training, a grasp-orientation loss, or in-domain sim demos — not the observation.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Checkpoint (128)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/dexpointwam/objcloud_ft/model-best.pt · test/robot_l2_moved 0.0381</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">2048 clouds</span><span class="ld mono">pnp500_obj2048/rlwrld_obj2048.h5 (2.3 GB) · extract_rlwrld/regen_object_points_2048_grad.py</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Datasets</span><span class="ld mono">wds_pnp500_fullscene_obj (128) · wds_pnp500_fullscene_obj2048 (2048)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Launchers</span><span class="ld mono">PointWAM/run_ft_objcloud.sbatch (PWAM_DATA, PWAM_OBJ_PTS) · openarm-sim/scripts/eval_pointwam_rlwrld.sbatch (PWAM_OBJ_COND=1)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Plan &amp; architecture</span><span class="ld"><a href="/experiments/dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">2026-07-29 · object-cloud-conditioning</a></span></span></li>
+      </ul>
+      <pre><code>sbatch --export=ALL,MODEL_OUTPUT_DIR=…/objcloud_ft2048,PWAM_DATA=pnp500_fullscene_obj2048,PWAM_OBJ_PTS=2048 run_ft_objcloud.sbatch
+sbatch --export=ALL,MODEL_OUTPUT_DIR=…/eval_objcloud128,PWAM_CKPT=…/objcloud_ft/model-best.pt,PWAM_OBJ_COND=1 scripts/eval_pointwam_rlwrld.sbatch bottle 24 24 1200</code></pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-07-29 · beomjun · experiments/dex-pointwam/logs/2026-07-29-object-cloud-results</div>
+</footer>
+
+</body>
+</html>

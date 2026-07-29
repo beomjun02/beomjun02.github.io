@@ -20,9 +20,19 @@
     {
       "project": "dex-pointwam",
       "date": "2026-07-29",
+      "slug": "object-cloud-results",
+      "title": "Handing the model the object doesn't fix the grasp",
+      "status": "running",
+      "tldr": "DPP-style target-object clouds built end to end and verified live in sim (24×2×128) — still 0/24, reach unchanged. Denser 2048-pt clouds via a depth-gradient filter (two failed filters caught by measurement) now training.",
+      "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
+      "tags": ["result", "object-cloud", "ablation", "depth-gradient"]
+    },
+    {
+      "project": "dex-pointwam",
+      "date": "2026-07-29",
       "slug": "object-cloud-conditioning",
       "title": "Give the model the object — target-object cloud conditioning",
-      "status": "running",
+      "status": "done",
       "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
       "tags": [
