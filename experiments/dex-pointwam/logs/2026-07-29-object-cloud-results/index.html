@@ -115,10 +115,13 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">03</span>The object cloud came from the wrong depth</h2>
-      <p class="sub">Chasing point density surfaced a bigger problem: the object clouds and the scene cloud
-        were built from <b>two different depth sources</b>. The clouds we had been feeding the model floated
-        several centimetres off the surface the model actually observes.</p>
+      <h2><span class="n">03</span>Two depth sources, and they disagree</h2>
+      <p class="sub">Chasing point density surfaced something else: the object clouds and the scene cloud
+        are built from <b>two different depth sources</b> — the stereo sensor and VGGT-Omega — and they
+        differ by a scale factor, so the object clouds floated several centimetres off the surface the
+        model observes. Rebuilding them from the scene's own field removes the offset, which is a useful
+        diagnostic; but the sensor is the metric measurement, so the direction is to keep sensor depth and
+        fix its real weakness (§04) rather than to swap sources.</p>
       <figure>
         <img src="assets/obj-depth-source.png" alt="Two 3D views of the same scene. Left, object clouds from the stereo sensor depth are coloured red-orange, sitting 2.5 to 4.4 cm off the scene surface. Right, clouds from the clip's own VGGT depth are uniformly dark blue, lying on the surface, and resolve the container's shape." loading="lazy">
         <figcaption>obj-depth-source.png · colour = distance from each object point to the nearest scene
@@ -163,7 +166,39 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">04</span>What this rules out</h2>
+      <h2><span class="n">04</span>Is the sensor depth actually noisy?</h2>
+      <p class="sub">Before treating the sensor as the problem, it is worth measuring. It is not noisy —
+        it is <b>incomplete</b>. That changes what the fix should be: filling holes with information from
+        other viewpoints, not smoothing or interpolating.</p>
+      <figure>
+        <img src="assets/sensor-depth-noise.png" alt="Three panels: the stereo depth map with invalid pixels in red covering the bottle region, the dense VGGT-Omega depth for contrast, and the RGB frame showing a bottle and a white container on a wooden table." loading="lazy">
+        <figcaption>sensor-depth-noise.png · Left: stereo depth, red = no reading — the target bottle sits
+          almost entirely inside a hole (white outlines are the SAM3 masks, cyan is the RANSAC table plane
+          used for the precision numbers below). Middle: the dense VGGT-Omega field, for contrast.
+          Right: the frame itself.</figcaption>
+      </figure>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Measurement</th><th>Stereo (sensor)</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Spatial noise on a flat plane</td><td class="mono">σ 2.5 mm · p95 4.5 mm</td><td class="muted">RANSAC table plane, point-to-plane</td></tr>
+            <tr><td>Temporal jitter, static pixels</td><td class="mono">median 0.4 mm · p90 2.3 mm</td><td class="muted">6 consecutive frames</td></tr>
+            <tr><td>Invalid pixels, whole frame</td><td class="mono">25.9%</td><td class="muted">no reading at all</td></tr>
+            <tr><td>Invalid pixels, inside the bottle mask</td><td class="mono">53.8%</td><td class="muted">one 995 px contiguous hole</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk ok">✓</span><span><span class="lt">Millimetre precision where it reads.</span><span class="ld">2.5 mm on a flat surface and 0.4 mm of temporal jitter is well inside what a grasp needs. Noise is not the limiting factor. (An earlier version of this measurement reported ~42 mm for both sources — that was a bad metric: it fitted depth linearly in pixel coordinates, but under perspective it is <i>inverse</i> depth that is linear on a plane, so surface curvature was counted as noise.)</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">The failure mode is missing data, on exactly the wrong object.</span><span class="ld">Over half the manipuland's pixels have no reading, in one contiguous blob — a dark specular bottle is the worst case for stereo matching. Interpolating across it would invent the grasp surface.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">So the fix is more viewpoints, not more filtering.</span><span class="ld">This is what the BMW pipeline does: reconstruct the scene from multiple views, select the points that fall inside each object mask, and reject boundary/flying pixels with a depth-gradient test. A hole in one view is visible in another.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>What this rules out</h2>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Not a missing-object-input problem.</span><span class="ld">The model now receives the same class of input DPP does — segmented, identity-tagged, co-registered — and still fails at the same point.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Not a language gap.</span><span class="ld">Instruction conditioning was already present; DPP's own text embedding is a sentence encoder, not an LLM.</span></span></li>
@@ -174,10 +209,11 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05</span>Next</h2>
+      <h2><span class="n">06</span>Next</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48621).</span><span class="ld">Scene-consistent clouds from the clip's own VGGT depth, 2048 pts/obj. Then sim eval on bottle · N=24. This is also the run that tells us whether the 0/24 above was partly an artefact of the depth mismatch.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path FPS-downsamples object clouds to 128 (<code>batched_to_128_cam</code>); a 2048 variant is needed so the 2048 checkpoint is evaluated on what it was trained on.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path downsampled object clouds to 128 (<code>batched_to_128_cam</code>); now selectable via <code>PWAM_OBJ_PTS</code> (default 128, so the DPP baseline is untouched) with more mesh candidates, and the eval logs how many points are real rather than padded.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Multi-view object clouds, BMW-style.</span><span class="ld">The principled fix for a 54%-occluded manipuland: reconstruct the scene from several views, take the points inside each object mask, and reject boundary/flying pixels with the depth-gradient test. A hole in one view is filled by another — no interpolation, and the sensor stays the metric reference.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">If 2048 also fails.</span><span class="ld">Then the lever is the grasp prior itself — domain-randomised real training, a grasp-orientation loss, or in-domain sim demos — not the observation.</span></span></li>
       </ul>
     </div>
@@ -185,7 +221,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">06</span>Artifacts &amp; repro</h2>
+      <h2><span class="n">07</span>Artifacts &amp; repro</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">Checkpoint (128)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/dexpointwam/objcloud_ft/model-best.pt · test/robot_l2_moved 0.0381</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">2048 clouds (scene-consistent)</span><span class="ld mono">built inside egodex_to_wds.py --obj-from-clip-depth --obj-pts 2048 (VGGT depth + SAM3 masks)</span></span></li>
