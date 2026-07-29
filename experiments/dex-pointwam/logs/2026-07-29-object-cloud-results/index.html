@@ -245,7 +245,34 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">06</span>What this rules out</h2>
+      <h2><span class="n">06</span>Trying to measure the pose from what was already logged</h2>
+      <p class="sub">The palm-up claim has only ever been read off a video. The eval records
+        <code>arm_final_q</code> per episode, so it looked like the pose could be quantified offline
+        against DPP's successful runs. It can't — but the attempt is worth recording, because what the
+        field actually measures is easy to mistake for a pose.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Final arm configuration</th><th>‖q − home‖</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>DPP, successful episodes (n=14)</td><td class="mono">0.064 rad</td><td>ends essentially at the home pose</td></tr>
+            <tr><td>DPP, failed episodes</td><td class="mono">0.340 rad</td><td>ends near home too</td></tr>
+            <tr><td>EgoDex-PT only</td><td class="mono">2.801 rad</td><td>left far from home</td></tr>
+            <tr><td>Object-cloud 128</td><td class="mono">2.759 rad</td><td>left far from home</td></tr>
+            <tr><td>Object-cloud 2048</td><td class="mono">3.465 rad</td><td>left far from home</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk x">✗</span><span><span class="lt">Retracted: this is not a palm-orientation measurement.</span><span class="ld">Because DPP's successes end 0.064 rad from the initial configuration, <code>arm_final_q</code> is recording "did the arm come back home", not the pose at the grasp. A first pass through this data read the per-joint deltas as an ~80° wrist rotation and called it the palm-up signature; that reading does not hold and is withdrawn.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">What it does show.</span><span class="ld">DPP finishes its episodes back at the start configuration whether or not it succeeded, while every Dex-PointWAM variant is left 2.8–3.5 rad away — the arm is driven somewhere and stalls there instead of completing a pick-place-retract cycle.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">So the eval now logs the palm normal.</span><span class="ld">The policy already holds wrist + fingertip keypoints, so <code>[pwam-palm]</code> now prints the angle between the palm normal and camera-up for both the observed and the predicted hand, every chunk. Printing both separates "the sim hand is rotated" from "the model predicts a rotated hand" — the distinction the video could never settle. It lands in the ball/box evals; the bottle re-eval had already started under the old code.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>What this rules out</h2>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Not a missing-object-input problem.</span><span class="ld">The model now receives the same class of input DPP does — segmented, identity-tagged, co-registered — and still fails at the same point.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Not a language gap.</span><span class="ld">Instruction conditioning was already present; DPP's own text embedding is a sentence encoder, not an LLM.</span></span></li>
@@ -256,7 +283,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>Next</h2>
+      <h2><span class="n">08</span>Next</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48621).</span><span class="ld">Scene-consistent clouds from the clip's own VGGT depth, 2048 pts/obj. Then sim eval on bottle · N=24. This is also the run that tells us whether the 0/24 above was partly an artefact of the depth mismatch.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path downsampled object clouds to 128 (<code>batched_to_128_cam</code>); now selectable via <code>PWAM_OBJ_PTS</code> (default 128, so the DPP baseline is untouched) with more mesh candidates, and the eval logs how many points are real rather than padded.</span></span></li>
@@ -269,7 +296,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <h2><span class="n">09</span>Artifacts &amp; repro</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">Checkpoint (128)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/dexpointwam/objcloud_ft/model-best.pt · test/robot_l2_moved 0.0381</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Metric depth library (shared with DPP)</span><span class="ld mono">extract_rlwrld/depth_metric.py · docs/depth_metric.md — estimate_transform / fuse_depth / grad_bad / nearest_depth_band / clean_object_mask / sample_object_points</span></span></li>
