@@ -20,6 +20,16 @@
     {
       "project": "dex-pointwam",
       "date": "2026-07-29",
+      "slug": "object-cloud-conditioning",
+      "title": "Give the model the object — target-object cloud conditioning",
+      "status": "running",
+      "tldr": "Adds a DPP-style per-object cloud (2048 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; 1.5 cm voxel validated; two-track 24 h run.",
+      "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
+      "tags": ["plan", "architecture", "object-cloud", "conditioning"]
+    },
+    {
+      "project": "dex-pointwam",
+      "date": "2026-07-29",
       "slug": "closed-loop-eval",
       "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
       "status": "closed",

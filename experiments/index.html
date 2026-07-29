@@ -40,10 +40,10 @@
         <div class="proj-card">
           <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
           <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
-          <a class="latest" href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
+          <a class="latest" href="dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">
             <span class="ldate">2026-07-29</span>
-            <span class="pill warn"><span class="dot"></span>closed</span>
-            <span class="lt">Closed-loop sim eval — reach transfers, grasp pose doesn't</span>
+            <span class="pill acc"><span class="dot"></span>running</span>
+            <span class="lt">Give the model the object — target-object cloud conditioning</span>
           </a>
         </div>
         <div class="proj-card">
@@ -62,6 +62,13 @@
       <ul class="log-feed" data-feed data-root=".">
         <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
         <li class="month-h">2026-07</li>
+        <li><a href="dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">
+          <span class="ldate">2026-07-29</span>
+          <span class="lmain"><span class="lproj">Dex-PointWAM</span>
+            <span class="lt">Give the model the object — target-object cloud conditioning</span>
+            <span class="ltl">Adds a DPP-style per-object cloud (2048 pts, PointNet) + object-name conditioning via the existing CLIP encoder; 1.5 cm voxel validated; two-track 24 h run.</span></span>
+          <span class="pill acc"><span class="dot"></span>running</span>
+        </a></li>
         <li><a href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
           <span class="ldate">2026-07-29</span>
           <span class="lmain"><span class="lproj">Dex-PointWAM</span>
