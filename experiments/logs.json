@@ -25,7 +25,12 @@
       "status": "running",
       "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
-      "tags": ["plan", "architecture", "object-cloud", "conditioning"]
+      "tags": [
+        "plan",
+        "architecture",
+        "object-cloud",
+        "conditioning"
+      ]
     },
     {
       "project": "dex-pointwam",
@@ -35,7 +40,28 @@
       "status": "closed",
       "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
       "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
-      "tags": ["sim", "closed-loop", "OOD", "isaac"]
+      "tags": [
+        "sim",
+        "closed-loop",
+        "OOD",
+        "isaac"
+      ]
+    },
+    {
+      "project": "dex-point-policy",
+      "date": "2026-07-29",
+      "slug": "contact-and-hand-rollouts",
+      "title": "Contact generalizes past BMW + three hands roll out in sim",
+      "status": "done",
+      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky); Inspire/Wuji/Sharpa each complete a scripted pick-lift 3/3 in the OpenArm sim.",
+      "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
+      "tags": [
+        "contact",
+        "tactile",
+        "sim",
+        "isaac",
+        "hand-swap"
+      ]
     }
   ]
 }

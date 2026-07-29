@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-07-29 · Contact generalizes + three hands roll out — Dexterous Point Policy</title>
+<meta name="description" content="Experiment log: the learned tactile-contact model transfers to PnP and Tool tasks, and Inspire/Wuji/Sharpa each complete a scripted pick-lift in the OpenArm sim.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-07-29 · contact-and-hand-rollouts</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy</p>
+    <h1>Contact prediction generalizes past BMW — and all three hands roll out in sim</h1>
+    <p class="lede">Two validation runs for the ICLR push. (1) The learned tactile-contact model — already
+      shown on the BMW task — measured on <b>PnP</b> and <b>Tool</b>. (2) The two new hand swaps,
+      <b>Wuji (20-DOF)</b> and <b>Sharpa (22-DOF)</b>, driven through a scripted pick-lift in the OpenArm
+      Isaac sim beside the <b>Inspire</b> baseline.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-29</dd></div>
+      <div><dt>Outcome</dt><dd>contact F1 0.70 (PnP) · 3/3 lift × 3 hands</dd></div>
+      <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · HaWoR-tactile v1</dd></div>
+      <div><dt>Tactile ckpt</dt><dd class="mono">hawor_tactile_v1_ws_150k.ckpt</dd></div>
+      <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/contact_analysis/REPORT.md · sim_rollout/</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>The tactile model validated on BMW <b>transfers to PnP (micro-F1 0.70 vs manual GT) and Tool</b> — and
+        on the spray power-grip it <b>recovers the ring and pinky</b> it under-fires on PnP pinches, so it isn't
+        pinky-blind; the grasp just has to load the finger. Separately, both new high-DOF hands
+        <b>each complete a scripted pick-lift 3/3</b> in the OpenArm sim, alongside Inspire 3/3 — the hand-swap
+        integration runs end to end. Two honest asterisks: PnP pinky recall is low (0.08), and the sim
+        rollouts are <b>scripted open-loop</b> — an integration check, not a policy result.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Two things at once: the three hands running the same scripted pick-lift side by side, and the
+        learned contact firing on the right fingers as a hand closes on the object.</p>
+      <div class="grid2">
+        <figure class="card">
+          <h3><span class="tag">sim</span>Three-hand rollout</h3>
+          <video class="vid" src="assets/rollout_comparison.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_comparison_poster.jpg"></video>
+          <figcaption>Inspire · Wuji · Sharpa — same scripted reach → grasp → lift in OpenArm Isaac. All three lift the bottle.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">contact</span>Learned tactile · PnP</h3>
+          <video class="vid" src="assets/pnp_bottle_ep37.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/pnp_bottle_ep37.jpg"></video>
+          <figcaption>Bottle grasp (per-ep F1 0.87) — thumb/index/middle/ring light at closure, pinky correctly off.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Setup</h2>
+      <p class="sub">One contact-analysis pipeline (reused from BMW) and one uniform scripted sim rollout across three hands.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Component</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Tactile model</td><td class="mono">HaWoR-tactile v1 · per-vertex contact prob over 778 MANO verts, from ego video</td></tr>
+            <tr><td>Reduce 778→5</td><td class="mono">prob&gt;0.5 · finger in-contact when &gt;5 verts in its fingertip patch</td></tr>
+            <tr><td>Contact tasks</td><td class="mono">PnP 479 eps (manual GT) · Tool microwave 10 + spray 3 (tactile freshly run)</td></tr>
+            <tr><td>Sim rollout</td><td class="mono">OpenArm Isaac · scripted reach→grasp→lift · coffee_bottle · 3 eps/hand</td></tr>
+            <tr><td>Hands</td><td class="mono">Inspire 6-DOF (24 jt, coupled) · Wuji 20-DOF · Sharpa 22-DOF (indep)</td></tr>
+            <tr><td>Sim "success"</td><td class="mono">bottle lifted &gt; threshold at episode end — crude integration check</td></tr>
+            <tr><td>Code</td><td class="mono">tools/{contact_reduce,overlay_contact,tool_analysis}.py · tools/sim_rollout_hand.py</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Contact — does it generalize?</h2>
+      <p class="sub">Learned tactile vs the fairest available reference per task (PnP has curated manual GT;
+        Tool manual GT is sparse and never labels the thumb, so proximity/auto is the fairer tool reference).</p>
+
+      <div class="chart" role="img" aria-label="Learned-tactile F1: PnP vs manual 70%, Tool microwave vs auto 63%, Tool spray vs auto 48%.">
+        <div class="crow">
+          <span class="clabel">PnP<span class="cnote">479 eps · vs manual GT</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:70%"></span></span><span class="cval">0.70</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Tool · microwave<span class="cnote">10 eps · vs auto/proximity</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:63%"></span></span><span class="cval">0.63</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Tool · spray<span class="cnote">3 eps · vs auto/proximity</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:48%"></span></span><span class="cval">0.48</span>
+        </div>
+      </div>
+      <p class="muted small" style="margin-top:14px">micro-F1. Against the sparse thumb-free manual GT, Tool drops to
+        0.29 (microwave) / 0.44 (spray) — a loose lower bound; the model over-predicts contact on the microwave
+        reach. Tool tactile was freshly computed here on a small subset (spray n=3 is indicative).</p>
+
+      <h3 style="margin-top:26px">PnP per-finger (vs manual GT, 479 eps)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>finger</th><th>F1</th><th>precision</th><th>recall</th><th>contact-rate SJ / manual</th></tr></thead>
+          <tbody>
+            <tr><td>thumb</td><td class="mono">0.835</td><td class="mono">0.853</td><td class="mono">0.818</td><td class="mono">31.7 / 32.5 %</td></tr>
+            <tr><td>index</td><td class="mono">0.848</td><td class="mono">0.768</td><td class="mono">0.947</td><td class="mono">40.8 / 32.5 %</td></tr>
+            <tr><td>middle</td><td class="mono">0.765</td><td class="mono">0.742</td><td class="mono">0.790</td><td class="mono">35.2 / 32.5 %</td></tr>
+            <tr><td>ring</td><td class="mono">0.512</td><td class="mono">0.499</td><td class="mono">0.524</td><td class="mono">25.7 / 24.0 %</td></tr>
+            <tr><td>pinky</td><td class="mono">0.153</td><td class="mono">0.796</td><td class="mono">0.084</td><td class="mono">2.6 / 24.0 %</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Per-object F1: gray_ball 0.740 · box 0.734 · bottle 0.715 · towel 0.708 · teddy 0.537
+        (deformable, loose grasp). Thumb/index/middle are reliable; the pinky under-fires on PnP pinch grasps (recall 0.08).</p>
+
+      <div class="grid2" style="margin-top:24px">
+        <figure class="card">
+          <h3><span class="tag">spray</span>Pinky recovers on a power grip</h3>
+          <video class="vid" src="assets/tool_spray_ep12.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/tool_spray_ep12.jpg"></video>
+          <figcaption>Full 5-finger wrap on the spray bottle — tactile fires thumb→pinky together. Pinky F1 jumps to 0.51 (vs 0.15 on PnP).</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">microwave</span>Honest counter-example</h3>
+          <video class="vid" src="assets/tool_microwave_ep77.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/tool_microwave_ep77.jpg"></video>
+          <figcaption>Button press — index/middle/ring fire, but the model over-predicts vs the sparse manual GT (0.29) and reaches 0.63 vs auto.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Hands — three-hand sim rollout</h2>
+      <p class="sub">Same scripted reach → grasp → lift on the bottle, run for each hand config in OpenArm Isaac.
+        Success rate is not the point — this checks that each hand loads, actuates, and interacts with an object
+        without failing. All three do.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Hand</th><th>DOF</th><th>joints</th><th>lifts</th><th>mean Δz (lift)</th><th>integration</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire (baseline)</td><td class="mono">6</td><td class="mono">24 (coupled)</td><td class="mono">3 / 3</td><td class="mono">0.28 m</td><td>✓ loads · actuates · lifts</td></tr>
+            <tr><td>Wuji</td><td class="mono">20</td><td class="mono">20 (indep)</td><td class="mono">3 / 3</td><td class="mono">0.29 m</td><td>✓ loads · actuates · lifts</td></tr>
+            <tr><td>Sharpa</td><td class="mono">22</td><td class="mono">22 (indep)</td><td class="mono">3 / 3</td><td class="mono">0.26 m</td><td>✓ loads · actuates · lifts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Scripted open-loop trajectory (arm reach + finger curl + lift), identical across
+        hands; "lift" = bottle z rises above threshold at episode end. Inspire also supports a real closed-loop DPP policy;
+        Wuji/Sharpa have no trained policy yet, so a scripted rollout is the honest integration test today.</p>
+      <div class="grid2" style="margin-top:24px">
+        <figure class="card">
+          <h3><span class="tag">20-DOF</span>Wuji</h3>
+          <video class="vid" src="assets/rollout_wuji.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_wuji_poster.jpg"></video>
+          <figcaption>OpenArm + Wuji — scripted pick-lift, best of 3 (Δz 0.37 m).</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">22-DOF</span>Sharpa</h3>
+          <video class="vid" src="assets/rollout_sharpa.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_sharpa_poster.jpg"></video>
+          <figcaption>OpenArm + Sharpa — scripted pick-lift. Wrist-mount orientation is untuned (reuses the Wuji value) but the grasp still closes.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Reads &amp; caveats</h2>
+      <p class="sub">What the numbers do and don't say.</p>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Contact prediction is not BMW-specific.</span>
+          <span class="ld">PnP micro-F1 0.70 vs manual GT; contact lands on the correct fingers at closure across five object types.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">The model isn't pinky-blind.</span>
+          <span class="ld">Pinky F1 0.15 on PnP pinches but 0.51 on the spray power grip — it fires the pinky when the grasp actually loads it.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">All three hands integrate in sim.</span>
+          <span class="ld">Inspire / Wuji / Sharpa each load, actuate every finger, and lift the bottle 3/3 in the scripted rollout.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">PnP pinky recall is low (0.08).</span>
+          <span class="ld">Under-fires the pinky in pinch/power grasps; precision stays high (0.80), so it's a miss-rate, not a false-alarm, issue.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Tool manual GT is sparse &amp; thumb-free.</span>
+          <span class="ld">Ego view occludes the thumb, so SJ-vs-manual understates agreement; the auto/proximity reference is fairer. Microwave also shows genuine over-firing during reach.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sim success is scripted, not policy.</span>
+          <span class="ld">The 3/3 lifts validate hand integration + basic grasp mechanics, not a learned policy — there is no Wuji/Sharpa policy yet.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Timeline</h2>
+      <ul class="timeline">
+        <li class="ok">
+          <span class="tdate">2026-07-29</span>
+          <span class="tt">PnP contact confirmed from existing tactile</span>
+          <p>Reduced the pre-computed HaWoR-tactile outputs (479 eps) to 5-finger contact and reproduced F1 0.70 vs manual GT;
+            rendered 5 panel overlays (one per object).</p>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-07-29</span>
+          <span class="tt">Tool tactile freshly run (microwave + spray)</span>
+          <p>Ran the HaWoR-tactile model on a tool subset (microwave 10, spray 3), reduced + scored. Spray recovers ring/pinky;
+            microwave over-predicts vs sparse manual GT. sweep / pour_coffee not reached.</p>
+        </li>
+        <li class="acc">
+          <span class="tdate">2026-07-29</span>
+          <span class="tt">Three-hand scripted rollout in OpenArm sim</span>
+          <p>One rollout script, three robot configs (Inspire / Wuji / Sharpa). Each lifts the bottle 3/3; built the
+            side-by-side comparison. Confirms the Wuji/Sharpa hand swaps run end to end.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Finish the Tool sweep.</span>
+          <span class="ld">Run tactile on sweep + pour_coffee for a complete PnP/BMW/Tool contact picture; more spray episodes (n=3 is thin).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">A real policy on the high-DOF hands.</span>
+          <span class="ld">Wuji/Sharpa rollouts are scripted — a keypoint/IK bridge + policy would turn this into a true dexterity comparison.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Tune the Sharpa wrist mount.</span>
+          <span class="ld">Its flange orientation reuses the Wuji quaternion; a small adjustment gives a natural grasp pose.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Contact analysis</span>
+          <span class="ld mono">DPP-ICLR2027/contact_analysis/ — REPORT.md · overlays/ (9 mp4) · pnp_stats · tool_stats · tool tactile npz</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sim rollout</span>
+          <span class="ld mono">DPP-ICLR2027/sim_rollout/ — {inspire,wuji,sharpa}.mp4 · comparison.mp4 · *_metrics.json</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Robot configs</span>
+          <span class="ld mono">openarm_sim/robot_cfg.py — OPENARM_{RH56F1,WUJI,SHARPA}_CFG</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Tactile model</span>
+          <span class="ld mono">HaWoR-tactile hawor_tactile_v1_ws_150k.ckpt (Seungjun) · extract_tactile.py (unmodified)</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-07-29 · beomjun · experiments/dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts</div>
+</footer>
+
+</body>
+</html>
