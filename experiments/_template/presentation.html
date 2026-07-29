@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════════
+  PRESENTATION TEMPLATE — the editorial showcase format.
+  For project hubs, milestone demos, meeting-ready story pages.
+  Ordinary experiment records use log.html (the LOG format) instead.
+
+  Copy into <project>/index.html (hub) or a milestone page, replace
+  ALL-CAPS placeholders, uncomment the optional blocks you need.
+  Styling comes from /experiments/assets/present.css — never inline
+  new design. Light/dark follows the viewer + the ◐ toggle.
+═══════════════════════════════════════════════════════════════════ -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>PROJECT — SUBTITLE</title>
+<meta name="description" content="One-sentence description.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/experiments/assets/present.css">
+<script src="/experiments/assets/present.js" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">PROJECT <b>·</b> CONTEXT</div>
+    <nav>
+      <a href="#s1">SECTION-1</a>
+      <a href="#s2">SECTION-2</a>
+      <a href="/experiments/">Lab</a>
+    </nav>
+    <button class="toggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
+  </div>
+</header>
+
+<div class="hero"><div class="wrap"><div class="hero-grid">
+  <div class="reveal">
+    <div class="eyebrow">EYEBROW · CONTEXT</div>
+    <h1>A thesis headline with one <span class="hl">emphasized</span> phrase.</h1>
+    <p class="lede">Two or three sentences: what this project is, what changed recently, why it matters.</p>
+    <div class="meta-line">
+      <span>Updated YYYY-MM-DD</span><span class="dot"></span>
+      <span>REF (arXiv / OpenReview / repo)</span>
+    </div>
+    <div class="chips">
+      <span class="chip"><span class="st done">done</span> SHIPPED-THING</span>
+      <span class="chip"><span class="st wip">next</span> IN-PROGRESS-THING</span>
+      <!-- <span class="chip"><span class="st ext">coworker</span> EXTERNAL-THING</span> -->
+    </div>
+  </div>
+  <figure class="hero-media reveal">
+    <video autoplay loop muted playsinline poster="assets/POSTER.png">
+      <source src="assets/HERO.mp4" type="video/mp4">
+    </video>
+    <figcaption>The single most characteristic clip — <b>what to look at</b> in one line.</figcaption>
+  </figure>
+</div></div></div>
+
+<section id="s1"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">SECTION EYEBROW</div>
+    <h2>Section headline</h2>
+    <p>What this section shows and why it matters.</p>
+  </div>
+
+  <!-- OPTIONAL KPI tiles (headline numbers; .accent highlights one):
+  <div class="kpis reveal">
+    <div class="kpi accent"><div class="n">0.70<span class="u"> F1</span></div><div class="k">what it measures</div></div>
+    <div class="kpi"><div class="n">24<span class="u"> eps</span></div><div class="k">what it measures</div></div>
+    <div class="kpi"><div class="n">0<span class="u"> labels</span></div><div class="k">what it measures</div></div>
+  </div>
+  -->
+
+  <div class="grid-2 reveal" style="margin-top:30px">
+    <figure class="media">
+      <div class="frame"><img src="assets/IMG-A.png" alt="ALT-A"></div>
+      <figcaption><b>Caption lead.</b> One-line explanation.</figcaption>
+    </figure>
+    <figure class="media">
+      <div class="frame"><img src="assets/IMG-B.png" alt="ALT-B"></div>
+      <figcaption><b>Caption lead.</b> One-line explanation.</figcaption>
+    </figure>
+  </div>
+
+  <!-- OPTIONAL metric table (.hero-row highlights ours; .win-num / .lose-num):
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead><tr><th>variant</th><th>metric</th></tr></thead>
+      <tbody>
+        <tr class="hero-row"><td>Ours</td><td class="win-num">0.70</td></tr>
+        <tr><td>Baseline</td><td class="lose-num">0.33</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Protocol, n, caveats — in one mono line.</p>
+  -->
+
+  <!-- OPTIONAL weakness→response table:
+  <div class="reframe reveal">
+    <div class="row h"><div class="cell">BEFORE-LABEL</div><div class="cell arrow" style="background:var(--surface-2)"></div><div class="cell">AFTER-LABEL</div></div>
+    <div class="row"><div class="cell weak">old state</div><div class="cell arrow">→</div><div class="cell win"><b>new state</b> — what changed</div></div>
+  </div>
+  -->
+</div></section>
+
+<section id="s2"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">STATUS</div>
+    <h2>Where things stand</h2>
+  </div>
+  <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3>MILESTONE</h3><p>Evidence in one line.</p></div></div>
+    <div class="item"><span class="badge wip">wip</span><div>
+      <h3>MILESTONE</h3><p>Current state, next action.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>MILESTONE</h3><p>What it needs to start.</p></div></div>
+  </div>
+
+  <!-- OPTIONAL open-decision cards:
+  <div class="eyebrow" style="margin-top:40px;margin-bottom:6px">Open decisions</div>
+  <div class="decisions reveal">
+    <div class="dec"><div class="q">D1</div><h4>Decision title</h4><p>The options in one line.</p></div>
+  </div>
+  -->
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div style="color:var(--ink);font-weight:600;font-size:14px">PROJECT — PAGE-TITLE</div>
+    <div style="margin-top:6px">Internal page · updated YYYY-MM-DD</div>
+  </div>
+  <div class="paths">
+    <div>plan <code>path/to/PLAN.md</code></div>
+    <div>logs <code>/experiments/PROJECT-SLUG/logs/</code></div>
+  </div>
+</div></footer>
+
+</body>
+</html>

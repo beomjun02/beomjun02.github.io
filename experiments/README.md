@@ -1,44 +1,45 @@
-# experiments/ — lab notebook conventions
+# experiments/ — lab notebook
 
-Experiment logs served at `https://beomjun02.github.io/experiments/`.
-This file is the contract for any agent adding content here. Follow it exactly.
+Served at `https://beomjun02.github.io/experiments/`. Contract for any agent adding content. Deploy = commit + push to `main` (live in ~1 min).
+
+## Two formats — pick by job
+
+| | **Log** (default) | **Presentation** |
+|---|---|---|
+| For | every experiment record | project hubs, milestone showcases |
+| Template | `_template/log.html` | `_template/presentation.html` |
+| Styling | `assets/lab.css` + `lab.js` | `assets/present.css` + `present.js` |
+| Character | data-first, verdict-first | editorial, hero + story |
+
+Both are light/dark (follow the viewer, toggle persists, shared across formats). All styling comes from the shared CSS — never redefine tokens per page.
 
 ## Structure
 
 ```
 experiments/
-├── index.html            dashboard: Ongoing (latest log per project) + Archive (all logs, month-grouped)
-├── logs.json             single registry — every log has one entry here
-├── assets/lab.css|lab.js shared design system (tokens, components, theme toggle, feed renderer)
-├── README.md             this file
-├── _template/log.html    skeleton for a new log page
-└── <project>/            e.g. dex-pointwam/, dex-point-policy/
-    ├── index.html        project hub (story so far + its own log feed)
-    ├── assets/           hub media
-    └── logs/
-        └── YYYY-MM-DD-<slug>/   one experiment log
-            ├── index.html       the log (loads /experiments/assets/lab.css — absolute path)
-            └── assets/          THIS log's media only — self-contained
+├── index.html        dashboard: Ongoing (latest per project) + Archive (month-grouped)
+├── logs.json         registry — one entry per log; drives both dashboard sections
+├── assets/           lab.css|js (Log) · present.css|js (Presentation)
+├── _template/        log.html · presentation.html
+└── <project>/
+    ├── index.html    hub (Presentation format)
+    ├── assets/
+    └── logs/YYYY-MM-DD-<slug>/   one log: index.html + its own assets/
 ```
 
-## Adding a new experiment log
+## Add a log
 
-1. `mkdir -p <project>/logs/YYYY-MM-DD-<slug>/assets` — date = when the experiment ran (or ended), slug = short kebab-case.
-2. Copy `_template/log.html` → `index.html` in that folder and fill it in with **real content, verdict first**. Section order: Result → Setup → Results vs baseline → Diagnosis → Timeline → Next → Artifacts & repro. Drop sections that don't apply; don't add new top-level patterns.
-3. Media go in the log's own `assets/` (never reference another log's folder):
-   - video: H.264 mp4, ≤ ~5 MB each, `autoplay loop muted playsinline preload="metadata"` + a `poster` jpg
-   - stills: jpg/png, ≤ ~500 KB; add `loading="lazy"` below the fold
-4. Append one entry to `experiments/logs.json` (schema documented in the file). Both dashboard sections — Ongoing (latest per project) and Archive (time-ordered, month-grouped) — render from it automatically.
-5. Also refresh the static fallbacks in `experiments/index.html` (the no-JS view): add an Archive `<li>` for the new log (under its month header; keep only ~10 static entries) and update your project card's `.latest` link in Ongoing.
+1. `mkdir -p <project>/logs/YYYY-MM-DD-<slug>/assets`
+2. Copy `_template/log.html` → `index.html`; fill ALL-CAPS placeholders; uncomment optional blocks; delete unused sections. House rules are in the template's header comment.
+3. Media into the log's own `assets/`: H.264 mp4 ≤5 MB + poster jpg; stills ≤500 KB, `loading="lazy"` below the fold.
+4. Append one entry to `logs.json` (schema in the file).
+5. Refresh static fallbacks in `experiments/index.html`: Archive `<li>` (≤10 entries) + the project card's `.latest` link.
 
-## New project
-
-Add `<project>/index.html` (hub) + `<project>/logs/`, register it under `projects` in `logs.json`, and add a project card in `experiments/index.html`.
+New project: hub `index.html` + `logs/`, register in `logs.json` `projects`, add a static card in `experiments/index.html`.
 
 ## Rules
 
-- Every page: `<meta name="robots" content="noindex">` — this repo is public; logs are unlisted, not secret. Never put credentials, private data, or double-blind-violating material here.
-- Design comes from `assets/lab.css` only. Page-local `<style>` is allowed for one-off tweaks, never for redefining tokens.
-- Charts: single measure → one hue (accent) with direct value labels; never dual-axis; status colors (ok/warn/bad) are reserved for state, not series.
-- Numbers must be real — no placeholder metrics, ever. If a number is provisional, say so in the caption.
-- Deploy = commit + push to the `beomjun02.github.io` repo; Pages serves it within ~1 minute.
+- `<meta name="robots" content="noindex">` on every page. Public repo — no credentials, nothing double-blind-sensitive.
+- Absolute asset paths (`/experiments/assets/…`).
+- Real numbers only; provisional ones say so in the caption.
+- Charts: one measure = one hue with direct labels; never dual-axis; ok/warn/bad reserved for status, never for series.
