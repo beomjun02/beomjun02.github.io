@@ -17,7 +17,7 @@ experiments/
     ├── assets/           hub media
     └── logs/
         └── YYYY-MM-DD-<slug>/   one experiment log
-            ├── index.html       the log (loads ../../../assets/lab.css)
+            ├── index.html       the log (loads /experiments/assets/lab.css — absolute path)
             └── assets/          THIS log's media only — self-contained
 ```
 

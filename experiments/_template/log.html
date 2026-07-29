@@ -12,9 +12,10 @@
     4. Append one entry to experiments/logs.json
     5. Add a static fallback <li> in experiments/index.html, then push.
 
-  NOTE: relative paths (../../../assets/lab.css) only resolve after the
-  file is copied into <project>/logs/<date-slug>/ — this file previews
-  unstyled from _template/.
+  Asset paths are ABSOLUTE (/experiments/assets/…) so this file renders
+  correctly from any depth on the live site — no ../.. counting. Light and
+  dark themes come free from lab.css: pages follow the viewer's system
+  theme, and the ◑ button in the topbar toggles + persists the choice.
 
   House rules (short version):
     · verdict first — write it last, put it first
@@ -32,16 +33,16 @@
 <meta name="robots" content="noindex">
 <title>YYYY-MM-DD · SHORT-TITLE — PROJECT</title>
 <meta name="description" content="Experiment log: one-sentence outcome.">
-<link rel="stylesheet" href="../../../assets/lab.css">
-<script src="../../../assets/lab.js" defer></script>
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
 </head>
 <body>
 
 <nav class="topbar">
   <div class="wrap">
     <div class="crumbs">
-      <a href="../../../">experiments</a><span class="sep">/</span>
-      <a href="../../">PROJECT-SLUG</a><span class="sep">/</span>
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/PROJECT-SLUG/">PROJECT-SLUG</a><span class="sep">/</span>
       <span class="here">YYYY-MM-DD · SLUG</span>
     </div>
     <button class="theme-btn" type="button">◑ dark</button>
