@@ -22,8 +22,8 @@
       "date": "2026-07-29",
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
-      "status": "running",
-      "tldr": "0/24 across bottle/ball/box, every point density, both checkpoints — the eval sweep is complete while DPP is 7/24 in the same harness. The palm is not held rotated, it is never held: DPP drifts -5 deg/1000 steps while ours climbs +56, rotating 58 to 122 deg across an episode. Longer finetune gains one step at ~5500 (val 0.0303 vs 0.0337) then flattens through 7100. Ships a measured metric-depth pipeline shared with DPP.",
+      "status": "done",
+      "tldr": "0/24 across bottle/ball/box, every point density, both checkpoints, and every training length tried — while DPP is 7/24 in the same harness. Two diagnoses fell to measurement: the palm is not held rotated (DPP drifts -5 deg/1000 steps, ours climbs +56, rotating 58->122 deg per episode), and undertraining is refuted — 18% better validation loss bought no success and nearly halved the reach, i.e. the objective and the task diverge. Ships a measured metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
