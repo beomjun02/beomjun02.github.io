@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "DPP-style target-object clouds built end to end and verified live in sim (24×2×128) — still 0/24, reach unchanged. Denser 2048-pt clouds via a depth-gradient filter (two failed filters caught by measurement) now training.",
+      "tldr": "DPP-style target-object clouds built end to end and verified live in sim — still 0/24, reach unchanged. Chasing density then exposed a real defect: the clouds came from the stereo depth, 12% deeper than the VGGT field the scene uses, so they sat 2.5–4.4 cm off the observed surface. Rebuilt scene-consistent (0.58 cm, 2048 real pts) and retraining.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": ["result", "object-cloud", "ablation", "depth-gradient"]
     },

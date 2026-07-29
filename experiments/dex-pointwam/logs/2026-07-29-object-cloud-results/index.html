@@ -28,7 +28,8 @@
     <h1>Handing the model the object doesn't fix the grasp</h1>
     <p class="lede">The one structural input Dex-PointWAM lacked versus DPP — a segmented target-object
       point cloud — was built end to end and trained in. It changes nothing: still 0/24, with the reach
-      unchanged. A 10× denser cloud built on a better filter is training now.</p>
+      unchanged. Chasing density then turned up a real defect: those clouds came from a different depth
+      source than the scene, and sat centimetres off it. Rebuilt and retraining now.</p>
 
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running · 2048 variant</span></dd></div>
@@ -45,7 +46,10 @@
       them, the model consumed them (<code>object cloud (24, 2, 128, 3)</code> logged live) and the new
       object head trained. It does <b>not</b> rescue the grasp: <b>0/24</b>, identical to the reach-only
       baseline, with per-chunk wrist displacement 3.2 cm vs the baseline's 4.0 cm. The
-      train–inference conditioning gap was real but was <b>not</b> what blocks the palm-up grasp.</p>
+      train–inference conditioning gap was real but was <b>not</b> what blocks the palm-up grasp.
+      One caveat on this run: those 128-pt clouds came from the stereo sensor depth, which reads 12%
+      deeper than the VGGT field the scene is built from, so the object sat 2.5–4.4 cm off the observed
+      surface (§03). The rebuilt, scene-consistent version is training now.</p>
     </div>
   </div>
 </header>
@@ -111,32 +115,46 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">03</span>A denser, better-filtered cloud</h2>
-      <p class="sub">128 pts/obj is what the DPP preprocessing happened to store. The masks are full-res
-        (720×1280, 6–8 k px on the bottle, 28–75 k on the container), so a 16× denser cloud is real
-        information, not duplicated points — and the old 20 px mask erosion could be dropped for the
-        BMW-style depth-gradient filter.</p>
+      <h2><span class="n">03</span>The object cloud came from the wrong depth</h2>
+      <p class="sub">Chasing point density surfaced a bigger problem: the object clouds and the scene cloud
+        were built from <b>two different depth sources</b>. The clouds we had been feeding the model floated
+        several centimetres off the surface the model actually observes.</p>
       <figure>
-        <img src="assets/obj-128-vs-2048.png" alt="Side by side: 128-point object clouds versus 2048-point clouds, both overlaid on the scene cloud; the 2048 container cloud fills in densely while both sit on the correct objects." loading="lazy">
-        <figcaption>obj-128-vs-2048.png · same PnP-500 bottle episode, same frame. Both land on the right
-          objects (bottle = blue, container = orange); the 2048 version resolves the container's surface
-          instead of sampling it sparsely. Hand keypoints in red for scale.</figcaption>
+        <img src="assets/obj-depth-source.png" alt="Two 3D views of the same scene. Left, object clouds from the stereo sensor depth are coloured red-orange, sitting 2.5 to 4.4 cm off the scene surface. Right, clouds from the clip's own VGGT depth are uniformly dark blue, lying on the surface, and resolve the container's shape." loading="lazy">
+        <figcaption>obj-depth-source.png · colour = distance from each object point to the nearest scene
+          point. Left: stereo-sensor clouds (red = several cm off the observed surface). Right: clouds
+          rebuilt from the clip's own VGGT-Omega depth — uniformly on-surface, and the container's shape
+          resolves. Triangles are hand keypoints.</figcaption>
       </figure>
-      <p class="sub" style="margin-top:18px">Two attempts failed before the method held up — both caught by
-        measuring against the trusted 128-pt cloud rather than by eyeballing:</p>
-      <ul class="clean">
-        <li><span class="mk x">✗</span><span><span class="lt">Depth gradient alone (10 mm) leaks the background.</span><span class="ld">14% of bottle points landed in a tight cluster ~18 cm behind the object: mask spill onto the table, whose surface is locally smooth so the gradient test passes it. The 20 px erosion had been hiding this by discarding the object's outer shell too.</span></span></li>
-        <li><span class="mk x">✗</span><span><span class="lt">"Keep the largest connected component" made it worse.</span><span class="ld">Stereo depth has holes <i>on</i> the object, so the gradient-cleaned mask fragments; the largest fragment was a 1430 px flat table patch, beating the bottle's 1116 px. It selected the table and reported a confident 2.3 cm "object".</span></span></li>
-        <li><span class="mk ok">✓</span><span><span class="lt">Nearest significant depth cluster.</span><span class="ld">An object always sits in front of whatever it occludes, so it is the nearest depth mode. 1 cm histogram bins, gaps ≤3 cm merged (one curved surface stays one cluster), first cluster holding ≥10% of pixels wins. No erosion at all — the object interior is kept in full.</span></span></li>
-      </ul>
       <div class="tbl" style="margin-top:18px">
         <table>
-          <thead><tr><th>Validation vs the trusted 128-pt cloud</th><th>Result</th></tr></thead>
+          <thead><tr><th></th><th>Stereo sensor depth</th><th>Clip's own VGGT depth</th></tr></thead>
           <tbody>
-            <tr><td>Depth of the selected surface</td><td class="mono">Δ 0.0–0.3 cm across frames and objects</td></tr>
-            <tr><td>Background spill (&gt;10 cm from the core)</td><td class="mono">0.0%</td></tr>
-            <tr><td>Distinct points per object</td><td class="mono">bottle 880–2048 · container 2048</td></tr>
-            <tr><td>Coverage</td><td class="mono">479/479 episodes, 0 skipped, all (frame, slot) pairs filled</td></tr>
+            <tr><td>Offset from the scene surface</td><td class="mono">bottle 2.54 cm · container 4.41 cm</td><td class="mono">0.58 cm · 0.60 cm</td></tr>
+            <tr><td>Distinct points (bottle)</td><td class="mono">880–2048 (padded by resampling)</td><td class="mono">2048, all real</td></tr>
+            <tr><td>Bottle extent</td><td class="mono">3.4 cm (a fragment)</td><td class="mono">3.5 × 7.4 × 8.7 cm</td></tr>
+            <tr><td>Holes inside the mask</td><td class="mono">26% of frame; one 995 px blob on the bottle</td><td class="mono">none — dense field</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk x">→</span><span><span class="lt">The two sources disagree by a scale factor, not by noise.</span><span class="ld">Stereo reads 12% deeper than the VGGT field (ratio 0.883, median bias −6.2 cm) with a spread of only 1.9 cm MAD. So it is not sensor noise that interpolation could smooth — it is a different metric.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">The scene's depth is the one anchored to the robot.</span><span class="ld">The flow pipeline runs VGGT-Omega and fits a <i>per-chunk robust GT-hand metric scale</i>, then stores that scaled depth. The metric reference is the hand the policy has to coordinate with — so the scene, the robot, and now the object cloud all live in one frame.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Density comes free, and is real.</span><span class="ld">xy detail comes from the true 720×1280 SAM3 mask; z is resampled from a hole-free field, so no surface is invented. 2048 pts/obj are all distinct — versus the 128 the DPP preprocessing happened to store.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Mask erosion is gone; spill rejection is geometric.</span><span class="ld">The old 20 px distance-transform erosion discarded most of a small object. In its place: a BMW-style depth-gradient filter for flying pixels, plus "keep the nearest significant depth cluster" — an object sits in front of whatever it occludes, so mask spill onto the table is a farther, separate depth mode.</span></span></li>
+      </ul>
+      <p class="sub" style="margin-top:16px">Two filters were tried and discarded on the way, both caught by
+        measurement rather than by eye: a depth gradient alone still leaked 14% of bottle points onto the
+        table behind it (that surface is locally smooth, so it passes the gradient test), and
+        "keep the largest connected component" was worse — stereo holes fragment the object, and the largest
+        fragment was a 1430 px flat table patch that beat the bottle's 1116 px.</p>
+      <div class="tbl" style="margin-top:18px">
+        <table>
+          <thead><tr><th>Rebuilt dataset</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Coverage</td><td class="mono">479/479 episodes · 3634 train / 230 test clips</td></tr>
+            <tr><td>Scene-surface agreement</td><td class="mono">0.53–0.60 cm median, holds across all five PnP objects</td></tr>
+            <tr><td>Reference</td><td class="mono">below the scene cloud's own 1.5 cm voxel grid</td></tr>
           </tbody>
         </table>
       </div>
@@ -158,7 +176,7 @@
     <div class="wrap">
       <h2><span class="n">05</span>Next</h2>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48613).</span><span class="ld">Same recipe, 16× denser clouds from the depth-gradient extraction. Then sim eval on bottle · N=24.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48621).</span><span class="ld">Scene-consistent clouds from the clip's own VGGT depth, 2048 pts/obj. Then sim eval on bottle · N=24. This is also the run that tells us whether the 0/24 above was partly an artefact of the depth mismatch.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path FPS-downsamples object clouds to 128 (<code>batched_to_128_cam</code>); a 2048 variant is needed so the 2048 checkpoint is evaluated on what it was trained on.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">If 2048 also fails.</span><span class="ld">Then the lever is the grasp prior itself — domain-randomised real training, a grasp-orientation loss, or in-domain sim demos — not the observation.</span></span></li>
       </ul>
@@ -170,7 +188,7 @@
       <h2><span class="n">06</span>Artifacts &amp; repro</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">Checkpoint (128)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/dexpointwam/objcloud_ft/model-best.pt · test/robot_l2_moved 0.0381</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">2048 clouds</span><span class="ld mono">pnp500_obj2048/rlwrld_obj2048.h5 (2.3 GB) · extract_rlwrld/regen_object_points_2048_grad.py</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">2048 clouds (scene-consistent)</span><span class="ld mono">built inside egodex_to_wds.py --obj-from-clip-depth --obj-pts 2048 (VGGT depth + SAM3 masks)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Datasets</span><span class="ld mono">wds_pnp500_fullscene_obj (128) · wds_pnp500_fullscene_obj2048 (2048)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Launchers</span><span class="ld mono">PointWAM/run_ft_objcloud.sbatch (PWAM_DATA, PWAM_OBJ_PTS) · openarm-sim/scripts/eval_pointwam_rlwrld.sbatch (PWAM_OBJ_COND=1)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Plan &amp; architecture</span><span class="ld"><a href="/experiments/dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">2026-07-29 · object-cloud-conditioning</a></span></span></li>
