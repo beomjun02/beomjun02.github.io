@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "Object-cloud conditioning is 0/24 at every density and on the ball too. Palm orientation, measured for the first time: on the same object DPP (29.2% success) holds 95.9 deg and Dex-PointWAM 73.2 deg — a real ~23 deg tilt toward palm-up, but a fifth of the ~90 deg the phrase 'palm-up collapse' asserts, with prediction tracking observation in both. PT-only reaches 26.1 cm/chunk vs 4.0 finetuned; a longer finetune runs in 3 h resumable chunks. Ships a measured metric-depth pipeline shared with DPP.",
+      "tldr": "Object-cloud conditioning is 0/24 at every density and on the ball too. Palm orientation, now measured over full episodes: episode means are ~5 deg apart (ours 100.8 vs DPP 95.9 at 29.2% success), so there is no standing palm-up offset — but DPP holds the palm nearly fixed while ours sweeps 70 to 117 deg across the episode, never settling into a grasp orientation. PT-only reaches 26.1 cm/chunk vs 4.0 finetuned; a longer finetune shows no gain at matched steps so far. Ships a measured metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
