@@ -27,7 +27,19 @@ experiments/
     └── logs/YYYY-MM-DD-<slug>/   one log: index.html + its own assets/
 ```
 
-## Add a log
+## Scope — one log ≈ 1–2 weeks
+
+A log is a **workstream record, not a changelog entry**. By default it covers **1–2 weeks** of progress on one question and ends in a verdict. A single fix, run, or config sweep is a Timeline entry *inside* the current log — never a log of its own.
+
+**Before creating one, check `logs.json`** for a log in that project still on the same question (usually `status: running`). If there is one, update it instead:
+
+- add a dated Timeline entry; refresh the Verdict, Results, and status pill; new media into its existing `assets/`
+- extend the header `Dates` range; keep the folder name and URL unchanged
+- in `logs.json` set `"updated": "YYYY-MM-DD"` and refresh `tldr` / `status` — dashboards sort by `updated` when present, so the log returns to the top
+
+Start a new log only when the question changes, the open log reached a verdict (`done` / `closed` / `failed`), or it has run ~2 weeks.
+
+## Add a new log
 
 1. `mkdir -p <project>/logs/YYYY-MM-DD-<slug>/assets`
 2. Copy `_template/log.html` → `index.html`; fill ALL-CAPS placeholders; uncomment optional blocks; delete unused sections. House rules are in the template's header comment.

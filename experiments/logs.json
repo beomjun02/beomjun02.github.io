@@ -1,8 +1,8 @@
 {
   "_schema": {
     "projects": "slug → {title, tagline, path}",
-    "logs": "append one entry per experiment log; date YYYY-MM-DD; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
-    "note": "Index pages render from this file. Agents: append your entry here after creating <project>/logs/<date>-<slug>/index.html."
+    "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+    "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
   },
   "projects": {
     "dex-pointwam": {
