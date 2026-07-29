@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "Target-object clouds built end to end and verified live in sim: 0/24 at 128 pts and 0/24 at 2048 pts (the 2048 eval density-confounded — sim gave 403 real pts vs 2048 in training). The round's real output is a measured depth pipeline: sensor sets the metre (scale-only fit, 8.0mm), VGGT fills its 26% holes, no mask erosion, 92% of clips reach 2048 real points. Shared with DPP.",
+      "tldr": "Target-object clouds built end to end: 0/24 at 128 pts and at 2048 pts (the latter density-confounded). New control — the EgoDex-PT ckpt with no finetune reaches 26.1 cm per chunk vs 4.0 cm finetuned, so the small motions are imposed by a 3000-step batch-16 finetune that saw 1/64 of the pretrain's samples; a PT-matched run (4 GPU, batch 64) is training. Also ships a measured metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
