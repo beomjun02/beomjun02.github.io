@@ -166,9 +166,11 @@
           </tbody>
         </table>
       </div>
-      <p class="muted small" style="margin-top:14px">Scripted open-loop trajectory (arm reach + finger curl + lift), identical across
-        hands; "lift" = bottle z rises above threshold at episode end. Inspire also supports a real closed-loop DPP policy;
-        Wuji/Sharpa have no trained policy yet, so a scripted rollout is the honest integration test today.</p>
+      <p class="muted small" style="margin-top:14px">Scripted open-loop, identical across hands: the lift is a scripted
+        <b>in-hand carry</b> — the bottle rides at a fixed offset through the lift, not autonomous force-closure (the light
+        finger gains don't close on a 6&nbsp;cm bottle). The point is that each hand loads, actuates every finger, and
+        interacts with the object without failing. Only <b>Inspire</b> has a real closed-loop DPP policy (clip below);
+        Wuji/Sharpa have none yet, so scripted is the honest integration test today.</p>
       <div class="grid2" style="margin-top:24px">
         <figure class="card">
           <h3><span class="tag">20-DOF</span>Wuji</h3>
@@ -181,6 +183,10 @@
           <figcaption>OpenArm + Sharpa — scripted pick-lift. Wrist-mount orientation is untuned (reuses the Wuji value) but the grasp still closes.</figcaption>
         </figure>
       </div>
+      <figure style="margin-top:24px">
+        <video class="vid" src="assets/rollout_inspire_dpp.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/rollout_inspire_dpp_poster.jpg"></video>
+        <figcaption>rollout_inspire_dpp.mp4 · <b>Inspire — real closed-loop DPP policy</b> (bonus). The actual trained policy driving the sim through the DPP server + IK — 200/200 steps, 0 IK/obs failures, wrist actively driven 9&nbsp;cm. The authentic full-stack demo, distinct from the scripted clips above; Wuji/Sharpa have no policy to run this way yet.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -199,8 +205,8 @@
           <span class="ld">Under-fires the pinky in pinch/power grasps; precision stays high (0.80), so it's a miss-rate, not a false-alarm, issue.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">Tool manual GT is sparse &amp; thumb-free.</span>
           <span class="ld">Ego view occludes the thumb, so SJ-vs-manual understates agreement; the auto/proximity reference is fairer. Microwave also shows genuine over-firing during reach.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Sim success is scripted, not policy.</span>
-          <span class="ld">The 3/3 lifts validate hand integration + basic grasp mechanics, not a learned policy — there is no Wuji/Sharpa policy yet.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sim success is a scripted carry, not a grasp policy.</span>
+          <span class="ld">The 3/3 lifts are an in-hand carry (bottle pinned at a fixed offset), validating integration + actuation — not autonomous force-closure and not a learned policy. Only Inspire runs a real closed-loop DPP (bonus clip).</span></span></li>
       </ul>
     </div>
   </section>
