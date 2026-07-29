@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "running",
-      "tldr": "0/24 on bottle, ball and box, at every point density, and for the PT-only ckpt too. Palm angle measured over full episodes: means ~5 deg apart from DPP (29.2% success) but ours sweeps 70-117 deg while DPP holds nearly fixed — it never settles into a grasp orientation. Doubling finetune steps (~4700) reaches val 0.0366, still short of the 2457-step run's 0.0337, so undertraining is unsupported. Ships a measured metric-depth pipeline shared with DPP.",
+      "tldr": "0/24 on bottle, ball and box, at every point density, and for the PT-only ckpt too. Palm angle over full episodes: means ~5 deg from DPP (29.2%) but ours sweeps 70-117 deg while DPP holds fixed — it never settles into a grasp orientation. Longer finetune: flat through ~4700 steps, then 0.0303 at ~5500, clearing the short run's 0.0337 by ~10% — step count does matter, but only past ~5000. Sim eval of that ckpt pending. Ships a metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
