@@ -198,7 +198,43 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05</span>What this rules out</h2>
+      <h2><span class="n">05</span>The fix: the sensor sets the metre, VGGT fills the holes</h2>
+      <p class="sub">Neither field is usable alone — the sensor is a measurement with holes, VGGT is
+        dense but only relative. So take the metre from the sensor and the geometry from VGGT. Every
+        parameter below was chosen by measurement, not assumption; the module and the dataset builder are
+        shared with DPP, which trains on the same clouds.</p>
+      <figure>
+        <img src="assets/depth-metric-summary.png" alt="Four panels: alignment-model residuals showing scale-only at 8.0 mm versus affine 7.7 and disparity 8.5; boxplots of the fitted scale per task ranging 1.13 to 1.40; a coverage bar showing fusion turning 26 percent no-reading into 75 percent sensor plus 25 percent filled with zero holes; and point-yield bars rising from 12 to 92 percent of clips reaching 2048 real points." loading="lazy">
+        <figcaption>depth-metric-summary.png · 180 robust fits across all five PnP-500 tasks. Panel 4 is
+          the one that matters for training: only the fused field at mask resolution delivers a full
+          2048 real points on the manipuland.</figcaption>
+      </figure>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Decision</th><th>Chosen</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Metric authority</td><td class="mono">stereo sensor</td><td>a measurement (σ 2.5 mm); VGGT's stored scale came from a monocular hand fit, which the corpus itself later corrected against this sensor</td></tr>
+            <tr><td>Alignment model</td><td class="mono">scale only, z = a·v</td><td>residual 8.0 mm vs 7.7 affine / 8.5 disparity — the offset term fits to −7 mm, i.e. nothing</td></tr>
+            <tr><td>Fit granularity</td><td class="mono">per clip</td><td>s spans 1.13–1.40 (±5–9% within one task) because the upstream VGGT scale was fitted per forward chunk</td></tr>
+            <tr><td>Combination</td><td class="mono">sensor where valid, s·VGGT in holes</td><td>75% measured + 25% filled → 0% invalid, from 25.9%</td></tr>
+            <tr><td>Mask cleaning</td><td class="mono">depth-gradient 10 mm, no erosion</td><td>erosion discarded the object; gradients discard only unmeasurable pixels</td></tr>
+            <tr><td>Sampling grid</td><td class="mono">720×1280 (mask res)</td><td>the sensor grid has 4× fewer pixels — a hard ceiling below 2048</td></tr>
+            <tr><td>Gradient dilation</td><td class="mono">1 (test only)</td><td>dilate 3 cost points (bottle 6879 → 6243 clean px) with no measurable gain on a hole-free field</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk ok">✓</span><span><span class="lt">Holes are filled by a dense field, not by interpolation.</span><span class="ld">That distinction is why smoothing was rejected: inside a bottle mask the invalid pixels are one 995 px blob covering over half the object, so interpolating would invent the grasp surface. Substituting an independently-dense field does not.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Two bugs found by measuring instead of eyeballing.</span><span class="ld">The gradient test must ignore invalid neighbours (comparing against a hole gives |d−0| = d, so every hole eroded a ring — worth 16–22% of the manipuland's points), and mask spill needs a depth criterion, not connectivity: "largest connected component" picked a 1430 px table patch over the 1116 px bottle.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Coverage limit, stated plainly.</span><span class="ld">The corpus stores a VGGT field only at clip anchor frames. Dex-PointWAM conditions on exactly those, so all of its samples are fused; DPP consumes every frame, so most of its frames are sensor-only (68% at full density). Closing that means re-running VGGT-Omega for all frames — a GPU job, and the next upgrade.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Same code at deploy.</span><span class="ld">In sim the rendered depth is already dense and metric, so fusion is the identity path; on a real robot the scale is re-fitted online per frame. Full write-up: <code>extract_rlwrld/docs/depth_metric.md</code>.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>What this rules out</h2>
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Not a missing-object-input problem.</span><span class="ld">The model now receives the same class of input DPP does — segmented, identity-tagged, co-registered — and still fails at the same point.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Not a language gap.</span><span class="ld">Instruction conditioning was already present; DPP's own text embedding is a sentence encoder, not an LLM.</span></span></li>
@@ -209,7 +245,7 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">06</span>Next</h2>
+      <h2><span class="n">07</span>Next</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">2048-pt finetune (running, job 48621).</span><span class="ld">Scene-consistent clouds from the clip's own VGGT depth, 2048 pts/obj. Then sim eval on bottle · N=24. This is also the run that tells us whether the 0/24 above was partly an artefact of the depth mismatch.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Sim-side density parity.</span><span class="ld">The eval path downsampled object clouds to 128 (<code>batched_to_128_cam</code>); now selectable via <code>PWAM_OBJ_PTS</code> (default 128, so the DPP baseline is untouched) with more mesh candidates, and the eval logs how many points are real rather than padded.</span></span></li>
@@ -221,10 +257,12 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>Artifacts &amp; repro</h2>
+      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
       <ul class="clean">
         <li><span class="mk i">·</span><span><span class="lt">Checkpoint (128)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/dexpointwam/objcloud_ft/model-best.pt · test/robot_l2_moved 0.0381</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">2048 clouds (scene-consistent)</span><span class="ld mono">built inside egodex_to_wds.py --obj-from-clip-depth --obj-pts 2048 (VGGT depth + SAM3 masks)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Metric depth library (shared with DPP)</span><span class="ld mono">extract_rlwrld/depth_metric.py · docs/depth_metric.md — estimate_transform / fuse_depth / grad_bad / nearest_depth_band / clean_object_mask / sample_object_points</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Shared dataset builder</span><span class="ld mono">extract_rlwrld/extract_object_points_metric.py → pnp500_objmetric/rlwrld_obj2048_metric.h5 (object_points_3d + n_real + points_source + vggt_scale)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">2048 clouds (scene-consistent variant)</span><span class="ld mono">egodex_to_wds.py --obj-from-clip-depth --obj-pts 2048 (VGGT depth + SAM3 masks)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Datasets</span><span class="ld mono">wds_pnp500_fullscene_obj (128) · wds_pnp500_fullscene_obj2048 (2048)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Launchers</span><span class="ld mono">PointWAM/run_ft_objcloud.sbatch (PWAM_DATA, PWAM_OBJ_PTS) · openarm-sim/scripts/eval_pointwam_rlwrld.sbatch (PWAM_OBJ_COND=1)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Plan &amp; architecture</span><span class="ld"><a href="/experiments/dex-pointwam/logs/2026-07-29-object-cloud-conditioning/">2026-07-29 · object-cloud-conditioning</a></span></span></li>
