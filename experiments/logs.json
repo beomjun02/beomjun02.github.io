@@ -25,7 +25,12 @@
       "status": "running",
       "tldr": "DPP-style target-object clouds built end to end and verified live in sim — still 0/24, reach unchanged. Chasing density then exposed a real defect: the clouds came from the stereo depth, 12% deeper than the VGGT field the scene uses, so they sat 2.5–4.4 cm off the observed surface. Rebuilt scene-consistent (0.58 cm, 2048 real pts) and retraining.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
-      "tags": ["result", "object-cloud", "ablation", "depth-gradient"]
+      "tags": [
+        "result",
+        "object-cloud",
+        "ablation",
+        "depth-gradient"
+      ]
     },
     {
       "project": "dex-pointwam",
@@ -61,9 +66,9 @@
       "project": "dex-point-policy",
       "date": "2026-07-29",
       "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes past BMW + three hands roll out in sim",
-      "status": "done",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky); Inspire/Wuji/Sharpa each complete a scripted pick-lift 3/3 in the OpenArm sim.",
+      "title": "Contact generalizes to PnP/Tool; sim success retracted",
+      "status": "running",
+      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave low F1 is a thumb-free GT artifact). Wuji/Sharpa load+actuate in Isaac, but the first \"3/3 lift\" number is withdrawn (object was pinned to the hand) — DPP x PnP per hand is running.",
       "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
       "tags": [
         "contact",
