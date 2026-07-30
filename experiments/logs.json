@@ -23,7 +23,7 @@
       "slug": "object-cloud-results",
       "title": "Handing the model the object doesn't fix the grasp",
       "status": "done",
-      "tldr": "0/24 across bottle/ball/box, every point density, both checkpoints, and every training length tried — while DPP is 7/24 in the same harness. Two diagnoses fell to measurement: the palm is not held rotated (DPP drifts -5 deg/1000 steps, ours climbs +56, rotating 58->122 deg per episode), and undertraining is refuted — 18% better validation loss bought no success and nearly halved the reach, i.e. the objective and the task diverge. Ships a measured metric-depth pipeline shared with DPP.",
+      "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP.",
       "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
       "tags": [
         "result",
