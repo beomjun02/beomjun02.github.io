@@ -277,7 +277,7 @@
       <h2><span class="n">08</span>The flip, on screen</h2>
       <p class="sub">Separate render passes at 8 seeds per grid cell, scored the same way. Their own
         <code>success_at_end</code> tracks the 512-episode runs closely (oracle bottle 22/32 vs 76.6 %, box 4/32
-        vs 14.6 %, ball 1/32 vs 3.9 %; auto box 14/32 vs 44.7 %, ball 7/32 vs 16.6 %), so these are
+        vs 14.6 %, ball 1/32 vs 3.9 %; auto bottle 16/32 vs 49.0 %, box 14/32 vs 44.7 %, ball 7/32 vs 16.6 %), so these are
         representative episodes, not selected highlights.</p>
 
       <div class="grid2">
@@ -296,11 +296,18 @@
         identical initial pose, two checkpoints that differ only in which contact label trained them, and a
         128-vs-0 split in that cell. Whatever the mechanism turns out to be, it is not subtle.</p>
 
-      <figure style="margin-top:24px">
-        <video class="vid" src="assets/oracle_bottle_cell3_success.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/oracle_bottle_cell3_success.jpg"></video>
-        <figcaption>bottle · cell 3 · oracle s60 k — success. The flip runs the other way here: 128/128 for the
-          human label in this cell against 0/128 for the learned tactile one.</figcaption>
-      </figure>
+      <div class="grid2" style="margin-top:24px">
+        <figure class="card">
+          <h3><span class="tag">bottle · cell 3</span>human contact — success</h3>
+          <video class="vid" src="assets/oracle_bottle_cell3_success.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/oracle_bottle_cell3_success.jpg"></video>
+          <figcaption>oracle s60 k — 128/128 in this cell.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">bottle · cell 3</span>learned tactile — failure</h3>
+          <video class="vid" src="assets/auto_bottle_cell3_failure.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/auto_bottle_cell3_failure.jpg"></video>
+          <figcaption>auto s80 k, <b>same cell, same episode id</b> — 0/128 here. The flip runs both ways.</figcaption>
+        </figure>
+      </div>
 
       <div class="grid2" style="margin-top:24px">
         <figure class="card">
@@ -314,9 +321,10 @@
           <figcaption>oracle s60 k, <b>same cell, same episode id</b> — 1/128 here. Ball is where the human-label run is weakest.</figcaption>
         </figure>
       </div>
-      <p class="muted small" style="margin-top:14px">Auto's bottle render pass had not finished when this was
-        published, so the counterpart to the bottle panel is missing rather than substituted; the number it
-        would illustrate (auto 0/128 in bottle cell 3) is in section 05.</p>
+      <p class="muted small" style="margin-top:14px">Three pairs, each one cell of one object, each with both
+        checkpoints run on the <b>same episode id</b> — and the direction reverses between them. Cells that
+        came out 8/8 or 0/8 within a render pass have no counter-example and are listed in that pass's JSON
+        as missing rather than filled in with something else.</p>
     </div>
   </section>
 
