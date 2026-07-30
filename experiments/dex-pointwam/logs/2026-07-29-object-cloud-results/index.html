@@ -63,6 +63,13 @@
       <h2><span class="n">01</span>Result</h2>
       <p class="sub">Same objects, seed, IK and start pose as every other run in this campaign.
         DPP is the reproducible baseline (the README's "70%" was retired last log).</p>
+      <figure>
+        <video class="vid" src="assets/c2-rollout.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/c2-rollout.jpg"></video>
+        <figcaption>c2-rollout.mp4 · the best-validation checkpoint (~5500 steps, val 0.0303) on the bottle,
+          ego head-camera, 900 steps. This is what "never settles into a grasp orientation" looks like: the arm
+          arrives and the hand keeps turning through orientations instead of closing on one. Its measured reach
+          is the smallest of any run (2.97 cm mean per chunk) — better validation loss bought smaller motion.</figcaption>
+      </figure>
       <div class="chart" role="img" aria-label="success_at_end: object-cloud conditioning 0 percent, reach-only baseline 0 percent, canonical DPP 27 percent.">
         <div class="crow zero">
           <span class="clabel">Object-cloud (128 pts)<span class="cnote">n=24 · job 48573</span></span>
