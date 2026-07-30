@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-07-30 · Object-point rebuild triples sim success; contact label verdict is object-dependent — Dexterous Point Policy</title>
+<meta name="description" content="Experiment log: rebuilding DPP object points (2048 pts, depth-gradient, sensor-metric fusion) beats the shipped pipeline on all three sim objects. Automating the contact label neither wins nor loses cleanly - it flips by object. Also: the benchmark has four initial conditions, not 512.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-07-30 · contact-auto-vs-oracle</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy</p>
+    <h1>Rebuilding the object points triples sim success; which contact label is better depends on the object</h1>
+    <p class="lede">Two changes were made to the fine-tune data at once and then separated: the object
+      point field was <b>rebuilt</b> (128 → 2048 points, mask erosion → depth-gradient rejection, sensor-metric
+      depth fusion), and the per-finger contact label was swapped from the <b>curated human annotation</b> to the
+      <b>learned tactile prediction</b>. Two otherwise identical finetunes, both scored by the openarm-sim
+      benchmark's own <code>success_at_end</code>.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-30</dd></div>
+      <div><dt>Outcome</dt><dd>rebuild 23.2 % → 36.8 % mean over 3 objects · contact-label winner flips by object · benchmark has 4 init conditions</dd></div>
+      <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · pointbridge FT bs128 lr1e-4</dd></div>
+      <div><dt>Metric</dt><dd class="mono">success_at_end (parallel_eval/eval_env.py) · num_envs fixed at 128</dd></div>
+      <div><dt>Full plan</dt><dd class="mono">DPP-ICLR2027/contact_ablation/{PLAN,PROGRESS}.md · results/TABLES.md</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><b>The object-point rebuild is a real win; the contact-label question does not have a clean answer.</b>
+        Averaged over the three deployment objects at 512 episodes each, the rebuilt 2048-point metric field
+        scores <b>36.8 %</b> (learned-tactile label) and <b>31.7 %</b> (human label) against <b>23.2 %</b> for
+        the shipped 128-point <code>shrink20</code> pipeline — the clouds were a real bottleneck, exactly as
+        the smear and object-size measurements predicted. But the two labels <b>trade places by object</b>:
+        the human label wins bottle 76.6 % to 49.0 % and loses box 14.6 % to 44.7 % and ball 3.9 % to 16.6 %.
+        Since each checkpoint was selected on <i>bottle alone</i>, the bottle-only sweep — which showed the
+        human label ahead 49.5 % to 14.5 % on average — was measuring its own selection criterion. No claim
+        about which label is better survives the other two objects.</p>
+      <p>What does survive is a measurement that reframes the question: the human annotation is
+        <b>one grasp bit replicated across all five fingers</b> (1.21 distinct finger columns out of 5 over
+        69 k frames), so the contact head fits it at <b>0.98</b> accuracy while the genuine 5-bit tactile
+        target only reaches <b>0.70</b> — with <i>identical</i> action loss between the runs. And one
+        methodological finding cuts across every number here and in the previous log: <b>this benchmark has
+        four initial conditions, not 512</b>, because the driver runs with zero position jitter.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Mean <code>success_at_end</code> over bottle, box and ball — 512 episodes per object
+        (128 per 2×2 grid cell), <code>num_envs</code> fixed at 128 throughout.</p>
+
+      <div class="chart" role="img" aria-label="Mean success over three objects: rebuilt data with learned tactile contact 36.8 percent, rebuilt data with human contact 31.7 percent, shipped baseline 23.2 percent.">
+        <div class="crow">
+          <span class="clabel">Rebuilt data · learned tactile<span class="cnote">auto s80k · 1536 eps</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:36.8%"></span></span><span class="cval">36.8 %</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Rebuilt data · human contact<span class="cnote">oracle s60k · 1536 eps</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:31.7%"></span></span><span class="cval">31.7 %</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">Shipped pipeline<span class="cnote">410k ckpt · 128 pts · 1536 eps</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:23.2%"></span></span><span class="cval">23.2 %</span>
+        </div>
+      </div>
+      <p class="muted small" style="margin-top:14px">Both rebuilt pipelines beat the shipped one on the
+        mean. The two labels are 5 points apart there and 27–30 points apart in both directions on
+        individual objects — section 05.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>What was rebuilt, and why it mattered more than expected</h2>
+      <p class="sub">The old field was produced by eroding every SAM3 mask inward by 20 px and back-projecting
+        stereo depth. The new one keeps the sensor as the metric authority, fills only its holes with
+        scale-fitted VGGT-Omega depth, rejects pixels by <b>depth gradient</b> instead of erosion, and samples
+        2048 points on the mask grid.</p>
+
+      <div class="tbl">
+        <table>
+          <thead><tr><th>object slot</th><th>shrink20 median</th><th>metric median</th><th>shrink20 &gt;30 cm</th><th>metric &gt;30 cm</th><th>shrink20 worst</th><th>metric worst</th></tr></thead>
+          <tbody>
+            <tr><td>bottle</td><td class="mono">8.9 cm</td><td class="mono">6.7 cm</td><td class="mono"><b>12.7 %</b></td><td class="mono"><b>0.1 %</b></td><td class="mono">66.1 cm</td><td class="mono">36.2 cm</td></tr>
+            <tr><td>tennis ball <span class="tag">⌀ 6.7 cm</span></td><td class="mono"><b>1.2 cm</b></td><td class="mono"><b>6.8 cm</b></td><td class="mono">1.8 %</td><td class="mono">0.0 %</td><td class="mono">43.2 cm</td><td class="mono">27.9 cm</td></tr>
+            <tr><td>soap box</td><td class="mono">2.6 cm</td><td class="mono">9.4 cm</td><td class="mono">0.1 %</td><td class="mono">0.0 %</td><td class="mono">30.3 cm</td><td class="mono">26.6 cm</td></tr>
+            <tr><td>teddy</td><td class="mono">2.1 cm</td><td class="mono">7.1 cm</td><td class="mono">0.5 %</td><td class="mono">0.1 %</td><td class="mono">54.8 cm</td><td class="mono">35.8 cm</td></tr>
+            <tr><td>towel</td><td class="mono">4.6 cm</td><td class="mono">9.6 cm</td><td class="mono">2.4 %</td><td class="mono">0.4 %</td><td class="mono">38.2 cm</td><td class="mono">36.6 cm</td></tr>
+            <tr><td>white container <span class="tag">bin 25.5×17 cm</span></td><td class="mono">17.7 cm</td><td class="mono">26.1 cm</td><td class="mono">2.6 %</td><td class="mono">8.2 %</td><td class="mono"><b>262.9 cm</b></td><td class="mono">55.7 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Cloud z-extent, paired over the same 479 episodes
+        (<code>results/validate_objmetric_full.json</code>). Two separate defects show up. The
+        <b>flying-pixel tail</b> is gone — the container's worst cloud spanned <b>2.6 metres</b> and now spans
+        56 cm, and the bottle's &gt;30 cm rate falls 12.7 % → 0.1 %. And <b>erosion was destroying the
+        objects</b>: the tennis ball's cloud spanned 1.2 cm where the ball is 6.7 cm across, and now spans
+        6.8 cm. The container extent rising is the same effect read the other way — the bin really is
+        25.5 cm wide, so 17.7 cm was an under-measurement, not a cleaner one.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>The human contact label is one bit</h2>
+      <p class="sub">Measured over all 479 PnP episodes / 69,066 frames before any training, on the two label
+        sources the ablation compares.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>label source</th><th>distinct finger columns per episode</th><th>frames where fingers disagree</th><th>contact rate thumb…pinky</th></tr></thead>
+          <tbody>
+            <tr><td>human annotation (<i>oracle</i>)</td><td class="mono"><b>1.21 / 5</b></td><td class="mono">25.9 %</td><td class="mono">.328 .328 .328 .243 .243</td></tr>
+            <tr><td>HaWoR-tactile (<i>auto</i>)</td><td class="mono"><b>4.98 / 5</b></td><td class="mono">95.9 %</td><td class="mono">.314 .404 .349 .255 .026</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">For bottle, box, teddy and towel the human label has
+        <b>exactly one</b> distinct column — a single grasp flag copied to all five fingers. Only the tennis
+        ball has two (thumb/index/middle vs ring/pinky). So this ablation is not "automating an expert
+        label"; it replaces a <b>1-bit</b> label with a <b>5-bit</b> one. Reviewer C's complaint that the
+        6-keypoint action reduces to a wrist plus five binary grippers is, for the manual labels,
+        <b>correct</b>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Checkpoint sweep — every checkpoint evaluated</h2>
+      <p class="sub">Both finetunes snapshot every 5000 steps; ten evenly spaced snapshots per variant were
+        evaluated on bottle at 128 episodes each. Same PT init, same data, same schedule — only the contact
+        label differs.</p>
+      <div class="tbl" id="sweep-table">
+        <table>
+          <thead><tr><th>step</th><th>auto (learned tactile)</th><th>oracle (human)</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">10 k</td><td class="mono">2.3 %</td><td class="mono">3.1 %</td></tr>
+            <tr><td class="mono">20 k</td><td class="mono">2.3 %</td><td class="mono"><b>68.8 %</b></td></tr>
+            <tr><td class="mono">30 k</td><td class="mono">25.0 %</td><td class="mono">—</td></tr>
+            <tr><td class="mono">40 k</td><td class="mono">8.6 %</td><td class="mono"><b>63.3 %</b></td></tr>
+            <tr><td class="mono">50 k</td><td class="mono">0.0 %</td><td class="mono">—</td></tr>
+            <tr><td class="mono">60 k</td><td class="mono">25.0 %</td><td class="mono"><b>75.0 %</b></td></tr>
+            <tr><td class="mono">70 k</td><td class="mono">5.5 %</td><td class="mono">—</td></tr>
+            <tr><td class="mono">80 k</td><td class="mono"><b>49.2 %</b></td><td class="mono">59.4 %</td></tr>
+            <tr><td class="mono">90 k</td><td class="mono">12.5 %</td><td class="mono">—</td></tr>
+            <tr><td class="mono">100 k</td><td class="mono">—</td><td class="mono">27.3 %</td></tr>
+            <tr><td class="mono"><b>mean</b></td><td class="mono"><b>14.5 %</b></td><td class="mono"><b>49.5 %</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Individual points swing 0–49 % (auto) and 3–75 %
+        (oracle) — which is what four effective initial conditions buys, so the claim has to be read off the
+        whole curve. On that reading <b>oracle &gt; baseline &gt; auto</b> holds throughout: oracle is at or
+        above 59 % at four of six steps, auto at or below 25 % at eight of nine. Oracle stopped at 175 k and
+        auto continued past it, so their grids differ where a snapshot was missing at eval time; the pairs
+        that exist are always at identical steps.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Per object, per grid cell — the requested protocol</h2>
+      <p class="sub">The selected checkpoint of each variant against all three deployment objects, 512
+        episodes each = 128 per 2×2 grid cell. Baseline is the shipped 410 k checkpoint at its own 128-point
+        density.</p>
+      <div class="tbl" id="headline-table">
+        <table>
+          <thead><tr><th>pipeline</th><th>object</th><th>n</th><th>success_at_end</th><th>cell 0</th><th>cell 1</th><th>cell 2</th><th>cell 3</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3">shipped baseline<br><span class="muted small">410 k · 128 pts</span></td><td>bottle</td><td class="mono">512</td><td class="mono">130/512 = <b>25.4 %</b></td><td class="mono">68/128</td><td class="mono">30/128</td><td class="mono">0/128</td><td class="mono">32/128</td></tr>
+            <tr><td>box</td><td class="mono">512</td><td class="mono">220/512 = <b>43.0 %</b></td><td class="mono">0/128</td><td class="mono">89/128</td><td class="mono">3/128</td><td class="mono">128/128</td></tr>
+            <tr><td>ball</td><td class="mono">512</td><td class="mono">7/512 = <b>1.4 %</b></td><td class="mono">1/128</td><td class="mono">5/128</td><td class="mono">1/128</td><td class="mono">0/128</td></tr>
+            <tr><td rowspan="3">rebuilt · human contact<br><span class="muted small">oracle s60 k · 2048 pts</span></td><td>bottle</td><td class="mono">512</td><td class="mono">392/512 = <b>76.6 %</b></td><td class="mono">126/128</td><td class="mono">86/128</td><td class="mono">52/128</td><td class="mono">128/128</td></tr>
+            <tr><td>box</td><td class="mono">512</td><td class="mono">75/512 = <b>14.6 %</b></td><td class="mono">57/128</td><td class="mono">0/128</td><td class="mono">18/128</td><td class="mono">0/128</td></tr>
+            <tr><td>ball</td><td class="mono">512</td><td class="mono">20/512 = <b>3.9 %</b></td><td class="mono">0/128</td><td class="mono">9/128</td><td class="mono">10/128</td><td class="mono">1/128</td></tr>
+            <tr><td rowspan="3">rebuilt · learned tactile<br><span class="muted small">auto s80 k · 2048 pts</span></td><td>bottle</td><td class="mono">512</td><td class="mono">251/512 = <b>49.0 %</b></td><td class="mono">123/128</td><td class="mono">128/128</td><td class="mono">0/128</td><td class="mono">0/128</td></tr>
+            <tr><td>box</td><td class="mono">512</td><td class="mono">229/512 = <b>44.7 %</b></td><td class="mono">105/128</td><td class="mono">123/128</td><td class="mono">0/128</td><td class="mono">1/128</td></tr>
+            <tr><td>ball</td><td class="mono">512</td><td class="mono">85/512 = <b>16.6 %</b></td><td class="mono">2/128</td><td class="mono">2/128</td><td class="mono">0/128</td><td class="mono">81/128</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:16px"><b>The winner flips.</b> The human label takes bottle by 27.6 points and
+        gives back 30.1 on box and 12.7 on ball. Means: <b>23.2 %</b> baseline, <b>31.7 %</b> human,
+        <b>36.8 %</b> learned tactile. And the shipped baseline is itself better than the human-label rebuild
+        on box (43.0 % vs 14.6 %), so "the rebuild helps" is also object-dependent rather than uniform.</p>
+      <p class="muted small" style="margin-top:14px">Every cell row is worth reading on its own: no pipeline
+        solves cell 2 for bottle, the baseline solves cell 3 perfectly for box and never for ball, and auto's
+        ball score is one cell carrying all of it (81/128 in cell 3, ~2/128 elsewhere). With four initial
+        conditions these are four measurements, not 512.</p>
+      <p class="muted small" style="margin-top:14px">Selection caveat, and it is the load-bearing one:
+        <b>each checkpoint was chosen as its variant's argmax on bottle</b>, over the same four initial
+        conditions used to score it. The bottle column therefore flatters both, and the box/ball columns are
+        the only ones the selection did not touch. The bottle numbers did <i>not</i> regress between the
+        128-episode selection run and this 512-episode one (75.0 → 76.6 oracle, 49.2 → 49.0 auto) — because
+        the extra episodes are more simulator-noise repeats of the same four poses, not new task instances.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Why the automatic label loses — and two fixes that did not work</h2>
+      <p class="sub">The training curves rule out the boring explanation first.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>step</th><th>action loss auto / oracle</th><th>contact loss auto / oracle</th><th>contact acc auto / oracle</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">20 k</td><td class="mono">0.00767 / 0.00760</td><td class="mono">0.348 / 0.065</td><td class="mono"><b>0.690 / 0.981</b></td></tr>
+            <tr><td class="mono">40 k</td><td class="mono">0.00675 / 0.00659</td><td class="mono">0.289 / 0.059</td><td class="mono"><b>0.733 / 0.983</b></td></tr>
+            <tr><td class="mono">60 k</td><td class="mono">0.00580 / 0.00576</td><td class="mono">0.264 / 0.057</td><td class="mono"><b>0.764 / 0.983</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:16px"><b>The trajectory head is equally well trained in both runs</b> — action
+        loss and per-horizon L1 match to three digits. The entire difference is the contact head, and it is
+        exactly what section 03 predicts: a 1-bit target is nearly free to fit, a 5-bit one is not. At deploy
+        the predicted bits do two jobs: they drive how far each finger curls
+        (<code>ContactBendGrip</code>), and with <code>use_contact_ar=true</code> they are fed back as policy
+        input. Two interventions follow, and neither rescued it:</p>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Fold the five predicted bits into one gripper close signal.</span>
+          <span class="ld"><code>DPP_CONTACT_REDUCE=or</code>: auto s20 k 2.3 % → 16.4 %, but s40 k 8.6 % → 6.2 %. Helps at one step, not the other, and nowhere near oracle — with four conditions this is most likely noise, not a mechanism.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Also fold the autoregressive contact feedback.</span>
+          <span class="ld"><code>DPP_CONTACT_REDUCE=orall</code>: auto s20 k <b>3.9 %</b> — worse than both. The exposure-bias story (policy conditioning on its own noisy contact prediction) is not supported.</span></span></li>
+      </ul>
+      <p style="margin-top:14px">So the correlation between contact-head accuracy and deployed success is
+        solid, and the causal path from one to the other is <b>not established</b>. That is the open question
+        this log leaves behind, and it is a better place to be than a plausible untested story.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>The benchmark has four initial conditions, not 512</h2>
+      <p class="sub">Found while reading the per-cell numbers, and it changes how every success rate on this
+        harness should be quoted — including the ones already published.</p>
+      <p>The eval driver constructs its initial-state table as
+        <code>InitialStateTable(manifest, device=env.device)</code> (<code>eval.py:104</code>), and that
+        class defaults to <code>xy_jitter_m = 0.0</code> (<code>init_table.py:60</code>). The manipuland is
+        therefore placed at the <b>exact</b> grid-cell centre in every episode. With four cells, a
+        512-episode run samples <b>four distinct task instances</b>, 128 times each.</p>
+      <p>The repeats are not identical — final object positions differ by 16–30 cm within a cell and 121–126
+        of 128 are distinct — but that spread is <b>PhysX slot-to-slot divergence</b>, i.e. simulator noise,
+        not task variation. It is why several cells come out at exactly 32/32 or 0/32. Consequences:</p>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">A binomial CI on n = 512 is wrong.</span>
+          <span class="ld">It describes sensitivity to simulator noise at four fixed poses, not generalisation. Every interval in <code>results/TABLES.md</code> is now mean ± 1.96 SE <b>over the four cells</b>, which is wide — honestly so.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Per-cell numbers are the primary read.</span>
+          <span class="ld">The shipped baseline's 25.4 % is 68/128 · 30/128 · <b>0/128</b> · 32/128 — one grid position it never solves in 128 attempts, which the aggregate hides completely.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The fix is one argument.</span>
+          <span class="ld"><code>xy_jitter_m &gt; 0</code> is already implemented and just never exposed on the CLI. Turning it on gives genuine task-level sampling and is the first thing to do before any of these numbers go in a paper.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>The flip, on screen</h2>
+      <p class="sub">Separate render passes at 8 seeds per grid cell, scored the same way. Their own
+        <code>success_at_end</code> tracks the 512-episode runs closely (oracle bottle 22/32 vs 76.6 %, box 4/32
+        vs 14.6 %, ball 1/32 vs 3.9 %; auto box 14/32 vs 44.7 %, ball 7/32 vs 16.6 %), so these are
+        representative episodes, not selected highlights.</p>
+
+      <div class="grid2">
+        <figure class="card">
+          <h3><span class="tag">box · cell 1</span>learned tactile — success</h3>
+          <video class="vid" src="assets/auto_box_cell1_success.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/auto_box_cell1_success.jpg"></video>
+          <figcaption>auto s80 k. In this cell auto places the box 123 times out of 128.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">box · cell 1</span>human contact — failure</h3>
+          <video class="vid" src="assets/oracle_box_cell1_failure.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/oracle_box_cell1_failure.jpg"></video>
+          <figcaption>oracle s60 k, <b>same cell, same episode id</b>. In this cell oracle places it 0 times out of 128.</figcaption>
+        </figure>
+      </div>
+      <p class="muted small" style="margin-top:14px">The clearest single pair in the study: identical scene,
+        identical initial pose, two checkpoints that differ only in which contact label trained them, and a
+        128-vs-0 split in that cell. Whatever the mechanism turns out to be, it is not subtle.</p>
+
+      <figure style="margin-top:24px">
+        <video class="vid" src="assets/oracle_bottle_cell3_success.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/oracle_bottle_cell3_success.jpg"></video>
+        <figcaption>bottle · cell 3 · oracle s60 k — success. The flip runs the other way here: 128/128 for the
+          human label in this cell against 0/128 for the learned tactile one.</figcaption>
+      </figure>
+
+      <div class="grid2" style="margin-top:24px">
+        <figure class="card">
+          <h3><span class="tag">ball · cell 3</span>learned tactile — success</h3>
+          <video class="vid" src="assets/auto_ball_cell3_success.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/auto_ball_cell3_success.jpg"></video>
+          <figcaption>auto s80 k — 81/128 in this cell.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">ball · cell 3</span>human contact — failure</h3>
+          <video class="vid" src="assets/oracle_ball_cell3_failure.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/oracle_ball_cell3_failure.jpg"></video>
+          <figcaption>oracle s60 k, <b>same cell, same episode id</b> — 1/128 here. Ball is where the human-label run is weakest.</figcaption>
+        </figure>
+      </div>
+      <p class="muted small" style="margin-top:14px">Auto's bottle render pass had not finished when this was
+        published, so the counterpart to the bottle panel is missing rather than substituted; the number it
+        would illustrate (auto 0/128 in bottle cell 3) is in section 05.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">09</span>Caveats</h2>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Neither finetune ran the baseline's schedule.</span>
+          <span class="ld">The baseline is 410 k steps at 128 points; these are ~100–175 k at 2048 points, which is ~2.6× slower per step. Both variants are compared at <b>identical</b> steps, but neither is compared to the baseline at equal steps.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Baseline vs rebuilt is a pipeline comparison, not a controlled one.</span>
+          <span class="ld">The baseline is evaluated at 128 points because that is what it was trained on, and the new runs at 2048 for the same reason (density parity). Point count, cleaning method and depth source all changed together; this log does not separate them.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Checkpoint selection is on the evaluation conditions.</span>
+          <span class="ld">With four conditions there is no held-out split. Sweep means, not best points, are the defensible summary.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The contact pos-weight differs between variants.</span>
+          <span class="ld">3.687 (auto) vs 2.478 (oracle) — computed from the labels by the trainer, so it is part of the treatment rather than a free knob, but it is not held constant.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Density parity is measured, not assumed.</span>
+          <span class="ld">Visible-candidate fraction averaged 0.326 of 8192 mesh candidates ≈ 2674 real points, above the 2048 requested; on the worst-occluded frames (0.054) padding does occur.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">10</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Turn on position jitter and re-run the headline.</span>
+          <span class="ld">Four initial conditions is the weakest part of every number here; <code>xy_jitter_m</code> already exists.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Isolate what the data rebuild bought.</span>
+          <span class="ld">128 vs 2048 points at fixed cleaning, and erosion vs depth-gradient at fixed count — two finetunes that split the 25 % → 75 % jump into its parts.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Establish or kill the contact-head causal path.</span>
+          <span class="ld">Train the auto variant with the contact head <i>disabled</i>, and separately with the tactile label OR-reduced to one bit at <b>training</b> time rather than at deploy. Either isolates the channel properly.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Finish the step schedule.</span>
+          <span class="ld">Both variants to a matched 400 k so the comparison sits where the baseline does.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">11</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Plan, running log, tables</span>
+          <span class="ld mono">DPP-ICLR2027/contact_ablation/{PLAN.md, PROGRESS.md, EGODEX-PT-SCOPE.md, results/TABLES.md, results/TABLES.json}</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Data build</span>
+          <span class="ld mono">pointbridge/scripts/extract_rlwrld/{depth_metric.py, extract_object_points_metric.py, docs/depth_metric.md} → rlwrld_obj2048_metric.h5 (479 eps, 2.4 GB)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Variant h5s + validation</span>
+          <span class="ld mono">contact_ablation/tools/{build_variant_h5.py, validate_data.py, prebuild_index.py} · results/{validate_objmetric_full.json, label_info_all479.json}</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Training</span>
+          <span class="ld mono">contact_ablation/jobs/train_ft.sbatch → /rlwrld-unified-checkpoints/beomjun/checkpoints/dpp_iclr2027_ft_pnp500_obj2048metric_contact{auto,oracle}</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Renders</span>
+          <span class="ld mono">contact_ablation/{jobs/render_cells.sbatch, tools/prep_media.sh} · openarm-sim/scripts/render_dpp_cells.py · clips /rlwrld-unified-checkpoints/beomjun/render/dpp_iclr2027_E3v2_{oracle,auto}_{bottle,box,ball}/</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Eval + aggregation</span>
+          <span class="ld mono">contact_ablation/{jobs/eval_dpp.sbatch, tools/submit_eval_sweep.py, tools/aggregate_results.py} · harness openarm-sim/openarm_sim/parallel_eval/</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Harness changes (all default-off)</span>
+          <span class="ld mono">eval.py: n_candidates ← PWAM_OBJ_CAND · policy_dpp.py: object-slot pad takes its point count from obj_pts (was hard-coded 128); DPP_CONTACT_REDUCE=or|orall</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-07-30 · beomjun · experiments/dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle</div>
+</footer>
+
+</body>
+</html>

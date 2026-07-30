@@ -1,85 +1,103 @@
 {
-  "_schema": {
-    "projects": "slug → {title, tagline, path}",
-    "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
-    "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ "_schema": {
+  "projects": "slug → {title, tagline, path}",
+  "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+  "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ },
+ "projects": {
+  "dex-pointwam": {
+   "title": "Dex-PointWAM",
+   "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
+   "path": "dex-pointwam/"
   },
-  "projects": {
-    "dex-pointwam": {
-      "title": "Dex-PointWAM",
-      "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
-      "path": "dex-pointwam/"
-    },
-    "dex-point-policy": {
-      "title": "Dexterous Point Policy",
-      "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
-      "path": "dex-point-policy/"
-    }
+  "dex-point-policy": {
+   "title": "Dexterous Point Policy",
+   "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
+   "path": "dex-point-policy/"
+  }
+ },
+ "logs": [
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-30",
+   "slug": "contact-auto-vs-oracle",
+   "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
+   "status": "running",
+   "updated": "2026-07-30",
+   "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter.",
+   "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
+   "tags": [
+    "data-quality",
+    "contact",
+    "ablation",
+    "depth-gradient",
+    "sim",
+    "methodology"
+   ]
   },
-  "logs": [
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-results",
-      "title": "Handing the model the object doesn't fix the grasp",
-      "status": "done",
-      "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
-      "tags": [
-        "result",
-        "object-cloud",
-        "ablation",
-        "depth-gradient"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-conditioning",
-      "title": "Give the model the object — target-object cloud conditioning",
-      "status": "done",
-      "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
-      "tags": [
-        "plan",
-        "architecture",
-        "object-cloud",
-        "conditioning"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "closed-loop-eval",
-      "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
-      "status": "closed",
-      "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
-      "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
-      "tags": [
-        "sim",
-        "closed-loop",
-        "OOD",
-        "isaac"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-29",
-      "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
-      "status": "done",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter).",
-      "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
-      "tags": [
-        "contact",
-        "tactile",
-        "sim",
-        "isaac",
-        "hand-swap",
-        "6-point",
-        "retraction"
-      ],
-      "updated": "2026-07-30"
-    }
-  ]
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-results",
+   "title": "Handing the model the object doesn't fix the grasp",
+   "status": "done",
+   "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
+   "tags": [
+    "result",
+    "object-cloud",
+    "ablation",
+    "depth-gradient"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-conditioning",
+   "title": "Give the model the object — target-object cloud conditioning",
+   "status": "done",
+   "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
+   "tags": [
+    "plan",
+    "architecture",
+    "object-cloud",
+    "conditioning"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "closed-loop-eval",
+   "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
+   "status": "closed",
+   "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out.",
+   "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
+   "tags": [
+    "sim",
+    "closed-loop",
+    "OOD",
+    "isaac"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-29",
+   "slug": "contact-and-hand-rollouts",
+   "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
+   "status": "done",
+   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter).",
+   "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
+   "tags": [
+    "contact",
+    "tactile",
+    "sim",
+    "isaac",
+    "hand-swap",
+    "6-point",
+    "retraction"
+   ],
+   "updated": "2026-07-30"
+  }
+ ]
 }
