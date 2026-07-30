@@ -22,7 +22,7 @@
    "date": "2026-07-30",
    "slug": "contact-auto-vs-oracle",
    "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
-   "status": "running",
+   "status": "done",
    "updated": "2026-07-30",
    "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter.",
    "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
