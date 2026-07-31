@@ -345,6 +345,23 @@ sbatch --export=ALL,MODEL_OUTPUT_DIR=…/eval_objcloud128,PWAM_CKPT=…/objcloud
     </div>
   </section>
 
+  <section>
+    <div class="wrap">
+      <h2><span class="n">10</span>Correction · added 2026-07-31</h2>
+      <p class="sub">Appended, not edited: the sections above stand as first written. Two input-side
+        measurements made on 2026-07-31 undercut claims in §01 and §07, and the retractions belong
+        next to them.</p>
+      <ul class="clean">
+        <li><span class="mk x">✗</span><span><span class="lt">The “2048&nbsp;pts” cell was never 2048 points.</span><span class="ld">In sim the target-object cloud carried only <b>403 distinct</b> points; the remaining 1645 slots were <i>copies of a single point</i>, because <code>obs_assembly.py:67</code> pads a short cloud with <code>pts_cam[:1].expand(...)</code> rather than resampling. Training clouds are 2048 <i>distinct</i> points at ~1&nbsp;mm spacing. So the density axis never reached training parity, and the §01 reading that success was flat “at every point density (263–2048 real)” is withdrawn — the tested range topped out at 403 distinct for the bottle. The 0/24 outcomes themselves are unaffected; what does not hold is the claim that density was excluded as a cause.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Root cause, and it is a configuration gap, not a model one.</span><span class="ld"><code>PWAM_OBJ_CAND</code> — the analytic mesh-candidate pool — defaulted to 2048, a value <code>preflight.py:70</code> documents as chosen so that <i>128</i>-point clouds were satisfiable (“1024 부족(box 120&lt;128), 2048 전 케이스 충족”). When the campaign moved to 2048-point clouds the pool was never scaled with it. Measured 2026-07-31: pool 2048 → 403 distinct, pool 12000 → 567, pool <b>48000 → 2048 distinct</b>, i.e. parity is reachable and costs only candidates.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">A second, unreported input gap: the scene cloud was capped and randomly thinned.</span><span class="ld">A bridge-side diagnostic added 2026-07-31 measures the sim scene at <b>12000 points, cap binding</b>, spanning 363×163×62&nbsp;cm at <b>2.55&nbsp;cm</b> effective spacing. The finetuning data, run through the real transform pipeline, is <b>5871 points, cap never binding</b>, 204×132×95&nbsp;cm, <b>1.43&nbsp;cm</b> spacing. The sim view is wide enough that its 1.5&nbsp;cm voxelisation overflows <code>max_scene_points</code>, so the cap decimates it <i>at random</i> — a point distribution with holes that the model never saw in training. §07 lists what the campaign ruled out; it should have listed scene-cloud parity as untested, and did not.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">The undertraining reading in §01 is weakened.</span><span class="ld">Run forward on held-out <i>real</i> PnP clips, these same checkpoints reproduce the true motion magnitude: GT right-wrist net displacement 16.07&nbsp;cm per 1&nbsp;s window vs predicted 15.69&nbsp;cm for the reach checkpoint (ratio 0.98) and 12.47&nbsp;cm for the object-cloud checkpoint (0.78). In sim the same checkpoints predict 4.04 and 5.74&nbsp;cm (0.25 and 0.36). The short predictions are therefore specific to sim input, not a property of the trained model, and “more training bought no success” should not be read as evidence about training budget.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">The palm-sweep framing in §07 does not survive either.</span><span class="ld">Commanded-versus-achieved palm rotation, from the logs already published here: this policy commands −1.9°/chunk and the hand achieves +0.9° (fraction achieved −0.26); DPP commands −3.2° and achieves 0.00°. Neither policy controls palm orientation through the position-only 6-point IK, so the +56°/1000-step sweep is an uncontrolled downstream quantity rather than the model walking the palm around, and it should not have been offered as a diagnosis.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">What still stands.</span><span class="ld">Every published <code>success_at_end</code> number (0/24 across all twelve cells, DPP 7/24 in the same harness), the depth-source measurements in §03–§05, and the shipped metric-depth library. Note separately that all of these were produced on the old four-initial-condition protocol; the harness now defaults to 1&nbsp;cm position jitter, so these point estimates are not interval-comparable with anything measured after 2026-07-31.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 
 <footer class="page">
