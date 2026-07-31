@@ -63,6 +63,23 @@
 
   <section>
     <div class="wrap">
+      <div class="verdict">
+        <p class="k">Follow-up added 2026-07-31</p>
+        <p>The cross-hand result on this page was measured at <b>24 episodes per hand</b> on a benchmark
+          that turned out to have only <b>four distinct initial conditions</b>. It has been re-run on the
+          corrected protocol (1 cm per-episode jitter) at <b>96 episodes per hand</b>, and it
+          <b>reproduces</b>: Inspire 25.0 % [17.4–34.5] against Wuji and Sharpa at 0/96 [0–3.85], now with
+          <b>non-overlapping intervals</b>, and IK residuals matching these to within a millimetre under
+          completely different starting poses.</p>
+        <p>That matters for how strongly the claim can be stated: at n=24 a zero only supported
+          <i>"at most 13.8 %"</i>; at n=96 it supports <i>"at most 3.85 %"</i>.
+          <a href="/experiments/dex-point-policy/logs/2026-07-31-benchmark-jitter/">See the 2026-07-31 log</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
       <h2><span class="n">01</span>Result</h2>
       <p class="sub">The result that stands: learned contact firing on the right fingers as the hand closes on the
         object, now measured outside BMW.</p>

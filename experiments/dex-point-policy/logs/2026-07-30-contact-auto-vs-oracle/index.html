@@ -66,6 +66,25 @@
 
   <section>
     <div class="wrap">
+      <div class="verdict">
+        <p class="k">Protocol note added 2026-07-31</p>
+        <p>Every number on this page was measured on a benchmark that ran with <b>zero position
+          jitter</b>, which this log itself identified: the object started at the exact centre of its grid
+          cell every episode, so a 512-episode run was <b>four initial conditions</b>, not 512. The driver
+          has since been fixed and the shipped baseline re-measured. <b>The three-object mean barely moves
+          (23.2 % &rarr; 22.9 %), but the tennis ball goes 1.4 % &rarr; 6.4 %</b> — a 4.6&times; per-object
+          error, because the exact-centre pose is atypically hard for it.</p>
+        <p>So the point estimates here remain valid as descriptions of what happened at four poses, the
+          cell-level intervals stand, and <b>no binomial interval on these episode counts is meaningful</b>.
+          The contact auto-vs-oracle comparison is being re-run at a matched training budget on the
+          corrected protocol with a pre-registered, paired analysis —
+          <a href="/experiments/dex-point-policy/logs/2026-07-31-benchmark-jitter/">see the 2026-07-31 log</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
       <h2><span class="n">01</span>Result</h2>
       <p class="sub">Mean <code>success_at_end</code> over bottle, box and ball — 512 episodes per object
         (128 per 2×2 grid cell), <code>num_envs</code> fixed at 128 throughout.</p>

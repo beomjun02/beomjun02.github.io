@@ -41,8 +41,8 @@
    "slug": "contact-auto-vs-oracle",
    "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
    "status": "done",
-   "updated": "2026-07-30",
-   "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter.",
+   "updated": "2026-07-31",
+   "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter. [2026-07-31] Protocol note: these numbers are from the 4-condition benchmark. Re-measured under 1cm jitter the 3-object mean holds (23.2 -> 22.9%) but the ball goes 1.4 -> 6.4%; the label comparison is being re-run at matched budget with a pre-registered paired analysis.",
    "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
    "tags": [
     "data-quality",
@@ -106,7 +106,7 @@
    "slug": "contact-and-hand-rollouts",
    "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
    "status": "done",
-   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter).",
+   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). [2026-07-31] Re-run at 96 eps/hand on the jittered protocol: reproduces with non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs 0/96 [0-3.85]).",
    "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
    "tags": [
     "contact",
@@ -117,7 +117,7 @@
     "6-point",
     "retraction"
    ],
-   "updated": "2026-07-30"
+   "updated": "2026-07-31"
   }
  ]
 }
