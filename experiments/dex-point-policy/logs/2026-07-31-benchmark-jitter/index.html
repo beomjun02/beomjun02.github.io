@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-07-31 · Four poses cannot estimate a success rate — Dexterous Point Policy</title>
+<meta name="description" content="Experiment log: the openarm-sim benchmark ran with zero position jitter, so 512 episodes were four initial conditions. Turning on 1 cm jitter leaves the mean almost unchanged and changes what every number means — including a 4.6x per-object error and a cross-hand result that now has non-overlapping intervals.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-07-31 · benchmark-jitter</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy</p>
+    <h1>Four poses cannot estimate a success rate</h1>
+    <p class="lede">The sim benchmark placed the object at the exact centre of its grid cell in every
+      episode, so a 512-episode run was <b>four initial conditions repeated 128 times each</b>. Turning on
+      1 cm of per-episode position jitter moves the aggregate by 0.3 points and changes what every number
+      on this benchmark means. Re-measured: the shipped baseline, and the cross-hand table that the
+      embodiment argument rests on.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-31</dd></div>
+      <div><dt>Outcome</dt><dd>mean 23.2 % → 22.9 % · ball 1.4 % → 6.4 % · cross-hand intervals now disjoint</dd></div>
+      <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · ckpt vanilla_initdest_410000.pt</dd></div>
+      <div><dt>Metric</dt><dd class="mono">success_at_end (parallel_eval/eval_env.py) · num_envs fixed per comparison</dd></div>
+      <div><dt>Pre-registered</dt><dd class="mono">contact_ablation/PREREGISTRATION.md (A1–A3)</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><b>The old protocol was unbiased in aggregate and degenerate per cell.</b> Averaged over
+        bottle, box and ball the shipped checkpoint scores <b>22.9 %</b> under 1 cm jitter against
+        <b>23.2 %</b> at the exact cell centres — a 0.3-point difference. But individual cells had been
+        sitting pinned at <code>0/128</code> and <code>128/128</code>, which means the cell was reporting
+        the outcome of the single pose it contained rather than the policy's competence. The clearest
+        consequence is the tennis ball: <b>1.4 % → 6.4 %, a 4.6× error</b>, because the exact-centre pose
+        happens to be atypically hard for it.</p>
+      <p>The cross-hand result <b>survives the change and gets stronger</b>. At 96 episodes per hand the
+        intervals no longer overlap — Inspire is at least <b>17.4 %</b>, while Wuji and Sharpa are at most
+        <b>3.85 %</b> — and the failure mechanism reproduces the previous study <i>to within a millimetre</i>
+        of IK residual under completely different initial conditions. Changing every starting pose changed
+        the success numbers slightly and changed the reason for failure not at all.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>The defect</h2>
+      <p class="sub">The eval driver built its <code>InitialStateTable</code> with
+        <code>xy_jitter_m=0.0</code>. The jitter machinery existed — it had simply never been switched on.</p>
+
+      <div class="tbl">
+        <table>
+          <thead><tr><th></th><th>jitter 0 (until today)</th><th>jitter 1 cm (from today)</th></tr></thead>
+          <tbody>
+            <tr><td>distinct initial conditions per 512-episode run</td><td class="mono"><b>4</b></td><td class="mono"><b>512</b></td></tr>
+            <tr><td>what the 128 episodes in a cell differ by</td><td>PhysX nondeterminism only</td><td>pose <i>and</i> PhysX</td></tr>
+            <tr><td>valid interval</td><td class="mono">cell-level mean ± 1.96 SE (n=4)</td><td class="mono">Wilson binomial (n=512)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">The within-cell divergence was real — final object
+        positions differ by 16–30 cm inside one cell — but it is simulator noise, not task variation. Every
+        binomial interval this harness has ever produced was therefore describing sensitivity to PhysX at one
+        fixed pose. The point estimates were always valid as descriptions of what happened at four poses.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Verified before any GPU was spent</h2>
+      <p class="sub">The fix went into <code>InitialStateTable.__init__</code> rather than the drivers, so
+        all ten call sites inherit it. It was checked on CPU first — a protocol change that silently does
+        nothing is worse than no change.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>check</th><th>result</th></tr></thead>
+          <tbody>
+            <tr><td>distinct manip poses over 512 episodes</td><td class="mono"><b>512</b> (was 4)</td></tr>
+            <tr><td>distinct per cell</td><td class="mono">128 / 128 / 128 / 128</td></tr>
+            <tr><td>offset from the anchor</td><td class="mono">mean 0.77 cm, max 1.37 cm</td></tr>
+            <tr><td>rebuild bit-identical</td><td class="mono">yes</td></tr>
+            <tr><td>same manifest → same poses (policy-independent)</td><td class="mono">yes</td></tr>
+            <tr><td><code>EVAL_XY_JITTER_M=0</code> restores the old benchmark</td><td class="mono">yes — exactly 4 conditions</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">The draw is
+        <code>default_rng(spec.init_seed)</code> with <code>init_seed = base_seed + ep_id</code>, so it does
+        not depend on the policy, the hand or the point density. Two different workstreams building the same
+        manifest get bit-identical object placements — the 512 initial conditions are exported as CSV with a
+        SHA-256 so that can be confirmed without spending a GPU-second.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>The baseline, re-measured</h2>
+      <p class="sub">Shipped <code>410000.pt</code> at 128 points, 512 episodes per object,
+        <code>num_envs</code> fixed at 128. Same checkpoint on both protocols.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>object</th><th>jitter 0</th><th>jitter 1 cm</th><th>95 % CI (Wilson, n=512)</th><th>cells, jitter 0</th><th>cells, jitter 1 cm</th></tr></thead>
+          <tbody>
+            <tr><td>bottle</td><td class="mono">25.4 %</td><td class="mono"><b>23.6 %</b></td><td class="mono">20.2–27.5 %</td><td class="mono">68 / 30 / <b>0</b> / 32</td><td class="mono">35 / 19 / 10 / 57</td></tr>
+            <tr><td>soap box</td><td class="mono">43.0 %</td><td class="mono"><b>38.5 %</b></td><td class="mono">34.4–42.8 %</td><td class="mono"><b>0</b> / 89 / 3 / <b>128</b></td><td class="mono">1 / 88 / 3 / 105</td></tr>
+            <tr><td>tennis ball</td><td class="mono"><b>1.4 %</b></td><td class="mono"><b>6.4 %</b></td><td class="mono">4.6–8.9 %</td><td class="mono">1 / 5 / 1 / <b>0</b></td><td class="mono">3 / 21 / 1 / 8</td></tr>
+            <tr><td><b>mean over objects</b></td><td class="mono">23.2 %</td><td class="mono"><b>22.9 %</b></td><td class="mono">—</td><td class="mono"></td><td class="mono"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Read the cell columns, not the mean. Under jitter 0
+        five cells across the three objects sat at exactly 0 or exactly 128 — saturated, so the cell measured
+        one pose. Under jitter they grade. <b>The ball quadruples</b>: all 512 un-jittered episodes placed it
+        at the same centre pose and 7 succeeded; with ±1 cm, 33 do. That single pose was being reported as the
+        object's success rate.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Does one centimetre decide the outcome?</h2>
+      <p class="sub">A question the old benchmark could not express. Within one cell, split the 128 episodes
+        at the median offset and compare. <span class="tag">exploratory</span></p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>object · cell · axis</th><th>below median</th><th>above median</th><th>Δ</th></tr></thead>
+          <tbody>
+            <tr><td>box · cell 3 · dx</td><td class="mono">96.9 %</td><td class="mono">66.7 %</td><td class="mono"><b>−30.3</b></td></tr>
+            <tr><td>bottle · cell 0 · dx</td><td class="mono">13.8 %</td><td class="mono">41.3 %</td><td class="mono"><b>+27.4</b></td></tr>
+            <tr><td>bottle · cell 3 · dx</td><td class="mono">53.8 %</td><td class="mono">34.9 %</td><td class="mono">−18.9</td></tr>
+            <tr><td>ball · cell 1 · dy</td><td class="mono">9.2 %</td><td class="mono">23.8 %</td><td class="mono">+14.6</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">Individual cells are strongly offset-dependent — but
+        <b>the sign is cell-specific</b>, so it does not aggregate. Pooled within-cell effects mostly straddle
+        zero; only 2 of 6 exclude it, and with six uncorrected tests that is roughly what chance produces.
+        Distance from the anchor separates nothing on any object. This is a post-hoc split of data collected
+        for another purpose and it supplies no headline claim.</p>
+      <p class="muted small">The useful reading is that at the centimetre scale success is strongly
+        pose-dependent but the dependence is <b>local, not monotone</b> — which argues for sampling poses more
+        strongly than a clean gradient would have. A smooth response could have been handled by four poses plus
+        an offset model; a lumpy one can only be sampled.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Cross-hand, re-run on the new protocol</h2>
+      <p class="sub">Same DPP checkpoint, same task and manifest, <code>num_envs</code> fixed at 96 for every
+        hand, naive retarget (<code>kp_scale=1.0</code>). Only the right hand is swapped. Episode count
+        quadrupled from the previous study, for the reason in the note below.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>hand</th><th>finger DoF</th><th>reach past wrist</th><th>n</th><th>success_at_end</th><th>95 % CI (Wilson)</th><th>cells</th></tr></thead>
+          <tbody>
+            <tr><td><b>Inspire RH56F1</b></td><td class="mono">12 (6 indep + 6 coupled)</td><td class="mono">16.6 cm</td><td class="mono">96</td><td class="mono"><b>24/96 = 25.0 %</b></td><td class="mono"><b>17.4–34.5 %</b></td><td class="mono">9 / 4 / 5 / 6</td></tr>
+            <tr><td><b>Wuji</b></td><td class="mono">20 independent</td><td class="mono">8.5 cm</td><td class="mono">96</td><td class="mono"><b>0/96</b></td><td class="mono"><b>0.0–3.85 %</b></td><td class="mono">0 / 0 / 0 / 0</td></tr>
+            <tr><td><b>Sharpa</b></td><td class="mono">22 independent</td><td class="mono">12.2 cm</td><td class="mono">96</td><td class="mono"><b>0/96</b></td><td class="mono"><b>0.0–3.85 %</b></td><td class="mono">0 / 0 / 0 / 0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">A count of zero is a floor, not a point estimate, so the
+        claim lives entirely in the upper bound — and that bound depends on n. At the previous study's
+        <b>n=24</b> a zero only supported <i>"at most 13.8 %"</i>; at <b>n=96</b> it supports
+        <i>"at most 3.85 %"</i> (Wilson two-sided; Clopper–Pearson gives 3.77 % two-sided, 3.07 % one-sided).
+        That is why the episode count was quadrupled. <b>The intervals are now disjoint</b> — 17.4 % floor
+        against a 3.85 % ceiling — so the gap is resolved by the data rather than asserted.</p>
+
+      <h3>Why they fail, and why it is not a grasp problem</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>hand</th><th>IK wrist residual<br><span class="mono small">07-29 → 07-31</span></th><th>IK fingertip max</th><th>IK converged</th><th>cmd delta</th><th>cmd step</th><th>min wrist→object</th></tr></thead>
+          <tbody>
+            <tr><td>Inspire</td><td class="mono">0.47 → <b>0.51 cm</b></td><td class="mono">0.95 cm</td><td class="mono">23 %</td><td class="mono">1.21 cm</td><td class="mono">0.60 cm</td><td class="mono"><b>19.2 cm</b></td></tr>
+            <tr><td>Wuji</td><td class="mono">5.43 → <b>5.44 cm</b></td><td class="mono">2.04 cm</td><td class="mono">0 %</td><td class="mono">1.92 cm</td><td class="mono">0.27 cm</td><td class="mono"><b>27.1 cm</b></td></tr>
+            <tr><td>Sharpa</td><td class="mono">2.77 → <b>2.72 cm</b></td><td class="mono">1.68 cm</td><td class="mono">1 %</td><td class="mono">1.29 cm</td><td class="mono">0.29 cm</td><td class="mono"><b>29.3 cm</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">The zero is a <b>reach</b> failure, not a grasp failure:
+        the wrist never gets near the bottle, so grip strength, finger torque and the contact controller never
+        act. The object point cloud is identical across hands at t=0 (extent 1.79 × 5.50 × 8.42 cm, no empty
+        slots), so observation quality is excluded too. The IK residuals reproduce the previous study to within
+        a millimetre <i>under completely different initial conditions</i> — a bare zero is not interpretable
+        on its own, and only this table makes it evidence.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>What was fixed in advance</h2>
+      <p class="sub">The previous log selected both checkpoints on <i>bottle alone</i> and the per-object table
+        then reversed the ranking. That freedom is removed by pre-registration, written before any eval on the
+        new protocol was submitted.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th></th><th>rule, fixed before the fact</th></tr></thead>
+          <tbody>
+            <tr><td>checkpoint</td><td>the <b>400 k</b> snapshot of each variant, chosen by step count alone. If training falls short, the largest step <i>both</i> reached — read off the filesystem by a script that prints "selection used snapshot availability only".</td></tr>
+            <tr><td>A1 · launch cutoff</td><td>primary evals must launch by 01:30 at whatever the largest common snapshot is then. Adds a deadline, does not touch the selection rule.</td></tr>
+            <tr><td>A2 · training continuation</td><td>chained <code>afterany</code> chunks permitted — the selection rule is invariant to how long training runs.</td></tr>
+            <tr><td>A3 · paired comparison</td><td>both variants run the <b>same</b> 512 initial conditions, so the primary is the <b>paired</b> difference with McNemar's exact test on discordant pairs. Independent binomials demoted to secondary.</td></tr>
+            <tr><td>null result</td><td>a CI covering zero is reported as "no detectable difference at this sample size", with the width stated — not as equivalence, and not resolved by per-object sign patterns.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small" style="margin-top:14px">A3 exists because of section 04: on a locally lumpy
+        response surface a few points of difference between two variants could be pose noise, and pairing
+        differences the pose out at no extra cost. The pairing is <b>verified, not assumed</b> — the analysis
+        script refuses to run unless both runs agree on jitter, episode count, the exact episode-id set and a
+        recomputed initial-condition hash.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Still running</h2>
+      <p class="sub">The contact auto-vs-oracle comparison from the previous log is being re-run at a matched
+        training budget on the new protocol. This section is the reason the log is still open.</p>
+      <ul class="notes">
+        <li>Both finetunes resumed toward <b>400 k steps</b> — the previous comparison ran at 180 k vs 175 k,
+          against a baseline trained to 410 k.</li>
+        <li>Six evals (2 variants × 3 objects × 512 episodes) launch at the pre-registered checkpoint, then the
+          paired McNemar analysis.</li>
+        <li>Whatever it shows, the direction convention and the null-result wording are already fixed above, so
+          the analysis has no room left to flatter itself.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>Artifacts</h2>
+      <ul class="notes">
+        <li><code>openarm_sim/parallel_eval/init_table.py</code> — <code>DEFAULT_XY_JITTER_M</code>, env override <code>EVAL_XY_JITTER_M</code></li>
+        <li><code>contact_ablation/PREREGISTRATION.md</code> — protocol, checkpoint rule, amendments A1–A3</li>
+        <li><code>contact_ablation/tools/</code> — <code>verify_jitter.py</code> · <code>export_eval_manifest.py</code> · <code>jitter_sensitivity.py</code> · <code>aggregate_3hands.py</code> · <code>paired_compare.py</code></li>
+        <li><code>contact_ablation/results/</code> — <code>TABLES.md</code> · <code>THREE_HANDS_JITTERED.md</code> · <code>JITTER_SENSITIVITY.md</code> · <code>manifests/</code></li>
+        <li><code>contact_ablation/SHARED_JITTERED_BASELINE.md</code> — protocol + numbers for cross-workstream reuse</li>
+        <li>Previous logs: <a href="/experiments/dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/">contact auto-vs-oracle</a> · <a href="/experiments/dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/">contact and hand rollouts</a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>Dexterous Point Policy · ICLR 2027 workstream · log updated 2026-07-31</p>
+  </div>
+</footer>
+
+</body>
+</html>

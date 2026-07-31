@@ -49,10 +49,10 @@
         <div class="proj-card">
           <h3><a href="dex-point-policy/">Dexterous Point Policy</a></h3>
           <p>Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.</p>
-          <a class="latest" href="dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/">
-            <span class="ldate">2026-07-30</span>
-            <span class="pill ok"><span class="dot"></span>done</span>
-            <span class="lt">Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object</span>
+          <a class="latest" href="dex-point-policy/logs/2026-07-31-benchmark-jitter/">
+            <span class="ldate">2026-07-31</span>
+            <span class="pill acc"><span class="dot"></span>running</span>
+            <span class="lt">Four poses cannot estimate a success rate</span>
           </a>
         </div>
       </div>
@@ -86,6 +86,13 @@
             <span class="lt">Closed-loop sim eval — reach transfers, grasp pose doesn't</span>
             <span class="ltl">Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD.</span></span>
           <span class="pill warn"><span class="dot"></span>closed</span>
+        </a></li>
+        <li><a href="dex-point-policy/logs/2026-07-31-benchmark-jitter/">
+          <span class="ldate">2026-07-31</span>
+          <span class="lmain"><span class="lproj">Dexterous Point Policy</span>
+            <span class="lt">Four poses cannot estimate a success rate</span>
+            <span class="ltl">The eval driver placed the object at the exact centre of its grid cell every episode, so 512 episodes were four initial conditions. Turning on 1 cm jitter moves the three-object mean 23.2% to 22.9% and changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose against 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand: Inspire 25.0% [17.4-34.5] vs Wuji and Sharpa 0/96 [0-3.85], now non-overlapping, mechanism reproducing to within a millimetre of IK residual.</span></span>
+          <span class="pill acc"><span class="dot"></span>running</span>
         </a></li>
         <li><a href="dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/">
           <span class="ldate">2026-07-30</span>

@@ -19,6 +19,24 @@
  "logs": [
   {
    "project": "dex-point-policy",
+   "date": "2026-07-31",
+   "slug": "benchmark-jitter",
+   "title": "Four poses cannot estimate a success rate",
+   "status": "running",
+   "updated": "2026-07-31",
+   "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Turning on 1 cm per-episode jitter moves the three-object mean by 0.3 points (23.2 -> 22.9%) and changes what every number means: cells had been saturating at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose against 6.4% under jitter, a 4.6x per-object error. Re-ran the cross-hand table at 96 episodes per hand: Inspire 25.0% [17.4-34.5] vs Wuji and Sharpa 0/96 [0-3.85], now non-overlapping, with IK residuals reproducing the previous study to within a millimetre under completely different initial conditions. Checkpoint rule, launch cutoff and a paired McNemar analysis pre-registered before any eval ran.",
+   "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
+   "tags": [
+    "methodology",
+    "statistics",
+    "benchmark",
+    "sim",
+    "cross-hand",
+    "pre-registration"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
    "date": "2026-07-30",
    "slug": "contact-auto-vs-oracle",
    "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
