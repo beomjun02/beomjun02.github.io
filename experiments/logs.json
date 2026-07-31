@@ -22,9 +22,9 @@
    "date": "2026-07-31",
    "slug": "benchmark-jitter",
    "title": "Four poses cannot estimate a success rate",
-   "status": "running",
-   "updated": "2026-07-31",
-   "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Turning on 1 cm per-episode jitter moves the three-object mean by 0.3 points (23.2 -> 22.9%) and changes what every number means: cells had been saturating at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose against 6.4% under jitter, a 4.6x per-object error. Re-ran the cross-hand table at 96 episodes per hand: Inspire 25.0% [17.4-34.5] vs Wuji and Sharpa 0/96 [0-3.85], now non-overlapping, with IK residuals reproducing the previous study to within a millimetre under completely different initial conditions. Checkpoint rule, launch cutoff and a paired McNemar analysis pre-registered before any eval ran.",
+   "status": "done",
+   "updated": "2026-08-01",
+   "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Fixing it (1cm per-episode jitter) moves the 3-object mean only 23.2 -> 22.9% but changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose vs 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand now has non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs Wuji/Sharpa 0/96 [0-3.85]) with IK residuals reproducing the earlier study to within a millimetre. And the contact-label question finally resolved, paired on identical initial conditions at a matched 370k steps: the HUMAN label wins bottle (-8.0, p=0.031) and box (-10.9, p=5e-05) and loses only ball (+2.5, where neither policy is competent) - the opposite of the 07-30 reading, which had compared checkpoints at different steps selected on bottle alone. Since that human label is one grasp bit copied across five fingers, a 1-bit label trains a better policy than a genuine 5-bit one.",
    "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
    "tags": [
     "methodology",

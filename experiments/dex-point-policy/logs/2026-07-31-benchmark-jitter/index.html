@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-07-31 · Four poses cannot estimate a success rate — Dexterous Point Policy</title>
-<meta name="description" content="Experiment log: the openarm-sim benchmark ran with zero position jitter, so 512 episodes were four initial conditions. Turning on 1 cm jitter leaves the mean almost unchanged and changes what every number means — including a 4.6x per-object error and a cross-hand result that now has non-overlapping intervals.">
+<meta name="description" content="Experiment log: the openarm-sim benchmark ran with zero position jitter, so 512 episodes were four initial conditions. Fixing it leaves the aggregate almost unchanged and changes what every number means — a 4.6x per-object error, a cross-hand result with non-overlapping intervals, and a paired contact-label comparison in which a 1-bit human label beats a 5-bit learned one on two of three objects.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <script src="/experiments/assets/lab.js" defer></script>
 </head>
@@ -33,9 +33,9 @@
       embodiment argument rests on.</p>
 
     <dl class="record">
-      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
-      <div><dt>Dates</dt><dd>2026-07-31</dd></div>
-      <div><dt>Outcome</dt><dd>mean 23.2 % → 22.9 % · ball 1.4 % → 6.4 % · cross-hand intervals now disjoint</dd></div>
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-31 → 2026-08-01</dd></div>
+      <div><dt>Outcome</dt><dd>ball 1.4 % → 6.4 % (4.6× error) · cross-hand intervals disjoint · human 1-bit contact label beats learned tactile on 2 of 3 objects</dd></div>
       <div><dt>Env</dt><dd class="mono">openarm-sim · Isaac Lab 0.53.1 · ckpt vanilla_initdest_410000.pt</dd></div>
       <div><dt>Metric</dt><dd class="mono">success_at_end (parallel_eval/eval_env.py) · num_envs fixed per comparison</dd></div>
       <div><dt>Pre-registered</dt><dd class="mono">contact_ablation/PREREGISTRATION.md (A1–A3)</dd></div>
@@ -55,6 +55,14 @@
         <b>3.85 %</b> — and the failure mechanism reproduces the previous study <i>to within a millimetre</i>
         of IK residual under completely different initial conditions. Changing every starting pose changed
         the success numbers slightly and changed the reason for failure not at all.</p>
+      <p><b>And on the corrected benchmark the contact-label question finally has an answer — the
+        opposite one.</b> At a matched 370 k steps on 512 <i>identical</i> initial conditions per object,
+        the <b>human</b> annotation beats the learned tactile label on bottle (−8.0 points, p = 0.031) and
+        box (−10.9, p = 5e−05), losing only on ball (+2.5) where neither policy is competent. The 07-30
+        log read the other way because it compared auto@80 k against oracle@60 k with both checkpoints
+        picked on bottle alone. Since that human label is <b>one grasp bit copied across five fingers</b>,
+        the finding is not "human labels are better" but something more awkward: <b>a 1-bit label trains a
+        better policy here than a genuine 5-bit one</b>.</p>
     </div>
   </div>
 </header>
@@ -259,17 +267,60 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>Still running</h2>
-      <p class="sub">The contact auto-vs-oracle comparison from the previous log is being re-run at a matched
-        training budget on the new protocol. This section is the reason the log is still open.</p>
-      <ul class="notes">
-        <li>Both finetunes resumed toward <b>400 k steps</b> — the previous comparison ran at 180 k vs 175 k,
-          against a baseline trained to 410 k.</li>
-        <li>Six evals (2 variants × 3 objects × 512 episodes) launch at the pre-registered checkpoint, then the
-          paired McNemar analysis.</li>
-        <li>Whatever it shows, the direction convention and the null-result wording are already fixed above, so
-          the analysis has no room left to flatter itself.</li>
-      </ul>
+      <h2><span class="n">07</span>The contact-label comparison, matched and paired</h2>
+      <p class="sub">Two finetunes identical in every respect except the source of the 5-finger contact
+        label, both at step 370 000, both scored on the <b>same</b> 512 initial conditions per object.
+        Pre-registered as a <b>paired</b> analysis (amendment A3) before any of these numbers existed;
+        direction convention fixed then too — <b>positive = auto (learned tactile) better</b>.</p>
+
+      <div class="tbl">
+        <table>
+          <thead><tr><th>object</th><th>auto (learned tactile)</th><th>oracle (human)</th><th>paired Δ</th><th>95 % CI</th><th>McNemar exact p</th><th>discordant</th><th>agreement</th></tr></thead>
+          <tbody>
+            <tr><td>bottle</td><td class="mono">252/512 = 49.2 %</td><td class="mono"><b>293/512 = 57.2 %</b></td><td class="mono"><b>−8.0</b></td><td class="mono">−15.1 to −0.9</td><td class="mono">0.031</td><td class="mono">345</td><td class="mono">32.6 %</td></tr>
+            <tr><td>soap box</td><td class="mono">143/512 = 27.9 %</td><td class="mono"><b>199/512 = 38.9 %</b></td><td class="mono"><b>−10.9</b></td><td class="mono">−16.1 to −5.8</td><td class="mono">4.9e−05</td><td class="mono">186</td><td class="mono">63.7 %</td></tr>
+            <tr><td>tennis ball</td><td class="mono"><b>21/512 = 4.1 %</b></td><td class="mono">8/512 = 1.6 %</td><td class="mono"><b>+2.5</b></td><td class="mono">+0.5 to +4.6</td><td class="mono">0.024</td><td class="mono">29</td><td class="mono">94.3 %</td></tr>
+            <tr><td><i>pooled (demoted)</i></td><td class="mono">27.1 % mean</td><td class="mono">32.6 % mean</td><td class="mono">−5.5</td><td class="mono">−8.5 to −2.5</td><td class="mono">4.4e−04</td><td class="mono">560</td><td class="mono">63.5 %</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted small" style="margin-top:14px"><b>The human label wins, and that is the awkward
+        result.</b> The annotation it wins with is <b>one grasp bit copied across five fingers</b>
+        (1.21 distinct finger columns of 5 over 69 k frames, section 03 of the previous log), while the
+        learned tactile label is a genuine 5-bit signal at 4.98/5. So a strictly less informative label
+        trains a better policy on two of three objects. The 07-30 log reported the reverse ranking; it
+        compared checkpoints at <i>different</i> training steps (auto 80 k vs oracle 60 k), both selected
+        on bottle alone. Matched and paired, the ordering flips.</p>
+
+      <p class="muted small"><b>Why the pooled row is demoted, not featured.</b> Pooling 1536 episodes
+        treats three tasks as exchangeable draws; they are not, and here they <b>disagree about the
+        sign</b> — ball significantly favours the opposite side. The analysis emits a direction-conflict
+        warning for exactly this case, so no single pooled figure is quoted. <b>Ball should carry no
+        weight in either direction</b> regardless: episodes solved by <i>both</i> policies number
+        <b>0 of 512</b>, so its handful of successes are disjoint — the signature of near-chance, not
+        of competence.</p>
+
+      <p class="muted small"><b>Why 370 k and not the pre-registered 400 k.</b> At 00:40 the shared
+        checkpoint volume went hard-full (a 4 KB write failed while <code>df</code> reported 1 % of a
+        bogus 2.0 E size) and both continuation jobs died on filesystem writes — auto at step 387 100,
+        oracle before training resumed. The pre-registered fallback took the largest step
+        <i>both</i> reached, computed from the filesystem by a script that prints
+        <i>"selection used snapshot availability only — no eval result was consulted"</i>. <b>auto is
+        therefore scored at 370 k, not at its own 385 k</b>: comparing auto@385 k with oracle@370 k would
+        confound the label with 15 k extra steps. Matched beats maximal.</p>
+
+      <p class="muted small"><b>What is <i>not</i> a controlled comparison.</b> Either variant against
+        the shipped baseline. That row is 410 k steps at 128 points on the old data; these are 370 k at
+        2048 points on rebuilt data, so label, point count, training length and pipeline all differ at
+        once — the same shape of confound as the original submission's +71.3-point claim. The baseline
+        appears here as context, and no attribution is drawn from it.</p>
+
+      <p class="muted small">Pairing was verified, not assumed: the analysis refuses to emit a number
+        unless both runs agree on jitter, episode count, the exact episode-id set and a recomputed
+        initial-condition hash — ball's is <code>82fbeaa7dc05e3f7</code>; all three are recorded in
+        <code>results/PAIRED.md</code>. Checked by deliberately breaking it — corrupted jitter and a
+        truncated episode set each exit non-zero.</p>
     </div>
   </section>
 
