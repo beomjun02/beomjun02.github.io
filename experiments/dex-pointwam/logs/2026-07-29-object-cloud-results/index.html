@@ -380,6 +380,26 @@ sbatch --export=ALL,MODEL_OUTPUT_DIR=…/eval_objcloud128,PWAM_CKPT=…/objcloud
     </div>
   </section>
 
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">12</span>Correction · added 2026-07-31 (third) — provenance</h2>
+      <p class="sub">Several numbers in &sect;10 were measured on the wrong observation. The bridge
+        runs a synthetic warm-up frame &mdash; a random-noise image over a dummy depth plane &mdash;
+        before it serves any client, and the one-shot diagnostics fired on <i>that</i>, not on the
+        simulator. Caught by an impossible result: a diagnostic that cannot be invariant under a
+        rotation came back invariant.</p>
+      <ul class="clean">
+        <li><span class="mk x">&#10007;</span><span><span class="lt">Withdrawn: the scene-parity numbers in &sect;10, replaced below.</span><span class="ld">&sect;10 reported the sim scene as &ldquo;363&times;163&times;62&nbsp;cm at 2.55&nbsp;cm spacing&rdquo;. That was the warm-up frame. Measured on real observations: extent <b>552&times;234&times;201&nbsp;cm</b>, spacing <b>1.90&nbsp;cm</b>, and the 12&thinsp;000-point cap <b>does</b> bind (that part of &sect;10 survives, with corrected numbers). Training reference: 204&times;132&times;95&nbsp;cm at 1.43&nbsp;cm, cap never binding. So the sim view really is far wider than training &mdash; about 2.7&times; in extent &mdash; and really is decimated by the cap; the specific figures were just wrong.</span></span></li>
+        <li><span class="mk x">&#10007;</span><span><span class="lt">Withdrawn entirely: the degenerate-frame / appearance account in &sect;10.</span><span class="ld">There is <b>no</b> degenerate frame in the simulator &mdash; not at reset, not anywhere. The first <i>real</i> frame is a normal render (mean [154.2,&nbsp;135.4,&nbsp;120.5], std [33.0,&nbsp;36.7,&nbsp;38.8], 203 distinct levels, against training std [38.6,&nbsp;40.7,&nbsp;45.9]). The &ldquo;noise&rdquo; was the bridge's own synthetic warm-up image, and the per-call counter had been counting that warm-up as call&nbsp;1, which is what produced the spurious &ldquo;exactly one bad frame per wave&rdquo;. Appearance was never a defect; a camera warm-up added on the strength of it is unnecessary.</span></span></li>
+        <li><span class="mk ok">&#10003;</span><span><span class="lt">And registration is fine, so nobody should chase it.</span><span class="ld">Keypoints sit <b>1.0&nbsp;cm</b> from the nearest scene point under the identity transform &mdash; better than the training median of 4.26&nbsp;cm and inside the 1.7&ndash;9.5&nbsp;cm training range. The robot arm is present in the cloud (6.7&nbsp;% of points within 15&nbsp;cm of the keypoints; closest keypoint 0.2&nbsp;cm). Two larger figures obtained en route (13.4 and 18.75&nbsp;cm) were artifacts of filtering keypoints by magnitude <i>after</i> a re-centring shift, which keeps the idle hand's zero placeholders as six phantom points &mdash; the same phantom-hand class of bug the bridge's exists-mask was written to fix. Both diagnostics now use the exists mask.</span></span></li>
+        <li><span class="mk i">&middot;</span><span><span class="lt">What the failure actually is, stated without any theory attached.</span><span class="ld">Across <b>48 trajectories</b> (2 replicate runs &times; 24 environments, policy-side instrumentation that never touches the bridge): the fingertips come within 5&nbsp;cm of the target in <b>1 of 48</b> trajectories. Best approach over a whole episode is 8.84&nbsp;cm for the wrist and <b>10.40&nbsp;cm</b> for the closest fingertip. The hand does approach &mdash; wrist 21.8&nbsp;&rarr;&nbsp;13&nbsp;cm &mdash; and then stops.</span></span></li>
+        <li><span class="mk i">&middot;</span><span><span class="lt">The stop is a <i>distance</i>, not a timeout.</span><span class="ld">Per-trajectory stall distance 10.63&nbsp;cm (sd 4.03, CV <b>0.379</b>) versus stall time 86.2 control steps (sd 47.3, CV <b>0.548</b>). Distance is the tighter variable, so this reads as a <b>learned stopping distance of about 10.6&nbsp;cm</b> rather than feedback drift over time. Replicated: 9.77 and 11.49&nbsp;cm across the two runs. The predicted closing rate decays monotonically toward zero as the hand approaches (&minus;5.5, &minus;3.6, &minus;1.8, &minus;0.0&nbsp;cm per chunk) and then reverses.</span></span></li>
+        <li><span class="mk i">&middot;</span><span><span class="lt">Two explanations remain live, and the palm geometry does not separate them.</span><span class="ld">At the stall the palm normal is 83.2&deg; from the direction to the target on average (sd 41.4; 42&nbsp;% facing away), i.e. broadly edge-on with wide spread rather than uniformly turned away. Fingertips are farther from the target than the wrist in 88&nbsp;% of trajectories. So &ldquo;cannot present the fingers&rdquo; is partially supported and &ldquo;behaves as though it has already arrived&rdquo; is not excluded; both stay open.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 
 <footer class="page">
