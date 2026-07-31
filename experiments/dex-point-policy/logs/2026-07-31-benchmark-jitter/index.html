@@ -203,6 +203,31 @@
         slots), so observation quality is excluded too. The IK residuals reproduce the previous study to within
         a millimetre <i>under completely different initial conditions</i> — a bare zero is not interpretable
         on its own, and only this table makes it evidence.</p>
+
+      <h3>What it looks like</h3>
+      <div class="grid3">
+        <figure class="card">
+          <h3><span class="tag">Inspire · 12 DoF</span>reaches and lifts</h3>
+          <video class="vid" src="assets/inspire_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/inspire_jit1cm.jpg"></video>
+          <figcaption>Scored 24/96. The arm closes on the bottle and carries it.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">Wuji · 20 DoF</span>never arrives</h3>
+          <video class="vid" src="assets/wuji_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/wuji_jit1cm.jpg"></video>
+          <figcaption>Scored 0/96. The wrist stalls 27 cm out; the bottle is never touched.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">Sharpa · 22 DoF</span>never arrives</h3>
+          <video class="vid" src="assets/sharpa_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/sharpa_jit1cm.jpg"></video>
+          <figcaption>Scored 0/96. More DoF than Wuji, same outcome — DoF is not the variable.</figcaption>
+        </figure>
+      </div>
+      <p class="muted small" style="margin-top:14px"><b>Caveat on the clips, not the counts.</b> These are
+        single-environment replays of episode 3, and <code>num_envs=1</code> is a different PhysX batch
+        composition from the scored run at <code>num_envs=96</code> — the harness documents that this changes
+        outcomes. All three replays score 0/1, including Inspire. So the clips faithfully show the
+        <i>difference between hands</i>, and the Inspire clip <b>understates Inspire's own success rate</b>.
+        The counts in the tables above come from the scored runs, not from these replays.</p>
     </div>
   </section>
 
