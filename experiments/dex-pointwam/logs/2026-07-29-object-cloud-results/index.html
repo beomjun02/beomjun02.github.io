@@ -362,6 +362,23 @@ sbatch --export=ALL,MODEL_OUTPUT_DIR=…/eval_objcloud128,PWAM_CKPT=…/objcloud
     </div>
   </section>
 
+  <section>
+    <div class="wrap">
+      <h2><span class="n">11</span>Correction · added 2026-07-31 (second)</h2>
+      <p class="sub">This one goes to the premise. The object-conditioning network was never trained,
+        so this entry's central claim — that the model was handed the object and it didn't help —
+        does not describe what was actually tested.</p>
+      <ul class="clean">
+        <li><span class="mk x">✗</span><span><span class="lt">The object-conditioning path sits at its initialisation.</span><span class="ld">Checkpoint forensics on <code>objcloud_ft2048/model-last.pt</code>, comparing each tensor against the exact expected value for <code>nn.Linear</code> default init (<code>E|w| = 0.5/√fan_in</code>): <code>point_mlp.0</code> expected 0.288675 / observed 0.285176 (−1.21%); <code>point_mlp.3</code> 0.062500 / 0.062667 (+0.27%); <code>point_mlp.6</code> 0.044194 / 0.043994 (−0.45%); <code>out_proj</code> 0.031250 / 0.031192 (−0.19%). The three LayerNorm weights initialise at exactly 1.0 and sit at 0.9974–0.9978 (−0.22 to −0.26%). Decoupled weight decay alone predicts <code>lr·wd·steps = 1e-4 · 0.01 · 2000 = −0.2%</code>. <b>The observed drift is the weight decay.</b> For contrast, in the same run the contact <i>head</i> trained normally (absmean 0.051–0.076).</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">So the headline overstates what was tested.</span><span class="ld">“Handing the model the object doesn't fix the grasp” presumes the object reached the model. The network that consumes the object points is at init, so those points could not influence the output however good they were. The 0/24 results stand as measurements; what does not stand is reading them as evidence about object-cloud conditioning.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">It also explains the suspiciously perfect nulls in §01.</span><span class="ld">128 points, 403 distinct, 567, and a full 2048 at true training parity all produced the same behaviour (7.72 vs 7.73&nbsp;cm predicted displacement). That was read here as “density doesn't matter”. The better reading is that the consumer of the density is untrained — a null that exact is a tell, and it was missed.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Established vs inferred.</span><span class="ld"><b>Established:</b> the weights are at init to within weight-decay drift; the flag is wired correctly (<code>use_object_cond</code> is set on <code>PointWAMPredictor</code>, the parameters are present under <code>dynamics_predictor.object_pointnet.*</code>, and object tokens do enter the DiT self-attention with valid slots unmasked). <b>Inferred, not yet measured:</b> <i>why</i> no gradient arrived. The leading candidate is redundancy — the reach checkpoint carries no object conditioning at all and still aims correctly on real clips (<code>robot_l2_moved</code> 0.0532, which includes direction), so scene + language already suffice on real data. A gradient-norm probe is what separates a wiring defect from genuine redundancy, and that is pending; no mechanism is asserted here.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">Every behaviour video published before 2026-07-31 filmed a different policy.</span><span class="ld"><code>render_fail.sbatch</code> never passed <code>model.use_object_cond=true</code> to the bridge, so its rollouts ran with object conditioning OFF regardless of which checkpoint was named. Fixed; the launcher now takes <code>PWAM_OBJ_COND</code> and echoes it.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">And the reach itself was never verified against the object.</span><span class="ld">A 900-step episode rendered with the conditioning actually enabled shows the bottle plainly visible on the left in every frame, <b>never moving</b>, while the arm moves in the middle-and-right region near the destination bin and never travels to the bottle. The Tier-0 claim (“arm reaches straight to the object”) rested on <code>_log_reach</code>, whose whole metric is <code>‖wrist_end − wrist0‖</code> — a displacement magnitude, never object-relative. So the correct question is not why the grasp fails but <b>why the predicted trajectory is not aimed at the conditioned target</b>. That reframing supersedes the “grasp pose doesn't transfer” framing in this entry and in the <a href="/experiments/dex-pointwam/logs/2026-07-29-closed-loop-eval/">closed-loop-eval</a> entry.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 
 <footer class="page">
