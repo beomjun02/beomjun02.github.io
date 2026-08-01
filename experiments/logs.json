@@ -1,133 +1,150 @@
 {
-  "_schema": {
-    "projects": "slug → {title, tagline, path}",
-    "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
-    "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ "_schema": {
+  "projects": "slug → {title, tagline, path}",
+  "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+  "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ },
+ "projects": {
+  "dex-pointwam": {
+   "title": "Dex-PointWAM",
+   "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
+   "path": "dex-pointwam/",
+   "now": {
+    "text": "Sprint 2: nonzero SR with scene points + hand keypoints only (object conditioning dropped); long finetune + visual-first evaluation",
+    "status": "active",
+    "updated": "2026-08-01"
+   }
   },
-  "projects": {
-    "dex-pointwam": {
-      "title": "Dex-PointWAM",
-      "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
-      "path": "dex-pointwam/",
-      "now": {
-        "text": "Sprint 2: nonzero SR with scene points + hand keypoints only (object conditioning dropped); long finetune + visual-first evaluation",
-        "status": "active",
-        "updated": "2026-08-01"
-      }
-    },
-    "dex-point-policy": {
-      "title": "Dexterous Point Policy",
-      "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
-      "path": "dex-point-policy/",
-      "now": {
-        "text": "Sprint 2: visual audit of sim hand actuation + observation validity (user flagged hand/contact observations as invalid); commanded-vs-achieved forensics before any new numbers",
-        "status": "active",
-        "updated": "2026-08-01"
-      }
-    }
+  "dex-point-policy": {
+   "title": "Dexterous Point Policy",
+   "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
+   "path": "dex-point-policy/",
+   "now": {
+    "text": "Sprint 2: visual audit of sim hand actuation + observation validity (user flagged hand/contact observations as invalid); commanded-vs-achieved forensics before any new numbers",
+    "status": "active",
+    "updated": "2026-08-01"
+   }
+  }
+ },
+ "logs": [
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-01",
+   "slug": "why-the-arm-does-not-move",
+   "title": "The arm is not stopping — it is not being moved",
+   "status": "running",
+   "updated": "2026-08-01",
+   "tldr": "\"Learned stopping distance\" struck: the policy commands 4.5–9.3 cm of wrist motion in every chunk and never stops, but net displacement pins at 29 cm. The IK residual — pre-physics — climbs to 5–8.5 cm at the WRIST, the freest site: the 6-point target is over-constrained for a coupled hand. Reproduced offline with no simulator.",
+   "path": "dex-pointwam/logs/2026-08-01-why-the-arm-does-not-move/",
+   "tags": [
+    "diagnosis",
+    "ik",
+    "embodiment-gap",
+    "retraction",
+    "sim"
+   ]
   },
-  "logs": [
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-31",
-      "slug": "benchmark-jitter",
-      "title": "Four poses cannot estimate a success rate",
-      "status": "done",
-      "updated": "2026-08-01",
-      "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Fixing it (1cm per-episode jitter) moves the 3-object mean only 23.2 -> 22.9% but changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose vs 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand now has non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs Wuji/Sharpa 0/96 [0-3.85]) with IK residuals reproducing the earlier study to within a millimetre. And the contact-label question finally resolved, paired on identical initial conditions at a matched 370k steps: the HUMAN label wins bottle (-8.0, p=0.031) and box (-10.9, p=5e-05) and loses only ball (+2.5, where neither policy is competent) - the opposite of the 07-30 reading, which had compared checkpoints at different steps selected on bottle alone. Since that human label is one grasp bit copied across five fingers, a 1-bit label trains a better policy than a genuine 5-bit one.",
-      "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
-      "tags": [
-        "methodology",
-        "statistics",
-        "benchmark",
-        "sim",
-        "cross-hand",
-        "pre-registration"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-30",
-      "slug": "contact-auto-vs-oracle",
-      "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
-      "status": "done",
-      "updated": "2026-07-31",
-      "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter. [2026-07-31] Protocol note: these numbers are from the 4-condition benchmark. Re-measured under 1cm jitter the 3-object mean holds (23.2 -> 22.9%) but the ball goes 1.4 -> 6.4%; the label comparison is being re-run at matched budget with a pre-registered paired analysis.",
-      "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
-      "tags": [
-        "data-quality",
-        "contact",
-        "ablation",
-        "depth-gradient",
-        "sim",
-        "methodology"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-results",
-      "title": "Handing the model the object doesn't fix the grasp",
-      "status": "done",
-      "updated": "2026-07-31",
-      "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP. CORRECTION 2026-07-31 (appended as section 10): the sim inputs were not at training parity, so two of this entry's exclusions do not hold. The '2048-point' object cloud carried only 403 distinct points padded with copies of one point (candidate pool never scaled past its 128-point default; 48000 candidates reaches true 2048), and the scene cloud was cap-bound and RANDOMLY decimated to 2.55 cm spacing over 363x163 cm versus training's uncapped 5871 points at 1.43 cm over 204x132 cm. Run forward on real held-out clips these same checkpoints reproduce 78-98% of true wrist motion (16.07 cm GT) but only 25-36% in sim, so the collapse is sim-input-side and the undertraining and palm-sweep readings are both withdrawn. All success_at_end numbers stand but are on the retired 4-initial-condition protocol. SECOND CORRECTION 2026-07-31 (section 11), and it goes to the premise: the object-conditioning network was NEVER TRAINED. Every weight sits at its initialisation to within weight-decay drift (point_mlp.0 expected 0.288675 vs observed 0.285176; out_proj 0.031250 vs 0.031192; LayerNorms 0.9974-0.9978 vs 1.0; lr*wd*steps predicts -0.2%), while the contact head in the same run trained normally. So the object points could not influence the output however good they were, which is also why 128 / 403 / 567 / 2048-distinct all gave identical behaviour. Additionally: every behaviour video published before 2026-07-31 filmed a DIFFERENT policy, because render_fail.sbatch never passed use_object_cond. And the reach itself was never object-relative. THIRD PASS same day: 'never travels to the bottle' is withdrawn as too strong - per-env instrumentation over 24 envs shows the wrist DOES close on the target (21.8 -> 13.2 cm). What actually happens is a STALL: the predicted closing rate decays monotonically toward zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips never reach grasp range (best 12.3-15.5 cm), so the hand parks ~11-16 cm short and grips air. The decay replicates across two runs with identical inputs; the subsequent reversal does not, and is not claimed. THIRD CORRECTION 2026-07-31 (section 12), a PROVENANCE error: several section-10 numbers were measured on the bridge's synthetic warm-up frame, not on the simulator. Replacements from real observations: sim scene extent 552x234x201 cm at 1.90 cm spacing with the 12000-point cap DOES bind (vs training 204x132x95 cm at 1.43 cm, cap never binding) - so the sim view really is ~2.7x wider and really is cap-decimated, the figures were just wrong. WITHDRAWN ENTIRELY: the degenerate-frame story - there is no bad frame anywhere, the first real frame is a normal render (std 33-39, 203 levels) and the 'noise' was the warm-up image. Registration is FINE at 1.0 cm under identity (better than training's 4.26 median); two larger figures en route were phantom-keypoint artifacts. THE FAILURE, theory-free, over 48 trajectories: fingertips come within 5 cm of the target in 1 of 48; best fingertip approach 10.40 cm. The hand approaches (wrist 21.8 -> 13 cm) then stops at a LEARNED DISTANCE, not a timeout - stall distance CV 0.379 vs stall time CV 0.548, ~10.6 cm, replicated 9.77/11.49.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
-      "tags": [
-        "result",
-        "object-cloud",
-        "ablation",
-        "depth-gradient"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-conditioning",
-      "title": "Give the model the object — target-object cloud conditioning",
-      "status": "done",
-      "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
-      "tags": [
-        "plan",
-        "architecture",
-        "object-cloud",
-        "conditioning"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "closed-loop-eval",
-      "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
-      "status": "closed",
-      "updated": "2026-07-31",
-      "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out. CORRECTION 2026-07-31 (appended as section 08): this title is STRUCK IN BOTH HALVES. Tier-0 was never an object-relative measurement — it rested on a displacement magnitude (||wrist_end - wrist0||) that never referenced the object — and rendered object-relatively the hand never reaches GRASP RANGE: per-env instrumentation shows the wrist closing 21.8 -> 13.2 cm but the predicted closing rate decaying to zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips stalling at 12.3-15.5 cm, so the hand parks ~11-16 cm short and the object never moves (obj_final_pos z=0.915, table height). The palm-up diagnosis also falls: neither policy controls palm orientation through the position-only 6-point IK (ours achieves -0.26 of command, DPP 0.000). The correct question is why the predicted trajectory is not aimed at the conditioned target object, which accounts for the grip firing in empty space, contact firing in 32% of chunks, and why six emulations of sim-input defects were all null. CORRECTION UPDATE 2026-07-31: quantified over 48 trajectories - the hand approaches then stops at a learned distance of ~10.6 cm (stall-distance CV 0.379 vs stall-time CV 0.548, replicated), fingertips within 5 cm in 1 of 48, best fingertip approach 10.40 cm. Scene registration is fine (1.0 cm, in the training band), so the failure is not a frame or perception-fidelity problem.",
-      "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
-      "tags": [
-        "sim",
-        "closed-loop",
-        "OOD",
-        "isaac"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-29",
-      "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
-      "status": "done",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). [2026-07-31] Re-run at 96 eps/hand on the jittered protocol: reproduces with non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs 0/96 [0-3.85]).",
-      "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
-      "tags": [
-        "contact",
-        "tactile",
-        "sim",
-        "isaac",
-        "hand-swap",
-        "6-point",
-        "retraction"
-      ],
-      "updated": "2026-07-31"
-    }
-  ]
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-31",
+   "slug": "benchmark-jitter",
+   "title": "Four poses cannot estimate a success rate",
+   "status": "done",
+   "updated": "2026-08-01",
+   "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Fixing it (1cm per-episode jitter) moves the 3-object mean only 23.2 -> 22.9% but changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose vs 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand now has non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs Wuji/Sharpa 0/96 [0-3.85]) with IK residuals reproducing the earlier study to within a millimetre. And the contact-label question finally resolved, paired on identical initial conditions at a matched 370k steps: the HUMAN label wins bottle (-8.0, p=0.031) and box (-10.9, p=5e-05) and loses only ball (+2.5, where neither policy is competent) - the opposite of the 07-30 reading, which had compared checkpoints at different steps selected on bottle alone. Since that human label is one grasp bit copied across five fingers, a 1-bit label trains a better policy than a genuine 5-bit one.",
+   "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
+   "tags": [
+    "methodology",
+    "statistics",
+    "benchmark",
+    "sim",
+    "cross-hand",
+    "pre-registration"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-30",
+   "slug": "contact-auto-vs-oracle",
+   "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
+   "status": "done",
+   "updated": "2026-07-31",
+   "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter. [2026-07-31] Protocol note: these numbers are from the 4-condition benchmark. Re-measured under 1cm jitter the 3-object mean holds (23.2 -> 22.9%) but the ball goes 1.4 -> 6.4%; the label comparison is being re-run at matched budget with a pre-registered paired analysis.",
+   "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
+   "tags": [
+    "data-quality",
+    "contact",
+    "ablation",
+    "depth-gradient",
+    "sim",
+    "methodology"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-results",
+   "title": "Handing the model the object doesn't fix the grasp",
+   "status": "done",
+   "updated": "2026-07-31",
+   "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP. CORRECTION 2026-07-31 (appended as section 10): the sim inputs were not at training parity, so two of this entry's exclusions do not hold. The '2048-point' object cloud carried only 403 distinct points padded with copies of one point (candidate pool never scaled past its 128-point default; 48000 candidates reaches true 2048), and the scene cloud was cap-bound and RANDOMLY decimated to 2.55 cm spacing over 363x163 cm versus training's uncapped 5871 points at 1.43 cm over 204x132 cm. Run forward on real held-out clips these same checkpoints reproduce 78-98% of true wrist motion (16.07 cm GT) but only 25-36% in sim, so the collapse is sim-input-side and the undertraining and palm-sweep readings are both withdrawn. All success_at_end numbers stand but are on the retired 4-initial-condition protocol. SECOND CORRECTION 2026-07-31 (section 11), and it goes to the premise: the object-conditioning network was NEVER TRAINED. Every weight sits at its initialisation to within weight-decay drift (point_mlp.0 expected 0.288675 vs observed 0.285176; out_proj 0.031250 vs 0.031192; LayerNorms 0.9974-0.9978 vs 1.0; lr*wd*steps predicts -0.2%), while the contact head in the same run trained normally. So the object points could not influence the output however good they were, which is also why 128 / 403 / 567 / 2048-distinct all gave identical behaviour. Additionally: every behaviour video published before 2026-07-31 filmed a DIFFERENT policy, because render_fail.sbatch never passed use_object_cond. And the reach itself was never object-relative. THIRD PASS same day: 'never travels to the bottle' is withdrawn as too strong - per-env instrumentation over 24 envs shows the wrist DOES close on the target (21.8 -> 13.2 cm). What actually happens is a STALL: the predicted closing rate decays monotonically toward zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips never reach grasp range (best 12.3-15.5 cm), so the hand parks ~11-16 cm short and grips air. The decay replicates across two runs with identical inputs; the subsequent reversal does not, and is not claimed. THIRD CORRECTION 2026-07-31 (section 12), a PROVENANCE error: several section-10 numbers were measured on the bridge's synthetic warm-up frame, not on the simulator. Replacements from real observations: sim scene extent 552x234x201 cm at 1.90 cm spacing with the 12000-point cap DOES bind (vs training 204x132x95 cm at 1.43 cm, cap never binding) - so the sim view really is ~2.7x wider and really is cap-decimated, the figures were just wrong. WITHDRAWN ENTIRELY: the degenerate-frame story - there is no bad frame anywhere, the first real frame is a normal render (std 33-39, 203 levels) and the 'noise' was the warm-up image. Registration is FINE at 1.0 cm under identity (better than training's 4.26 median); two larger figures en route were phantom-keypoint artifacts. THE FAILURE, theory-free, over 48 trajectories: fingertips come within 5 cm of the target in 1 of 48; best fingertip approach 10.40 cm. The hand approaches (wrist 21.8 -> 13 cm) then stops at a LEARNED DISTANCE, not a timeout - stall distance CV 0.379 vs stall time CV 0.548, ~10.6 cm, replicated 9.77/11.49.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
+   "tags": [
+    "result",
+    "object-cloud",
+    "ablation",
+    "depth-gradient"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "object-cloud-conditioning",
+   "title": "Give the model the object — target-object cloud conditioning",
+   "status": "done",
+   "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
+   "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
+   "tags": [
+    "plan",
+    "architecture",
+    "object-cloud",
+    "conditioning"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-29",
+   "slug": "closed-loop-eval",
+   "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
+   "status": "closed",
+   "updated": "2026-07-31",
+   "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out. CORRECTION 2026-07-31 (appended as section 08): this title is STRUCK IN BOTH HALVES. Tier-0 was never an object-relative measurement — it rested on a displacement magnitude (||wrist_end - wrist0||) that never referenced the object — and rendered object-relatively the hand never reaches GRASP RANGE: per-env instrumentation shows the wrist closing 21.8 -> 13.2 cm but the predicted closing rate decaying to zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips stalling at 12.3-15.5 cm, so the hand parks ~11-16 cm short and the object never moves (obj_final_pos z=0.915, table height). The palm-up diagnosis also falls: neither policy controls palm orientation through the position-only 6-point IK (ours achieves -0.26 of command, DPP 0.000). The correct question is why the predicted trajectory is not aimed at the conditioned target object, which accounts for the grip firing in empty space, contact firing in 32% of chunks, and why six emulations of sim-input defects were all null. CORRECTION UPDATE 2026-07-31: quantified over 48 trajectories - the hand approaches then stops at a learned distance of ~10.6 cm (stall-distance CV 0.379 vs stall-time CV 0.548, replicated), fingertips within 5 cm in 1 of 48, best fingertip approach 10.40 cm. Scene registration is fine (1.0 cm, in the training band), so the failure is not a frame or perception-fidelity problem.",
+   "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
+   "tags": [
+    "sim",
+    "closed-loop",
+    "OOD",
+    "isaac"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-29",
+   "slug": "contact-and-hand-rollouts",
+   "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
+   "status": "done",
+   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). [2026-07-31] Re-run at 96 eps/hand on the jittered protocol: reproduces with non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs 0/96 [0-3.85]).",
+   "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
+   "tags": [
+    "contact",
+    "tactile",
+    "sim",
+    "isaac",
+    "hand-swap",
+    "6-point",
+    "retraction"
+   ],
+   "updated": "2026-07-31"
+  }
+ ]
 }

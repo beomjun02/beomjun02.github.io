@@ -304,9 +304,10 @@
     <h2><span class="n">09</span>All logs</h2>
     <p class="sub">Every log in this project, newest first. The registry is <code>/experiments/logs.json</code>; keep this list in sync when a log is added or its status changes.</p>
     <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt"><a href="logs/2026-08-01-why-the-arm-does-not-move/">The arm is not stopping — it is not being moved</a> · <code>2026-08-01 · running</code></span><span class="ld">Strikes the "learned stopping distance" reading: the policy never stops commanding motion, the IK residual (pre-physics) reaches 5–8.5 cm at the wrist, and the over-constraint reproduces offline with no simulator.</span></span></li>
       <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-07-29-object-cloud-results/">Handing the model the object doesn't fix the grasp</a> · <code>2026-07-29 → 07-31 · done</code></span><span class="ld">0/24 across every density at true parity; §11 correction: the object-conditioning path was at initialisation — the cell tested a no-op.</span></span></li>
       <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-07-29-object-cloud-conditioning/">Give the model the object — target-object cloud conditioning</a> · <code>2026-07-29 · done</code></span><span class="ld">The conditioning build; superseded by the §11 untrained-path forensics in the results log.</span></span></li>
-      <li><span class="mk warn">→</span><span><span class="lt"><a href="logs/2026-07-29-closed-loop-eval/">Closed-loop sim eval</a> · <code>2026-07-29 → 07-31 · closed</code></span><span class="ld">Tier-0 struck in both halves; the honest signature: approach decays to a stall ~10.6 cm short, fingertips reach the object in 1/48 episodes.</span></span></li>
+      <li><span class="mk warn">→</span><span><span class="lt"><a href="logs/2026-07-29-closed-loop-eval/">Closed-loop sim eval</a> · <code>2026-07-29 → 07-31 · closed</code></span><span class="ld">Tier-0 struck in both halves; approach decays and fingertips reach the object in 1/48 episodes. <strong>2026-08-01:</strong> the "stall ~10.6 cm short" reading stated here is <em>struck</em> — see the 08-01 log; the model never stops commanding motion, the motion is not realised.</span></span></li>
     </ul>
   </section>
 
