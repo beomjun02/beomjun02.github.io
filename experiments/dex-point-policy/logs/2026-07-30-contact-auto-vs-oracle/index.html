@@ -80,6 +80,26 @@
           corrected protocol with a pre-registered, paired analysis —
           <a href="/experiments/dex-point-policy/logs/2026-07-31-benchmark-jitter/">see the 2026-07-31 log</a>.</p>
       </div>
+
+      <div class="verdict">
+        <p class="k">Second protocol note added 2026-08-01 — a separate defect</p>
+        <p>A later audit of the success predicate found a <b>second, independent</b> problem with the
+          headline on this page. <code>success_at_end</code> tests only whether the object's origin
+          finished inside a box: XY within the bin footprint, Z within <code>[floor−3 cm, rim+3 cm]</code>.
+          The upper margin admits objects that are <b>above the rim</b> — and since the predicate also
+          demands the origin be inside the footprint, and that interior is empty air, such an object has
+          13–16 cm of nothing beneath it. It is held by the hand or mid-fall at the timeout:
+          <b>neither placed nor failed</b>.</p>
+        <p><b>83 of the 392 successes behind the 76.6 % oracle figure — 21.2 % — are in that state.</b>
+          The auto run has 22 of 251 (8.8 %). Their final tilt is a narrow band (33.6° median, 1.2 %
+          upright), which reads as a held pose rather than an object balanced on a rim edge; final pose
+          alone cannot fully separate the two, and both are outside what the number claims.</p>
+        <p>This is <b>independent of the jitter defect above</b> and compounds it. The corrected
+          2026-07-31 runs are clean on this axis — <b>0 of 293</b> such episodes for oracle and 2 of 252
+          for auto — so the paired contact-label verdict rests on episodes where the object actually
+          reached the bin floor. Recomputed from <code>obj_final_pos</code>/<code>obj_final_quat</code>,
+          which were recorded per episode all along.</p>
+      </div>
     </div>
   </section>
 
