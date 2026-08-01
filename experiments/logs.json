@@ -10,7 +10,7 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "Coherence collapse found: predictions decay in direction, not magnitude. Next: is autoregressive decoding what supplies chunk-to-chunk consistency (DPP's +44.2 ablation)?",
+    "text": "Account closed: a coherent trajectory to the wrong attractor, matching the marginal of its training diet. Next: the WDS window-cutting rule, and whether autoregressive decoding is what supplies chunk-to-chunk consistency.",
     "status": "active",
     "updated": "2026-08-01"
    }
@@ -34,7 +34,7 @@
    "title": "The arm is not stopping — it is not being moved",
    "status": "running",
    "updated": "2026-08-01",
-   "tldr": "The arm is not frozen — it executes 0.5–0.8 cm every chunk and NETS ZERO. Realised coherence (net gain ÷ achieved motion) falls 0.94 → 0.01 and stays there: predictions decay in DIRECTION, never in magnitude. Six deploy-side shims each improved their own mechanism metric and moved the outcome not at all, and the IK residual is dissociable from the stall.",
+   "tldr": "Not a stall and not oscillation: the model steers the hand along a COHERENT straight line (chunk-to-chunk direction agreement +0.99) to a fixed point 16 cm from the object, converges there and holds. Seven interventions, thirteen cells, all 0/24 — and the IK residual is dissociable from the outcome, confirmed independently on a second driver.",
    "path": "dex-pointwam/logs/2026-08-01-why-the-arm-does-not-move/",
    "tags": [
     "diagnosis",

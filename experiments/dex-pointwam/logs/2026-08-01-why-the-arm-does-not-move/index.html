@@ -34,7 +34,7 @@
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
       <div><dt>Dates</dt><dd>2026-08-01</dd></div>
-      <div><dt>Outcome</dt><dd>0/24 · realised coherence 0.53 → <strong>0.01</strong> · the arm moves every chunk and nets zero</dd></div>
+      <div><dt>Outcome</dt><dd>0/24 across 13 cells · a coherent straight line to a fixed point <strong>16 cm from the object</strong></dd></div>
       <div><dt>Env</dt><dd class="mono">alinlab slurm · Isaac Lab · OpenArm + Inspire 19-dof</dd></div>
       <div><dt>Checkpoint</dt><dd class="mono">dpp_ckpts_1p9s/pnp500_ft_ext1/model-best.pt</dd></div>
       <div><dt>Full report</dt><dd class="mono">openarm-sim/DEXPOINTWAM_SIM_CAMPAIGN.md · jobs 55180, 55210</dd></div>
@@ -337,6 +337,81 @@ sbatch scripts/render_pointwam_3p.sbatch  # third-person view + contact sheet</c
       fraction swings from 16.7% to 31.6% on a 0.21 cm difference between two independently computed
       thumb maxima (12.46 vs 12.25 cm). The thumb distribution is dense at the limit, so that statistic
       is knife-edge and should never be quoted without the maximum it was computed against.</p>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">11</span>Correction &amp; account · 2026-08-01 16:10</h2>
+      <p class="sub">Append-only. The coherence framing published earlier today is <strong>struck</strong>,
+      and what replaces it is a complete account of the path.</p>
+
+      <p><strong>What was wrong.</strong> The verdict above described the arm as oscillating in place,
+      with predictions decaying in direction. Both came from a "realised coherence" ratio whose
+      numerator was <span class="mono">‖w<sub>now</sub> − w<sub>reset</sub>‖</span> — a <em>radius</em>.
+      Its change measures distance from a fixed point, not displacement, so an arm tracing a consistent
+      purposeful arc scores ~0 with no reversal anywhere; circling at constant radius scores exactly
+      zero. The instrument that caught it was wired into the same cell specifically because it could
+      prove the reading wrong: <strong>chunk-to-chunk commanded direction agreement is +0.98 to
+      +0.99</strong> while the ratio was collapsing. The predictions were never reversing.</p>
+
+      <h3>The account</h3>
+      <p>The model steers the hand along a coherent straight line to a fixed point that is
+      <em>not the object</em>, converges there smoothly, and then holds — still commanding 6–8 cm per
+      chunk that yields half a centimetre, because at that pose the commanded target carries a 5–6 cm
+      IK residual.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>t</th><th>wrist world (m)</th><th>chunk displacement</th><th>wrist→bottle</th><th>fingertip→bottle</th><th>predicted Δ to bottle</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0</td><td class="mono">(0.209, −0.153, 1.107)</td><td class="mono">—</td><td class="mono">21.8</td><td class="mono">16.3</td><td class="mono">−7.23</td></tr>
+            <tr><td class="mono">20</td><td class="mono">(0.284, −0.152, 1.068)</td><td class="mono">8.65</td><td class="mono">16.7</td><td class="mono">18.1</td><td class="mono">−1.48</td></tr>
+            <tr><td class="mono">40</td><td class="mono">(0.362, −0.155, 1.057)</td><td class="mono">8.22</td><td class="mono">15.8</td><td class="mono">20.9</td><td class="mono">+2.22</td></tr>
+            <tr><td class="mono">80</td><td class="mono">(0.457, −0.145, 1.023)</td><td class="mono">4.34</td><td class="mono">16.7</td><td class="mono">22.5</td><td class="mono">+3.68</td></tr>
+            <tr><td class="mono">120</td><td class="mono">(0.470, −0.142, 1.014)</td><td class="mono">1.26</td><td class="mono">16.8</td><td class="mono">23.0</td><td class="mono">+2.44</td></tr>
+            <tr><td class="mono">200</td><td class="mono">(0.467, −0.132, 1.008)</td><td class="mono">~0.3</td><td class="mono">16.0</td><td class="mono">22.8</td><td class="mono">+2.10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A straight line in +x, smooth deceleration, convergence — t=120 and t=200 differ by 3 mm.
+      Closest approach is 15.8 cm at t=40; after that it recedes. <strong>The model stops predicting
+      approach after the first chunk and never resumes.</strong> Not a stall, not a tremor, not
+      oscillation: a coherent trajectory aimed somewhere that is not the object.</p>
+
+      <p><strong>It is the model, not the shim.</strong> A paired baseline cell (no smoothing, no
+      clamp) reproduces it to within a few millimetres — predicted Δ −7.24 / −1.20 / +1.71 / +2.45
+      against −7.23 / −1.48 / +2.22 / +3.32, fingertip→bottle 16.3 / 18.1 / 21.1 / 21.7 against
+      16.3 / 18.1 / 20.9 / 21.9, and the target-directedness verdict flips to the container at t=20 in
+      both. The t=0 agreement is exact to 0.01 cm, which it must be — smoothing has no history at the
+      first chunk — so the comparison carries a free determinism check, and it passes.</p>
+
+      <h3>Does the model just emit its training marginal?</h3>
+      <p>Two claims, two statuses. <strong>Decided:</strong> the model's unconditional prediction
+      matches the marginal of its <em>actual training diet</em> — <span class="mono">+2.00 to +2.44 cm</span>
+      predicted change in fingertip→object per 1 s chunk, against a WDS marginal of
+      <span class="mono">+2.43 cm</span> median over 3,431 windows. <strong>Open:</strong> whether the
+      diet's marginal represents the task's. The raw source h5 at a matched horizon gives
+      <span class="mono">+0.23 cm</span> — an order of magnitude apart. Four candidate causes are
+      excluded by measurement: window length, occlusion drift of the object centroid (the cloud is one
+      static snapshot per window, so it cannot move), phase-biased gating (visibility is 96% early and
+      worst in the <em>late</em> deciles; restricting to visible-at-both-ends moves the median by zero;
+      hand tracking is 100% throughout), and a per-window metric transform (spans agree within 1%).
+      The remaining lead: the build keeps 3,431 windows where a raw stride-5 pass finds 9,616.</p>
+
+      <h3>Seven interventions, thirteen cells, one outcome</h3>
+      <p>Rigid hand, fingertip scale 0.8, step clamp 2 cm, temporal ensembling α=0.5, plus the previous
+      night's contact-in family. Every cell 0/24. The wrist IK residual ranges over a factor of 3.5
+      across them and the outcome never moves — including a clamp that held the residual at 1.8 cm
+      against a 5.5 cm baseline. <strong>The IK residual is dissociable from the stall.</strong>
+      dpp-iclr27 reached the same conclusion from the opposite direction, <em>repairing</em> the IK to
+      0.5–0.7 cm with 65–98% convergence and getting 0/24 in all six of their cells with the hand no
+      closer. Two drivers, two interventions, opposite directions, same result: residual is not causal
+      for task outcome on this benchmark, and reporting it as evidence about policy quality needs an
+      intervention control rather than a correlation.</p>
+      <p class="muted">The final intervention failed for a reason already in hand: temporal ensembling
+      averages consecutive commanded directions, and those already agree at +0.98–0.99, so there was
+      nothing to average out. The family closes on an explanation rather than on exhaustion.</p>
     </div>
   </section>
 
