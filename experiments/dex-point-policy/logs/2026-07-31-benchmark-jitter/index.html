@@ -213,29 +213,49 @@
         on its own, and only this table makes it evidence.</p>
 
       <h3>What it looks like</h3>
+
+      <div class="verdict" style="margin-bottom:18px">
+        <p class="k">Correction added 2026-08-01 — these three clips do not show what they claimed</p>
+        <p>All three are replays of <b>episode 3, which fails for every hand</b>. That was disclosed
+          below from the start, but two claims made around it were wrong and are struck:</p>
+        <p><b>Struck: "Inspire reaches and lifts / the arm closes on the bottle and carries it."</b> It does
+          not. In this episode the bottle finishes at exactly its spawn position — displacement 0.0 cm,
+          z-rise 0.0000 m — and Inspire's wrist never gets closer than <b>21.5 cm</b> to it.</p>
+        <p><b>Struck: "the clips faithfully show the difference between hands."</b> They do not. Minimum
+          wrist-to-object distance in <i>this</i> episode is Inspire <b>21.5 cm</b>, Wuji <b>19.8 cm</b>,
+          Sharpa <b>22.0 cm</b> — no separation, and Inspire is the <i>worst</i> of the three. The
+          separation is real in the 96-episode aggregate (Inspire 19.2 cm, Wuji 27.1 cm, Sharpa 29.3 cm),
+          which is where the tables above come from; it is simply not visible here.</p>
+        <p>The captions had been written from the aggregate table while pointing at a specific clip that
+          contradicted it. The counts and the reach table are unaffected — they never came from these
+          replays. A genuine Inspire success episode is being rendered to replace this panel.</p>
+      </div>
+
       <div class="grid3">
         <figure class="card">
-          <h3><span class="tag">Inspire · 12 DoF</span>reaches and lifts</h3>
+          <h3><span class="tag">Inspire · 12 DoF</span>episode 3 — a failure</h3>
           <video class="vid" src="assets/inspire_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/inspire_jit1cm.jpg"></video>
-          <figcaption>Scored 24/96. The arm closes on the bottle and carries it.</figcaption>
+          <figcaption>Scored 24/96 overall — <b>but this episode is not one of them.</b> The wrist stops
+            21.5 cm out and the bottle is never touched.</figcaption>
         </figure>
         <figure class="card">
-          <h3><span class="tag">Wuji · 20 DoF</span>never arrives</h3>
+          <h3><span class="tag">Wuji · 20 DoF</span>episode 3 — a failure</h3>
           <video class="vid" src="assets/wuji_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/wuji_jit1cm.jpg"></video>
-          <figcaption>Scored 0/96. The wrist stalls 27 cm out; the bottle is never touched.</figcaption>
+          <figcaption>Scored 0/96. Here the wrist closes to 19.8 cm and stops; the bottle is never
+            touched.</figcaption>
         </figure>
         <figure class="card">
-          <h3><span class="tag">Sharpa · 22 DoF</span>never arrives</h3>
+          <h3><span class="tag">Sharpa · 22 DoF</span>episode 3 — a failure</h3>
           <video class="vid" src="assets/sharpa_jit1cm.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/sharpa_jit1cm.jpg"></video>
-          <figcaption>Scored 0/96. More DoF than Wuji, same outcome — DoF is not the variable.</figcaption>
+          <figcaption>Scored 0/96. Closes to 22.0 cm and stops. More DoF than Wuji, same outcome.</figcaption>
         </figure>
       </div>
-      <p class="muted small" style="margin-top:14px"><b>Caveat on the clips, not the counts.</b> These are
-        single-environment replays of episode 3, and <code>num_envs=1</code> is a different PhysX batch
-        composition from the scored run at <code>num_envs=96</code> — the harness documents that this changes
-        outcomes. All three replays score 0/1, including Inspire. So the clips faithfully show the
-        <i>difference between hands</i>, and the Inspire clip <b>understates Inspire's own success rate</b>.
-        The counts in the tables above come from the scored runs, not from these replays.</p>
+      <p class="muted small" style="margin-top:14px"><b>What the clips are, exactly.</b>
+        Single-environment replays of the same episode 3 on all three hands, so the initial condition is
+        held constant across the comparison. <code>num_envs=1</code> is a different PhysX batch composition
+        from the scored run at <code>num_envs=96</code>, which the harness documents as outcome-changing.
+        All three replays score 0/1. They are a matched-initial-condition view of one episode —
+        <b>not an illustration of the success-rate gap</b>, which is what the tables above are for.</p>
     </div>
   </section>
 
