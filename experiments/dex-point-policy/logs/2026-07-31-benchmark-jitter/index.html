@@ -228,8 +228,28 @@
           which is where the tables above come from; it is simply not visible here.</p>
         <p>The captions had been written from the aggregate table while pointing at a specific clip that
           contradicted it. The counts and the reach table are unaffected — they never came from these
-          replays. A genuine Inspire success episode is being rendered to replace this panel.</p>
+          replays. The replacement success clip is below; the matched-condition trio is kept beneath it,
+          honestly labelled, because holding the initial condition fixed across hands is the one thing
+          it does do.</p>
       </div>
+
+      <figure class="card" style="margin-bottom:22px">
+        <h3><span class="tag">Inspire · 12 DoF</span>what a success actually looks like</h3>
+        <video class="vid" src="assets/inspire_success_ep0.mp4" autoplay loop muted playsinline
+               preload="metadata" poster="assets/inspire_success_ep0.jpg"></video>
+        <figcaption><b>Episode 0 — a success, and this caption is written from the clip.</b> The bottle
+          stands on the desk; the arm reaches; by frame 109 <b>the bottle is off the desk and held in the
+          hand</b>, upright between the fingers; by frame 140 it is being lowered <b>into the container</b>;
+          the hand then withdraws and leaves it there. Final position (0.363, −0.287, 0.943) m — inside the
+          bin footprint with 3.0 cm and 4.8 cm of wall clearance, resting 2.3 cm above the bin floor.
+          <br><br>
+          <b>Selected by rule, fixed before rendering:</b> the first six successful <code>ep_id</code>s in
+          manifest order from the scored 96-episode run (0, 6, 23, 41, 42, 44) were rendered together in one
+          batch, and the panel uses the first of them that also succeeded <i>in that render</i>. That was
+          <b>ep 0</b>, the first in manifest order; the other five failed under the smaller batch, which is
+          the same composition effect that made episode 3 fail below. Same configuration as the scored run —
+          shipped baseline at 128 points, 1 cm jitter, 1200 steps.</figcaption>
+      </figure>
 
       <div class="grid3">
         <figure class="card">
