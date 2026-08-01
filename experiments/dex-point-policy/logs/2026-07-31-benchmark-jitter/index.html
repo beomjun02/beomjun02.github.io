@@ -65,18 +65,32 @@
         better policy here than a genuine 5-bit one</b>.</p>
 
       <p class="k" style="margin-top:20px">Added 2026-08-01 — two results from the forensic audit</p>
-      <p><b>The deployed observation did not match the trained one, and fixing it triples the label
-        gap.</b> The harness was still eroding the object silhouette by 15 px, which the training
-        pipeline dropped in July; the policy was being fed a flat ribbon (24.4 % distinct points,
-        two axes 2.9× and 3.4× thinner) where it learned a 3-D shell. Re-running the same paired
-        comparison with erosion off — one variable, same 512 initial conditions, same 370 k step —
-        moves the two variants in <i>opposite</i> directions: <b>oracle 57.2 % → 65.4 %</b> (+8.2,
-        p = 1.4e−4), <b>auto 49.2 % → 39.1 %</b> (−10.2, p = 9e−5). The auto-vs-oracle gap goes from
-        <b>−8.0 to −26.4 points</b> (p = 6.0e−15). The human 1-bit label's advantage was being
-        heavily understated by a degraded observation. <i>Bottle only so far; ball and box are
-        running, and ball matters most — it is the one object that favoured the learned label.</i>
-        That the two variants respond oppositely to the same fix, differing only in the contact
-        label, is an observation I cannot yet explain and am not going to dress as a mechanism.</p>
+      <p><b>The deployed observation did not match the trained one — and fixing it breaks the
+        verdict above.</b> The harness was still eroding the object silhouette by 15 px, which the
+        training pipeline dropped in July; the policy was being fed a flat ribbon (24.4 % distinct
+        points, two axes 2.9× and 3.4× thinner) where it learned a 3-D shell. Re-running the same
+        paired comparison with erosion off — one variable, same 512 initial conditions per object,
+        same 370 k step, all three objects:</p>
+      <div class="tbl"><table>
+        <thead><tr><th>object</th><th>paired Δ, old observation</th><th>paired Δ, at parity</th><th>95 % CI</th><th>McNemar p</th></tr></thead>
+        <tbody>
+          <tr><td>bottle</td><td class="mono">−8.0 (p = .031)</td><td class="mono"><b>−26.4</b></td><td class="mono">−32.7 to −20.1</td><td class="mono">6.0e−15</td></tr>
+          <tr><td>box</td><td class="mono">−10.9 (p = 5e−5)</td><td class="mono"><b>+7.0</b></td><td class="mono">+3.5 to +10.5</td><td class="mono">1.3e−4</td></tr>
+          <tr><td>ball</td><td class="mono">+2.5 (p = .024)</td><td class="mono">−1.0</td><td class="mono">−3.0 to +1.1</td><td class="mono">0.46</td></tr>
+        </tbody>
+      </table></div>
+      <p>Negative favours the human label, positive the learned one — the convention was fixed
+        before any of these numbers existed. <b>Box flips sign.</b> Under the old observation the
+        human 1-bit label won on two objects of three; at parity it wins enormously on bottle,
+        <i>loses</i> significantly on box, and ball is null. <b>So the two-of-three result above was
+        in part an artifact of a degraded observation, and no claim of the form "the human 1-bit
+        label trains a better policy" is admissible without naming the object.</b> The pooled figure
+        (−6.8) averages over objects that disagree about the sign and is not quoted here.</p>
+      <p>A mechanism I proposed from bottle alone, and which the full table kills: I read the
+        variants as responding oppositely to the observation fix — oracle +8.2, auto −10.2 — and
+        suggested they consume the object cloud differently. On box it is <b>exactly reversed</b>
+        (oracle −5.9, auto +12.1). It is an object × variant interaction, not a property of either
+        variant, and I have no account of it.</p>
       <p><b>The cross-hand failure is not an IK problem, and I would have published that it was.</b>
         The reading above — that the equal-weight IK sacrifices the wrist to chase fingertips a
         different hand cannot reach — is half right, and the half that is wrong matters. Shrinking
