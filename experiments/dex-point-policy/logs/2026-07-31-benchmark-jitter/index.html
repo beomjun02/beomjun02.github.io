@@ -293,6 +293,30 @@
         Pre-registered as a <b>paired</b> analysis (amendment A3) before any of these numbers existed;
         direction convention fixed then too — <b>positive = auto (learned tactile) better</b>.</p>
 
+      <div class="verdict">
+        <p class="k">Annotation added 2026-08-01 — these rates were measured through a degraded observation</p>
+        <p>A forensic replay found that the object point cloud the policy is fed <b>at deploy</b> does not
+          match the one it was <b>trained</b> on. Measured by rotation-invariant PCA extent, over 24
+          bottle frames each:</p>
+        <p class="mono" style="margin:8px 0">training h5 &nbsp; <b>100 % distinct</b> points &nbsp;·&nbsp;
+          extent 7.0 × 2.6 × 1.7 cm<br>
+          sim / deploy &nbsp; <b>24.4 % distinct</b> &nbsp;·&nbsp; extent 5.9 × 0.9 × 0.5 cm</p>
+        <p>The longest axis roughly matches (0.84×) but the second and third are <b>2.9× and 3.4×
+          thinner</b>: the policy sees a flat ribbon where it learned a three-dimensional shell. And
+          76 % of the 2048-point tensor is <b>one point repeated</b> — the padding rule filling slots
+          that erosion emptied. Registration is correct; the points do land on the bottle.</p>
+        <p>Cause: the harness still applies 15 px image-space ring erosion to the bottle, while the
+          training pipeline was rebuilt in July with depth-gradient filtering <i>because</i> erosion was
+          destroying objects — the same defect that had rendered a 6.7 cm tennis ball as a 1.2 cm speck.
+          The training data was fixed; the simulator's observation was not.</p>
+        <p><b>What this does and does not affect.</b> The <b>absolute</b> success rates on this page —
+          here and in section 03 — were all measured through that degraded observation and should be
+          read as such. The <b>paired comparison below is internally valid</b>: both variants were
+          scored through the identical degraded pipeline on identical initial conditions, so the
+          difference between them is not explained by it. An erosion sweep against the training band is
+          running; any re-measurement will be published as its own result, not folded into this table.</p>
+      </div>
+
       <div class="tbl">
         <table>
           <thead><tr><th>object</th><th>auto (learned tactile)</th><th>oracle (human)</th><th>paired Δ</th><th>95 % CI</th><th>McNemar exact p</th><th>discordant</th><th>agreement</th></tr></thead>
