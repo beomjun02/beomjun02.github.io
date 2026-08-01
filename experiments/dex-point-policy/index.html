@@ -219,30 +219,65 @@
   </div>
 
   <div class="road reveal">
-    <div class="item"><span class="badge done">done</span><div>
+    <div class="item"><span class="badge wip">reframed</span><div>
       <h3>① Contact automation via tactile prediction</h3>
-      <p>Learned tactile model verified (F1 0.70 ≫ 0.33) and visualized; contact labels no longer hand-made.</p></div></div>
+      <p>The tactile model itself is verified (F1 0.70 ≫ 0.33) and the human annotation is measurably
+        <b>one grasp bit copied across five fingers</b> (1.21 distinct finger columns of 5, over 69 k frames).
+        But <b>“automating it” no longer has a clean performance argument.</b> Matched at 370 k steps on
+        identical initial conditions, with the deployed observation brought into parity with training, the
+        paired result is <b>object-dependent</b>: the human label wins hugely on bottle (−26.4 pts,
+        p = 6e−15), the learned label wins on box (+7.0, p = 1.3e−4), ball is null. This is now an
+        <b>interaction study</b> — “which label” has no object-free answer — and that is the finding.</p></div></div>
     <div class="item"><span class="badge ext">coworker</span><div>
       <h3>② Residual RL to close sub-cm error <span class="who">· owned by coworker</span></h3>
       <p>Base policy from human video, then residual RL on the real robot — the “true real-robot learning from human demos” argument. We keep the story consistent, not the implementation.</p></div></div>
     <div class="item"><span class="badge done">done</span><div>
       <h3>③ Higher-DOF hands in simulation</h3>
-      <p>OpenArm + Wuji (20 DOF) and + Sharpa (22 DOF) built, smoke-tested, config-integrated in Isaac Lab.</p></div></div>
+      <p>OpenArm + Wuji (20 DOF) and + Sharpa (22 DOF) built, smoke-tested, config-integrated in Isaac Lab,
+        and measured: Inspire 25.0 % against <b>0/96 for both new hands</b> on the corrected benchmark.
+        The mechanism now resolves into <b>two layers</b>. The <i>action</i> layer is real and fixable —
+        shrinking the fingertip targets repairs the IK almost completely (Wuji wrist residual
+        5.44 → 0.67 cm, Sharpa 2.71 → 0.48, solver convergence 0 % → 65–98 %) — and <b>buys nothing:
+        0/24 in all six cells</b>, hand no closer to the object. What remains is the <i>observation</i>
+        layer: the policy is looking at a hand it never saw, and no action-side fix reaches that.</p></div></div>
     <div class="item"><span class="badge plan">planned</span><div>
       <h3>④ Harder, more dexterous task set</h3>
       <p>Pick&amp;Place · long-horizon high-precision BMW · a finger-gaiting task only a high-DOF hand can do. Task-env design (scene / action / RL) is the next scoping step.</p></div></div>
   </div>
 
+  <div class="eyebrow" style="margin-top:40px;margin-bottom:6px">Measurement standing (2026-08-01)</div>
+  <div class="decisions reveal">
+    <div class="dec"><div class="q">P</div><h4>Protocol-v2 is the base</h4>
+      <p>All sim tables from here use 1 cm initial-pose jitter <i>and</i> observation parity
+        (<code>EVAL_RING_PX=0</code>). Earlier runs stay published under their own annotations; they are
+        internally valid, just measured through a degraded object cloud.</p></div>
+    <div class="dec"><div class="q">!</div><h4>IK residual is not causal</h4>
+      <p>Shown by intervention from both directions across two projects: repairing the residual 8× and
+        suppressing it 3× each leave the task outcome unchanged. Residual is not admissible as evidence
+        about policy quality without an intervention control.</p></div>
+    <div class="dec"><div class="q">!</div><h4>“Success” means object-in-container</h4>
+      <p>The predicate is geometric — no grasp, lift or contact test — and its rim margin admits objects
+        still suspended in mid-air. Verified separately that DPP successes <i>are</i> genuine
+        grasp-lift-places, but the metric could not have told us.</p></div>
+  </div>
+
   <div class="eyebrow" style="margin-top:40px;margin-bottom:6px">Open decisions</div>
   <div class="decisions reveal">
+    <div class="dec"><div class="q">D-A</div><h4>What the headline contribution is</h4>
+      <p>① is now an interaction result rather than a clean automation win, and the object-cloud rebuild
+        moved absolute rates by 8–12 points on its own. Whether perception/observation quality displaces
+        contact automation as the primary claim is the live framing decision.</p></div>
     <div class="dec"><div class="q">D1</div><h4>6-point abstraction for higher DOF</h4>
-      <p>Keep the 6-point interface and let residual RL learn the extra DOF (recommended), or extend the abstraction itself?</p></div>
+      <p>Keep the 6-point interface and let residual RL learn the extra DOF (recommended), or extend the
+        abstraction itself? The two-layer result narrows this: the action side is already closable by a
+        scalar, so the case turns on the observation side.</p></div>
     <div class="dec"><div class="q">D2</div><h4>Residual RL form</h4>
       <p>Real-robot residual (headline) vs. sim-transfer proving the no-gap claim — likely both.</p></div>
     <div class="dec"><div class="q">T3</div><h4>Finger-gaiting task</h4>
       <p>Which dexterous task to target, and how to wire the sim scene / action term / RL around it.</p></div>
-    <div class="dec"><div class="q">·</div><h4>Sharpa mount tune</h4>
-      <p>Adjust the wrist-flange orientation quaternion for a natural Sharpa grasp pose.</p></div>
+    <div class="dec"><div class="q">·</div><h4>Benchmark predicate</h4>
+      <p>Whether to add a settled-object or grasp-qualified success term. It would close two false-positive
+        modes and restate every published rate, so it is a decision for the benchmark's owner.</p></div>
   </div>
 </div></section>
 
