@@ -27,9 +27,9 @@ experiments/
     └── logs/YYYY-MM-DD-<slug>/   one log: index.html + its own assets/
 ```
 
-## Scope — one log ≈ 1–2 weeks
+## Scope — one log = one question, ended by a verdict
 
-A log is a **workstream record, not a changelog entry**. By default it covers **1–2 weeks** of progress on one question and ends in a verdict. A single fix, run, or config sweep is a Timeline entry *inside* the current log — never a log of its own.
+A log is a **workstream record, not a changelog entry**. The unit is a **question** (≈ one action item / one campaign): the log opens when work on the question starts, accumulates dated Timeline entries while it is open, and closes when the question reaches a verdict (`done` / `closed` / `failed`). Duration is however long that takes — hours to ~2 weeks. If a question is still open after ~2 weeks, split it. A single fix, run, or config sweep is a Timeline entry *inside* the current log — never a log of its own. Weekly summaries are **views over logs, not logs**: link the logs, don't duplicate them.
 
 **Before creating one, check `logs.json`** for a log in that project still on the same question (usually `status: running`). If there is one, update it instead:
 
@@ -45,9 +45,14 @@ Start a new log only when the question changes, the open log reached a verdict (
 2. Copy `_template/log.html` → `index.html`; fill ALL-CAPS placeholders; uncomment optional blocks; delete unused sections. House rules are in the template's header comment.
 3. Media into the log's own `assets/`: H.264 mp4 ≤5 MB + poster jpg; stills ≤500 KB, `loading="lazy"` below the fold.
 4. Append one entry to `logs.json` (schema in the file).
-5. Refresh static fallbacks in `experiments/index.html`: Archive `<li>` (≤10 entries) + the project card's `.latest` link.
+5. Refresh static fallbacks in `experiments/index.html`: Archive `<li>` (≤10 entries) + the project card's `mini-feed` links.
+6. Add the log to the **project hub's "All logs" section** (every hub carries its full per-project list; the dashboard only shows the last few).
 
-New project: hub `index.html` + `logs/`, register in `logs.json` `projects`, add a static card in `experiments/index.html`.
+New project: hub `index.html` (with an "All logs" section) + `logs/`, register in `logs.json` `projects` (including a `now` entry), add a static card in `experiments/index.html`.
+
+## Project "now" line
+
+`logs.json` → `projects.<id>.now = {text, status: active|blocked|idle, updated}` is the project's **current focus**, independent of any log — it is what the dashboard's Ongoing section leads with. Update it whenever the focus changes (sprint open/close, new directive), and set `status: idle` when nothing is running. A stale `now` is worse than none.
 
 ## Rules
 

@@ -34,26 +34,46 @@
   <section>
     <div class="wrap">
       <h2>Ongoing</h2>
-      <p class="sub">The latest log from each project. Project names link to the hub pages.</p>
+      <p class="sub">Each project's current focus (<em>now</em>) and its last few logs. Project names link to the hub pages, which carry the full per-project archive.</p>
       <div class="proj-grid" data-projects data-root=".">
         <!-- Static fallback (also the no-JS view); JS re-renders from logs.json. -->
         <div class="proj-card">
-          <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
-          <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
-          <a class="latest" href="dex-pointwam/logs/2026-07-29-object-cloud-results/">
-            <span class="ldate">2026-07-29</span>
-            <span class="pill ok"><span class="dot"></span>done</span>
-            <span class="lt">Handing the model the object doesn't fix the grasp</span>
-          </a>
-        </div>
-        <div class="proj-card">
           <h3><a href="dex-point-policy/">Dexterous Point Policy</a></h3>
           <p>Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.</p>
-          <a class="latest" href="dex-point-policy/logs/2026-07-31-benchmark-jitter/">
-            <span class="ldate">2026-07-31</span>
-            <span class="pill ok"><span class="dot"></span>done</span>
-            <span class="lt">Four poses cannot estimate a success rate</span>
-          </a>
+          <div class="now-line"><span class="pill acc"><span class="dot"></span>now</span>
+            <span class="nt">Sprint 2: visual audit of sim hand actuation + observation validity; commanded-vs-achieved forensics before any new numbers</span>
+            <span class="nd">2026-08-01</span></div>
+          <div class="mini-feed">
+            <a class="latest" href="dex-point-policy/logs/2026-07-31-benchmark-jitter/">
+              <span class="ldate">2026-08-01</span>
+              <span class="pill ok"><span class="dot"></span>done</span>
+              <span class="lt">Four poses cannot estimate a success rate</span>
+            </a>
+            <a class="latest" href="dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/">
+              <span class="ldate">2026-07-31</span>
+              <span class="pill ok"><span class="dot"></span>done</span>
+              <span class="lt">Rebuilding the object points beats the shipped pipeline</span>
+            </a>
+          </div>
+        </div>
+        <div class="proj-card">
+          <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
+          <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
+          <div class="now-line"><span class="pill acc"><span class="dot"></span>now</span>
+            <span class="nt">Sprint 2: nonzero SR with scene points + hand keypoints only (object conditioning dropped); long finetune + visual-first evaluation</span>
+            <span class="nd">2026-08-01</span></div>
+          <div class="mini-feed">
+            <a class="latest" href="dex-pointwam/logs/2026-07-29-object-cloud-results/">
+              <span class="ldate">2026-07-31</span>
+              <span class="pill ok"><span class="dot"></span>done</span>
+              <span class="lt">Handing the model the object doesn't fix the grasp</span>
+            </a>
+            <a class="latest" href="dex-pointwam/logs/2026-07-29-closed-loop-eval/">
+              <span class="ldate">2026-07-31</span>
+              <span class="pill warn"><span class="dot"></span>closed</span>
+              <span class="lt">Closed-loop sim eval — Tier-0 struck; approach stalls short</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>

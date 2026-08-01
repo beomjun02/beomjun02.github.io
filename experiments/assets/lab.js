@@ -43,28 +43,37 @@
     function pill(status) {
       return '<span class="pill ' + (PILL[status] || '') + '"><span class="dot"></span>' + status + '</span>';
     }
-    // A log spans 1–2 weeks and gets updated in place; sort/display by its last change.
+    // A log covers ONE question and ends in a verdict; it is updated in place while
+    // that question is open. Sort/display by last change.
     function eff(l) { return l.updated || l.date; }
+    var NOWPILL = { active: 'acc', blocked: 'bad', idle: '' };
 
     fetch(rootPath + '/logs.json').then(function (r) { return r.json(); }).then(function (db) {
       var logs = db.logs.slice().sort(function (a, b) { return eff(a) < eff(b) ? 1 : -1; });
 
       if (grid) {
-        var latestBy = {};
-        logs.forEach(function (l) { if (!latestBy[l.project]) latestBy[l.project] = l; });
+        var byProj = {};
+        logs.forEach(function (l) { (byProj[l.project] = byProj[l.project] || []).push(l); });
         var slugs = Object.keys(db.projects).sort(function (a, b) {
-          var da = latestBy[a] ? eff(latestBy[a]) : '', dbb = latestBy[b] ? eff(latestBy[b]) : '';
+          var da = byProj[a] ? eff(byProj[a][0]) : '', dbb = byProj[b] ? eff(byProj[b][0]) : '';
           return da < dbb ? 1 : -1;
         });
         grid.innerHTML = slugs.map(function (s) {
-          var p = db.projects[s], l = latestBy[s];
-          var latest = l
-            ? '<a class="latest" href="' + rootPath + '/' + l.path + '">' +
+          var p = db.projects[s], ls = byProj[s] || [];
+          // "Now" line: the project's current focus — maintained in logs.json
+          // projects.<id>.now, independent of any single log.
+          var now = p.now && p.now.text
+            ? '<div class="now-line"><span class="pill ' + (NOWPILL[p.now.status] || '') + '">' +
+              '<span class="dot"></span>now</span><span class="nt">' + p.now.text + '</span>' +
+              (p.now.updated ? '<span class="nd">' + p.now.updated + '</span>' : '') + '</div>'
+            : '';
+          var mini = ls.slice(0, 3).map(function (l) {
+            return '<a class="latest" href="' + rootPath + '/' + l.path + '">' +
               '<span class="ldate">' + eff(l) + '</span>' + pill(l.status) +
-              '<span class="lt">' + l.title + '</span></a>'
-            : '<span class="latest none">no logs yet</span>';
+              '<span class="lt">' + l.title + '</span></a>';
+          }).join('') || '<span class="latest none">no logs yet</span>';
           return '<div class="proj-card"><h3><a href="' + rootPath + '/' + p.path + '">' + p.title + '</a></h3>' +
-                 '<p>' + p.tagline + '</p>' + latest + '</div>';
+                 '<p>' + p.tagline + '</p>' + now + '<div class="mini-feed">' + mini + '</div></div>';
         }).join('');
       }
 
