@@ -264,6 +264,56 @@ sbatch scripts/render_pointwam_3p.sbatch  # third-person view + contact sheet</c
     </div>
   </section>
 
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">10</span>Correction · 2026-08-01 14:35</h2>
+      <p class="sub">Append-only. The embodiment-gap numbers first published in this log were computed
+      on a biased sample and are wrong. They were live for about fifteen minutes.</p>
+      <p><strong>What was wrong.</strong> The script that extracted hand shapes stopped after 2,000
+      frames — the first ~150 episodes in shard order, not a sample across the corpus — and those
+      leading episodes have systematically smaller hands. Recomputed over all 69,066 right-hand frames
+      of all 479 episodes:</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>finger</th><th>published mean</th><th>true mean</th><th>published beyond reach</th><th>true beyond reach</th></tr></thead>
+          <tbody>
+            <tr><td>thumb</td><td class="mono strike">10.76</td><td class="mono">11.64</td><td class="mono strike">1.1%</td><td class="mono">16.7%</td></tr>
+            <tr><td>index</td><td class="mono strike">14.79</td><td class="mono">15.39</td><td class="mono strike">25.4%</td><td class="mono">47.4%</td></tr>
+            <tr><td>middle</td><td class="mono strike">15.62</td><td class="mono">15.99</td><td class="mono strike">34.4%</td><td class="mono">46.5%</td></tr>
+            <tr><td>ring</td><td class="mono strike">14.71</td><td class="mono">15.11</td><td class="mono strike">38.1%</td><td class="mono">46.1%</td></tr>
+            <tr><td>little</td><td class="mono strike">13.09</td><td class="mono">13.32</td><td class="mono strike">28.5%</td><td class="mono">41.2%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>59.8% of frames have at least one fingertip beyond reach; 8.2% have all five. These match
+      dpp-iclr27's independent measurement on their own file to the decimal, so <strong>the two h5
+      generations carry identical hand geometry</strong> and the "different file generations" reading
+      in §04 is withdrawn — there was never a file difference, only my sampling bias.</p>
+      <p><strong>The worst part was the control.</strong> §04 claimed the raw h5 and the derived WDS
+      agreed to 0.08 cm and offered that as proof the extraction was faithful. It was not an independent
+      check: the raw-h5 verification read <span class="mono">keys[:60]</span> — the same leading-episode
+      window — so it validated the bias against itself and passed.
+      <strong>A control that shares the bias of the thing it checks is not a control.</strong></p>
+      <p><strong>Also withdrawn:</strong> "the human thumb is shorter than Inspire can extend, so the
+      thumb is exempt from the length deficit" — at 16.7% it is not exempt. The per-finger retarget
+      scales (thumb 1.00, others 0.92–0.93) are refitted to
+      <span class="mono">[0.92, 0.89, 0.90, 0.90, 0.92]</span>, global 0.89.</p>
+      <p><strong>Narrowed, not withdrawn:</strong> on the unbiased corpus the <em>offline</em> sweep at
+      scale 1.0 makes the <em>thumb</em> the worst site (1.61 cm) rather than the wrist (1.31). The
+      wrist-worst profile in §03 is an <em>in-sim</em> result and stands on that measurement alone.
+      What the offline harness independently confirms is the sweep <em>signature</em> — wrist residual
+      1.31 → 0.48 → 0.22 as the fingertip targets shrink, reversing at 0.4 — and it is stronger on the
+      corrected data than on the biased data. Plausibly the profiles differ because offline the wrist
+      target is reachable, static and orientation-free, so the thumb absorbs the error; in sim the wrist
+      target moves and the model chooses the orientation, so the wrist absorbs it.</p>
+      <p class="muted">One further caveat on numbers both agents agree about: the thumb's out-of-reach
+      fraction swings from 16.7% to 31.6% on a 0.21 cm difference between two independently computed
+      thumb maxima (12.46 vs 12.25 cm). The thumb distribution is dense at the limit, so that statistic
+      is knife-edge and should never be quoted without the maximum it was computed against.</p>
+    </div>
+  </section>
+
 </main>
 
 <footer class="page">
