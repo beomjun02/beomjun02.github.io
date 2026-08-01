@@ -10,7 +10,7 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "Sprint 2: nonzero SR with scene points + hand keypoints only (object conditioning dropped); long finetune + visual-first evaluation",
+    "text": "Coherence collapse found: predictions decay in direction, not magnitude. Next: is autoregressive decoding what supplies chunk-to-chunk consistency (DPP's +44.2 ablation)?",
     "status": "active",
     "updated": "2026-08-01"
    }
@@ -34,10 +34,11 @@
    "title": "The arm is not stopping — it is not being moved",
    "status": "running",
    "updated": "2026-08-01",
-   "tldr": "\"Learned stopping distance\" struck: the policy commands 4.5–9.3 cm of wrist motion in every chunk and never stops, but net displacement pins at 29 cm. The IK residual — pre-physics — climbs to 5–8.5 cm at the WRIST, the freest site: the 6-point target is over-constrained for a coupled hand. Reproduced offline with no simulator.",
+   "tldr": "The arm is not frozen — it executes 0.5–0.8 cm every chunk and NETS ZERO. Realised coherence (net gain ÷ achieved motion) falls 0.94 → 0.01 and stays there: predictions decay in DIRECTION, never in magnitude. Six deploy-side shims each improved their own mechanism metric and moved the outcome not at all, and the IK residual is dissociable from the stall.",
    "path": "dex-pointwam/logs/2026-08-01-why-the-arm-does-not-move/",
    "tags": [
     "diagnosis",
+    "closed-loop-coherence",
     "ik",
     "embodiment-gap",
     "retraction",

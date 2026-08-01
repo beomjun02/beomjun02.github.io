@@ -60,7 +60,7 @@
           <h3><a href="dex-pointwam/">Dex-PointWAM</a></h3>
           <p>Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim and real deployment.</p>
           <div class="now-line"><span class="pill acc"><span class="dot"></span>now</span>
-            <span class="nt">Sprint 2: nonzero SR with scene points + hand keypoints only (object conditioning dropped); long finetune + visual-first evaluation</span>
+            <span class="nt">Coherence collapse found: predictions decay in direction, not magnitude. Next: is autoregressive decoding what supplies chunk-to-chunk consistency?</span>
             <span class="nd">2026-08-01</span></div>
           <div class="mini-feed">
             <a class="latest" href="dex-pointwam/logs/2026-08-01-why-the-arm-does-not-move/">
@@ -95,7 +95,7 @@
           <span class="ldate">2026-08-01</span>
           <span class="lmain"><span class="lproj">Dex-PointWAM</span>
             <span class="lt">The arm is not stopping — it is not being moved</span>
-            <span class="ltl">The policy commands 4.5–9.3 cm of wrist motion every chunk and never stops, yet net displacement pins at 29 cm. The IK residual, measured before physics, climbs to 5–8.5 cm at the wrist — the 6-point target is over-constrained for a coupled hand.</span></span>
+            <span class="ltl">The arm is not frozen — it moves 0.5–0.8 cm every chunk and nets zero. Realised coherence falls 0.94 to 0.01: predictions decay in direction, never magnitude. Six deploy-side shims improved their own metrics and changed nothing.</span></span>
           <span class="pill acc"><span class="dot"></span>running</span>
         </a></li>
         <li class="month-h">2026-07</li>

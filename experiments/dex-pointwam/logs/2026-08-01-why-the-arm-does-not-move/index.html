@@ -34,7 +34,7 @@
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
       <div><dt>Dates</dt><dd>2026-08-01</dd></div>
-      <div><dt>Outcome</dt><dd>0/24 · wrist IK residual 0.10 → 5–8.5 cm · arm pinned at 29 cm</dd></div>
+      <div><dt>Outcome</dt><dd>0/24 · realised coherence 0.53 → <strong>0.01</strong> · the arm moves every chunk and nets zero</dd></div>
       <div><dt>Env</dt><dd class="mono">alinlab slurm · Isaac Lab · OpenArm + Inspire 19-dof</dd></div>
       <div><dt>Checkpoint</dt><dd class="mono">dpp_ckpts_1p9s/pnp500_ft_ext1/model-best.pt</dd></div>
       <div><dt>Full report</dt><dd class="mono">openarm-sim/DEXPOINTWAM_SIM_CAMPAIGN.md · jobs 55180, 55210</dd></div>
@@ -51,6 +51,14 @@
       compromise near where the arm already is. Three failures had been compressed into one wrong phrase.
       <strong>The model never stops asking for motion; the motion does not point at the object; and almost
       none of it is realised.</strong></p>
+      <p><strong>2026-08-01 15:24 — the mechanism, found by walking back a wrong headline.</strong> The arm
+      is <em>not</em> frozen. It executes 0.5–0.8 cm of real motion in every chunk of the whole second half
+      of the episode and <strong>nets exactly zero</strong>. Measured as a <em>realised coherence ratio</em>
+      — net displacement gain ÷ achieved motion, wrist, world frame — the baseline runs 0.94 → 0.81 → 0.44
+      → 0.03 and then hovers at ±0.04 for the remaining 400 steps. <strong>Predictions decay in direction,
+      never in magnitude.</strong> No execution path can accumulate displacement from a direction that
+      reverses each chunk, which is why six deploy-side interventions each improved their own mechanism
+      metric and moved the outcome not at all.</p>
     </div>
   </div>
 </header>
@@ -220,6 +228,24 @@
             <img src="assets/oracle-strip.jpg" alt="The oracle hand reaches the bottle, knocks it over around t=158, closes beside it and withdraws empty." loading="lazy">
             <figcaption>oracle-strip.jpg · privileged oracle · bottle · knock-over at t≈158</figcaption>
           </figure>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-08-01</span>
+          <span class="tt">The coherence ratio — and a walk-back that produced it</span>
+          <p>Capping the commanded wrist step at 2 cm was reported at 15:14 as "motion restored", on the
+          t=120–180 window where it holds 74–93 % tracking against the baseline's 19–31 %. Checking whether
+          that held revealed it does not: by t=260–360 the clamped arm achieves 0.74–1.12 cm/chunk against
+          the baseline's 0.54–0.78, and its net displacement <em>ends lower</em>, 16.0 vs 28.4 cm.</p>
+          <p>The check that killed the headline produced the finding. Net displacement gain ÷ achieved
+          motion per chunk — <em>realised coherence</em> — is 0.53 before t=180 and <strong>0.01</strong>
+          after t=260 on the baseline; 0.83 and 0.25 with the clamp. And the clamp holds the wrist IK
+          residual at 1.8 cm against 5.5, a sustained two-thirds reduction, <em>and still stalls</em>:
+          <strong>the residual is dissociable from the stall.</strong> It was a symptom, not the cause.</p>
+          <p>Verified in code rather than assumed (<span class="mono">pointwam.py:302</span>):
+          <span class="mono">RobotTrajDiT</span> emits the full trajectory in a single forward pass, no
+          autoregression anywhere, and no state carried across chunks — so chunk-to-chunk agreement is
+          <strong>unrepresented</strong>, not merely unenforced. The coherence decay is this architecture's
+          expected behaviour.</p>
         </li>
         <li class="bad">
           <span class="tdate">2026-08-01</span>
