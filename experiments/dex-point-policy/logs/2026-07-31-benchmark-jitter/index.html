@@ -63,6 +63,29 @@
         picked on bottle alone. Since that human label is <b>one grasp bit copied across five fingers</b>,
         the finding is not "human labels are better" but something more awkward: <b>a 1-bit label trains a
         better policy here than a genuine 5-bit one</b>.</p>
+
+      <p class="k" style="margin-top:20px">Added 2026-08-01 — two results from the forensic audit</p>
+      <p><b>The deployed observation did not match the trained one, and fixing it triples the label
+        gap.</b> The harness was still eroding the object silhouette by 15 px, which the training
+        pipeline dropped in July; the policy was being fed a flat ribbon (24.4 % distinct points,
+        two axes 2.9× and 3.4× thinner) where it learned a 3-D shell. Re-running the same paired
+        comparison with erosion off — one variable, same 512 initial conditions, same 370 k step —
+        moves the two variants in <i>opposite</i> directions: <b>oracle 57.2 % → 65.4 %</b> (+8.2,
+        p = 1.4e−4), <b>auto 49.2 % → 39.1 %</b> (−10.2, p = 9e−5). The auto-vs-oracle gap goes from
+        <b>−8.0 to −26.4 points</b> (p = 6.0e−15). The human 1-bit label's advantage was being
+        heavily understated by a degraded observation. <i>Bottle only so far; ball and box are
+        running, and ball matters most — it is the one object that favoured the learned label.</i>
+        That the two variants respond oppositely to the same fix, differing only in the contact
+        label, is an observation I cannot yet explain and am not going to dress as a mechanism.</p>
+      <p><b>The cross-hand failure is not an IK problem, and I would have published that it was.</b>
+        The reading above — that the equal-weight IK sacrifices the wrist to chase fingertips a
+        different hand cannot reach — is half right, and the half that is wrong matters. Shrinking
+        the fingertip targets repairs the IK almost completely on both hands (Wuji wrist residual
+        5.44 → 0.67 cm, Sharpa 2.71 → 0.48, solver convergence 0 % → 65–98 %), which confirms
+        over-constraint by intervention. It also changes nothing: <b>0/24 successes in all six
+        cells</b>, with the hand ending no closer to the object. So the wrist sacrifice is real and
+        it is <i>not</i> why these hands fail to arrive. What remains is the observation side — the
+        policy is looking at a hand it never saw — which no action-layer fix reaches.</p>
     </div>
   </div>
 </header>
