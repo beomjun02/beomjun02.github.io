@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-02 · Closed-loop evaluation on the DPP task — Dex-PointWAM</title>
+<meta name="description" content="Experiment log: rolling Dex-PointWAM out in the OpenArm pick-and-place sim — what the closed loop actually does, three retracted statistics, and a clock mismatch found by external anchor.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-08-02 · closed-loop-evaluation-dpp-task</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dex-PointWAM</p>
+    <h1>Closed-loop evaluation on the DPP task</h1>
+    <p class="lede">The <a href="/experiments/dex-pointwam/logs/2026-07-15-initial-development-and-egodex-pretraining/">open-loop
+    numbers</a> were good and kept improving with scale. Rolled out in the OpenArm pick-and-place
+    simulator, the same checkpoint does not pick anything up. This log is the account of what it does
+    instead — which turned out to require throwing away three of our own statistics first — and the
+    clock mismatch that is the current leading candidate.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-07-29 → present</dd></div>
+      <div><dt>Outcome so far</dt><dd>0 successes · a <em>coherent</em> trajectory (cos +0.99) converging on a fixed point <strong>16 cm from the object</strong></dd></div>
+      <div><dt>Env</dt><dd class="mono">alinlab slurm · Isaac Lab · OpenArm + Inspire 19-dof · 20 Hz control</dd></div>
+      <div><dt>Protocol</dt><dd>3 objects × 2×2 grid × 32 episodes = <strong>384 per model</strong> · 1 cm xy jitter · <span class="mono">EVAL_RING_PX=0</span></dd></div>
+      <div><dt>Success</dt><dd>whatever <span class="mono">openarm-sim</span> scores — never our own read of a rollout</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict — provisional, the eval is still running</p>
+      <p><strong>The policy is not confused and it is not frozen. It goes somewhere specific, coherently,
+      and that somewhere is not the object.</strong> Chunk-to-chunk the commanded directions agree at
+      cosine +0.99, so the trajectory is not oscillating or dithering; it is a clean approach to a fixed
+      point that sits about 16 cm from the bottle, where it then stays. Twelve deploy-side intervention
+      cells moved the inverse-kinematics residual by a factor of 3.5 and the outcome never changed once.</p>
+      <p>The strongest quantitative lead is a <strong>clock mismatch</strong>. The model's predicted
+      displacement per chunk matches the marginal of its own training diet almost exactly (+2.4 cm per
+      chunk, both sides). It is reproducing what it was taught — over the wrong amount of physical time.
+      Settled against an external anchor this week: the demonstrations were recorded at <strong>20 Hz</strong>,
+      not the 30 fps the video containers advertise, which makes our shipped chunk <strong>1.50 s</strong> of
+      human motion against DPP's <strong>0.80 s</strong>. Three finetune arms are now in flight to test
+      that directly (§05).</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>What the model is given</h2>
+      <p class="sub">Before any claim about behaviour: the observation, rendered as the model receives
+      it — after the agent is stripped, after the 1.5 cm voxel grid, after the 12,000-point cap.</p>
+      <figure>
+        <video src="assets/scene_obs_orbit.mp4" poster="assets/scene_obs_orbit.jpg" controls muted loop playsinline preload="none" width="720"></video>
+        <figcaption>scene_obs_orbit.mp4 · one full horizontal orbit of the deployed scene observation,
+        72 frames at 18 fps, dumped from the live bridge at the exact point the tensor is handed to the
+        model. Camera matches the EgoDex training viz so the two are comparable by eye.</figcaption>
+      </figure>
+      <p>Raw density is <em>not</em> the problem. The sim cloud is 12,000 points at 1046.8 points per
+      occupied litre against training's 1107.0, with nearest-neighbour spacing of 17.04 mm (median)
+      versus training's 14.23 mm. What differs is <strong>extent</strong>: the sim observation spans
+      552.5 × 234.4 × 206.6 cm against training's 193.3 × 129.9 × 91.5 cm. The same point budget is
+      spread over roughly fifteen times the volume, so the region that matters — around the hand and the
+      object — is thinner even though the global figure looks healthy.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>points near the acting wrist</th><th>sim (deployed)</th><th>training (n=30 episodes)</th></tr></thead>
+          <tbody>
+            <tr><td>within 20 cm</td><td>266 of 12,000 (2.22%)</td><td>10.5%</td></tr>
+            <tr><td>within 30 cm</td><td>892 of 12,000 (7.43%)</td><td>21.9%</td></tr>
+            <tr><td>nearest point</td><td>1.9 cm</td><td>2.6 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Setting difference that must be read with the table: the training clouds are
+      <strong>not</strong> agent-stripped, so their within-20 cm count includes the hand's own surface;
+      the sim count does not. The sim figure is roughly 3× thinner near the hand in fractional terms,
+      but part of that ratio is this asymmetry rather than a sparser sensor.</p>
+      <figure>
+        <img src="assets/zoom_object_hand.png" alt="Close-up of the deployed point cloud around the hand and the bottle, showing the object surface resolved but sparsely sampled relative to the wider scene." loading="lazy">
+        <figcaption>zoom_object_hand.png · the hand–object region of the same observation.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Three statistics of ours that were wrong</h2>
+      <p class="sub">Retractions first, because two of the headline claims in the earlier versions of
+      this log were built on them. All three were caught by us; none changed the outcome, all changed
+      the mechanism.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>claim</th><th>what actually produced it</th><th>corrected</th></tr></thead>
+          <tbody>
+            <tr class="strike"><td>"the model learned to stop 10.6 cm short"</td><td>an inference from a closing-rate series plus a frozen-anchor histogram, never a measurement</td><td>struck</td></tr>
+            <tr class="strike"><td>"predictions decay in direction — the trajectory oscillates"</td><td>a ratio whose numerator was a <em>radius</em>, not a displacement</td><td>struck; directions actually agree at cos <strong>+0.99</strong></td></tr>
+            <tr class="strike"><td>"keypoints sit 13.7 cm from the nearest scene point — possible mis-registration"</td><td>a median over all 12 keypoint slots, 6 of which are idle-hand placeholders sitting at one identical coordinate</td><td>acting hand alone: <strong>1.2 cm</strong> (min 0.3, max 1.9), inside the 1.7–9.5 cm training band. <strong>No defect.</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The third has a general form worth stating, because it has now produced false alarms three
+      separate times including once in the bridge's own instrumentation. <strong>The robot array is 12
+      keypoints = [left, right] × [wrist + 5 fingertips], and pick-and-place is single-handed, so half
+      the slots are placeholders rather than measurements.</strong> Any statistic taken over all twelve
+      is a mixture of ~6 real values and ~6 identical phantoms, and its median lands in the empty gap
+      between the two modes — which looks exactly like a defect. The correct selector is the exists
+      mask; a magnitude test does not work, because the placeholders get centre-shifted to a non-zero
+      value. The same error also produced a "zero points within 20 cm of the wrist" figure that is
+      really 266 (the table in §01 is the corrected one, anchored on the acting wrist).</p>
+      <p class="muted">Standing rule adopted from this: when two numbers disagree, diff the
+      <em>expressions</em> that produced them before diffing the <em>values</em>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>What the closed loop does</h2>
+      <p class="sub">One episode of the learned policy, third-person camera, 600 steps at 20 Hz.</p>
+      <figure>
+        <video src="assets/reach.mp4" poster="assets/reach_f240.jpg" controls muted loop playsinline preload="none" width="720"></video>
+        <figcaption>reach.mp4 · the arm reaches out and then holds. The bottle is never touched.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/pwam-policy-strip.jpg" alt="Twenty sampled frames of one episode: the arm extends over the first third, then the pose is visually unchanged for the remaining frames while the bottle stands untouched." loading="lazy">
+        <figcaption>pwam-policy-strip.jpg · the same episode as a strip. Visually unchanged from t≈158.</figcaption>
+      </figure>
+      <p>With the retracted statistics removed, the surviving description is simple and much less
+      exotic than the one it replaces. The policy commands real motion in every chunk. Consecutive
+      chunks agree with each other at cosine +0.99 — this is a <em>coherent</em> plan, not a confused
+      one. Net displacement rises and then flattens, and the point it flattens at is roughly 16 cm from
+      the object. It is a well-behaved controller converging on the wrong attractor.</p>
+      <p>An off-policy probe sharpens this. Placed in states an oracle visits rather than states its own
+      rollout produces, the model's predicted displacement is an affine function of distance to the
+      object — <span class="mono">predicted Δ = −0.277·d + 0.943 cm</span>, R² 0.924 — a proportional
+      controller with a constant opposing term, whose implied fixed point is <strong>3.40 cm</strong>.
+      Against an on-policy park of 22.8 cm at the same measurement site, that is a sevenfold difference.
+      <strong>The model emits object-seeking targets in every configuration the oracle visits.</strong>
+      Whatever is wrong is not the model's response to a given state; it is which states the closed loop
+      manages to reach.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Interventions that did not move the outcome</h2>
+      <p class="sub">Recorded because the null results constrain the search more than the positive ones.</p>
+      <p>Twelve deploy-side cells were attempted and eleven measured: rigid hand, fingertip scale 0.8,
+      step clamp 2 cm, temporal ensembling, and the contact-conditioning family. Every cell scored zero.
+      Across them the wrist IK residual varied by a factor of 3.5 — including a clamp that held it at
+      1.8 cm against a 5.5 cm baseline — and the outcome never moved. Working the opposite direction, a
+      co-worker <em>repaired</em> the IK to 0.5–0.7 cm at 65–98% convergence and also scored zero in all
+      six of their cells, with the hand no closer.</p>
+      <p><strong>Two drivers, opposite interventions, identical result: the IK residual is dissociable
+      from task outcome on this benchmark.</strong> Quoting it as evidence about policy quality needs an
+      intervention control, not a correlation. Temporal ensembling in particular failed for a reason
+      already in hand — it averages consecutive commanded directions, and those already agree at +0.99,
+      so there was nothing to average out.</p>
+      <p class="muted">Under-training was tested and is <em>not</em> cleanly dead, contrary to an earlier
+      note here that said validation saturates by step 500. A longer run does improve on the short one —
+      but the raw best-vs-best comparison, a 14.6% gain, overstates it: the short run's reported minimum
+      (0.036651) sits 2.6σ above the bootstrap mean of its own eval distribution (0.032618 ± 0.001565),
+      and only 2.0% of min-of-8 subsamples reach a value that good, so roughly a quarter of the apparent
+      gap is min-of-N selection bias. The honest matched-budget statement is the like-for-like one:
+      <strong>the long run's own first 8 evals bottom out at 0.034566 against the short run's 0.036651</strong>.
+      Real, smaller than advertised, and not the explanation for a zero success rate.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>The clock, settled by external anchor</h2>
+      <p class="sub">The current leading candidate, and the reason three finetune arms are running.</p>
+      <p>The model's predicted displacement per chunk matches the marginal of its training data almost
+      exactly — +2.4 cm per chunk on both sides. It is reproducing what it was taught. The question is
+      then over <em>how much physical time</em>, and that turned on a fact none of our files could settle
+      on their own: the mp4 containers report 30 fps, and an h5 whose frames are 1:1 with those videos
+      and carry no duplicate poses looks consistent with 30 fps — but a 20 Hz capture muxed with 30 fps
+      metadata produces exactly the same signature.</p>
+      <p>The anchor that settles it is collection-side rather than container-side. The LeRobot export of
+      the same corpus (<span class="mono">pnp_clean_260506/meta/info.json</span>) declares
+      <span class="mono">fps: 20</span>, and it is the same corpus frame-for-frame: <strong>479 of 479
+      episodes match by source-video basename with identical per-episode frame counts, 69,066 of 69,066
+      frames.</strong> Corroborated twice — DPP's own simulator runner steps the policy at
+      <span class="mono">round((1/20)/SIM_DT)</span>, and the overlay renderer writes at fps=20.</p>
+      <p>At 20 Hz the arithmetic reverses a comfortable assumption. Our shipped build takes every 3rd
+      frame over a 30-frame span, which is <strong>1.50 s</strong> of human motion per chunk, at 6.67 Hz.
+      DPP's chunk is <span class="mono">num_queries=16</span> consecutive frames with no subsampling —
+      read from the shipped checkpoint's own metadata, not from the config file, which says 15 — so
+      <strong>0.80 s</strong>. We have been asking the model to plan nearly twice as far ahead as the
+      policy we are comparing against.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>arm</th><th>resolution</th><th>steps</th><th>chunk</th><th>tests</th></tr></thead>
+          <tbody>
+            <tr><td>A · DPP-matched</td><td>20 Hz (native)</td><td>16</td><td><strong>0.80 s</strong></td><td rowspan="2">A vs B: resolution at matched duration</td></tr>
+            <tr><td>B · half rate</td><td>10 Hz</td><td>8</td><td><strong>0.80 s</strong></td></tr>
+            <tr><td>C · control</td><td>6.67 Hz</td><td>10</td><td>1.50 s</td><td>A vs C: does predicting less physical time help</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>All three arms are decimations of <em>one</em> extraction — every raw frame run through the
+      annotation pipeline once, with clip span held at 30 raw frames and the same clip starts as the
+      shipped build — so they differ in the clock and in nothing else. Each plays back exactly at the
+      simulator's 20 Hz control rate (hold = 1, 2, 3 control steps per predicted step respectively);
+      the deploy path asserts the ratio is an exact integer rather than rounding it. Fresh normalisation
+      statistics per arm, object conditioning off in all three.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>How success is being counted</h2>
+      <p class="sub">Stated explicitly because the predicate is narrower than the word suggests.</p>
+      <p>Success is whatever <span class="mono">openarm-sim</span> computes, never our own reading of a
+      rollout. That predicate is <span class="mono">terminations.object_in_container</span>: the object's
+      <em>origin</em> inside the bin footprint with z within [floor_top − 3 cm, rim + 3 cm]. It is
+      <strong>purely geometric</strong> — there is no grasp, lift, or contact test — and its ±3 cm margin
+      will count an object still held in the hand. A previous headline of ours was retracted once for
+      exactly this reason.</p>
+      <p>Every model in the comparison is run under one protocol: 3 objects × a 2×2 initial-placement
+      grid × 32 episodes = <strong>384 episodes per model</strong>, 1 cm xy position jitter, and
+      <span class="mono">EVAL_RING_PX=0</span> so the object cloud is not eroded differently between
+      training and deployment. Episode seeds are derived from the manifest index, so placements are
+      bit-identical across models. The DPP row is the shipped baseline
+      (<span class="mono">vanilla_initdest_410000.pt</span>, 128 points per object), with checkpoint
+      provenance printed beside every number.</p>
+      <p class="muted">Numbers land here when the runs finish. Nothing in this section is a result yet —
+      it is the contract they will be reported under.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-02 · beomjun · experiments/dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task</div>
+</footer>
+
+</body>
+</html>

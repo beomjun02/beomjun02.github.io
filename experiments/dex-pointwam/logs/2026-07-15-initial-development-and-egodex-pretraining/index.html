@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-07-15 · Initial development &amp; EgoDex pretraining — Dex-PointWAM</title>
+<meta name="description" content="Experiment log: porting PointWAM to a 12-keypoint dexterous hand, pretraining on EgoDex, and the open-loop numbers that came out of it.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-07-15 · initial-development-and-egodex-pretraining</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dex-PointWAM</p>
+    <h1>Initial development and pretraining on EgoDex</h1>
+    <p class="lede">PointWAM was built to predict a robot trajectory and a scene trajectory from one
+    point cloud. This log covers taking it to a <em>dexterous human hand</em> — twelve keypoints instead
+    of a gripper — and pretraining it on EgoDex. Everything here is open-loop: a held-out prediction
+    error in metres, with no simulator and no control loop. Closed-loop behaviour is a separate
+    question and lives in the <a href="/experiments/dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/">next log</a>.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-06 → 2026-07-15</dd></div>
+      <div><dt>Headline</dt><dd>5.2M clips · held-out <span class="mono">robot_l2_moved</span> <strong>0.06057 ± 0.00017 m</strong> · world-modelling gap <strong>−4.7%</strong> (z≈12) and growing with scale</dd></div>
+      <div><dt>Env</dt><dd class="mono">8×B200 · PTv3 + DINOv3 + RobotTrajDiT + frozen CLIP</dd></div>
+      <div><dt>Report</dt><dd class="mono">PointWAM/experiments/pointwam-dex-egodex.md</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><strong>The world-modelling branch is not a luxury and data does not replace it.</strong> At
+      100K clips, predicting the scene trajectory alongside the robot trajectory bought about 3% on
+      held-out moved-keypoint error. The obvious worry was that this is a small-data effect that more
+      data would wash out. It is not: at 5.2M clips the robot-only ablation is <em>better than every
+      100K configuration</em>, and the gap to the world-model run <em>widens</em> to −4.7% at z≈12. Scale
+      and world-modelling are additive, not substitutable.</p>
+      <p>Two things this log deliberately does <em>not</em> claim. First, the E1 run was
+      <strong>not converged</strong> — validation was still falling at 36K→40K steps (0.0636→0.0618) on
+      a ~2-epoch budget, so 0.06057 is a floor on what this recipe reaches, not its asymptote. Second,
+      <strong>static error is dead as a metric.</strong> At 0.0041–0.0046 m it sits below the measured
+      annotation noise floor (0.9–1.7 cm of GT world drift), so it reports the labeller, not the model.
+      Only <span class="mono">robot_l2_moved</span> is live.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>What the model is</h2>
+      <p class="sub">The port from a parallel gripper to a human hand, and what stayed fixed.</p>
+      <p>Dex-PointWAM takes a single RGB-D observation, back-projects it to a point cloud, and encodes
+      it with a PTv3 backbone at a 1.5 cm voxel grid plus a frozen DINOv3 image featuriser. A
+      <span class="mono">RobotTrajDiT</span> — one token per robot point, cross-attending to frozen CLIP
+      word tokens for the instruction — regresses the whole future trajectory. A separate PointWorld
+      dynamics head predicts the <em>scene</em> trajectory over the same horizon; that branch is the
+      "world model" ablated below.</p>
+      <p>The dexterous change is the robot representation: <strong>12 keypoints = 2 hands ×
+      [wrist + 5 fingertips]</strong>. There is no gripper command, so the gripper BCE loss is weighted
+      to zero and grasp is left implicit in the fingertip flow. One consequence worth stating plainly,
+      because it shapes everything downstream: the model emits its <strong>entire T−1 step trajectory in
+      a single forward pass</strong>. There is no recurrence and no cross-chunk state, so agreement
+      between one chunk and the next is not represented anywhere in the architecture — nothing in
+      training penalises a plan that contradicts the previous plan.</p>
+      <figure>
+        <img src="assets/scene_dense_vs_voxel.png" alt="Two renderings of the same scene point cloud side by side: the raw back-projected cloud, and the same cloud after 1.5 cm voxel downsampling, which keeps the visible structure." loading="lazy">
+        <figcaption>scene_dense_vs_voxel.png · the observation before and after the 1.5 cm voxel grid.
+        The grid size is not cosmetic — see the sweep in §03, where it is the single most damaging knob.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Does world-modelling help the action head?</h2>
+      <p class="sub">100K clips, 15 epochs, three seeds per arm. Metric is held-out
+      <span class="mono">robot_l2_moved</span> in metres — lower is better.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>config</th><th>seed 42</th><th>seed 43</th><th>seed 44</th><th>spread</th></tr></thead>
+          <tbody>
+            <tr><td>world-model λ=1</td><td>0.06435</td><td>0.06492</td><td>0.06452</td><td>±0.03 cm</td></tr>
+            <tr><td>robot-only (<span class="mono">predict_scene=false</span>)</td><td>0.06794</td><td>0.06689</td><td>0.06497</td><td>±0.15 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The world-model arm is better on every seed and is also <strong>five times tighter across
+      seeds</strong>. The variance result is the more interesting half: scene supervision is doing
+      something stabilising, not just adding a few percent. Note the overlap at seed 44 — with three
+      seeds this is a ~3% effect, which is why it needed re-testing at scale rather than being called
+      settled here.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Sweet-spot matrix</h2>
+      <p class="sub">100K clips / 15 epochs, single runs unless noted. Each row varies one thing.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>lever</th><th>setting</th><th>robot_l2_moved</th><th>read</th></tr></thead>
+          <tbody>
+            <tr><td>voxel grid</td><td class="mono">1.5 cm</td><td>0.0644</td><td>baseline</td></tr>
+            <tr><td>voxel grid</td><td class="mono">3 cm</td><td>0.06527</td><td rowspan="3">monotonic degradation — keep 1.5 cm</td></tr>
+            <tr><td>voxel grid</td><td class="mono">6 cm</td><td>0.06833</td></tr>
+            <tr><td>voxel grid</td><td class="mono">10 cm</td><td>0.07256</td></tr>
+            <tr><td>scene contents</td><td><span class="mono">fullscene</span> (agent kept in cloud)</td><td><strong>0.06402</strong></td><td>best single value (1 seed)</td></tr>
+            <tr><td>combo</td><td>λ=10 × 3 cm</td><td>0.06655</td><td>levers do not stack; moot once 1.5 cm wins</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Voxel resolution is monotonic and steep: going from 1.5 cm to 10 cm costs 12.7%, more than the
+      entire world-model effect. <strong><span class="mono">fullscene</span> — keeping the hand's own
+      surface in the scene cloud — became the default from here on</strong>, and it matters more than
+      its 0.4% margin suggests: it fixes what the model's input <em>contains</em>, which is exactly the
+      contract that has to be reproduced at deployment.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Scale-up: 5.2M clips</h2>
+      <p class="sub">Merged <span class="mono">fullscene</span> corpus, 40K steps at batch 256 (~2 epochs).
+      Fixed held-out set of 40K clips (<span class="mono">egodex_eval40k_fullscene</span>), evaluated at
+      <span class="mono">model-last@40K</span>.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>config</th><th>robot_l2_moved</th><th>vs its 100K counterpart</th></tr></thead>
+          <tbody>
+            <tr><td>E1 world-model λ=1 (fullscene)</td><td><strong>0.06057 ± 0.00017</strong></td><td>−5.9% (from 0.0644) — record</td></tr>
+            <tr><td>E2 robot-only</td><td>0.06357 ± 0.00018</td><td>−4.5% (from 0.0666)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Three readings, in order of how much they constrain what comes next:</p>
+      <ol>
+        <li><strong>Data scale alone beats every 100K configuration.</strong> E2 — the <em>ablated</em>
+        model at scale — is better than every tuned 100K run including the world-model ones. No amount
+        of 100K-scale tuning substitutes for data.</li>
+        <li><strong>The world-model gap survives scaling and grows.</strong> −4.7% at z≈12, against ~3%
+        at 100K. This is the result that mattered: the branch is not a small-data crutch.</li>
+        <li><strong>The budget was not spent.</strong> E1 validation was still falling at 36K→40K
+        (0.0636→0.0618). Every number in this table is a 2-epoch number.</li>
+      </ol>
+      <p>For completeness, E1's scene branch reached <span class="mono">scene l2_moved</span> 0.04610 —
+      the world model is genuinely predicting scene motion, not degenerating to a copy of the input.</p>
+      <figure>
+        <img src="assets/res-egodex.png" alt="Training and validation curves for the EgoDex pretraining runs, showing the world-model arm below the robot-only arm throughout and both still descending at the end of the budget." loading="lazy">
+        <figcaption>res-egodex.png · EgoDex pretraining curves. The separation is visible for the whole
+        run rather than emerging at the end, and neither curve has flattened at the budget limit.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>What this log does not establish</h2>
+      <p class="sub">Stated up front so the next log is not read as a contradiction of this one.</p>
+      <p>Every number above is <strong>open-loop</strong>: the model is shown a held-out observation and
+      its predicted trajectory is compared to the recorded one. That measures whether the model has
+      learned the demonstration distribution. It does <em>not</em> measure whether rolling the model out
+      in a closed loop — where its own predictions determine the next observation — produces useful
+      behaviour, because open-loop evaluation never visits a state the model itself created.</p>
+      <p>It also says nothing about transfer to a robot. EgoDex is egocentric human video; the target
+      is an OpenArm with an Inspire hand in an Isaac Lab pick-and-place task. Finetuning onto that
+      corpus, deploying through a bridge, and measuring success rate under the simulator's own success
+      predicate is the subject of the
+      <a href="/experiments/dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/">closed-loop
+      evaluation log</a>, and the answer there is materially harsher than this one.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-07-15 · beomjun · experiments/dex-pointwam/logs/2026-07-15-initial-development-and-egodex-pretraining</div>
+</footer>
+
+</body>
+</html>

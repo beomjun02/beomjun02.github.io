@@ -10,9 +10,9 @@
       "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
       "path": "dex-pointwam/",
       "now": {
-        "text": "Account closed: a coherent trajectory to the wrong attractor, matching the marginal of its training diet. Next: the WDS window-cutting rule, and whether autoregressive decoding is what supplies chunk-to-chunk consistency.",
+        "text": "Closed-loop evaluation on the DPP task. Clock settled at 20 Hz by external anchor, so our 1.50 s chunk is nearly double DPP's 0.80 s; three finetune arms (0.80 s native, 0.80 s half-rate, 1.50 s control) are building from one stride-1 extraction. 384-episode eval per model.",
         "status": "active",
-        "updated": "2026-08-01"
+        "updated": "2026-08-02"
       }
     },
     "dex-point-policy": {
@@ -29,20 +29,38 @@
   "logs": [
     {
       "project": "dex-pointwam",
-      "date": "2026-08-01",
-      "slug": "why-the-arm-does-not-move",
-      "title": "The arm is not stopping — it is not being moved",
+      "date": "2026-07-15",
+      "slug": "initial-development-and-egodex-pretraining",
+      "title": "Initial development and pretraining on EgoDex",
+      "status": "done",
+      "updated": "2026-08-02",
+      "tldr": "Porting PointWAM to a 12-keypoint dexterous hand and pretraining on EgoDex. At 5.2M clips held-out robot_l2_moved is 0.06057 +/- 0.00017 m; the world-modelling branch buys -4.7% (z~12) and the gap GROWS with scale rather than washing out. Open-loop only, and the run was still improving at the budget limit.",
+      "path": "dex-pointwam/logs/2026-07-15-initial-development-and-egodex-pretraining/",
+      "tags": [
+        "pretraining",
+        "egodex",
+        "world-model",
+        "ablation",
+        "open-loop",
+        "scaling"
+      ]
+    },
+    {
+      "project": "dex-pointwam",
+      "date": "2026-08-02",
+      "slug": "closed-loop-evaluation-dpp-task",
+      "title": "Closed-loop evaluation on the DPP task",
       "status": "running",
       "updated": "2026-08-02",
-      "tldr": "Not a stall and not oscillation: the model steers the hand along a COHERENT straight line (chunk-to-chunk direction agreement +0.99) to a fixed point 16 cm from the object, converges there and holds. Seven interventions, thirteen cells, all 0/24 — and the IK residual is dissociable from the outcome, confirmed independently on a second driver.",
-      "path": "dex-pointwam/logs/2026-08-01-why-the-arm-does-not-move/",
+      "tldr": "The same checkpoint picks nothing up. Not a stall and not oscillation: a COHERENT trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted first. Leading candidate is a clock mismatch - the demos are 20 Hz by external anchor (479/479 episodes, 69066/69066 frames), making our chunk 1.50 s against DPP's 0.80 s; three finetune arms in flight.",
+      "path": "dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/",
       "tags": [
-        "diagnosis",
-        "closed-loop-coherence",
-        "ik",
-        "embodiment-gap",
+        "closed-loop",
+        "sim",
         "retraction",
-        "sim"
+        "clock",
+        "evaluation",
+        "embodiment-gap"
       ]
     },
     {
@@ -79,53 +97,6 @@
         "depth-gradient",
         "sim",
         "methodology"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-results",
-      "title": "Handing the model the object doesn't fix the grasp",
-      "status": "done",
-      "updated": "2026-07-31",
-      "tldr": "0/24 everywhere: three objects, every point density, both checkpoints, every training length, and with the contact grip enabled — while DPP is 7/24 in the same harness. Three diagnoses fell to measurement: the palm is not held rotated (it rotates, +56 deg/1000 steps vs DPP's -5), undertraining is refuted (18% better val bought no success and halved the reach), and grasp initiation is excluded (contact fires in 32% of chunks, nothing changes). Ships a measured metric-depth pipeline shared with DPP. CORRECTION 2026-07-31 (appended as section 10): the sim inputs were not at training parity, so two of this entry's exclusions do not hold. The '2048-point' object cloud carried only 403 distinct points padded with copies of one point (candidate pool never scaled past its 128-point default; 48000 candidates reaches true 2048), and the scene cloud was cap-bound and RANDOMLY decimated to 2.55 cm spacing over 363x163 cm versus training's uncapped 5871 points at 1.43 cm over 204x132 cm. Run forward on real held-out clips these same checkpoints reproduce 78-98% of true wrist motion (16.07 cm GT) but only 25-36% in sim, so the collapse is sim-input-side and the undertraining and palm-sweep readings are both withdrawn. All success_at_end numbers stand but are on the retired 4-initial-condition protocol. SECOND CORRECTION 2026-07-31 (section 11), and it goes to the premise: the object-conditioning network was NEVER TRAINED. Every weight sits at its initialisation to within weight-decay drift (point_mlp.0 expected 0.288675 vs observed 0.285176; out_proj 0.031250 vs 0.031192; LayerNorms 0.9974-0.9978 vs 1.0; lr*wd*steps predicts -0.2%), while the contact head in the same run trained normally. So the object points could not influence the output however good they were, which is also why 128 / 403 / 567 / 2048-distinct all gave identical behaviour. Additionally: every behaviour video published before 2026-07-31 filmed a DIFFERENT policy, because render_fail.sbatch never passed use_object_cond. And the reach itself was never object-relative. THIRD PASS same day: 'never travels to the bottle' is withdrawn as too strong - per-env instrumentation over 24 envs shows the wrist DOES close on the target (21.8 -> 13.2 cm). What actually happens is a STALL: the predicted closing rate decays monotonically toward zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips never reach grasp range (best 12.3-15.5 cm), so the hand parks ~11-16 cm short and grips air. The decay replicates across two runs with identical inputs; the subsequent reversal does not, and is not claimed. THIRD CORRECTION 2026-07-31 (section 12), a PROVENANCE error: several section-10 numbers were measured on the bridge's synthetic warm-up frame, not on the simulator. Replacements from real observations: sim scene extent 552x234x201 cm at 1.90 cm spacing with the 12000-point cap DOES bind (vs training 204x132x95 cm at 1.43 cm, cap never binding) - so the sim view really is ~2.7x wider and really is cap-decimated, the figures were just wrong. WITHDRAWN ENTIRELY: the degenerate-frame story - there is no bad frame anywhere, the first real frame is a normal render (std 33-39, 203 levels) and the 'noise' was the warm-up image. Registration is FINE at 1.0 cm under identity (better than training's 4.26 median); two larger figures en route were phantom-keypoint artifacts. THE FAILURE, theory-free, over 48 trajectories: fingertips come within 5 cm of the target in 1 of 48; best fingertip approach 10.40 cm. The hand approaches (wrist 21.8 -> 13 cm) then stops at a LEARNED DISTANCE, not a timeout - stall distance CV 0.379 vs stall time CV 0.548, ~10.6 cm, replicated 9.77/11.49.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-results/",
-      "tags": [
-        "result",
-        "object-cloud",
-        "ablation",
-        "depth-gradient"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "object-cloud-conditioning",
-      "title": "Give the model the object — target-object cloud conditioning",
-      "status": "done",
-      "tldr": "Adds a DPP-style per-object cloud (128 pts, PointNet) + object-name conditioning via the existing CLIP encoder to fix the palm-up grasp OOD; object cloud verified co-registered (chamfer 0 cm); 1.5 cm voxel validated; two-track 24 h run.",
-      "path": "dex-pointwam/logs/2026-07-29-object-cloud-conditioning/",
-      "tags": [
-        "plan",
-        "architecture",
-        "object-cloud",
-        "conditioning"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-29",
-      "slug": "closed-loop-eval",
-      "title": "Closed-loop sim eval — reach transfers, grasp pose doesn't",
-      "status": "closed",
-      "updated": "2026-07-31",
-      "tldr": "Tier-0 sensible reach achieved after two deploy-side fixes; grasp 0/24 from a palm-up orientation collapse — model-level real→sim OOD, all deploy causes ruled out. CORRECTION 2026-07-31 (appended as section 08): this title is STRUCK IN BOTH HALVES. Tier-0 was never an object-relative measurement — it rested on a displacement magnitude (||wrist_end - wrist0||) that never referenced the object — and rendered object-relatively the hand never reaches GRASP RANGE: per-env instrumentation shows the wrist closing 21.8 -> 13.2 cm but the predicted closing rate decaying to zero (-5.47, -3.60, -1.78, -0.02 cm/chunk) and the fingertips stalling at 12.3-15.5 cm, so the hand parks ~11-16 cm short and the object never moves (obj_final_pos z=0.915, table height). The palm-up diagnosis also falls: neither policy controls palm orientation through the position-only 6-point IK (ours achieves -0.26 of command, DPP 0.000). The correct question is why the predicted trajectory is not aimed at the conditioned target object, which accounts for the grip firing in empty space, contact firing in 32% of chunks, and why six emulations of sim-input defects were all null. CORRECTION UPDATE 2026-07-31: quantified over 48 trajectories - the hand approaches then stops at a learned distance of ~10.6 cm (stall-distance CV 0.379 vs stall-time CV 0.548, replicated), fingertips within 5 cm in 1 of 48, best fingertip approach 10.40 cm. Scene registration is fine (1.0 cm, in the training band), so the failure is not a frame or perception-fidelity problem.",
-      "path": "dex-pointwam/logs/2026-07-29-closed-loop-eval/",
-      "tags": [
-        "sim",
-        "closed-loop",
-        "OOD",
-        "isaac"
       ]
     },
     {
