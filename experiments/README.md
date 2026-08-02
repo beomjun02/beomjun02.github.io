@@ -17,7 +17,7 @@ Both are light/dark (follow the viewer, toggle persists, shared across formats).
 
 ```
 experiments/
-├── index.html        dashboard: Ongoing (latest per project) + Archive (month-grouped)
+├── index.html        home: project tiles only — name + fixed thumbnail (<project>/assets/thumb.jpg)
 ├── logs.json         registry — one entry per log; drives both dashboard sections
 ├── assets/           lab.css|js (Log) · present.css|js (Presentation)
 ├── _template/        log.html · presentation.html
@@ -45,14 +45,13 @@ Start a new log only when the question changes, the open log reached a verdict (
 2. Copy `_template/log.html` → `index.html`; fill ALL-CAPS placeholders; uncomment optional blocks; delete unused sections. House rules are in the template's header comment.
 3. Media into the log's own `assets/`: H.264 mp4 ≤5 MB + poster jpg; stills ≤500 KB, `loading="lazy"` below the fold.
 4. Append one entry to `logs.json` (schema in the file).
-5. Refresh static fallbacks in `experiments/index.html`: Archive `<li>` (≤10 entries) + the project card's `mini-feed` links.
-6. Add the log to the **project hub's "All logs" section** (every hub carries its full per-project list; the dashboard only shows the last few).
+5. Add the log to the **project hub's "All logs" section**, newest first — the hub is the project's full time-ordered archive and the only place logs are listed. The home page (`experiments/index.html`) never changes when a log is added: it carries only project tiles (name + fixed thumbnail).
 
-New project: hub `index.html` (with an "All logs" section) + `logs/`, register in `logs.json` `projects` (including a `now` entry), add a static card in `experiments/index.html`.
+New project: hub `index.html` (with an "All logs" section) + `logs/` + a fixed `assets/thumb.jpg` (16:9, ≤200 KB, changed rarely), register in `logs.json` `projects`, add a tile in `experiments/index.html`.
 
 ## Project "now" line
 
-`logs.json` → `projects.<id>.now = {text, status: active|blocked|idle, updated}` is the project's **current focus**, independent of any log — it is what the dashboard's Ongoing section leads with. Update it whenever the focus changes (sprint open/close, new directive), and set `status: idle` when nothing is running. A stale `now` is worse than none.
+`logs.json` → `projects.<id>.now = {text, status: active|blocked|idle, updated}` is registry metadata for the project's **current focus** (hub pages may surface it; the home page does not). Update it when the focus changes; set `status: idle` when nothing is running. A stale `now` is worse than none.
 
 ## Rules
 
