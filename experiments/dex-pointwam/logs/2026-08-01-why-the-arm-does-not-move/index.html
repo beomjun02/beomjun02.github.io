@@ -218,6 +218,28 @@
       <h2><span class="n">07</span>Timeline</h2>
       <ul class="timeline">
         <li class="acc">
+          <span class="tdate">2026-08-02</span>
+          <span class="tt">Published: the scene observation as the model consumes it (sprint-1 Task 2 renders)</span>
+          <p>The 1.5 cm-voxel scene input on the DPP PnP task, requested by the owner and previously delivered
+          only off-site. Verdict unchanged from when they were made: the scene cloud is <b>thin on the
+          target</b> — the bottle gets 54 scene points inside its bounding box (66 within ±8 cm), the wrist 18
+          within 5 cm, out of 5,871 total; the 12,000-point cap does not bind on real data. Object geometry is
+          carried almost entirely by the separate 2048-point object cloud.</p>
+          <figure>
+            <img src="assets/model_input_voxel_density.jpg" alt="Three zoom levels, dense capture vs 1.5cm voxelized model input, red box marks the bottle extent, red dots the hand keypoints, green the separate object cloud." loading="lazy">
+            <figcaption>model_input_voxel_density.jpg · 3 zoom levels × dense-vs-voxel · red box = target extent, red dots = hand keypoints, green = separate object cloud</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/zoom_object_hand.png" alt="Close view of the voxelized scene around the object and hand showing sparse coverage." loading="lazy">
+            <figcaption>zoom_object_hand.png · object/hand region at model resolution</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/scene_dense_vs_voxel.png" alt="Full scene, dense capture next to the voxelized version the model receives." loading="lazy">
+            <figcaption>scene_dense_vs_voxel.png · full scene, dense vs voxelized</figcaption>
+          </figure>
+        </li>
+
+        <li class="acc">
           <span class="tdate">2026-08-01</span>
           <span class="tt">Oracle: the harness can reach, the policy cannot</span>
           <p>A scripted privileged-state policy through the identical IK and grip path reaches the bottle in
