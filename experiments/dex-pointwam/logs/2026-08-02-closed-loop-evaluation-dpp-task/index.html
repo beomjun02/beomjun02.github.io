@@ -88,10 +88,19 @@
           </tbody>
         </table>
       </div>
-      <p class="muted">Setting difference that must be read with the table: the training clouds are
-      <strong>not</strong> agent-stripped, so their within-20 cm count includes the hand's own surface;
-      the sim count does not. The sim figure is roughly 3× thinner near the hand in fractional terms,
-      but part of that ratio is this asymmetry rather than a sparser sensor.</p>
+      <p class="muted"><strong>Corrected 2026-08-04.</strong> The caveat previously here said the sim
+      cloud was agent-stripped while training's was not, and that this asymmetry explained part of the
+      gap. That is <strong>wrong</strong>: <code>PWAM_STRIP_AGENT_CM</code> was never set in the run these
+      numbers come from (the strip diagnostic does not appear in its log at all), and training uses the
+      <code>fullscene</code> variant, which also keeps the agent. <strong>Both clouds contain the hand, so
+      the comparison is like-for-like and the gap is larger than was stated, not smaller</strong> —
+      4.7× fewer points within 20 cm of the acting wrist, 2.9× within 30 cm.</p>
+      <p>The mechanism is the point budget, not the sensor. The sim cloud sits <em>at</em> the
+      12,000-point cap (57,600 before voxelisation) while training's 5,871 points are not capped at all,
+      and the sim scene spans about ten times the bounding volume — 552×234×207 cm against
+      204×132×95 cm. Per litre of bounding box that is 0.45 points against 2.30, a <strong>5.1×
+      deficit</strong>. The same budget spread over a much larger room means the region where the task
+      actually happens is the region that loses resolution.</p>
       <figure>
         <img src="assets/zoom_object_hand.png" alt="Close-up of the deployed point cloud around the hand and the bottle, showing the object surface resolved but sparsely sampled relative to the wider scene." loading="lazy">
         <figcaption>zoom_object_hand.png · the hand–object region of the same observation.</figcaption>
