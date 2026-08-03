@@ -51,7 +51,7 @@
       <p>The strongest quantitative lead is a <strong>clock mismatch</strong>. The model's predicted
       displacement per chunk matches the marginal of its own training diet almost exactly (+2.4 cm per
       chunk, both sides). It is reproducing what it was taught — over the wrong amount of physical time.
-      Settled against an external anchor this week: the demonstrations were recorded at <strong>20 Hz</strong>,
+      <span class="muted">[corrected 2026-08-03 — see §05]</span> Settled against an external anchor this week: the demonstrations were recorded at <strong>20 Hz</strong>,
       not the 30 fps the video containers advertise, which makes our shipped chunk <strong>1.50 s</strong> of
       human motion against DPP's <strong>0.80 s</strong>. Three finetune arms are now in flight to test
       that directly (§05).</p>
@@ -185,7 +185,34 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05</span>The clock, settled by external anchor</h2>
+      <h2><span class="n">05</span>The clock — corrected 2026-08-03, not settled</h2>
+      <div class="verdict">
+        <p class="k">Correction · 2026-08-03</p>
+        <p><strong>The claim below that the source rate is settled at 20 Hz is withdrawn. It is not
+        settled.</strong> The section is kept as written; what follows corrects it.</p>
+        <p>A rate in this project has <strong>three possible referents</strong>, and a number quoted
+        without saying which one is unusable: the <em>sensor clock</em>, the <em>delivered rate</em>
+        after any multi-camera alignment drops frames, and the <em>post-extraction stride</em> we
+        apply ourselves. The anchor below is a <strong>delivered-rate label</strong>, not a sensor
+        measurement — and two things we called corroboration are not. The parquet
+        <code>timestamp</code> column is <em>derived</em> from that same label (exactly
+        <code>frame_index / 20</code> to float32; jitter 2&times;10<sup>-7</sup> is quantisation,
+        not measurement), and the simulator stepping at 20&nbsp;Hz is a deploy choice that may be
+        downstream of the same belief.</p>
+        <p>What measurement does establish: per-frame wrist displacement is median 0.54&nbsp;cm /
+        p95 3.81&nbsp;cm, which <strong>excludes 8.33&nbsp;Hz</strong> (it would imply a 20.5&nbsp;s
+        pick-and-place peaking at 32&nbsp;cm/s). So this corpus is a native stream rather than an
+        already-decimated one — but 20, 25 and 30&nbsp;Hz all remain physically ordinary and the
+        measurement does not choose between them. The source videos are no longer on this
+        filesystem, so the sensor clock cannot currently be read at all.</p>
+        <p><strong>None of the finetunes depend on the answer.</strong> The arms are defined in raw
+        frames, and training consumes a decimation and a step count, never a duration. DPP predicts
+        16 <em>consecutive native frames</em>; arm A predicts the same 16, so it is DPP-matched at
+        any source rate, and the A-vs-C contrast is 16 frames versus 30 frames either way. Only the
+        seconds <em>label</em> moves — arm A is 0.80&nbsp;s at 20&nbsp;Hz and 0.64&nbsp;s at
+        25&nbsp;Hz. Seconds enter only at deployment, where the playback code asserts the step is an
+        exact multiple of the control period rather than rounding it.</p>
+      </div>
       <p class="sub">The current leading candidate, and the reason three finetune arms are running.</p>
       <p>The model's predicted displacement per chunk matches the marginal of its training data almost
       exactly — +2.4 cm per chunk on both sides. It is reproducing what it was taught. The question is
@@ -215,6 +242,7 @@
           </tbody>
         </table>
       </div>
+      <p class="muted">The chunk column above is stated at 20&nbsp;Hz and moves with the unresolved rate; the step counts and the 16/16/30-frame spans do not.</p>
       <p>All three arms are decimations of <em>one</em> extraction — every raw frame run through the
       annotation pipeline once, with clip span held at 30 raw frames and the same clip starts as the
       shipped build — so they differ in the clock and in nothing else. Each plays back exactly at the

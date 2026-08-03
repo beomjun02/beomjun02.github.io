@@ -10,9 +10,9 @@
       "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
       "path": "dex-pointwam/",
       "now": {
-        "text": "Closed-loop evaluation on the DPP task. Clock settled at 20 Hz by external anchor, so our 1.50 s chunk is nearly double DPP's 0.80 s; three finetune arms (0.80 s native, 0.80 s half-rate, 1.50 s control) are building from one stride-1 extraction. 384-episode eval per model.",
+        "text": "Closed-loop evaluation on the DPP task. Three clock arms (16 / 16-half-res / 30 raw frames) finetuning from one stride-1 superset extraction; DPP baseline row done at 56/384 = 14.6%. Source rate deliberately NOT asserted - arms are frame-defined, see CLOCK-LEVELS.",
         "status": "active",
-        "updated": "2026-08-02"
+        "updated": "2026-08-03"
       }
     },
     "dex-point-policy": {
@@ -51,8 +51,8 @@
       "slug": "closed-loop-evaluation-dpp-task",
       "title": "Closed-loop evaluation on the DPP task",
       "status": "running",
-      "updated": "2026-08-02",
-      "tldr": "The same checkpoint picks nothing up. Not a stall and not oscillation: a COHERENT trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted first. Leading candidate is a clock mismatch - the demos are 20 Hz by external anchor (479/479 episodes, 69066/69066 frames), making our chunk 1.50 s against DPP's 0.80 s; three finetune arms in flight.",
+      "updated": "2026-08-03",
+      "tldr": "The same checkpoint picks nothing up. Not a stall and not oscillation: a COHERENT trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted. Leading candidate is a chunk-length mismatch: our shipped chunk spans 30 raw frames against DPP's 16, so three finetune arms (16, 16 at half resolution, 30 frames) are in flight. Corrected 2026-08-03: the SOURCE RATE IS NOT SETTLED - the 20 Hz figure is a delivered-rate label, not a sensor measurement, so the arms are defined in frames and no result depends on it.",
       "path": "dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/",
       "tags": [
         "closed-loop",
