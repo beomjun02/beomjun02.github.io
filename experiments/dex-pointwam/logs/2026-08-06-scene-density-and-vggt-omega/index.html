@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-06 · Scene density &amp; VGGT-Omega — Dex-PointWAM</title>
+<meta name="description" content="Experiment log: the 12k point budget is an allocation problem — EE-centered sampling recovers 3–5× near-hand density; VGGT-Omega encoder proposal filed.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-08-06 · scene-density-and-vggt-omega</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dex-PointWAM</p>
+    <h1>Half the point budget is background — sampling fixes the allocation, VGGT-Omega would remove the budget</h1>
+    <p class="lede">Representation study on the model's scene input: what the 12,000-point cap actually spends its budget on (measured on DPP sim and an EgoDex training sample), five end-effector-centered sampling schemes compared at equal budget, and an architecture proposal that eliminates the budget entirely.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-06</dd></div>
+      <div><dt>Outcome</dt><dd>points &lt;20 cm of hand: 234 → 726–1,169 at the same 12k budget</dd></div>
+      <div><dt>Env</dt><dd class="mono">alinlab cluster · openarm-sim (Isaac) · EgoDex wds part1</dd></div>
+      <div><dt>Full report</dt><dd class="mono">obs dumps: job 72332 · renderer: openarm-sim/scripts/render_density_configs.py</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>The near-field starvation of the model input is an <b>allocation problem, not a sensor problem</b>: 54% of the 12,000-point budget lands beyond 1.5 m and only ~2% within 20 cm of the hand, while the source cloud holds 1,169 fine voxels in that shell — 5× what the uniform-random cap keeps. End-effector-centered sampling (banded or gaussian) recovers 3–5× near-hand density at equal budget and works on both the sim and EgoDex sides. But every scheme is a heuristic for spending a capped token budget that PTv3 imposes by construction; a VGGT-Omega encoder has no such budget (pixel-dense geometry from ~1,041 tokens/frame, perspective foveation for free). Proposal filed; two ~1-GPU-hour de-riskers pending go.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Five survival rules, one source cloud, one 12k budget. Top rows: full scene; bottom: work region; red = hand keypoints.</p>
+      <figure>
+        <img src="assets/density_configs_dpp_bottle.jpg" alt="DPP sim bottle: five sampling schemes side by side" style="width:100%">
+        <figcaption>DPP sim (bottle), source = 57,600-pixel GT-depth cloud. <code>current</code> spends 54% of the budget beyond 1.5 m; <code>priority</code> is a hard crop at an adaptive 37 cm radius; <code>gaussian</code>/<code>banded</code> keep the far field at low density.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/density_configs_egodex_addlid.jpg" alt="EgoDex add_remove_lid: same schemes on the dense VGGT source" loading="lazy" style="width:100%">
+        <figcaption>EgoDex (<code>add_remove_lid</code>), source = dense VGGT-Omega depth (57,600 px). The stored training input is 6,696 tracked points with only 199 &lt;20 cm — the training side is equally starved. Note: the whole scene is within 0.78 m; the background-waste problem is robot/sim-side only.</figcaption>
+      </figure>
+
+      <div class="chart" role="img" aria-label="Points within 20 cm of the hand, DPP sim, equal 12k budget: current 234, priority 1169, gaussian 726, banded 714, linear 557.">
+        <div class="crow">
+          <span class="clabel">priority<span class="cnote">0.5cm, nearest-12k</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:100%"></span></span><span class="cval">1,169</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">gaussian<span class="cnote">σ=35cm + floor</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:62%"></span></span><span class="cval">726</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">banded<span class="cnote">0.5/1.2/3.5cm</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:61%"></span></span><span class="cval">714</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">linear<span class="cnote">R=1.2m + floor</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:48%"></span></span><span class="cval">557</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">current<span class="cnote">1.5cm + random cap</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:20%"></span></span><span class="cval">234</span>
+        </div>
+      </div>
+      <p class="sub">Points within 20 cm of the hand (DPP sim, same 12k budget). The <code>priority</code> bar is also the source ceiling at 0.5 cm — it keeps everything in the shell by construction.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Why the input is starved: tokens are the resolution</h2>
+      <p class="sub">The limit is structural to the point representation, not a tuning miss.</p>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">In PTv3, one retained point = one token.</span><span class="ld">Coverage × density = token budget, hard-capped at <code>max_scene_points = 12,000</code>. At the shipped 1.5 cm grid the cap already binds (13,038 voxels), and the excess is dropped <em>uniformly at random</em> — so the background keeps its share.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Measured on the DPP bottle frame:</span><span class="ld">54.3% of the budget beyond 1.5 m (max 3.76 m); 64 points &lt;10 cm, 234 &lt;20 cm, 1,148 &lt;30 cm of the hand. Those far points are static, so they also get ≈0 weight in the motion-weighted world-model loss — over half the input is dead for both objectives at once.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Finer grids reallocate but can't escape the cap.</span><span class="ld">A 0.5 cm grid triples the work-region share (32% → 61%) yet the total stays pinned at 12k; <code>grid_size</code> is a checkpoint-contract key, so changing it means finetuning, not a config flip.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Earlier hard-crop evidence re-read:</span><span class="ld">the background-crop test halved wrist displacement (7.72 → 4.45 cm at t=0, policy went passive) — but it removed the far field entirely and never unbound the cap, so it tested the cliff, not the density.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>What we tried: five schemes, one budget</h2>
+      <p class="sub">All schemes see the same source cloud; only the survival rule differs. Weighted sampling is exact (Efraimidis–Spirakis, without replacement).</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Scheme</th><th>&lt;20cm</th><th>&lt;30cm</th><th>&lt;60cm</th><th>&gt;1.5m</th><th>Judgement</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">current</td><td class="mono">234</td><td class="mono">1,148</td><td class="mono">3,855</td><td class="mono">54%</td><td>baseline; majority of budget wasted</td></tr>
+            <tr><td class="mono">priority</td><td class="mono">1,169</td><td class="mono">7,181</td><td class="mono">12,000</td><td class="mono">0%</td><td>adaptive-radius crop (r_cut=37 cm) — far target <em>guaranteed</em> invisible; diagnostic upper bound only</td></tr>
+            <tr><td class="mono">gaussian</td><td class="mono">726</td><td class="mono">3,976</td><td class="mono">10,767</td><td class="mono">1.3%</td><td>3.1× near-field, smooth falloff, nonzero floor everywhere; stochastic</td></tr>
+            <tr><td class="mono">linear</td><td class="mono">557</td><td class="mono">3,162</td><td class="mono">9,953</td><td class="mono">0.9%</td><td>dominated by gaussian at equal floor — dropped</td></tr>
+            <tr><td class="mono">banded</td><td class="mono">714</td><td class="mono">4,455</td><td class="mono">9,108</td><td class="mono">13.8%</td><td>deterministic, no cliff, structured coarse far field; best contract fit (3 numbers)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub">DPP sim, bottle. EgoDex sample (40 cm work region): stored input 199 &lt;20 cm → priority 1,266 · gaussian 933 · banded 1,060.</p>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Conclusion 1 — allocation, not source.</span><span class="ld">The 0.5 cm source holds 1,169 voxels &lt;20 cm; uniform-random capping keeps ~230 of them. Reallocation alone buys 3–5×.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Conclusion 2 — recommended: banded primary, gaussian ablation, priority as strawman.</span><span class="ld">If even priority's near-field maximum doesn't move closed-loop SR, density was not the binding failure (conditioning collapse remains a live rival hypothesis from the 08-01 wrong-attractor account).</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Conclusion 3 — the scheme is part of the observation contract.</span><span class="ld">It must be applied identically at train and deploy; on the EgoDex side that means re-extraction at the CoTracker <em>query</em> stage (~14% track survival ⇒ query ~7× the target), not just re-voxelisation. Sampling compute itself is negligible.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>VGGT-Omega: what it can and can't do</h2>
+      <p class="sub">Verified against the vendored source (<code>pointbridge/third_party/vggt-omega</code>), not the paper.</p>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Pixel-dense geometry from a compact latent.</span><span class="ld">Per 512² frame: 1 camera + 16 register + 1,024 patch tokens ≈ 1,041 tokens — 12× fewer than PTv3's 12k input — and the DPT-style DenseHead decodes them back to per-pixel depth/point maps (57,600 samples). Resolution lives in channels + decoder, not in token count: there is nothing to cap.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Video/history native.</span><span class="ld">The Aggregator alternates frame-wise and global attention over the sequence; the CameraHead handles the moving ego camera. Multi-frame is what it was built for.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Perspective = built-in foveation.</span><span class="ld">Pixel density on a surface falls as 1/z² — the ego camera looking at the workspace allocates samples toward the hand automatically. Section 03's schemes are hand-crafted approximations of this.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">No spatial language grounding.</span><span class="ld">The TextAlignmentHead reads out one global, L2-normalised scene-level embedding (CLIP-style retrieval) — no per-patch language field. Deferred anyway: on single-object DPP scenes language is not the failure suspect.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">No agent-free scene.</span><span class="ld">It reconstructs whatever is in the pixels, hand included. This is the crux for human→robot transfer — see the proposal.</span></span></li>
+        <li><span class="mk x">✗</span><span><span class="lt">Scale-ambiguous depth; sim renders untested.</span><span class="ld">Training already anchors scale via the GT hand; at deploy the robot keypoints / calibrated camera anchor it. DPP sim currently feeds GT depth (zero perception error) — VGGT on synthetic renders introduces error where there was none. Must be smoke-tested.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Proposal: VGGT-Omega-based Dex-PointWAM</h2>
+      <p class="sub">The strongest argument is our own pipeline: EgoDex training clouds already <em>are</em> VGGT-Omega outputs — then every later stage discards information.</p>
+      <pre><code>today:     VGGT-Omega dense depth → lift → track-select (~14% survive) → 1.5cm voxel → 12k cap → PTv3
+proposal:  RGB history → VGGT-Omega Aggregator → patch tokens → action DiT (cross-attn: text, KP12 query tokens)</code></pre>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Action expert unchanged in spirit.</span><span class="ld">The DiT keeps CLIP-text cross-attention; robot keypoints become query tokens carrying 3D position via the CameraHead's projection. The KP12 action space — the embodiment bridge — is retained as-is.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">The world-model objective arguably improves.</span><span class="ld">Predict future depth/point maps → pixel-dense flow supervision instead of 14%-survival sparse tracks.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Risk 1 — the embodiment gap re-enters through pixels.</span><span class="ld">Point clouds + keypoints gave appearance invariance; patch tokens embed hand/arm appearance. Plan: segment the agent (SAM3/EgoHOS for human, URDF projection or sim GT seg for robot), drop the agent's patch tokens, insert KP12 tokens. Price: 16 px mask granularity.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Risk 2 — sim domain gap.</span><span class="ld">Predicted vs GT depth on synthetic renders; testable in ~1 GPU-hour, finetunable on sim GT depth if needed.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Cost.</span><span class="ld">1B-param encoder (ckpt 4.58 GB) vs PTv3-small + DINOv3; chunk-replanning deploy on H100 is realistic, training cost rises materially.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Two tracks, different time constants.</span><span class="ld">Sampling schemes = tactical fix inside the current architecture (cheap FT arm, doubles as the density-vs-conditioning diagnostic). VGGT-Omega encoder = strategic fix that removes the token-budget problem class.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">De-risker A (pending go): VGGT-Omega zero-shot on DPP sim renders.</span><span class="ld">Depth quality vs the GT buffer; ~1 GPU-hour.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">De-risker B (pending go): agent-free feasibility.</span><span class="ld">Hand-mask + patch-token drop on a few EgoDex frames; does the scene reconstruction survive? ~1 GPU-hour.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Tactical arm (pending go): banded-sampling finetune on DPP data + matched deploy.</span><span class="ld">First closed-loop signal on whether near-field density moves SR at all — before committing to EgoDex re-extraction.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Obs dumps (as-received input + pre-voxel source)</span><span class="ld mono">/rlwrld-unified-checkpoints/beomjun/obsdump_pointmap/ · job 72332 · launcher openarm-sim/scripts/dump_obs_npz.sbatch</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Renderers</span><span class="ld mono">openarm-sim/scripts/render_density_configs.py · render_voxel_sweep.py · render_obs_orbit.py</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">EgoDex sample</span><span class="ld mono">wds_egodex_part1_fullscene/train/train-rank00-000000.tar :: add_remove_lid__0__0_11</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">VGGT-Omega source + weights</span><span class="ld mono">pointbridge/third_party/vggt-omega · egodex-pipeline/checkpoints/vggt_omega_1b_512.pt</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-06 · beomjun · experiments/dex-pointwam/logs/2026-08-06-scene-density-and-vggt-omega</div>
+</footer>
+
+</body>
+</html>
