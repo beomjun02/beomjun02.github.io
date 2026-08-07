@@ -29,16 +29,16 @@
     <p class="lede">Restructure of the ICLR-2027 workstream around a human-centric base policy (real human data only, embodiment-free observations) composed with a learned per-embodiment retargeter whose objective is functional: the object must follow the demo's 3D trajectory. Four assigned papers read in full + a 26-work novelty sweep, via 5 parallel reading agents; design v1 written and under discussion.</p>
 
     <dl class="record">
-      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
       <div><dt>Dates</dt><dd>2026-08-07</dd></div>
-      <div><dt>Outcome</dt><dd>idea 4/5 · novelty = a defensible conjunction · design v1, 6 decisions open</dd></div>
+      <div><dt>Outcome</dt><dd>idea 4/5 · novelty = a defensible conjunction · design CLOSED v1.0</dd></div>
       <div><dt>Env</dt><dd class="mono">reading + design only · zero GPU spent</dd></div>
-      <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/retargeter/reading-notes.md</dd></div>
+      <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/retargeter/{DESIGN.md, reading-notes.md}</dd></div>
     </dl>
 
     <div class="verdict">
       <p class="k">Verdict</p>
-      <p><strong>4/5.</strong> The architecture is right and mostly de-risked by infrastructure we already validated; the risk concentrates in exactly one place — the retargeter's training signal — because "the object moves the same" is a <em>closed-loop</em> property that cannot supervise a per-step map directly. The fix is pairing-by-outcome: in sim, make each robot hand track each human demo's object trajectory; successes become time-aligned (human ↔ robot) pairs. A 26-work sweep found no 5/5 collision: the claim survives as a conjunction, and the paper hangs on one ablation — <strong>the same retargeter trained on kinematic pairs vs object-motion-matched pairs</strong>.</p>
+      <p><strong>4/5, and the design closed same-day at v1.0</strong> (authoritative spec: <span class="mono">DPP-ICLR2027/retargeter/DESIGN.md</span>). The risk concentrates in exactly one place — the retargeter's training signal — because "the object moves the same" is a <em>closed-loop</em> property; the fix is pairing-by-outcome in sim, discharged at data-generation time. Final form after five discussion rounds: MANO-θ interfaces both ways (R: θ→q residual over a geometric prior, R⁻¹: q→θ), W=1 per-step at control rate, wrist 6D + arm IK outside R, and a hard principle — <strong>the retargeter is task-agnostic: no robot demos AND no task data, sim play pairs only</strong> (two-hand play: MANO hand leads, robot tracks the recorded object trajectory on the same clock). A 26-work sweep found no 5/5 collision; the paper hangs on one ablation — <strong>the same retargeter trained on kinematic pairs vs object-motion-matched pairs</strong>.</p>
     </div>
   </div>
 </header>
@@ -61,27 +61,27 @@
           <rect x="12" y="90" width="200" height="120" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="112" y="115" text-anchor="middle" fill="var(--txt)" font-weight="600">Embodiment-free obs</text>
           <text x="112" y="140" text-anchor="middle" fill="var(--mut)">object cloud (2048 pts)</text>
-          <text x="112" y="160" text-anchor="middle" fill="var(--mut)">full-fidelity human hand state</text>
-          <text x="112" y="180" text-anchor="middle" fill="var(--mut)">MANO θ / 21 kp — from R⁻¹ at deploy</text>
+          <text x="112" y="160" text-anchor="middle" fill="var(--mut)">human hand state: MANO θ + wrist SE(3)</text>
+          <text x="112" y="180" text-anchor="middle" fill="var(--mut)">(from R⁻¹ at deploy; FK(θ,β) points into obs)</text>
           <!-- pi_H -->
           <rect x="262" y="90" width="190" height="120" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
           <text x="357" y="122" text-anchor="middle" fill="var(--txt)" font-weight="600">π_H — frozen</text>
           <text x="357" y="144" text-anchor="middle" fill="var(--mut)">DPP, human data only</text>
-          <text x="357" y="166" text-anchor="middle" fill="var(--mut)">→ human-hand chunk â (21 kp)</text>
-          <text x="357" y="186" text-anchor="middle" fill="var(--mut)">+ contact ĉ</text>
+          <text x="357" y="166" text-anchor="middle" fill="var(--mut)">→ θ chunk + wrist SE(3) chunk</text>
+          <text x="357" y="186" text-anchor="middle" fill="var(--mut)">(no contact head in v0)</text>
           <!-- interface -->
           <line x1="512" y1="30" x2="512" y2="290" stroke="var(--line)" stroke-dasharray="5 5"/>
           <text x="512" y="18" text-anchor="middle" fill="var(--mut)" font-size="12">human action interface</text>
           <!-- R_E boxes -->
           <rect x="572" y="42" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="682" y="68" text-anchor="middle" fill="var(--txt)" font-weight="600">R_inspire (6 dof)</text>
-          <text x="682" y="90" text-anchor="middle" fill="var(--mut)">u = g_E(â) + Δ · conditioned policy</text>
+          <text x="682" y="90" text-anchor="middle" fill="var(--mut)">u = g_E(θ̂) + Δ · per-step policy</text>
           <rect x="572" y="126" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="682" y="152" text-anchor="middle" fill="var(--txt)" font-weight="600">R_wuji (20 dof)</text>
-          <text x="682" y="174" text-anchor="middle" fill="var(--mut)">in: â, object cloud, q, ĉ</text>
+          <text x="682" y="174" text-anchor="middle" fill="var(--mut)">in: θ̂_k, q, u_{k−1} — no camera (W=1)</text>
           <rect x="572" y="210" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="682" y="236" text-anchor="middle" fill="var(--txt)" font-weight="600">R_sharpa (22 dof)</text>
-          <text x="682" y="258" text-anchor="middle" fill="var(--mut)">out: joint targets @ ctrl rate</text>
+          <text x="682" y="258" text-anchor="middle" fill="var(--mut)">out: hand joints @ ctrl rate · wrist → arm IK</text>
           <!-- robot -->
           <rect x="832" y="126" width="76" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="870" y="152" text-anchor="middle" fill="var(--txt)" font-weight="600">robot</text>
@@ -94,7 +94,7 @@
           <line x1="792" y1="158" x2="826" y2="158" stroke="var(--mut)" marker-end="url(#arr)"/>
           <!-- inverse -->
           <path d="M 870 190 L 870 305 L 357 305 L 357 216" fill="none" stroke="var(--mut)" stroke-dasharray="4 4" marker-end="url(#arr)"/>
-          <text x="614" y="299" text-anchor="middle" fill="var(--mut)" font-size="12">R⁻¹ LEARNED (state encode): robot q → MANO θ → 21 kp · trained on the same pairs, reversed · FK+alignment = its geometric baseline</text>
+          <text x="614" y="299" text-anchor="middle" fill="var(--mut)" font-size="12">R⁻¹ LEARNED (state encode): robot q → MANO θ (on-manifold by construction) · co-trained on the same pairs · FK+alignment = geometric baseline</text>
         </svg>
         <figcaption>The composition, after the 08-07 clarifications: the 6-point abstraction is REMOVED (it was a documented weakness — cross-hand 0/24 even after the IK scale fix) in favor of the full-fidelity hand (MANO θ / 21 keypoints), and the retargeter is <strong>bidirectional</strong> — deployment runs robot q → R⁻¹ → human state → π_H → human action → R → robot. Both directions train on the same time-aligned pairs (R⁻¹ supervision is free), with a cycle-consistency auxiliary. R⁻¹'s requirement is consistency over accuracy — it must emit a plausible, temporally coherent, on-manifold human (hence MANO-θ output decoded to keypoints, valid by construction). The geometric FK+alignment map (Inspire-validated: 7.68° vs 7.7°) remains as R⁻¹'s baseline and regularizer.</figcaption>
       </figure>
@@ -169,8 +169,8 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">04</span>Design v1 — implement, train, deploy</h2>
-      <p class="sub">Four stages. Stage 0 exists; stages 1–3 are the new build. Everything evaluated on the jittered benchmark at observation parity (EVAL_RING_PX=0), with non-geometric success predicates.</p>
+      <h2><span class="n">04</span>Final design (v1.0) — closed after five discussion rounds</h2>
+      <p class="sub">Authoritative spec: <span class="mono">DPP-ICLR2027/retargeter/DESIGN.md</span>. The figure and tables below reflect the FINAL state; the initial v1 draft (demo-tracking pairs, DAgger, contact channel, object-conditioned R) was substantially revised — see the Timeline for what changed and why. Hard principle adopted: <strong>the retargeter is task-agnostic — no robot demos, no task data; sim play pairs only. Finetuning is for the base policy; R stays frozen across tasks.</strong></p>
 
       <figure>
         <svg viewBox="0 0 920 360" style="width:100%;height:auto;font-family:var(--sans);font-size:13px" role="img" aria-label="Pipeline: human demos provide MANO stream, object trajectory and contact; a per-hand goal-conditioned tracker in openarm-sim generates rollouts; a filter produces time-aligned pairs; the retargeter is trained supervised, then DAgger, then RL fine-tune; closed-loop evaluation composes the frozen base policy with the retargeter on three hands.">
@@ -181,77 +181,76 @@
           </defs>
           <!-- row 1 -->
           <rect x="12" y="20" width="256" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
-          <text x="140" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Human demos (PnP 500, 479 eps)</text>
-          <text x="140" y="66" text-anchor="middle" fill="var(--mut)">MANO keypoints · per-frame object cloud</text>
-          <text x="140" y="86" text-anchor="middle" fill="var(--mut)">contact (HaWoR-tactile, 5-finger)</text>
-          <text x="140" y="106" text-anchor="middle" fill="var(--mut)">+ NEW: object 6D per frame (registration, QC'd)</text>
+          <text x="140" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Diverse play objects</text>
+          <text x="140" y="66" text-anchor="middle" fill="var(--mut)">DGA / Objaverse / procedural (P2P recipe)</text>
+          <text x="140" y="86" text-anchor="middle" fill="var(--mut)">convex decomp + SDF on contact geometry</text>
+          <text x="140" y="106" text-anchor="middle" fill="var(--mut)">benchmark objects EXCLUDED (held-out)</text>
 
           <rect x="330" y="20" width="280" height="96" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
-          <text x="470" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Per-hand goal-conditioned tracker</text>
-          <text x="470" y="66" text-anchor="middle" fill="var(--mut)">openarm-sim RL · tracks demo object traj</text>
-          <text x="470" y="86" text-anchor="middle" fill="var(--mut)">ghost-controller curriculum (DexMachina)</text>
-          <text x="470" y="106" text-anchor="middle" fill="var(--mut)">warmup weld (DAID) · P2P reward, ε=1–3 cm</text>
+          <text x="470" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">MANO hand PLAYS (leads)</text>
+          <text x="470" y="66" text-anchor="middle" fill="var(--mut)">actuated MANO in Isaac · P2P goal sequences</text>
+          <text x="470" y="86" text-anchor="middle" fill="var(--mut)">full episodes from non-grasped start</text>
+          <text x="470" y="106" text-anchor="middle" fill="var(--mut)">PT pose prior · records (θ, wrist, obj traj)</text>
 
-          <rect x="672" y="20" width="236" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
-          <text x="790" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Filter → paired dataset</text>
-          <text x="790" y="66" text-anchor="middle" fill="var(--mut)">tiered ε (gold/silver) · physics gates (DGA)</text>
-          <text x="790" y="86" text-anchor="middle" fill="var(--mut)">real lift/grasp check · failures kept, labeled</text>
-          <text x="790" y="106" text-anchor="middle" fill="var(--mut)">time-aligned by shared object clock</text>
+          <rect x="672" y="20" width="236" height="96" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
+          <text x="790" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Robot hand TRACKS (follows)</text>
+          <text x="790" y="66" text-anchor="middle" fill="var(--mut)">recorded obj traj, SAME clock, no warp</text>
+          <text x="790" y="86" text-anchor="middle" fill="var(--mut)">ghost-controller curriculum · warmup weld</text>
+          <text x="790" y="106" text-anchor="middle" fill="var(--mut)">force-perturbed sampling</text>
 
           <line x1="268" y1="68" x2="324" y2="68" stroke="var(--mut)" marker-end="url(#arr2)"/>
           <line x1="610" y1="68" x2="666" y2="68" stroke="var(--mut)" marker-end="url(#arr2)"/>
-          <text x="638" y="56" text-anchor="middle" fill="var(--mut)" font-size="11">×479×~10 seeds</text>
 
           <!-- row 2 -->
           <rect x="12" y="180" width="256" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
-          <text x="140" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Supervised R_E + DAgger</text>
-          <text x="140" y="226" text-anchor="middle" fill="var(--mut)">L_action (joint MSE + FK tips)</text>
-          <text x="140" y="246" text-anchor="middle" fill="var(--mut)">+ weak hand-sim + contact BCE + ‖Δ‖²</text>
-          <text x="140" y="266" text-anchor="middle" fill="var(--mut)">relabel composed rollouts w/ tracker</text>
+          <text x="140" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Filter → pairs</text>
+          <text x="140" y="226" text-anchor="middle" fill="var(--mut)">dense-ε tiers · DGA physics gates</text>
+          <text x="140" y="246" text-anchor="middle" fill="var(--mut)">real grasp/lift check · failures labeled</text>
+          <text x="140" y="266" text-anchor="middle" fill="var(--mut)">(θ_k, wrist_k) ↔ (q_k, u_k) per-step aligned</text>
 
           <rect x="330" y="180" width="280" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
-          <text x="470" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">RL fine-tune (per hand, ~1 GPU-day)</text>
-          <text x="470" y="226" text-anchor="middle" fill="var(--mut)">PPO · reward = object keypoint tracking</text>
-          <text x="470" y="246" text-anchor="middle" fill="var(--mut)">+ contact match − ‖Δ‖ − smoothness</text>
-          <text x="470" y="266" text-anchor="middle" fill="var(--mut)">IL action anchor (DexTrack)</text>
+          <text x="470" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Supervised R + R⁻¹ co-training</text>
+          <text x="470" y="226" text-anchor="middle" fill="var(--mut)">R: joint MSE + FK tips + ‖Δ‖² + rate</text>
+          <text x="470" y="246" text-anchor="middle" fill="var(--mut)">R⁻¹: θ MSE + FK + smoothness</text>
+          <text x="470" y="266" text-anchor="middle" fill="var(--mut)">g_E distilled on PT/play poses (rebased)</text>
 
           <rect x="672" y="180" width="236" height="96" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
-          <text x="790" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Closed-loop eval, 3 hands</text>
-          <text x="790" y="226" text-anchor="middle" fill="var(--mut)">frozen π_H ∘ R_E · jittered benchmark</text>
-          <text x="790" y="246" text-anchor="middle" fill="var(--mut)">bottle / box / ball · parity EVAL_RING_PX=0</text>
-          <text x="790" y="266" text-anchor="middle" fill="var(--mut)">+ perturbation-recovery probe</text>
+          <text x="790" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Deploy: π_H ∘ R, 3 hands</text>
+          <text x="790" y="226" text-anchor="middle" fill="var(--mut)">openarm-sim · jittered · parity</text>
+          <text x="790" y="246" text-anchor="middle" fill="var(--mut)">base-only FT on human task data</text>
+          <text x="790" y="266" text-anchor="middle" fill="var(--mut)">R frozen across tasks</text>
 
           <path d="M 790 116 L 790 148 L 140 148 L 140 174" fill="none" stroke="var(--mut)" marker-end="url(#arr2)"/>
           <line x1="268" y1="228" x2="324" y2="228" stroke="var(--mut)" marker-end="url(#arr2)"/>
           <line x1="610" y1="228" x2="666" y2="228" stroke="var(--mut)" marker-end="url(#arr2)"/>
-          <text x="460" y="330" text-anchor="middle" fill="var(--mut)" font-size="12">Stage 0 (exists): geometric prior g_E — dex-retargeting GT (Inspire) + alignment fits + fingertip→joint MLPs = residual base, RL cold start, R⁻¹, and the learned-kinematic baseline.</text>
+          <text x="460" y="330" text-anchor="middle" fill="var(--mut)" font-size="12">Coverage-audit gate: play θ distribution vs PT-data θ distribution (with W=1 per-step R, the naturalness gap reduces to pose coverage). Stage 0 (exists): g_E = residual base + learned-kinematic baseline.</text>
         </svg>
-        <figcaption>The build. Pairing-by-outcome makes correspondence per-timestep <em>by construction</em> (robot tracks the demo's object trajectory on the demo's clock) — exactly what HRDexDB's semantic pairs cannot give.</figcaption>
+        <figcaption>Final pair-generation design: two-hand play, no demonstrations anywhere. The MANO hand leads — its clock defines per-step alignment (the one real flaw found in review: independently tracking shared goals breaks alignment between waypoints) — and the robot follows the recorded time-indexed object trajectory. Pairs are functional by construction, which is exactly what HRDexDB's semantic pairs and DexTrack's kinematic pairs cannot give.</figcaption>
       </figure>
 
       <div class="tbl" style="margin-top:22px">
         <table>
-          <thead><tr><th>Stage</th><th>What</th><th>Key choices (source)</th><th>Cost est.</th></tr></thead>
+          <thead><tr><th>Step</th><th>What</th><th>Key choices (source)</th><th>Cost est.</th></tr></thead>
           <tbody>
-            <tr><td class="mono">0</td><td>Geometric prior g_E + R⁻¹ per hand</td><td>Tasks #28/#29 as-is; Wuji/Sharpa GT blocked on the fingertip-site convention ruling</td><td class="mono">exists / CPU</td></tr>
-            <tr><td class="mono">1</td><td>Paired data: per-hand goal-conditioned object-trajectory tracker → rollout on all demos → filter</td><td>P2P reward machinery + ε=1–3 cm; DexMachina ghost curriculum; DAID warmup weld + contact staging; DGA physics gates; per-demo RL mops up hard demos (= oracle baseline data)</td><td class="mono">1–2 H100-d / hand</td></tr>
-            <tr><td class="mono">2</td><td>R_E training: supervised → DAgger → light RL</td><td>Residual over g_E (the auxiliary, structurally); ~1–5 M params; object:hand weighting starts at DAID's 10–30:1; contact BCE; DexTrack IL anchor</td><td class="mono">hours + ~1 H100-d / hand</td></tr>
-            <tr><td class="mono">3</td><td>Composition + deploy</td><td>Sim: harness cloud + R⁻¹(q) → frozen π_H (chunk rate) → R_E (control rate). Real: swap dex-retargeting module in the existing policy-server — later, after sim results</td><td class="mono">eval-harness hours</td></tr>
+            <tr><td class="mono">S1</td><td>Base π_H: PT on VITRA/EgoDex, action = (wrist SE(3), θ) chunks, no contact head</td><td>Start with option (a): reuse existing VITRA PT trunk + θ-head swap + short re-FT on PT data; full re-PT only with sign-off. Obs keeps FK(θ,β) points co-embedded with the object cloud. #18 merges here</td><td class="mono">~1 GPU-d (opt a)</td></tr>
+            <tr><td class="mono">S2</td><td>Two-hand play pairs (Inspire first): MANO leads, robot tracks the recorded object trajectory on the same clock</td><td>P2P play protocol (full episodes, gated rewards, ε=1 cm keypoint 6D distance) + DexMachina ghost curriculum + DAID weld/perturbation + DGA gates; PT pose prior on the MANO policy; coverage-audit gate</td><td class="mono">1–2 H100-d / hand</td></tr>
+            <tr><td class="mono">S2b</td><td>R + R⁻¹ supervised co-training</td><td>R: joint MSE + FK tips + ‖Δ‖² + action-rate, residual over g_E (g_E rebased to PT/play poses); R⁻¹: θ MSE + FK + smoothness; shared-pair consistency (no functional cycle through dynamics)</td><td class="mono">hours / hand</td></tr>
+            <tr><td class="mono">S3</td><td>Deploy π_H ∘ R in openarm-sim; base-only FT on human task data; R frozen</td><td>Wrist → canonical transform → arm IK; R = hand joints at control rate, W=1; jittered benchmark, parity, non-geometric predicates. Real rig later: R drops into the policy-server's dex-retargeting slot</td><td class="mono">harness hours</td></tr>
           </tbody>
         </table>
       </div>
 
       <h3 style="margin-top:26px">Evaluation matrix</h3>
-      <p class="sub">3 hands × bottle/box/ball ×: converter (no learning) · stage-0 kinematic MLP · R_E supervised · R_E+RL · kinematic-pairs vs functional-pairs (THE ablation) · ±hand regularizer · frozen vs finetuned base · DexMachina per-demo oracle (~20-demo subset) · monolithic per-hand head (#30 repurposed). Metrics: task success, object-trajectory keypoint-distance profile, contact-timing IoU, per-new-hand onboarding cost. Total budget ≈ 10–15 H100-days including baselines; nothing submitted before sign-off.</p>
+      <p class="sub">3 hands × benchmark objects (held out from play) ×: dex-retargeting converter + wrist IK · g_E kinematic MLP · batched no-proprio converter · R (ours) · ⭐ kinematic-pairs vs functional-pairs (THE ablation) · W∈{1,4} (Inspire) · ±residual weight · v1 object-conditioning (parity protocol; exit clause v1≤v0) · per-trajectory functional-RL oracle (may use task data — it is the comparison point) · monolithic per-hand head (#30 repurposed) · perturbation-recovery probe. Metrics: task success, object-trajectory error profile, per-hand onboarding cost (GPU-hrs/params/wall-clock — the economics headline vs EgoScale/HRDexDB). Pilot (Inspire) ~3–4 H100-d; full matrix ~10–15 H100-d; nothing submitted before sign-off.</p>
 
-      <h3 style="margin-top:26px">Open decisions (blocking the design doc, not the reading)</h3>
+      <h3 style="margin-top:26px">All decisions closed (08-07) · critical-path checks before GPU</h3>
       <ul class="clean">
-        <li><span class="mk i">1</span><span><span class="lt">Pair engine.</span><span class="ld">Amortized goal-conditioned tracker (recommended) vs per-demo RL vs SPIDER-MPPI (needs an MJCF asset check for openarm + 3 hands).</span></span></li>
-        <li><span class="mk i">2</span><span><span class="lt">Residual vs direct output for R_E.</span><span class="ld">Residual recommended — bakes in the auxiliary, degrades gracefully to the geometric baseline.</span></span></li>
-        <li><span class="mk i">3</span><span><span class="lt">Which frozen base.</span><span class="ld">Existing PnP FT checkpoint (protocol-v2) vs retraining a clean base first.</span></span></li>
-        <li><span class="mk i">4</span><span><span class="lt">Wrist/arm split.</span><span class="ld">Lean: wrist via canonical transform + arm IK (the morphology gap is not in the wrist); R_E owns fingers + small wrist correction. Alternative: R_E outputs all 7 arm joints.</span></span></li>
-        <li><span class="mk i">5</span><span><span class="lt">Contact channel.</span><span class="ld">Binary 5-finger (existing head) vs HRDexDB-style contact/part maps on the object cloud (richer pairing criterion, more work).</span></span></li>
-        <li><span class="mk i">6</span><span><span class="lt">Scope guard.</span><span class="ld">Retargeter-RL is distinct from residual-RL-on-policy (Seunghoon's), but if it should stay out entirely, supervised+DAgger alone still gives a paper.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Decisions.</span><span class="ld">MANO-θ interfaces both ways · task-agnostic R (no robot demos, no task data; benchmark objects excluded from play) · two-hand play pairing, MANO clock · W=1 per-step at control rate, u_{k−1} robot-side · residual over g_E · wrist 6D + arm IK outside R · β pinned canonical · object in the objective not the observation (v0). Full dated log: DESIGN.md §12.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">C1 — actuated MANO hand in Isaac.</span><span class="ld">Survey UHAS/DexCanvas implementations first; DexCanvas license/format check (candidate ready-made human side).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">C2 — EgoDex MANO-θ availability.</span><span class="ld">ARKit joints → MANO fit step needed?</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">C3 — #28 fingertip-site convention ruling.</span><span class="ld">Still blocks Wuji/Sharpa g_E GT.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">C4 — g_E rebase.</span><span class="ld">Distillation poses from PT/play distribution, not PnP FT streams (task-agnostic compliance).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Contingencies (not plan-of-record).</span><span class="ld">DAgger · RL polish · contact channel · O-conditioning v1 · W&gt;1 · per-trajectory RL mop-up.</span></span></li>
       </ul>
     </div>
   </section>
@@ -280,6 +279,16 @@
           <span class="tt">Two clarifications from the user, folded in</span>
           <p>(1) The 6-point abstraction is removed — full-fidelity hand interface (MANO θ / 21 kp) and a <em>bidirectional</em> retargeter: robot → R⁻¹ → human → π_H → human → R → robot, both directions trained on the same time-aligned pairs (cycle-consistency auxiliary; base-policy retrain required — point-mode registry currently only has 6points). (2) Per-chunk pairing + per-step training confirmed sound: the closed-loop property is discharged at data time by rollouts; residual edge cases = label multimodality (proprio conditioning + one-strategy-per-demo), covariate shift (DAgger + perturbed generation + RL), dense-not-endpoint enforcement, no time-warping, and unconstrained pre-contact phases (hand prior carries them). Reference works all use per-step object STATE error vs a time-indexed reference — none use velocity, none endpoint-only.</p>
         </li>
+        <li class="acc">
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">Rounds 3–4: representation, structure, and the task-agnostic principle</span>
+          <p>Representation unified on <strong>MANO θ</strong> (reversing an interim 21-kp ruling — θ/β factorizes pose from hand size, matches the robot's joint space, and kp inherit the same fitter bias anyway); geometry moves into FK losses ("represent in parameters, supervise in points"). R structure settled at <strong>W=1 per-step + proprio</strong> — the tracker-class field standard (proprio, not lookahead, is the converter/tracker dividing line); W∈{1,4} kept as an Inspire-only ablation. Object conditioning: v0 without, v1 as a measured arm under a parity-by-construction protocol (the ±8–10pt observation-parity scar makes sim-perfect clouds inadmissible). <strong>Hard principle adopted: the retargeter is task-agnostic</strong> — no finetune/task data anywhere in R/R⁻¹/g_E; pairs come from two-hand sim play (MANO hand + robot hand), DGA-style diverse objects, DexMachina demoted to a parts bin. DAgger/RL-polish/contact demoted to contingencies; the pilot simplified to S1 base → S2 pairs+R → S3 deploy.</p>
+        </li>
+        <li class="acc">
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">Round 5: flaw sweep, wrist ruling — design CLOSED at v1.0</span>
+          <p>Final checks: play episodes start non-grasped (approach+grasp+manipulate all learned), and with a W=1 per-step R the human-side naturalness gap reduces to a <em>pose-coverage</em> requirement — auditable (play-θ vs PT-θ distribution overlap), insured by a PT pose prior on the MANO play policy. Flaw sweep found one real defect — independently tracking shared goals breaks per-step alignment — fixed by making the MANO hand's clock authoritative (robot tracks the <em>recorded</em> object trajectory). Task-agnostic leaks patched (g_E distillation rebased off PnP FT streams; benchmark objects excluded from play). Wrist/arm closed by convention: wrist 6D + arm IK outside R (EgoVLA/EgoScale/DAID all do this; the old 2.8–5.4 cm IK scar was fingertip-IK, not wrist-target IK); θ-unification dissolves the R⁻¹ manifold concern. Spec frozen as <span class="mono">DPP-ICLR2027/retargeter/DESIGN.md</span> v1.0.</p>
+        </li>
       </ul>
     </div>
   </section>
@@ -288,9 +297,8 @@
     <div class="wrap">
       <h2><span class="n">06</span>Next</h2>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">Close the six decisions.</span><span class="ld">Then write DPP-ICLR2027/retargeter/DESIGN.md and cost the stage-1 pilot precisely.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Unblock stage 0.</span><span class="ld">Fingertip-site convention ruling (sim sites vs dex-urdf *_tip) gates Wuji/Sharpa pseudo-joint GT (#28).</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Object 6D extraction pilot.</span><span class="ld">Per-frame registration on 10 PnP episodes with overlay QC before anything trains on it.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Critical-path checks C1–C4 (zero GPU).</span><span class="ld">MANO-in-Isaac survey + DexCanvas license/format · EgoDex MANO-θ availability · #28 fingertip-site ruling · g_E rebase data.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Then the Inspire pilot (S1a → S2 → S3), ~3–4 H100-days.</span><span class="ld">GPU spend gated on sign-off; execution gets its own log.</span></span></li>
       </ul>
     </div>
   </section>

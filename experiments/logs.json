@@ -20,7 +20,7 @@
    "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
    "path": "dex-point-policy/",
    "now": {
-    "text": "Restructure: frozen human-data base policy + per-hand FUNCTIONAL retargeter (object follows the demo trajectory). Idea verified 4/5, 4 papers + 26-work sweep read, design v1 under discussion - 6 decisions open before DESIGN.md.",
+    "text": "Functional-retargeter restructure: design CLOSED v1.0 (DESIGN.md) - task-agnostic R, MANO-theta both ways, two-hand play pairing. Next: critical-path checks C1-C4 (MANO-in-Isaac, DexCanvas, EgoDex theta, g_E rebase), then the Inspire pilot pending sign-off.",
     "status": "active",
     "updated": "2026-08-07"
    }
@@ -31,10 +31,10 @@
    "project": "dex-point-policy",
    "date": "2026-08-07",
    "slug": "functional-retargeter-restructure",
-   "title": "One frozen human policy, N functional retargeters — idea verified 4/5, design v1",
-   "status": "running",
+   "title": "One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0",
+   "status": "done",
    "updated": "2026-08-07",
-   "tldr": "Workstream restructured around a human-centric base policy (real human data, embodiment-free obs) + a learned per-embodiment retargeter whose objective is FUNCTIONAL: the object must follow the demo's 3D trajectory. Theory verdict 4/5 - the one concentrated risk is that object-trajectory equivalence is a closed-loop property, fixed by pairing-by-outcome (per-hand tracker in sim chases each demo's object trajectory; successes become time-aligned human-robot pairs). Four assigned papers read in full (Play2Perfect, Do-As-I-Do, DexGrasp Anything, HRDexDB) plus a 26-work novelty sweep: nothing scored 5/5, claim survives as a conjunction, and the paper hangs on one ablation - the same retargeter trained on kinematic vs object-motion-matched pairs. Design v1 filed: 4 stages, ~10-15 H100-days incl. baselines; 6 decisions open.",
+   "tldr": "Workstream restructured around a frozen human-data base policy + a learned per-embodiment retargeter whose objective is FUNCTIONAL: the object must follow the source's 3D trajectory. Theory verdict 4/5; 4 papers read in full + a 26-work sweep (no 5/5 collision - the paper hangs on one ablation: the same retargeter trained on kinematic vs object-motion-matched pairs). Design closed same-day at v1.0 after five discussion rounds: MANO-theta interfaces both ways (R: theta->q residual over a geometric prior; R-1: q->theta), W=1 per-step at control rate, wrist 6D + arm IK outside R, and a hard principle - the retargeter is TASK-AGNOSTIC (no robot demos, no task data; pairs from two-hand sim play where the MANO hand leads and the robot tracks the recorded object trajectory on the same clock; benchmark objects held out). Spec: DPP-ICLR2027/retargeter/DESIGN.md. Pilot ~3-4 H100-d gated on C1-C4 checks + sign-off.",
    "path": "dex-point-policy/logs/2026-08-07-functional-retargeter-restructure/",
    "tags": [
     "restructure",
