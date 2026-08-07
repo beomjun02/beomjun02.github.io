@@ -61,13 +61,13 @@
           <rect x="12" y="90" width="200" height="120" rx="8" fill="var(--panel)" stroke="var(--line)"/>
           <text x="112" y="115" text-anchor="middle" fill="var(--txt)" font-weight="600">Embodiment-free obs</text>
           <text x="112" y="140" text-anchor="middle" fill="var(--mut)">object cloud (2048 pts)</text>
-          <text x="112" y="160" text-anchor="middle" fill="var(--mut)">6 canonical keypoints</text>
-          <text x="112" y="180" text-anchor="middle" fill="var(--mut)">(wrist + 5 fingertips)</text>
+          <text x="112" y="160" text-anchor="middle" fill="var(--mut)">full-fidelity human hand state</text>
+          <text x="112" y="180" text-anchor="middle" fill="var(--mut)">MANO θ / 21 kp — from R⁻¹ at deploy</text>
           <!-- pi_H -->
           <rect x="262" y="90" width="190" height="120" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
           <text x="357" y="122" text-anchor="middle" fill="var(--txt)" font-weight="600">π_H — frozen</text>
           <text x="357" y="144" text-anchor="middle" fill="var(--mut)">DPP, human data only</text>
-          <text x="357" y="166" text-anchor="middle" fill="var(--mut)">→ keypoint chunk â</text>
+          <text x="357" y="166" text-anchor="middle" fill="var(--mut)">→ human-hand chunk â (21 kp)</text>
           <text x="357" y="186" text-anchor="middle" fill="var(--mut)">+ contact ĉ</text>
           <!-- interface -->
           <line x1="512" y1="30" x2="512" y2="290" stroke="var(--line)" stroke-dasharray="5 5"/>
@@ -94,9 +94,9 @@
           <line x1="792" y1="158" x2="826" y2="158" stroke="var(--mut)" marker-end="url(#arr)"/>
           <!-- inverse -->
           <path d="M 870 190 L 870 305 L 357 305 L 357 216" fill="none" stroke="var(--mut)" stroke-dasharray="4 4" marker-end="url(#arr)"/>
-          <text x="614" y="299" text-anchor="middle" fill="var(--mut)" font-size="12">R⁻¹ : FK + alignment → canonical keypoints (proprio encode)</text>
+          <text x="614" y="299" text-anchor="middle" fill="var(--mut)" font-size="12">R⁻¹ LEARNED (state encode): robot q → MANO θ → 21 kp · trained on the same pairs, reversed · FK+alignment = its geometric baseline</text>
         </svg>
-        <figcaption>The composition. Everything left of the dashed line already exists (DPP is embodiment-free by construction). The new work is the right side: R_E as a <em>conditioned policy</em>, not a pose converter, plus the R⁻¹ proprio encode — which also already exists (HandFK + alignment, Inspire-validated: reproduces dex-retargeting to 7.68° vs 7.7°, 29.5 mm vs its own 28.6 mm residual).</figcaption>
+        <figcaption>The composition, after the 08-07 clarifications: the 6-point abstraction is REMOVED (it was a documented weakness — cross-hand 0/24 even after the IK scale fix) in favor of the full-fidelity hand (MANO θ / 21 keypoints), and the retargeter is <strong>bidirectional</strong> — deployment runs robot q → R⁻¹ → human state → π_H → human action → R → robot. Both directions train on the same time-aligned pairs (R⁻¹ supervision is free), with a cycle-consistency auxiliary. R⁻¹'s requirement is consistency over accuracy — it must emit a plausible, temporally coherent, on-manifold human (hence MANO-θ output decoded to keypoints, valid by construction). The geometric FK+alignment map (Inspire-validated: 7.68° vs 7.7°) remains as R⁻¹'s baseline and regularizer.</figcaption>
       </figure>
 
       <div class="tbl" style="margin-top:22px">
@@ -118,7 +118,7 @@
         <li><span class="mk x">→</span><span><span class="lt">The per-step map is ill-posed without context.</span><span class="ld">Same human pose needs different robot joints depending on object geometry and contact state. R_E must be conditioned on (object cloud, proprio, contact) — a small policy, not a converter.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">The "hand pose similar" auxiliary is load-bearing, not aesthetic.</span><span class="ld">Pure functional matching admits degenerate grasps that move the object identically but push closed-loop object-in-hand states off the human-data manifold — breaking frozen π_H at the next chunk (the exact DexWAM wrong-attractor failure). Formalize as a small-weight deviation penalty from the geometric retarget. Human2Sim2Robot's ablation independently shows hand-tracking rewards hurt when strong: keep it weak.</span></span></li>
         <li><span class="mk x">→</span><span><span class="lt">Contact is the missing observable.</span><span class="ld">Same object path under different force closure ≠ same robustness. DPP has a contact head — add contact-event timing preservation as a third term.</span></span></li>
-        <li><span class="mk x">→</span><span><span class="lt">Deployment needs the inverse map too.</span><span class="ld">π_H consumes human-hand proprio; each embodiment needs R⁻¹ (robot FK → canonical keypoints). Ours exists and is validated; EgoVLA's released equivalent was &lt;0.45 correlation — validate per hand, don't assume.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Deployment needs the inverse map too — now learned, bidirectionally.</span><span class="ld">π_H consumes human-hand proprio; each embodiment needs R⁻¹ (robot state → human hand state). Post-clarification: R⁻¹ is trained on the same functional pairs reversed, outputs MANO θ decoded to 21 kp (on-manifold by construction), regularized toward the validated geometric FK+alignment map. EgoVLA's released equivalent was &lt;0.45 correlation — validate per hand, don't assume.</span></span></li>
       </ul>
     </div>
   </section>
@@ -274,6 +274,11 @@
           <span class="tdate">2026-08-07</span>
           <span class="tt">Design v1 written up for discussion</span>
           <p>Four-stage plan above; six decisions open; no GPU spent, nothing submitted. DESIGN.md deferred until discussion closes (user's call).</p>
+        </li>
+        <li class="acc">
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">Two clarifications from the user, folded in</span>
+          <p>(1) The 6-point abstraction is removed — full-fidelity hand interface (MANO θ / 21 kp) and a <em>bidirectional</em> retargeter: robot → R⁻¹ → human → π_H → human → R → robot, both directions trained on the same time-aligned pairs (cycle-consistency auxiliary; base-policy retrain required — point-mode registry currently only has 6points). (2) Per-chunk pairing + per-step training confirmed sound: the closed-loop property is discharged at data time by rollouts; residual edge cases = label multimodality (proprio conditioning + one-strategy-per-demo), covariate shift (DAgger + perturbed generation + RL), dense-not-endpoint enforcement, no time-warping, and unconstrained pre-contact phases (hand prior carries them). Reference works all use per-step object STATE error vs a time-indexed reference — none use velocity, none endpoint-only.</p>
         </li>
       </ul>
     </div>
