@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-07 · Functional retargeter restructure — dex-point-policy</title>
+<meta name="description" content="Restructure proposal verified 4/5; 4 papers + 26-work sweep read; retargeter design v1.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-08-07 · functional-retargeter-restructure</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy (ICLR 2027)</p>
+    <h1>One frozen human policy, N functional retargeters — idea verified 4/5, design v1 on the table</h1>
+    <p class="lede">Restructure of the ICLR-2027 workstream around a human-centric base policy (real human data only, embodiment-free observations) composed with a learned per-embodiment retargeter whose objective is functional: the object must follow the demo's 3D trajectory. Four assigned papers read in full + a 26-work novelty sweep, via 5 parallel reading agents; design v1 written and under discussion.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-07</dd></div>
+      <div><dt>Outcome</dt><dd>idea 4/5 · novelty = a defensible conjunction · design v1, 6 decisions open</dd></div>
+      <div><dt>Env</dt><dd class="mono">reading + design only · zero GPU spent</dd></div>
+      <div><dt>Full report</dt><dd class="mono">DPP-ICLR2027/retargeter/reading-notes.md</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><strong>4/5.</strong> The architecture is right and mostly de-risked by infrastructure we already validated; the risk concentrates in exactly one place — the retargeter's training signal — because "the object moves the same" is a <em>closed-loop</em> property that cannot supervise a per-step map directly. The fix is pairing-by-outcome: in sim, make each robot hand track each human demo's object trajectory; successes become time-aligned (human ↔ robot) pairs. A 26-work sweep found no 5/5 collision: the claim survives as a conjunction, and the paper hangs on one ablation — <strong>the same retargeter trained on kinematic pairs vs object-motion-matched pairs</strong>.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>The idea, verified</h2>
+      <p class="sub">Proposal: robot policy = R<sub>E</sub> ∘ π<sub>H</sub>. π<sub>H</sub> trained only on human (MANO) data over embodiment-free observations; R<sub>E</sub> is a small per-embodiment decoder. One base policy, N hands, only the retargeter is embodiment-specific.</p>
+
+      <figure>
+        <svg viewBox="0 0 920 320" style="width:100%;height:auto;font-family:var(--sans);font-size:13px" role="img" aria-label="System diagram: object cloud and canonical keypoints feed a frozen human policy, whose keypoint-chunk and contact output passes an embodiment-free interface into per-hand retargeters for Inspire, Wuji and Sharpa; an inverse map feeds robot state back as canonical keypoints.">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/>
+            </marker>
+          </defs>
+          <!-- obs box -->
+          <rect x="12" y="90" width="200" height="120" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="112" y="115" text-anchor="middle" fill="var(--txt)" font-weight="600">Embodiment-free obs</text>
+          <text x="112" y="140" text-anchor="middle" fill="var(--mut)">object cloud (2048 pts)</text>
+          <text x="112" y="160" text-anchor="middle" fill="var(--mut)">6 canonical keypoints</text>
+          <text x="112" y="180" text-anchor="middle" fill="var(--mut)">(wrist + 5 fingertips)</text>
+          <!-- pi_H -->
+          <rect x="262" y="90" width="190" height="120" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
+          <text x="357" y="122" text-anchor="middle" fill="var(--txt)" font-weight="600">π_H — frozen</text>
+          <text x="357" y="144" text-anchor="middle" fill="var(--mut)">DPP, human data only</text>
+          <text x="357" y="166" text-anchor="middle" fill="var(--mut)">→ keypoint chunk â</text>
+          <text x="357" y="186" text-anchor="middle" fill="var(--mut)">+ contact ĉ</text>
+          <!-- interface -->
+          <line x1="512" y1="30" x2="512" y2="290" stroke="var(--line)" stroke-dasharray="5 5"/>
+          <text x="512" y="18" text-anchor="middle" fill="var(--mut)" font-size="12">human action interface</text>
+          <!-- R_E boxes -->
+          <rect x="572" y="42" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="682" y="68" text-anchor="middle" fill="var(--txt)" font-weight="600">R_inspire (6 dof)</text>
+          <text x="682" y="90" text-anchor="middle" fill="var(--mut)">u = g_E(â) + Δ · conditioned policy</text>
+          <rect x="572" y="126" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="682" y="152" text-anchor="middle" fill="var(--txt)" font-weight="600">R_wuji (20 dof)</text>
+          <text x="682" y="174" text-anchor="middle" fill="var(--mut)">in: â, object cloud, q, ĉ</text>
+          <rect x="572" y="210" width="220" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="682" y="236" text-anchor="middle" fill="var(--txt)" font-weight="600">R_sharpa (22 dof)</text>
+          <text x="682" y="258" text-anchor="middle" fill="var(--mut)">out: joint targets @ ctrl rate</text>
+          <!-- robot -->
+          <rect x="832" y="126" width="76" height="64" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="870" y="152" text-anchor="middle" fill="var(--txt)" font-weight="600">robot</text>
+          <text x="870" y="172" text-anchor="middle" fill="var(--mut)">q_t</text>
+          <!-- arrows -->
+          <line x1="212" y1="150" x2="256" y2="150" stroke="var(--mut)" marker-end="url(#arr)"/>
+          <line x1="452" y1="150" x2="566" y2="74"  stroke="var(--mut)" marker-end="url(#arr)"/>
+          <line x1="452" y1="150" x2="566" y2="158" stroke="var(--mut)" marker-end="url(#arr)"/>
+          <line x1="452" y1="150" x2="566" y2="242" stroke="var(--mut)" marker-end="url(#arr)"/>
+          <line x1="792" y1="158" x2="826" y2="158" stroke="var(--mut)" marker-end="url(#arr)"/>
+          <!-- inverse -->
+          <path d="M 870 190 L 870 305 L 357 305 L 357 216" fill="none" stroke="var(--mut)" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+          <text x="614" y="299" text-anchor="middle" fill="var(--mut)" font-size="12">R⁻¹ : FK + alignment → canonical keypoints (proprio encode)</text>
+        </svg>
+        <figcaption>The composition. Everything left of the dashed line already exists (DPP is embodiment-free by construction). The new work is the right side: R_E as a <em>conditioned policy</em>, not a pose converter, plus the R⁻¹ proprio encode — which also already exists (HandFK + alignment, Inspire-validated: reproduces dex-retargeting to 7.68° vs 7.7°, 29.5 mm vs its own 28.6 mm residual).</figcaption>
+      </figure>
+
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Component of the proposal</th><th>Score</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Motivation (human data as the prior)</td><td class="mono">5/5</td><td>Standard and in-house-evidenced: W29 (prior irreplaceable, compounds with scale), BMW PT-vs-scratch.</td></tr>
+            <tr><td>Vision-side embodiment gap</td><td class="mono">4.5/5</td><td>Already solved by DPP's own design — the policy never sees the embodiment. Enabler, <em>not</em> a claimable contribution (we published it).</td></tr>
+            <tr><td>Functional definition of retargeting</td><td class="mono">3→4/5</td><td>Right objective; as stated it is not per-step trainable (closed-loop property). Fixed by pairing-by-outcome + RL fine-tune. Geometric proxy error is measured: ~29 mm median fingertip-vector residual on the <em>easiest</em> hand (Inspire).</td></tr>
+            <tr><td>Data plan (sim pairs)</td><td class="mono">4/5</td><td>Sound once rephrased: track each demo's <em>object trajectory</em> per hand in sim; successes = time-aligned pairs. Human side is free (PnP 500 has object clouds + contact per frame).</td></tr>
+            <tr><td>Experiment plan (openarm-sim)</td><td class="mono">4/5</td><td>All three hands integrated and smoke-passed; jitter + observation-parity lessons apply to any success-rate claim.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">The five sharpenings the idea needs</h3>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Object-trajectory equivalence is closed-loop, not per-step.</span><span class="ld">You cannot supervise a_R = R(a_H) with it without rolling out. Resolution: (i) pairing-by-outcome in sim, (ii) RL fine-tune with an object-tracking reward on a geometric prior. Differentiable sim through contact: skip.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">The per-step map is ill-posed without context.</span><span class="ld">Same human pose needs different robot joints depending on object geometry and contact state. R_E must be conditioned on (object cloud, proprio, contact) — a small policy, not a converter.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">The "hand pose similar" auxiliary is load-bearing, not aesthetic.</span><span class="ld">Pure functional matching admits degenerate grasps that move the object identically but push closed-loop object-in-hand states off the human-data manifold — breaking frozen π_H at the next chunk (the exact DexWAM wrong-attractor failure). Formalize as a small-weight deviation penalty from the geometric retarget. Human2Sim2Robot's ablation independently shows hand-tracking rewards hurt when strong: keep it weak.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Contact is the missing observable.</span><span class="ld">Same object path under different force closure ≠ same robustness. DPP has a contact head — add contact-event timing preservation as a third term.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Deployment needs the inverse map too.</span><span class="ld">π_H consumes human-hand proprio; each embodiment needs R⁻¹ (robot FK → canonical keypoints). Ours exists and is validated; EgoVLA's released equivalent was &lt;0.45 correlation — validate per hand, don't assume.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>The four assigned works (full-paper reads)</h2>
+      <p class="sub">Each read end-to-end by a dedicated agent; dense digests in <span class="mono">DPP-ICLR2027/retargeter/reading-notes.md</span>. None is a novelty collision; each contributes one pillar of the design.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Work</th><th>What it actually is</th><th>What we take</th><th>Collision</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Play2Perfect</strong><br><span class="muted mono">arXiv 2606.26428</span></td><td>Demo-free RL: goal-conditioned "play" over 1000 procedural objects through 6D-pose goal sequences (ε=1 cm), then sparse CAD-goal finetune. Sharpa+KUKA, zero human data. 33× sample efficiency, 60% real @0.5 mm insertion.</td><td>Keypoint 6D pose distance (fixed reward dims) as our reward/filter/eval metric; the goal-conditioned tracker as pair-minting engine; published grasp-bootstrap reward gates; ε=1 cm is the transfer-critical knob; full-6D beats translation-only (their cleanest negative result); validated Sharpa-in-Isaac stack (SAPG, DR tables, SDF-256 collision).</td><td class="mono">none — opposite bet (no human data, 1 hand, monolithic)</td></tr>
+            <tr><td><strong>Do-As-I-Do</strong><br><span class="muted mono">arXiv 2606.19333</span></td><td>Training-free: monocular human video → reconstruction → SPIDER annealed MPPI in MuJoCo Warp tracking the <em>object's</em> 6D trajectory → 500 feasible Sharpa trajectories. Open-loop replay; nothing learned.</td><td>Empirical proof of our objective: object:hand reward 10–30:1 (pos 1.0/rot 0.3 vs 0.1/0.03/0.01) → 71–81% feasible; warmup weld (+41 pts); contact-phase staging (→ our binary-contact channel); success filter E_pos&lt;0.1 m ∧ E_rot&lt;0.5 rad; force-perturbed sampling halves tracking error; mink multi-seed IK warm start.</td><td class="mono">low — the criterion is theirs to cite; the learned, amortized, closed-loop, N-hand form is ours</td></tr>
+            <tr><td><strong>DexGrasp Anything</strong><br><span class="muted mono">CVPR25, arXiv 2503.08257</span></td><td>Physics-aware diffusion for <em>static</em> ShadowHand grasp poses from object clouds + 3.4M-grasp dataset. No trajectory, no arm, no policy.</td><td>Isaac acceptance gates (&lt;2 cm displacement under 6-dir force, pen &lt;10 mm) as pair-validity filter; three morphology-agnostic physics losses (SPF/ERF/SRF) — with SPF keypoints placed <em>at the human contact locations</em> = a match-the-human-contact term; DSG test-time guidance for any diffusion head; the DexGRAB recipe (MANO→retarget→validate) as pairing template v0 — they discard the correspondence we keep.</td><td class="mono">none — single frame, single hand, no object motion</td></tr>
+            <tr><td><strong>HRDexDB</strong><br><span class="muted mono">arXiv 2604.14944, SNU VCLab</span></td><td>REAL-capture paired dataset: 23-cam rig, 100 objects, 2.1K trials, human MANO + 4 robot hands (incl. Inspire RH56F1) via teleop. Grasping only; pairing is <em>semantic</em> (teleoperator imitates by eye); object motion recorded but never used as the criterion; no temporal alignment.</td><td>Their Table 4: kinematic retargeting is the <em>worst</em> grasp initializer (42.4/30.3% vs 75.8/93.9% learned) — third-party evidence for functional transfer. Contact map C + part map P on the object cloud as embodiment-agnostic interface; keep-failures-labeled schema; physics-validation stack; caveat: object 6D tracking degrades 0.7–2.1 cm under robot grasps (matters for real-world trajectory-matched eval).</td><td class="mono">low — their own limitation names our pairing criterion "an open problem"; don't claim "first paired dataset"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:14px">Flag: HRDexDB's senior author is RLWRLD-affiliated — potential internal overlap/priority, raised to the supervisor.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Novelty sweep — 26 adjacent works, nothing scored 5/5</h2>
+      <p class="sub">Claim at risk: "one frozen human-data policy + N per-embodiment adapters trained without robot demonstrations, closed-loop on ≥3 hands." Four works scored 4/5; each fails at least two legs of the conjunction.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Near-miss</th><th>Has</th><th>Lacks</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DexMachina</strong> <span class="muted mono">2505.24853</span></td><td>"Functional retargeting" is literally their term: RL tracks demo object states; decaying virtual-object-controller curriculum; 6 hands incl. Inspire.</td><td>One policy <em>per demo per hand</em> — no reusable module, no human-data base, state-based. → our data engine + strongest mandatory baseline. Also: underactuated hands hardest → Inspire is the stress case.</td></tr>
+            <tr><td><strong>DexTrack</strong> <span class="muted mono">ICLR25</span></td><td>Sim-generated (reference→action) pairs → reference-conditioned neural controller; RL+IL flywheel.</td><td>Pairing is pose-space (kinematic), no frozen-base/adapter split, one hand per system. → our training-recipe template.</td></tr>
+            <tr><td><strong>EgoScale</strong> <span class="muted mono">2602.16710</span></td><td>Frozen 20k-hr human-video VLA + per-embodiment MLP adapters; uses Sharpa. Closest <em>structure</em>.</td><td>Adapters need 54 h of aligned human-robot teleop play; 2 hands; pure imitation. → our headline economics contrast: they can't add a hand without robot data.</td></tr>
+            <tr><td><strong>Latent Action Diffusion</strong> <span class="muted mono">2506.14608</span></td><td>Shared latent action space over MANO + robot hands; frozen per-embodiment decoders.</td><td>Kinematic alignment; decoder is a converter (no closed-loop correction); co-trained on robot teleop. → ablation arm.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:26px">What makes it unambiguous</h3>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Lead with the pairing mechanism.</span><span class="ld">Formalize functional (object-motion-matched) vs kinematic pairing, and run THE ablation: identical retargeter architecture trained on each. If that gap isn't there, the paper isn't there.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Show the adapter is a policy, not a converter.</span><span class="ld">Perturbation-recovery probe (mid-rollout force pushes) that a DexPilot/GeoRT-class converter structurally cannot pass.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Quantify "cheap".</span><span class="ld">Per-new-hand cost (GPU-hrs, params, wall-clock) + hands-scaling curve — the figure EgoScale cannot produce without new robot data.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Baselines reviewers will demand.</span><span class="ld">dex-retargeting converter (no learning) · learned-kinematic MLP (our stage-0 #28/#29) · DexMachina per-demo RL (oracle) · monolithic per-hand controller (task #30 repurposed — tests the factorization) · adapter WITH a small robot-demo set · ablations: ±hand regularizer, frozen vs finetuned base.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Design v1 — implement, train, deploy</h2>
+      <p class="sub">Four stages. Stage 0 exists; stages 1–3 are the new build. Everything evaluated on the jittered benchmark at observation parity (EVAL_RING_PX=0), with non-geometric success predicates.</p>
+
+      <figure>
+        <svg viewBox="0 0 920 360" style="width:100%;height:auto;font-family:var(--sans);font-size:13px" role="img" aria-label="Pipeline: human demos provide MANO stream, object trajectory and contact; a per-hand goal-conditioned tracker in openarm-sim generates rollouts; a filter produces time-aligned pairs; the retargeter is trained supervised, then DAgger, then RL fine-tune; closed-loop evaluation composes the frozen base policy with the retargeter on three hands.">
+          <defs>
+            <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/>
+            </marker>
+          </defs>
+          <!-- row 1 -->
+          <rect x="12" y="20" width="256" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="140" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Human demos (PnP 500, 479 eps)</text>
+          <text x="140" y="66" text-anchor="middle" fill="var(--mut)">MANO keypoints · per-frame object cloud</text>
+          <text x="140" y="86" text-anchor="middle" fill="var(--mut)">contact (HaWoR-tactile, 5-finger)</text>
+          <text x="140" y="106" text-anchor="middle" fill="var(--mut)">+ NEW: object 6D per frame (registration, QC'd)</text>
+
+          <rect x="330" y="20" width="280" height="96" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
+          <text x="470" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Per-hand goal-conditioned tracker</text>
+          <text x="470" y="66" text-anchor="middle" fill="var(--mut)">openarm-sim RL · tracks demo object traj</text>
+          <text x="470" y="86" text-anchor="middle" fill="var(--mut)">ghost-controller curriculum (DexMachina)</text>
+          <text x="470" y="106" text-anchor="middle" fill="var(--mut)">warmup weld (DAID) · P2P reward, ε=1–3 cm</text>
+
+          <rect x="672" y="20" width="236" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="790" y="44" text-anchor="middle" fill="var(--txt)" font-weight="600">Filter → paired dataset</text>
+          <text x="790" y="66" text-anchor="middle" fill="var(--mut)">tiered ε (gold/silver) · physics gates (DGA)</text>
+          <text x="790" y="86" text-anchor="middle" fill="var(--mut)">real lift/grasp check · failures kept, labeled</text>
+          <text x="790" y="106" text-anchor="middle" fill="var(--mut)">time-aligned by shared object clock</text>
+
+          <line x1="268" y1="68" x2="324" y2="68" stroke="var(--mut)" marker-end="url(#arr2)"/>
+          <line x1="610" y1="68" x2="666" y2="68" stroke="var(--mut)" marker-end="url(#arr2)"/>
+          <text x="638" y="56" text-anchor="middle" fill="var(--mut)" font-size="11">×479×~10 seeds</text>
+
+          <!-- row 2 -->
+          <rect x="12" y="180" width="256" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="140" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Supervised R_E + DAgger</text>
+          <text x="140" y="226" text-anchor="middle" fill="var(--mut)">L_action (joint MSE + FK tips)</text>
+          <text x="140" y="246" text-anchor="middle" fill="var(--mut)">+ weak hand-sim + contact BCE + ‖Δ‖²</text>
+          <text x="140" y="266" text-anchor="middle" fill="var(--mut)">relabel composed rollouts w/ tracker</text>
+
+          <rect x="330" y="180" width="280" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="470" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">RL fine-tune (per hand, ~1 GPU-day)</text>
+          <text x="470" y="226" text-anchor="middle" fill="var(--mut)">PPO · reward = object keypoint tracking</text>
+          <text x="470" y="246" text-anchor="middle" fill="var(--mut)">+ contact match − ‖Δ‖ − smoothness</text>
+          <text x="470" y="266" text-anchor="middle" fill="var(--mut)">IL action anchor (DexTrack)</text>
+
+          <rect x="672" y="180" width="236" height="96" rx="8" fill="var(--acc-bg)" stroke="var(--acc-line)"/>
+          <text x="790" y="204" text-anchor="middle" fill="var(--txt)" font-weight="600">Closed-loop eval, 3 hands</text>
+          <text x="790" y="226" text-anchor="middle" fill="var(--mut)">frozen π_H ∘ R_E · jittered benchmark</text>
+          <text x="790" y="246" text-anchor="middle" fill="var(--mut)">bottle / box / ball · parity EVAL_RING_PX=0</text>
+          <text x="790" y="266" text-anchor="middle" fill="var(--mut)">+ perturbation-recovery probe</text>
+
+          <path d="M 790 116 L 790 148 L 140 148 L 140 174" fill="none" stroke="var(--mut)" marker-end="url(#arr2)"/>
+          <line x1="268" y1="228" x2="324" y2="228" stroke="var(--mut)" marker-end="url(#arr2)"/>
+          <line x1="610" y1="228" x2="666" y2="228" stroke="var(--mut)" marker-end="url(#arr2)"/>
+          <text x="460" y="330" text-anchor="middle" fill="var(--mut)" font-size="12">Stage 0 (exists): geometric prior g_E — dex-retargeting GT (Inspire) + alignment fits + fingertip→joint MLPs = residual base, RL cold start, R⁻¹, and the learned-kinematic baseline.</text>
+        </svg>
+        <figcaption>The build. Pairing-by-outcome makes correspondence per-timestep <em>by construction</em> (robot tracks the demo's object trajectory on the demo's clock) — exactly what HRDexDB's semantic pairs cannot give.</figcaption>
+      </figure>
+
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Stage</th><th>What</th><th>Key choices (source)</th><th>Cost est.</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0</td><td>Geometric prior g_E + R⁻¹ per hand</td><td>Tasks #28/#29 as-is; Wuji/Sharpa GT blocked on the fingertip-site convention ruling</td><td class="mono">exists / CPU</td></tr>
+            <tr><td class="mono">1</td><td>Paired data: per-hand goal-conditioned object-trajectory tracker → rollout on all demos → filter</td><td>P2P reward machinery + ε=1–3 cm; DexMachina ghost curriculum; DAID warmup weld + contact staging; DGA physics gates; per-demo RL mops up hard demos (= oracle baseline data)</td><td class="mono">1–2 H100-d / hand</td></tr>
+            <tr><td class="mono">2</td><td>R_E training: supervised → DAgger → light RL</td><td>Residual over g_E (the auxiliary, structurally); ~1–5 M params; object:hand weighting starts at DAID's 10–30:1; contact BCE; DexTrack IL anchor</td><td class="mono">hours + ~1 H100-d / hand</td></tr>
+            <tr><td class="mono">3</td><td>Composition + deploy</td><td>Sim: harness cloud + R⁻¹(q) → frozen π_H (chunk rate) → R_E (control rate). Real: swap dex-retargeting module in the existing policy-server — later, after sim results</td><td class="mono">eval-harness hours</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">Evaluation matrix</h3>
+      <p class="sub">3 hands × bottle/box/ball ×: converter (no learning) · stage-0 kinematic MLP · R_E supervised · R_E+RL · kinematic-pairs vs functional-pairs (THE ablation) · ±hand regularizer · frozen vs finetuned base · DexMachina per-demo oracle (~20-demo subset) · monolithic per-hand head (#30 repurposed). Metrics: task success, object-trajectory keypoint-distance profile, contact-timing IoU, per-new-hand onboarding cost. Total budget ≈ 10–15 H100-days including baselines; nothing submitted before sign-off.</p>
+
+      <h3 style="margin-top:26px">Open decisions (blocking the design doc, not the reading)</h3>
+      <ul class="clean">
+        <li><span class="mk i">1</span><span><span class="lt">Pair engine.</span><span class="ld">Amortized goal-conditioned tracker (recommended) vs per-demo RL vs SPIDER-MPPI (needs an MJCF asset check for openarm + 3 hands).</span></span></li>
+        <li><span class="mk i">2</span><span><span class="lt">Residual vs direct output for R_E.</span><span class="ld">Residual recommended — bakes in the auxiliary, degrades gracefully to the geometric baseline.</span></span></li>
+        <li><span class="mk i">3</span><span><span class="lt">Which frozen base.</span><span class="ld">Existing PnP FT checkpoint (protocol-v2) vs retraining a clean base first.</span></span></li>
+        <li><span class="mk i">4</span><span><span class="lt">Wrist/arm split.</span><span class="ld">Lean: wrist via canonical transform + arm IK (the morphology gap is not in the wrist); R_E owns fingers + small wrist correction. Alternative: R_E outputs all 7 arm joints.</span></span></li>
+        <li><span class="mk i">5</span><span><span class="lt">Contact channel.</span><span class="ld">Binary 5-finger (existing head) vs HRDexDB-style contact/part maps on the object cloud (richer pairing criterion, more work).</span></span></li>
+        <li><span class="mk i">6</span><span><span class="lt">Scope guard.</span><span class="ld">Retargeter-RL is distinct from residual-RL-on-policy (Seunghoon's), but if it should stay out entirely, supervised+DAgger alone still gives a paper.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Timeline</h2>
+      <ul class="timeline">
+        <li class="acc">
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">Restructure proposed; theory verdict delivered</span>
+          <p>User reframed the workstream: human-centric base policy + embodiment-specific retargeter, functional ("object moves the same") retargeting definition. Verified 4/5 with five sharpenings; five reading agents dispatched (4 assigned papers in full + a novelty sweep).</p>
+        </li>
+        <li class="acc">
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">All five readers reported; digests filed</span>
+          <p>Play2Perfect (pair-minting machinery + ε knob), Do-As-I-Do (objective validated at 10–30:1 + warmup weld), DexGrasp Anything (grasp synthesis + physics gates), HRDexDB (semantic-pairing contrast + kinematic-retargeting-is-worst evidence), sweep (26 works, no 5/5; DexMachina/DexTrack/EgoScale/LAD are the 4/5 near-misses).</p>
+        </li>
+        <li>
+          <span class="tdate">2026-08-07</span>
+          <span class="tt">Design v1 written up for discussion</span>
+          <p>Four-stage plan above; six decisions open; no GPU spent, nothing submitted. DESIGN.md deferred until discussion closes (user's call).</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Close the six decisions.</span><span class="ld">Then write DPP-ICLR2027/retargeter/DESIGN.md and cost the stage-1 pilot precisely.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Unblock stage 0.</span><span class="ld">Fingertip-site convention ruling (sim sites vs dex-urdf *_tip) gates Wuji/Sharpa pseudo-joint GT (#28).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Object 6D extraction pilot.</span><span class="ld">Per-frame registration on 10 PnP episodes with overlay QC before anything trains on it.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Reading digests</span><span class="ld mono">DPP-ICLR2027/retargeter/reading-notes.md (all five reports condensed, with equations/coefficients)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Stage-0 code</span><span class="ld mono">DPP-ICLR2027/handretarget/{common.py, fit_alignment.py, alignment_inspire.json}</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Human-side data</span><span class="ld mono">pointbridge …/0501_pnp_500_v2_b0_shrink20/rlwrld_final.h5 · Inspire GT: dex-point-policy-rebuttal/retargeting/output/pnp500_pseudo_joints.h5</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Hand kinematics</span><span class="ld mono">openarm-sim/openarm_sim/parallel_eval/assets/kinematics_right{,_wuji,_sharpa}.npz + keypoint_fk.py</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Papers</span><span class="ld mono">2606.26428 · 2606.19333 · 2503.08257 · 2604.14944 · sweep: 2505.24853, 2502.09614, 2602.16710, 2506.14608 + 22 more</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-07 · beomjun · experiments/dex-point-policy/logs/2026-08-07-functional-retargeter-restructure</div>
+</footer>
+
+</body>
+</html>

@@ -20,13 +20,31 @@
    "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
    "path": "dex-point-policy/",
    "now": {
-    "text": "Sprint 2: visual audit of sim hand actuation + observation validity (user flagged hand/contact observations as invalid); commanded-vs-achieved forensics before any new numbers",
+    "text": "Restructure: frozen human-data base policy + per-hand FUNCTIONAL retargeter (object follows the demo trajectory). Idea verified 4/5, 4 papers + 26-work sweep read, design v1 under discussion - 6 decisions open before DESIGN.md.",
     "status": "active",
-    "updated": "2026-08-01"
+    "updated": "2026-08-07"
    }
   }
  },
  "logs": [
+  {
+   "project": "dex-point-policy",
+   "date": "2026-08-07",
+   "slug": "functional-retargeter-restructure",
+   "title": "One frozen human policy, N functional retargeters — idea verified 4/5, design v1",
+   "status": "running",
+   "updated": "2026-08-07",
+   "tldr": "Workstream restructured around a human-centric base policy (real human data, embodiment-free obs) + a learned per-embodiment retargeter whose objective is FUNCTIONAL: the object must follow the demo's 3D trajectory. Theory verdict 4/5 - the one concentrated risk is that object-trajectory equivalence is a closed-loop property, fixed by pairing-by-outcome (per-hand tracker in sim chases each demo's object trajectory; successes become time-aligned human-robot pairs). Four assigned papers read in full (Play2Perfect, Do-As-I-Do, DexGrasp Anything, HRDexDB) plus a 26-work novelty sweep: nothing scored 5/5, claim survives as a conjunction, and the paper hangs on one ablation - the same retargeter trained on kinematic vs object-motion-matched pairs. Design v1 filed: 4 stages, ~10-15 H100-days incl. baselines; 6 decisions open.",
+   "path": "dex-point-policy/logs/2026-08-07-functional-retargeter-restructure/",
+   "tags": [
+    "restructure",
+    "retargeting",
+    "cross-embodiment",
+    "literature",
+    "design",
+    "novelty"
+   ]
+  },
   {
    "project": "dex-pointwam",
    "date": "2026-08-06",
