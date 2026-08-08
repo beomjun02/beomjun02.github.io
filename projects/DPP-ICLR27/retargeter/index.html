@@ -17,7 +17,7 @@
 
   <header class="paper">
     <h1>Distilling Functional Transfer into a Reusable Hand Retargeter</h1>
-    <p class="meta">Working note · v1.1, 2026-08-08 <span class="status-pill">METHOD FROZEN · RESULTS PENDING</span></p>
+    <p class="meta">Working note · v1.2, 2026-08-09 <span class="status-pill">RESULTS v1 · n=29 held-out</span></p>
   </header>
 
   <div class="abstract">
@@ -32,7 +32,10 @@
     frames), with <em>no robot demonstrations and no task data</em>. The load-bearing experiment
     holds architecture fixed and varies only the pairing criterion: the same R trained on
     <em>kinematic</em> pairs versus <em>functional</em> pairs.
-    Results: <span class="tbd">pending</span>.
+    First results (n=29 held-out sequences): functional pairing wins on <em>grasp
+    robustness</em> — retention 0.90–0.92 vs 0.78–0.79, object-drop at frame ~70 vs ~30, replay
+    success 31–34% vs 28% @5 cm — while median tracking is similar; the effect is concentrated in
+    the failure tail, not the typical sequence.
   </div>
 
   <h2>1&nbsp;&nbsp;Motivation</h2>
@@ -71,44 +74,85 @@ R⁻¹:  ( q_k )                →  ( k̃_k ,  Δ̃wrist_k )</code></pre>
   <strong>H4</strong>: distillation loss is small (≈ oracle ceiling).</p>
 
   <h2>4&nbsp;&nbsp;Results</h2>
-  <div class="placeholder"><span class="k">PLACEHOLDER — PENDING RUNS</span>
-  Ingestion-gate report (Appendix B checks) lands here first.</div>
+  <p class="note">Run of 2026-08-08→09. Pairs: 1,258 rollout sequences (492 OakInk-V2 source
+  sequences; FAVOR excluded — no released human stream), 12-DOF command labels, split by source
+  hash 90/10. All seven ingestion gates passed (frame count matches the paper's 1.34M exactly;
+  temporal join certified to 1.1 mm; <a href="#app-b">Appendix B</a>). Two gate findings
+  sharpened the method: commanded targets carry <em>press-intent</em> DC offsets under contact
+  (validating command-space labels + L1), and the RL rollouts do not respect mimic coupling
+  (so labels stay in the 12-DOF simulator convention; the 6-DOF projection moves to deploy).</p>
 
   <div class="tbl"><table>
-    <caption>Table 1 — Level 1 (pair space), held-out episodes. Lower is better.</caption>
-    <thead><tr><th>Model</th><th>Joint MAE (°)</th><th>Fingertip FK (mm)</th><th>Δwrist (mm / °)</th></tr></thead>
+    <caption>Table 1 — Level 1 (pair space), held-out sequences. Joint-command L1 in radians
+    (labels are RL commands with heavy per-frame jitter; ~0.18 rad is close to the
+    median-of-jitter floor, so read differences, not magnitudes). R-kin regresses smooth g_E
+    targets — its L1 lives in a different label space and is not comparable.</caption>
+    <thead><tr><th>Model</th><th>u L1 (rad)</th><th>Fingertip FK (mm)</th><th>Δwrist L1</th></tr></thead>
     <tbody>
-      <tr><td>g_E (dex-retargeting)</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">—</td></tr>
-      <tr><td>R-kin ⭐</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td>R-direct</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td><strong>R-main</strong></td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
+      <tr><td><strong>R-direct (1M)</strong></td><td>0.187</td><td>15.9</td><td>0.107</td></tr>
+      <tr><td>R-W16 (16-frame window)</td><td>0.190</td><td>16.1</td><td>0.105</td></tr>
+      <tr><td>R-main (g_E-anchored, λ=0.1)</td><td>0.203</td><td>17.3</td><td>0.107</td></tr>
+      <tr><td>R-chunk (open-loop 16-step)</td><td>0.229</td><td>16.1</td><td>0.105</td></tr>
+      <tr><td>R-kin ⭐ (not comparable)</td><td>0.025</td><td>—</td><td>0.001</td></tr>
+    </tbody>
+  </table></div>
+  <p>Capacity is flat (0.1M→50M: 0.187→0.185) — label jitter dominates. The g_E anchor
+  <em>hurts</em>: λ_Δ=1 collapses u-L1 to 0.31 (functional commands live far from kinematic
+  poses); w_FK is neutral. Full grid: <a href="#app-c">Appendix C</a>.</p>
+
+  <div class="tbl"><table>
+    <caption>Table 2 — Level 2, segmented replay (teacher-forced reset every 60 frames — the
+    compounding-divergence-free protocol; <a href="#app-e">Appendix E</a>). n=29 held-out rh
+    sequences, 26 objects. succ = final object pose within ε of the demo per segment end;
+    held = fraction of frames with the object within 30 cm of the hand; drop = first frame it
+    isn't (−1 → never, averaged). Binomial 95% CI on success is ±17 pp — success differences
+    are directional, not significant; the retention and error columns carry the signal.</caption>
+    <thead><tr><th>Model</th><th>succ@5cm</th><th>succ@10cm</th><th>mean err (cm)</th><th>seg-end med (cm)</th><th>held</th><th>drop (frame)</th></tr></thead>
+    <tbody>
+      <tr><td>oracle (stored commands)</td><td>79%</td><td>86%</td><td>6.5</td><td>10.4</td><td>0.97</td><td>62</td></tr>
+      <tr><td><strong>R-W16</strong></td><td><strong>34%</strong></td><td><strong>69%</strong></td><td><strong>13.5</strong></td><td>12.8</td><td>0.92</td><td>74</td></tr>
+      <tr><td>R-direct</td><td>31%</td><td>66%</td><td>20.6</td><td>18.9</td><td>0.90</td><td>67</td></tr>
+      <tr><td>R-main</td><td>28%</td><td>59%</td><td>26.8</td><td>23.3</td><td>0.84</td><td>79</td></tr>
+      <tr><td>R-chunk</td><td>28%</td><td>69%</td><td>52.7</td><td>18.7</td><td>0.88</td><td>62</td></tr>
+      <tr><td>R-kin ⭐ (kinematic pairs)</td><td>28%</td><td>59%</td><td>58.2</td><td>24.1</td><td>0.79</td><td>32</td></tr>
+      <tr><td>g_E (dex-retargeting)</td><td>28%</td><td>55%</td><td>69.4</td><td>43.5</td><td>0.78</td><td>27</td></tr>
     </tbody>
   </table></div>
 
-  <div class="tbl"><table>
-    <caption>Table 2 — Level 2 (functional replay): success at ε = 1 / 3 cm and perturbation
-    recovery; unseen-task and unseen-object splits reported separately.</caption>
-    <thead><tr><th>Model</th><th>ε=1 cm (%)</th><th>ε=3 cm (%)</th><th>Perturb. recovery (%)</th></tr></thead>
-    <tbody>
-      <tr><td>Oracle replay (ceiling)</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">—</td></tr>
-      <tr><td>g_E</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td>R-kin ⭐</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td>R-chunk</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td>R-W16</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-      <tr><td><strong>R-main</strong></td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">TBD</td></tr>
-    </tbody>
-  </table></div>
-
-  <div class="placeholder"><span class="k">PLACEHOLDER</span>
-  Fig. 1 — λ_Δ sweep (converter↔policy continuum) &amp; ‖Δ‖ distribution at optimal λ ·
-  Fig. 2 — capacity curve · Fig. 3 — acquisition-vs-transport error decomposition ·
-  R⁻¹ table (keypoint error / jitter / round-trip).</div>
+  <p><strong>Findings.</strong>
+  <strong>H1 (functional &gt; kinematic pairing)</strong>: supported, with a precise shape — on the
+  <em>median</em> sequence all retargeters track similarly (12.6–15.0 cm; the demo plan does most of
+  the work), but kinematic arms fail catastrophically in the tail: R-kin drops objects at frame ~32
+  (g_E: ~27) versus ~67–79 for functional arms, and its mean error is 2.8× R-direct's. Functional
+  pairing buys <em>grasp robustness</em>, not median precision.
+  <strong>H2 (&gt; g_E)</strong>: yes on every column, same tail-shaped effect.
+  <strong>H3 (per-step feedback)</strong>: inconclusive — R-chunk's seg-end median matches R-direct,
+  its mean is tail-inflated, and the perturbation probe (init-q noise, open-loop) moved <em>no</em>
+  median metric at n=29 (a null result as measured).
+  <strong>H4 (≈ oracle)</strong>: not yet — 34% vs 79% @5 cm; the distillation gap is the main
+  open problem, and W16's Level-2 win (despite a neutral Level-1) says temporal context in the
+  <em>input</em> is one lever.
+  Full open-loop replay depresses even the oracle to 10% @5 cm (med 19.7 cm) — quantifying why
+  plan-level feedback (the frozen π<sub>H</sub> re-planning from fresh observations) is where
+  closed-loop object correction must come from in the full system; auxiliary tables:
+  <a href="#app-e">Appendix E</a>.</p>
 
   <h2>5&nbsp;&nbsp;Discussion &amp; Limitations</h2>
   <ul>
+    <li><strong>n=29, one split</strong> — success-rate differences are inside the binomial CI;
+    the tail-shaped H1 evidence (retention, drop-time, mean error) is the defensible claim.
+    Scale-up to the full val set and an unseen-object split is the immediate next run.</li>
+    <li><strong>Distillation gap</strong> — best R is at 34% vs oracle 79% @5 cm. W16's win says
+    input temporal context matters; the gap, not H1, is now the research problem.</li>
+    <li><strong>Fixed-plan evaluation</strong> — replaying recorded human streams is open-loop at
+    plan level by construction; closed-loop object correction belongs to the frozen π<sub>H</sub>
+    (fresh observations each chunk) and is untested here.</li>
+    <li><strong>Human side = OakInk-V2 raw_mano</strong> (matches π<sub>H</sub>'s MANO provenance),
+    not ManipTrans' SMPLX-derived reference — a deliberate provenance choice, unmeasured Δ.</li>
     <li><strong>Single hand so far</strong> — Wuji/Sharpa pending; Inspire-first is the
-    conservative test (kinematic retargeting is strongest there).</li>
-    <li><strong>Hardware coupling unverified</strong> until rig experiments
+    conservative test (kinematic retargeting is strongest there). R⁻¹ not yet trained.</li>
+    <li><strong>Hardware coupling unverified</strong> until rig experiments; labels live in the
+    simulator's 12-DOF convention, the 6-DOF physical projection is a deploy-time step
     (<a href="#app-b">Appendix B</a>).</li>
     <li><strong>Composition with the frozen human policy is out of scope</strong> — see the
     <a href="../base-policy/">base-policy workstream</a>.</li>
@@ -203,12 +247,30 @@ R⁻¹ (per obs tick):
       <tr><td>R⁻¹</td><td class="mono">keypoint + smoothness + round-trip</td><td>round-trip = wrist-channel R∘R⁻¹ ≈ id on shared pairs</td></tr>
     </tbody>
   </table></div>
-  <p><strong>Ablation grids</strong> (validation-split selection only; test splits untouched):
-  term on/off {−λ_Δ, −FK, −rate, −Δwrist} (4 runs); weights λ_Δ ∈ {0, 0.01, 0.1, 1} ×
-  w<sub>FK</sub> ∈ {0, 0.1, 1} (12 runs, at 1M capacity); capacity {0.1, 1, 5, 50}M on R-main with
-  selected weights (4 runs); ±1-step sensitivity row at the final configuration. The ‖Δ‖
-  distribution at optimal λ_Δ quantifies, in degrees, how much correction kinematic retargeting
-  actually needs.</p>
+  <p><strong>Ablation grids as run</strong> (validation-split selection only): weights
+  λ_Δ ∈ {0, 0.01, 0.1, 1} × w<sub>FK</sub> ∈ {0, 0.1, 1} on R-main (12 runs, 1M);
+  capacity {0.1, 1, 5, 50}M on R-direct. The rate term was dropped from v1 runs — L1 on jittery
+  command labels already predicts the (smooth) conditional median, so smoothness is measured at
+  eval instead of imposed in training.</p>
+  <div class="tbl"><table>
+    <caption>Grid results — validation u-L1 (rad) / FK (mm). λ_Δ is flat until it collapses the
+    model onto g_E (λ=1 → 0.31 rad); w_FK is neutral on u-L1.</caption>
+    <thead><tr><th>λ_Δ</th><th>w_FK</th><th>u L1 (rad)</th><th>FK (mm)</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>0</td><td>0.199</td><td>—</td></tr>
+      <tr><td>0</td><td>0.1</td><td>0.200</td><td>17.1</td></tr>
+      <tr><td>0</td><td>1</td><td>0.199</td><td>17.1</td></tr>
+      <tr><td>0.01</td><td>0</td><td>0.199</td><td>—</td></tr>
+      <tr><td>0.01</td><td>0.1</td><td>0.200</td><td>17.1</td></tr>
+      <tr><td>0.01</td><td>1</td><td>0.199</td><td>17.1</td></tr>
+      <tr><td>0.1</td><td>0</td><td>0.203</td><td>—</td></tr>
+      <tr><td>0.1</td><td>0.1</td><td>0.203</td><td>17.3</td></tr>
+      <tr><td>0.1</td><td>1</td><td>0.202</td><td>17.3</td></tr>
+      <tr><td>1</td><td>0</td><td>0.313</td><td>—</td></tr>
+      <tr><td>1</td><td>0.1</td><td>0.312</td><td>26.0</td></tr>
+      <tr><td>1</td><td>1</td><td>0.304</td><td>24.9</td></tr>
+    </tbody>
+  </table></div>
 
   <h2 id="app-d">Appendix D&nbsp;&nbsp;Arm definitions</h2>
   <div class="tbl"><table>
@@ -224,26 +286,45 @@ R⁻¹ (per obs tick):
     </tbody>
   </table></div>
 
-  <h2 id="app-e">Appendix E&nbsp;&nbsp;Evaluation protocol &amp; budget</h2>
+  <h2 id="app-e">Appendix E&nbsp;&nbsp;Evaluation protocol (as run) &amp; budget</h2>
   <ul>
-    <li><strong>Splits</strong>: pre-registered held-out sets along two axes — unseen task and
-    unseen object; hyperparameter/checkpoint selection on the validation split only.</li>
-    <li><strong>Level 1 (pair space)</strong>: joint MAE (deg), fingertip FK error (mm), Δwrist
-    error (mm/deg); R⁻¹: keypoint error (mm), frame-to-frame jitter, wrist round-trip error.</li>
-    <li><strong>Level 2 (functional replay)</strong>: ManipTrans' IsaacGym environment — the same
-    simulator that produced the data, eliminating the sim-gap confound. Drive each arm with
-    held-out source human streams; object-pose error profile over time; success at ε ∈ {1, 3} cm
-    (dense over the trajectory, not endpoint-only); lift/hold predicate (never geometric-only).</li>
-    <li><strong>Perturbation probe</strong>: randomized mid-rollout wrenches on the object
-    (magnitude/timing swept); recovery = re-satisfying the ε-band within a fixed window.</li>
-    <li><strong>Budget</strong>: ~26 training runs × ≤1 h + replay ≈ 1–1.5 A100-days.
-    IsaacGym Preview 4 (CUDA-11 era) targets A100-class GPUs; H100 not assumed to work.
-    Single-GPU jobs throughout.</li>
+    <li><strong>Splits (as run)</strong>: single pre-registered split by <em>source-sequence
+    hash</em> 90/10 (seed 0) — unseen recordings, not unseen tasks/objects; the two-axis split is
+    future work. Selection on validation only.</li>
+    <li><strong>Level 1</strong>: joint-command L1 (rad), fingertip FK (mm), Δwrist L1.
+    R⁻¹ was not trained in v1.</li>
+    <li><strong>Level 2 (as run)</strong>: ManipTrans' own IsaacGym env, rebuilt from their vis
+    class with the <em>training</em> config's contacts (contact_offset 0.005, frictions 4.0/2.0,
+    8 pos-iters — the vis defaults eject grasped objects). Wrist = kinematic root tracking
+    ("perfect arm"), fingers = PD position targets at 60 Hz. Stored rollouts are closed-loop RL
+    output, so any fixed-plan replay diverges chaotically in contact; the primary protocol is
+    therefore <strong>segmented replay</strong> (object+hand reset to recorded state every 60
+    frames; per-segment scoring), with full open-loop replay reported as an auxiliary
+    divergence/retention measure. Held/drop use a 30 cm object-to-hand band.</li>
+    <li><strong>Perturbation probe (as run)</strong>: uniform ±0.3 rad initial-q noise under full
+    open-loop replay. Result: no median metric moved at n=29 — a null as measured; the planned
+    mid-rollout object wrenches remain future work.</li>
+    <li><strong>Budget (actual)</strong>: 19 training runs ≈ 1.6 h + replay sweep (13 arms × 29
+    seqs, one IsaacGym process per sequence) ≈ 3 h; total well under 1 A100-day. IsaacGym
+    Preview 4 on A100 only; single-GPU jobs throughout.</li>
   </ul>
+  <div class="tbl"><table>
+    <caption>Auxiliary — full open-loop replay (no resets), medians over n=29; means are
+    dominated by flung-object outliers and are not reported here.</caption>
+    <thead><tr><th>Model</th><th>med err (cm)</th><th>med final (cm)</th><th>held (med)</th><th>succ@10cm</th></tr></thead>
+    <tbody>
+      <tr><td>oracle</td><td>19.7</td><td>18.2</td><td>1.00</td><td>24%</td></tr>
+      <tr><td>R-main</td><td>21.5</td><td>29.9</td><td>0.72</td><td>3%</td></tr>
+      <tr><td>R-chunk</td><td>22.7</td><td>28.1</td><td>0.69</td><td>17%</td></tr>
+      <tr><td>R-kin ⭐</td><td>23.1</td><td>23.8</td><td>0.66</td><td>10%</td></tr>
+      <tr><td>R-main, perturbed init-q</td><td>21.5</td><td>28.1</td><td>0.70</td><td>14%</td></tr>
+      <tr><td>R-chunk, perturbed init-q</td><td>22.7</td><td>28.1</td><td>0.70</td><td>17%</td></tr>
+    </tbody>
+  </table></div>
 
   </div>
 
-  <footer>DPP / ICLR'27 workstream · method frozen 2026-08-08 · results pending · beomjun</footer>
+  <footer>DPP / ICLR'27 workstream · method frozen 2026-08-08 · results v1 (n=29) 2026-08-09 · beomjun</footer>
 </div>
 </body>
 </html>
