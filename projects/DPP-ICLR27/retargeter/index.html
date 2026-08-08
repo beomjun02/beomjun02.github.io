@@ -6,6 +6,10 @@
 <meta name="robots" content="noindex">
 <title>Retargeter Training — DPP-ICLR27</title>
 <link rel="stylesheet" href="../assets/paper.css">
+<style>
+.appendix-rule{border:none;border-top:2px solid var(--ink);margin:56px 0 8px}
+.appendix h2{font-size:18px}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -13,175 +17,62 @@
 
   <header class="paper">
     <h1>Distilling Functional Transfer into a Reusable Hand Retargeter</h1>
-    <p class="meta">Working note · v1, 2026-08-08 <span class="status-pill">METHOD FROZEN · RESULTS PENDING</span></p>
+    <p class="meta">Working note · v1.1, 2026-08-08 <span class="status-pill">METHOD FROZEN · RESULTS PENDING</span></p>
   </header>
 
   <div class="abstract">
     <span class="k">ABSTRACT</span>
-    Existing human→robot hand retargeting is either <em>pose-based</em> — cheap, reusable, but blind
-    to the object (kinematic matching demonstrably produces the worst grasps) — or
-    <em>object-based (functional)</em> — correct, but locked inside per-demo/per-task RL policies that
-    are never reusable. We distill the latter into the former's form: a small per-hand retargeter
-    <strong>R</strong> (human hand keypoints → robot joint commands, closed-loop, per-step) and its
-    inverse <strong>R⁻¹</strong> (robot joints → human-equivalent hand), trained purely supervised on
-    time-aligned human↔robot pairs mined from ManipTrans' released functional transfers
-    (DexManipNet: 3.3K episodes, 1.2K objects, 1.34M frames), with <em>no robot demonstrations and
-    no task data</em>. The load-bearing experiment holds architecture fixed and varies only the
-    pairing criterion: the same R trained on <em>kinematic</em> pairs versus <em>functional</em>
-    pairs. Results: <span class="tbd">pending (runs in progress)</span>.
+    Existing human→robot hand retargeting is either <em>pose-based</em> — cheap and reusable but
+    blind to the object — or <em>object-based (functional)</em> — correct, but locked inside
+    per-demo/per-task RL policies that are never reusable. We distill the latter into the former's
+    form: a small per-hand retargeter <strong>R</strong> (human hand keypoints → robot joint
+    commands, closed-loop, per-step) and its inverse <strong>R⁻¹</strong> (robot joints →
+    human-equivalent hand), trained purely supervised on time-aligned human↔robot pairs mined from
+    ManipTrans' released functional transfers (DexManipNet: 3.3K episodes, 1.2K objects, 1.34M
+    frames), with <em>no robot demonstrations and no task data</em>. The load-bearing experiment
+    holds architecture fixed and varies only the pairing criterion: the same R trained on
+    <em>kinematic</em> pairs versus <em>functional</em> pairs.
+    Results: <span class="tbd">pending</span>.
   </div>
 
   <h2>1&nbsp;&nbsp;Motivation</h2>
-  <p>Retargeting decides whether human hand data is usable by a robot hand at all. Two failure
-  modes motivate this work. First, <strong>pose-based retargeting ignores the object</strong>: in
-  our own cross-hand study, a policy that scored 25% with the Inspire hand scored 0/96 with Wuji
-  and Sharpa even after IK repair, and HRDexDB independently reports kinematic-retargeting
-  initialization <em>below a no-prior baseline</em> (42.4% vs 69.7% episode success). Second,
-  <strong>functional approaches don't produce a reusable module</strong>: DexMachina trains one
-  policy per demonstration, ManipTrans retrains a residual per task, DexTrack's controller consumes
-  robot-kinematic references — none yields a component that can be composed, unchanged, with a
-  policy that emits human hand actions.</p>
-  <p>Our claim: the functional objective can be <em>amortized</em> into the reusable form —
-  distill sim-verified functional transfers into a per-hand module trained once, reused across
-  tasks. The retargeter is <strong>task-agnostic by construction</strong>: no task data from our
-  downstream benchmarks enters its training; fine-tuning happens (elsewhere) only in the base
-  policy, while R stays frozen. See <a href="../related-works/">Related Works</a> for the full
-  taxonomy; the empty cell it exposes — <em>learned, closed-loop, per-hand retargeter trained from
-  object-motion-matched pairs without robot demos or task data</em> — is what this note fills.</p>
+  <p>Pose-based retargeting ignores the object and demonstrably fails across morphologies; the
+  functional alternatives are correct but never yield a reusable module (one policy per demo or
+  per task). We <em>amortize</em> the functional objective into the reusable form: distilled once,
+  frozen across tasks — <strong>no robot demonstrations, no task data</strong>. Evidence and the
+  full taxonomy: <a href="../related-works/">Related Works</a>.</p>
 
   <h2>2&nbsp;&nbsp;Method</h2>
-
-  <h3>2.1&nbsp;&nbsp;Interfaces</h3>
-  <p>The human hand is represented as <strong>21 keypoints</strong>: a wrist pose
-  <span class="mono">w ∈ SE(3)</span> plus 20 wrist-relative joint positions
-  <span class="mono">k ∈ ℝ⁶⁰</span>. Keypoints (rather than MANO θ) are the interface because every
-  asset in play speaks points: the pretrained point-track policy trunk, dex-retargeting's native
-  input, ManipTrans' 21-keypoint correspondence, and EgoDex's ARKit joints. The robot hand is its
-  independent-joint vector <span class="mono">q</span> (Inspire: 6; the 6 coupled joints follow
-  mechanically).</p>
-
-  <h3>2.2&nbsp;&nbsp;The retargeter pair R, R⁻¹</h3>
-  <pre><code>R   (per control tick):  [ k̂_k ∈ ℝ⁶⁰,  q_k ∈ ℝ⁶,  u_{k−1} ∈ ℝ⁶ ]  →  [ u_k = g_E(k̂_k) + Δq_k,   Δwrist_k ∈ ℝ⁶ ]
-R⁻¹ (per obs tick):      [ q_k ∈ ℝ⁶ ]                            →  [ k̃_k ∈ ℝ⁶⁰ (via θ̃→FK),  Δ̃wrist_k ∈ ℝ⁶ ]</code></pre>
-  <ul>
-    <li><strong>Residual over a geometric prior.</strong> <span class="mono">g_E</span> is
-    off-the-shelf kinematic retargeting (dex-retargeting / AnyTeleop, called directly — it is
-    teleop-grade real-time; no distilled surrogate). R learns only the correction
-    <span class="mono">Δq</span>; λ‖Δ‖² regularization makes λ→∞ recover the pose-based baseline
-    exactly, so the λ sweep traces the converter↔policy continuum.</li>
-    <li><strong>Conditioning makes it a policy, not a converter.</strong>
-    <span class="mono">q_k</span> is the measured state (contact stalls appear here),
-    <span class="mono">u_{k−1}</span> the previous command (continuity; the commanded-vs-achieved
-    gap is itself a contact/lag signal). Proprioceptive conditioning — not lookahead — is what
-    separates the tracker class from the converter class in prior work.</li>
-    <li><strong>Wrist as correspondence, not pinning.</strong> Robot wrist =
-    <span class="mono">T_static(ŵ) ⊕ Δwrist</span>: a per-hand reach-scale calibration (initialized
-    from our validated fingertip-vector alignment fit) plus a learned, bounded correction. R⁻¹
-    learns the inverse map; a round-trip consistency loss ties the two. The human-side wrist is a
-    canonical representation — loop consistency, not physical coincidence, is the requirement.</li>
-    <li><strong>R⁻¹ is an encoder, not a mirror-policy.</strong> Its contract is consistency over
-    accuracy: report a plausible, temporally coherent human hand for the robot's state. Internally
-    it predicts MANO θ̃ and emits FK(θ̃, β<sub>canon</sub>) keypoints, guaranteeing anatomically
-    valid output; an EMA filter enforces coherence. Input is q only — no conditioning, by design.</li>
-    <li><strong>No object input anywhere.</strong> The object enters the <em>objective</em> (pair
-    construction and evaluation), never the observation; R needs no camera at deployment.</li>
-  </ul>
-
-  <h3>2.3&nbsp;&nbsp;Pair construction from DexManipNet</h3>
-  <p>ManipTrans transfers human demonstrations (OakInk-V2, FAVOR) to robot hands via a generalist
-  imitator plus per-task residual RL, releasing the successful transfers as DexManipNet — 3.3K
-  episodes over 1.2K objects and 61 tasks (1.34M frames, Inspire hand). Because the residual
-  tracking follows the source clock, each episode is a <em>time-aligned functional pair</em> by
-  construction: per frame,</p>
-  <pre><code>( k_t, w^H_t │ q_t, u_t, w^R_t │ object pose_t │ task/object metadata )</code></pre>
-  <p>We parse these tuples directly; the 61 per-task RL trainings that produced them are a cost we
-  never pay. The <strong>kinematic comparison set</strong> applies g_E frame-by-frame to the same
-  source human streams — identical sources, objects and trajectories; only the pairing criterion
-  differs. This makes the central ablation exactly controlled.</p>
-  <p><strong>Hand-identity audit.</strong> ManipTrans' Inspire URDF and ours (dex-urdf lineage)
-  agree on all 12 joint origins to 0.00&nbsp;mm; they differ in tip-site placement (2.0–4.6&nbsp;mm),
-  joint limits (e.g. proximal 1.7 vs 1.47&nbsp;rad), and mimic-coupling ratios (1.0/1.6/2.4 vs
-  1.064/1.334/0.667) — three teams' approximations of the same RH56 mechanism. We therefore define
-  robot labels in the <strong>6 independent joints</strong>, whose geometry is identical across
-  conventions, and gate ingestion on (i) the fraction of frames exceeding our joint limits and
-  (ii) the fingertip-FK discrepancy across coupling conventions over the dataset's q-distribution.</p>
-
-  <h3>2.4&nbsp;&nbsp;Training</h3>
-  <div class="tbl"><table>
-    <caption>Loss terms and provenance. Everything is standard behavior cloning on mined pairs;
-    no reinforcement learning, no DAgger, no contact channel.</caption>
-    <thead><tr><th>Term</th><th>Form</th><th>Provenance</th></tr></thead>
-    <tbody>
-      <tr><td>Action</td><td class="mono">L1(u − u*)</td><td>standard BC; L1 for robustness to RL-label outliers (median-seeking); codebase convention (ACT, BAKU, DPP)</td></tr>
-      <tr><td>Fingertip FK</td><td class="mono">‖FK(u) − FK(u*)‖</td><td>supervised equivalent of ManipTrans' keypoint-matching reward; GeoRT's keypoint-space objective</td></tr>
-      <tr><td>Residual magnitude</td><td class="mono">λ_Δ‖Δq‖²</td><td>ours (ablated, §3.3)</td></tr>
-      <tr><td>Wrist</td><td class="mono">‖Δwrist − Δwrist*‖</td><td>ours; label Δwrist* = w^R ⊖ T_static(w^H) free from pairs</td></tr>
-      <tr><td>Rate</td><td class="mono">λ_r‖u_k − u_{k−1}‖</td><td>equivalent of their action-smoothness/EMA</td></tr>
-      <tr><td>R⁻¹</td><td class="mono">keypoint + smoothness</td><td>+ wrist round-trip consistency on shared pairs</td></tr>
-    </tbody>
-  </table></div>
+  <pre><code>R  :  ( k̂_k, q_k, u_{k−1} )  →  ( u_k = g_E(k̂_k) + Δq_k ,  Δwrist_k )
+R⁻¹:  ( q_k )                →  ( k̃_k ,  Δ̃wrist_k )</code></pre>
+  <p>Human hand = 21 keypoints; robot hand = independent joints q. Three commitments:
+  <strong>(i) residual over off-the-shelf kinematic retargeting</strong> g_E;
+  <strong>(ii) proprioceptive conditioning</strong> (q, u<sub>k−1</sub>) — what makes R a policy,
+  not a converter; <strong>(iii) wrist as a learned correspondence</strong>, not position-pinning.
+  The object never enters the observation — only the objective.
+  I/O spec: <a href="#app-a">Appendix A</a>.</p>
+  <p><strong>Pairs</strong>: DexManipNet episodes are time-aligned functional pairs by construction
+  (residual tracking follows the source clock); the <strong>kinematic comparison set</strong> is
+  g_E applied to the same source streams — only the pairing criterion differs. Hand-identity audit
+  and ingestion gates: <a href="#app-b">Appendix B</a>.</p>
+  <p><strong>Training</strong>: pure behavior cloning (L1 + fingertip-FK + regularizers); no RL,
+  no DAgger. Losses and grids: <a href="#app-c">Appendix C</a>.</p>
 
   <h2>3&nbsp;&nbsp;Experimental Setup</h2>
-
-  <h3>3.1&nbsp;&nbsp;Arms</h3>
-  <div class="tbl"><table>
-    <thead><tr><th>Arm</th><th>Definition</th><th>Question it answers</th></tr></thead>
-    <tbody>
-      <tr><td><strong>R-main</strong></td><td>W=1 per-step, residual, functional pairs</td><td>the proposed model</td></tr>
-      <tr><td><strong>R-kin ⭐</strong></td><td>identical architecture, <em>kinematic</em> pairs</td><td><strong>the central claim: does the pairing criterion matter?</strong></td></tr>
-      <tr><td>R-W16</td><td>full-chunk input, per-step output</td><td>value of plan lookahead</td></tr>
-      <tr><td>R-chunk</td><td>chunk-in → chunk-out (open-loop)</td><td>value of per-step proprio feedback</td></tr>
-      <tr><td>R-direct</td><td>no residual structure (direct u output)</td><td>value of the geometric prior</td></tr>
-      <tr><td>g_E</td><td>dex-retargeting alone (no learning)</td><td>pose-based floor</td></tr>
-      <tr><td>Oracle replay</td><td>DexManipNet trajectories replayed verbatim</td><td>ceiling / sanity (same sim ⇒ ≈100%)</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3>3.2&nbsp;&nbsp;Data splits &amp; gates</h3>
-  <p>Pre-registered held-out splits along two axes: <strong>unseen task</strong> and
-  <strong>unseen object</strong>. Ingestion gates (before any training): per-episode hand tag;
-  command-vs-state label semantics; root-pose presence; object-pose presence; join-alignment spot
-  check on sampled episodes; joint-limit-exceed fraction; coupling-FK discrepancy (§2.3). All
-  hyperparameter selection uses the validation split only.</p>
-
-  <h3>3.3&nbsp;&nbsp;Ablations</h3>
-  <ul>
-    <li><strong>Loss terms</strong> (on/off): −λ_Δ, −FK, −rate, −Δwrist (4 runs).</li>
-    <li><strong>Weights</strong> (log grid, validation-selected): λ_Δ ∈ {0, 0.01, 0.1, 1} ×
-    w<sub>FK</sub> ∈ {0, 0.1, 1} (12 runs). The λ_Δ sweep doubles as the converter↔policy
-    interpolation; the optimal-λ ‖Δ‖ distribution quantifies, in degrees, how much correction
-    kinematic retargeting actually needs.</li>
-    <li><strong>Capacity</strong>: {0.1, 1, 5, 50}M parameters on R-main (4 runs).</li>
-  </ul>
-
-  <h3>3.4&nbsp;&nbsp;Metrics</h3>
-  <p><strong>Level 1 — pair space</strong> (held-out episodes, no simulator): joint MAE (deg),
-  fingertip FK error (mm), Δwrist error (mm/deg); for R⁻¹: keypoint error (mm), frame-to-frame
-  jitter, wrist round-trip error.</p>
-  <p><strong>Level 2 — functional replay</strong> (ManipTrans' IsaacGym environment — the same
-  simulator that produced the data, eliminating the sim-gap confound): drive each arm with held-out
-  <em>source human streams</em> and measure whether the <em>object</em> reproduces its recorded
-  trajectory — dense-ε pose-error profile, success at ε ∈ {1, 3} cm, lift/hold predicate — plus a
-  <strong>perturbation probe</strong> (randomized mid-rollout wrenches; recovery rate) that a
-  converter structurally cannot pass.</p>
-
-  <h3>3.5&nbsp;&nbsp;Pre-registered hypotheses</h3>
-  <ol>
-    <li><strong>H1 (central):</strong> R-main &gt; R-kin on both levels; the Level-2 success gap is
-    the paper's claim that <em>functional pairing beats kinematic pairing</em>.</li>
-    <li><strong>H2:</strong> R-main &gt; g_E — learning adds value over optimization alone.</li>
-    <li><strong>H3:</strong> R-main &gt; R-chunk, concentrated in grasp-acquisition segments and
-    under perturbation — per-step feedback matters.</li>
-    <li><strong>H4:</strong> R-main approaches the oracle-replay ceiling — distillation loss is small.</li>
-  </ol>
-
-  <h3>3.6&nbsp;&nbsp;Budget</h3>
-  <p>~26 training runs × ≤1 h + replay evaluation ≈ <strong>1–1.5 A100-days total</strong>.
-  IsaacGym Preview 4 (CUDA-11 era) targets A100-class GPUs; H100 is not assumed to work.</p>
+  <p>The central comparison is <strong>R-main vs R-kin ⭐</strong> — identical architecture,
+  functional vs kinematic pairs. Supporting arms (floor g_E, open-loop R-chunk, R-direct, R-W16,
+  oracle ceiling): <a href="#app-d">Appendix D</a>. Evaluation is two-level — pair-space error
+  (Level 1) and <em>functional replay</em> in ManipTrans' own simulator with a perturbation probe
+  (Level 2); protocol: <a href="#app-e">Appendix E</a>.</p>
+  <p><strong>Hypotheses</strong> —
+  <strong>H1</strong>: functional pairing beats kinematic pairing (R-main &gt; R-kin; the claim).
+  <strong>H2</strong>: learning beats optimization alone (&gt; g_E).
+  <strong>H3</strong>: per-step feedback matters (&gt; R-chunk, esp. acquisition/perturbation).
+  <strong>H4</strong>: distillation loss is small (≈ oracle ceiling).</p>
 
   <h2>4&nbsp;&nbsp;Results</h2>
-  <div class="placeholder"><span class="k">PLACEHOLDER — PENDING B0–B3 RUNS</span>
-  Ingestion-gate report (hand tag, label semantics, limit-exceed %, coupling-FK mm) lands here first.</div>
+  <div class="placeholder"><span class="k">PLACEHOLDER — PENDING RUNS</span>
+  Ingestion-gate report (Appendix B checks) lands here first.</div>
 
   <div class="tbl"><table>
     <caption>Table 1 — Level 1 (pair space), held-out episodes. Lower is better.</caption>
@@ -195,8 +86,8 @@ R⁻¹ (per obs tick):      [ q_k ∈ ℝ⁶ ]                            →  [
   </table></div>
 
   <div class="tbl"><table>
-    <caption>Table 2 — Level 2 (functional replay), success at ε=1/3 cm + perturbation recovery.
-    Unseen-task / unseen-object splits reported separately.</caption>
+    <caption>Table 2 — Level 2 (functional replay): success at ε = 1 / 3 cm and perturbation
+    recovery; unseen-task and unseen-object splits reported separately.</caption>
     <thead><tr><th>Model</th><th>ε=1 cm (%)</th><th>ε=3 cm (%)</th><th>Perturb. recovery (%)</th></tr></thead>
     <tbody>
       <tr><td>Oracle replay (ceiling)</td><td class="tbd">TBD</td><td class="tbd">TBD</td><td class="tbd">—</td></tr>
@@ -209,40 +100,148 @@ R⁻¹ (per obs tick):      [ q_k ∈ ℝ⁶ ]                            →  [
   </table></div>
 
   <div class="placeholder"><span class="k">PLACEHOLDER</span>
-  Fig. 1 — λ_Δ sweep (converter↔policy continuum) and ‖Δ‖ distribution at optimal λ.
-  Fig. 2 — capacity curve {0.1, 1, 5, 50}M. Fig. 3 — error-over-time decomposition
-  (acquisition vs transport segments). R⁻¹ table (keypoint error / jitter / round-trip).</div>
+  Fig. 1 — λ_Δ sweep (converter↔policy continuum) &amp; ‖Δ‖ distribution at optimal λ ·
+  Fig. 2 — capacity curve · Fig. 3 — acquisition-vs-transport error decomposition ·
+  R⁻¹ table (keypoint error / jitter / round-trip).</div>
 
   <h2>5&nbsp;&nbsp;Discussion &amp; Limitations</h2>
   <ul>
-    <li><strong>Single hand so far.</strong> The modularity claim (one policy, N hands) needs
-    Wuji/Sharpa, which requires authoring ManipTrans DexHand configs and re-running their transfer
-    (~1–2 A100-days/hand for a task subset). Inspire-first is deliberate: it is the hand where
-    kinematic retargeting is <em>strongest</em>, so H1 here is the conservative test.</li>
-    <li><strong>Coupling conventions.</strong> Labels in the 6 independent joints sidestep the
-    mimic-ratio disagreement, but deployment on hardware inherits the real mechanism's coupling;
-    the residual channel is expected to absorb the millimetre-scale difference — unverified until
-    rig experiments.</li>
-    <li><strong>Composition with the base policy is out of scope here.</strong> This note evaluates
-    R against recorded human streams; closed-loop composition with the frozen human policy
-    π<sub>H</sub> is a separate workstream (see <a href="../base-policy/">Base Policy</a>).</li>
-    <li><strong>Licensing.</strong> ManipTrans code/data are GPL-3.0 — fine for research use;
-    code-release plans must account for it.</li>
+    <li><strong>Single hand so far</strong> — Wuji/Sharpa pending; Inspire-first is the
+    conservative test (kinematic retargeting is strongest there).</li>
+    <li><strong>Hardware coupling unverified</strong> until rig experiments
+    (<a href="#app-b">Appendix B</a>).</li>
+    <li><strong>Composition with the frozen human policy is out of scope</strong> — see the
+    <a href="../base-policy/">base-policy workstream</a>.</li>
+    <li><strong>GPL-3.0</strong> upstream (research use fine; release plans must account for it).</li>
   </ul>
 
   <h2>References</h2>
   <ol class="refs">
     <li>Li et al., <a href="https://arxiv.org/abs/2503.21860">ManipTrans: Efficient Dexterous Bimanual Manipulation Transfer via Residual Learning</a>, CVPR 2025. (+ <a href="https://huggingface.co/datasets/LiKailin/DexManipNet">DexManipNet</a>)</li>
-    <li><a href="https://arxiv.org/abs/2502.09614">DexTrack: Generalizable Neural Tracking Control for Dexterous Manipulation from Human References</a>, ICLR 2025.</li>
+    <li><a href="https://arxiv.org/abs/2502.09614">DexTrack</a>, ICLR 2025.</li>
     <li>Mandi et al., <a href="https://arxiv.org/abs/2505.24853">DexMachina: Functional Retargeting for Bimanual Dexterous Manipulation</a>, 2025.</li>
     <li>Qin et al., <a href="https://arxiv.org/abs/2307.04577">AnyTeleop</a> (dex-retargeting), RSS 2023.</li>
     <li>Handa et al., <a href="https://arxiv.org/abs/1910.03135">DexPilot</a>, ICRA 2020.</li>
-    <li><a href="https://arxiv.org/abs/2503.07541">GeoRT: Geometric Retargeting</a>, IROS 2025.</li>
-    <li><a href="https://arxiv.org/abs/2604.14944">HRDexDB: A Paired Human-Robot Dataset for Cross-Embodiment Dexterous Grasping</a>, 2026.</li>
-    <li><a href="https://arxiv.org/abs/2504.12609">Crossing the Human-Robot Embodiment Gap with Sim-to-Real RL using One Human Demonstration</a>, CoRL 2025.</li>
-    <li>Zhan et al., <a href="https://arxiv.org/abs/2403.19417">OakInk2</a>, CVPR 2024 (DexManipNet source).</li>
-    <li><a href="https://arxiv.org/abs/2506.14608">Latent Action Diffusion for Cross-Embodiment Manipulation</a>, 2025.</li>
+    <li><a href="https://arxiv.org/abs/2503.07541">GeoRT</a>, IROS 2025.</li>
+    <li><a href="https://arxiv.org/abs/2604.14944">HRDexDB</a>, 2026.</li>
+    <li><a href="https://arxiv.org/abs/2504.12609">Human2Sim2Robot</a>, CoRL 2025.</li>
+    <li>Zhan et al., <a href="https://arxiv.org/abs/2403.19417">OakInk2</a>, CVPR 2024.</li>
+    <li><a href="https://arxiv.org/abs/2506.14608">Latent Action Diffusion</a>, 2025.</li>
   </ol>
+
+  <!-- ===================== APPENDIX ===================== -->
+  <hr class="appendix-rule">
+  <div class="appendix">
+
+  <h2 id="app-a">Appendix A&nbsp;&nbsp;Interfaces &amp; I/O specification</h2>
+  <pre><code>R   (per control tick):
+  in  : k̂_k ∈ ℝ⁶⁰ (wrist-relative 20 keypoints, from the policy/source stream)
+        q_k ∈ ℝ⁶  (measured independent joints)      u_{k−1} ∈ ℝ⁶ (previous command)
+  out : u_k = g_E(k̂_k) + Δq_k ∈ ℝ⁶                    Δwrist_k ∈ ℝ⁶ (tanh-bounded)
+  wrist path: robot wrist target = T_static(ŵ_k) ⊕ Δwrist_k → downstream IK (outside R)
+
+R⁻¹ (per obs tick):
+  in  : q_k ∈ ℝ⁶
+  out : k̃_k ∈ ℝ⁶⁰ via internal θ̃ ∈ ℝ⁴⁵ → FK(θ̃, β_canon)   (anatomically valid by construction)
+        Δ̃wrist_k ∈ ℝ⁶ ;  human wrist = T_static⁻¹(robot wrist) ⊖ Δ̃wrist_k
+  post: EMA filter + joint-limit clamp</code></pre>
+  <ul>
+    <li><strong>Why keypoints (not MANO θ) as the interface</strong>: the pretrained point-track
+    policy trunk, dex-retargeting's native input, ManipTrans' 21-keypoint correspondence, and
+    EgoDex's ARKit joints all speak points; θ appears only inside R⁻¹'s decoder head for validity.</li>
+    <li><strong>Why q AND u<sub>k−1</sub></strong>: u is what was commanded, q is what happened;
+    their gap is a contact/lag signal (e.g., a finger stalled on the object surface). u<sub>k−1</sub>
+    additionally provides continuity and disambiguates label multimodality.</li>
+    <li><strong>Semantic-channel symmetry</strong>: hand 60↔6 and wrist 6↔6 mirror exactly; the
+    conditioning inputs are deliberately asymmetric (R is a policy; R⁻¹ is an encoder whose
+    contract is consistency over accuracy — hence q-only input and output smoothing).</li>
+    <li><strong>W variants</strong>: R-main uses W=1 (the current-step target only — the
+    tracker-class standard: proprio, not lookahead, separates trackers from converters);
+    R-W16 feeds the full committed chunk as input while keeping per-step output;
+    R-chunk emits the whole chunk open-loop (plan-level and execution-level feedback are distinct
+    layers — a fixed plan does not imply open-loop motor control).</li>
+    <li><strong>T_static</strong>: per-hand reach-scale calibration of the wrist correspondence,
+    initialized from our fingertip-vector alignment fit (validated on Inspire: reproduces
+    dex-retargeting to 7.68° vs 7.7°). The human-side wrist is a canonical representation; loop
+    consistency (R∘R⁻¹ ≈ id on the wrist channel) is the requirement, not physical coincidence —
+    which is what accommodates differing hand scales (measured fingertip reach: Inspire 16.6 /
+    Sharpa 12.2 / Wuji 8.5 cm).</li>
+  </ul>
+
+  <h2 id="app-b">Appendix B&nbsp;&nbsp;Hand-identity audit &amp; ingestion gates</h2>
+  <p>ManipTrans' Inspire URDF (Unitree-H1 package lineage) vs ours (dex-urdf lineage), compared
+  numerically:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Property</th><th>ManipTrans</th><th>Ours</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>12 actuated-joint origins</td><td colspan="2">identical</td><td><strong>0.00 mm on all 12</strong> — same RH56 mechanism</td></tr>
+      <tr><td>Tip-site placement</td><td colspan="2">differs</td><td>2.0–4.6 mm (keypoint-site convention only)</td></tr>
+      <tr><td>Mimic coupling ratios</td><td class="mono">1.0 / 1.6 / 2.4</td><td class="mono">1.064 / 1.334 / 0.667</td><td>different approximations of the same mechanism (a third exists in our simulator assets)</td></tr>
+      <tr><td>Joint limits (e.g. proximal)</td><td class="mono">0–1.7 rad</td><td class="mono">0–1.47 rad</td><td>label frames beyond our limits must be measured</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Resolution</strong>: robot labels are defined in the <em>6 independent joints</em>,
+  whose geometry is identical across all conventions; each simulator/hardware expands 6→12 with
+  its own coupling. The released dataset uses the <code>inspire</code> hand class (Inspire FTP's
+  URDF is not redistributable and ships no public checkpoints).</p>
+  <p><strong>Ingestion gates (all pass/fail before training)</strong>: ① per-episode hand tag =
+  <code>inspire</code>; ② action semantics — commands stored vs joint states only (else
+  q<sub>t+1</sub> proxy); ③ floating-base root pose present (Δwrist* labels); ④ object-pose
+  trajectories present (functional verification); ⑤ join-alignment spot check on sampled episodes
+  (frame rate/clock vs source datasets); ⑥ joint-limit-exceed fraction under our limits;
+  ⑦ fingertip-FK discrepancy across coupling conventions over the dataset's q-distribution (mm).</p>
+
+  <h2 id="app-c">Appendix C&nbsp;&nbsp;Losses, provenance, ablation grids</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Term</th><th>Form</th><th>Provenance</th></tr></thead>
+    <tbody>
+      <tr><td>Action</td><td class="mono">L1(u − u*)</td><td>standard BC; L1 = median-seeking, robust to RL-label outliers (ACT/BAKU convention)</td></tr>
+      <tr><td>Fingertip FK</td><td class="mono">‖FK(u) − FK(u*)‖</td><td>supervised equivalent of ManipTrans' keypoint-matching reward; GeoRT's keypoint-space objective</td></tr>
+      <tr><td>Residual magnitude</td><td class="mono">λ_Δ‖Δq‖²</td><td>ours — λ→∞ recovers g_E exactly (converter↔policy continuum)</td></tr>
+      <tr><td>Wrist</td><td class="mono">‖Δwrist − Δwrist*‖</td><td>ours; label Δwrist* = w^R ⊖ T_static(w^H), free from pairs</td></tr>
+      <tr><td>Rate</td><td class="mono">λ_r‖u_k − u_{k−1}‖</td><td>equivalent of their action-smoothness/EMA</td></tr>
+      <tr><td>R⁻¹</td><td class="mono">keypoint + smoothness + round-trip</td><td>round-trip = wrist-channel R∘R⁻¹ ≈ id on shared pairs</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Ablation grids</strong> (validation-split selection only; test splits untouched):
+  term on/off {−λ_Δ, −FK, −rate, −Δwrist} (4 runs); weights λ_Δ ∈ {0, 0.01, 0.1, 1} ×
+  w<sub>FK</sub> ∈ {0, 0.1, 1} (12 runs, at 1M capacity); capacity {0.1, 1, 5, 50}M on R-main with
+  selected weights (4 runs); ±1-step sensitivity row at the final configuration. The ‖Δ‖
+  distribution at optimal λ_Δ quantifies, in degrees, how much correction kinematic retargeting
+  actually needs.</p>
+
+  <h2 id="app-d">Appendix D&nbsp;&nbsp;Arm definitions</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Arm</th><th>Definition</th><th>Question</th></tr></thead>
+    <tbody>
+      <tr><td><strong>R-main</strong></td><td>W=1 per-step, residual, functional pairs</td><td>proposed model</td></tr>
+      <tr><td><strong>R-kin ⭐</strong></td><td>identical architecture, kinematic pairs (g_E on the same source streams)</td><td><strong>does the pairing criterion matter? (H1)</strong></td></tr>
+      <tr><td>R-W16</td><td>full-chunk input, per-step output</td><td>plan-lookahead value</td></tr>
+      <tr><td>R-chunk</td><td>chunk-in → chunk-out (open-loop)</td><td>per-step-feedback value (H3)</td></tr>
+      <tr><td>R-direct</td><td>no residual structure</td><td>geometric-prior value</td></tr>
+      <tr><td>g_E</td><td>dex-retargeting alone</td><td>pose-based floor (H2)</td></tr>
+      <tr><td>Oracle replay</td><td>DexManipNet trajectories verbatim</td><td>ceiling/sanity (H4; ≈100% in the same simulator)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="app-e">Appendix E&nbsp;&nbsp;Evaluation protocol &amp; budget</h2>
+  <ul>
+    <li><strong>Splits</strong>: pre-registered held-out sets along two axes — unseen task and
+    unseen object; hyperparameter/checkpoint selection on the validation split only.</li>
+    <li><strong>Level 1 (pair space)</strong>: joint MAE (deg), fingertip FK error (mm), Δwrist
+    error (mm/deg); R⁻¹: keypoint error (mm), frame-to-frame jitter, wrist round-trip error.</li>
+    <li><strong>Level 2 (functional replay)</strong>: ManipTrans' IsaacGym environment — the same
+    simulator that produced the data, eliminating the sim-gap confound. Drive each arm with
+    held-out source human streams; object-pose error profile over time; success at ε ∈ {1, 3} cm
+    (dense over the trajectory, not endpoint-only); lift/hold predicate (never geometric-only).</li>
+    <li><strong>Perturbation probe</strong>: randomized mid-rollout wrenches on the object
+    (magnitude/timing swept); recovery = re-satisfying the ε-band within a fixed window.</li>
+    <li><strong>Budget</strong>: ~26 training runs × ≤1 h + replay ≈ 1–1.5 A100-days.
+    IsaacGym Preview 4 (CUDA-11 era) targets A100-class GPUs; H100 not assumed to work.
+    Single-GPU jobs throughout.</li>
+  </ul>
+
+  </div>
 
   <footer>DPP / ICLR'27 workstream · method frozen 2026-08-08 · results pending · beomjun</footer>
 </div>
