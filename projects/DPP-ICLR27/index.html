@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DPP-ICLR27 — project notes</title>
+<link rel="stylesheet" href="assets/paper.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="crumbs"><a href="/">home</a> / projects / DPP-ICLR27</nav>
+
+  <header class="paper">
+    <h1>DPP-ICLR27 — One Frozen Human Hand Policy, Many Robot Hands</h1>
+    <p class="meta">Working notes, written as short papers · updated 2026-08-08</p>
+  </header>
+
+  <p>Central claim under construction: a manipulation policy trained <em>only</em> on human hand
+  data can drive multiple dexterous robot hands through small, per-hand <strong>retargeters</strong>
+  that are trained with <em>no robot demonstrations and no task data</em> — pairs are distilled from
+  functional (object-motion-equivalent) transfer in simulation. Each workstream below is documented
+  as a self-contained short paper; results land in the placeholder sections as runs complete.</p>
+
+  <div class="cards">
+    <a class="card" href="related-works/">
+      <h3>Related Works</h3>
+      <p>Taxonomy of human→robot hand retargeting (pose-based / object-based / shared action
+      spaces), chronological survey with citation counts, and the base-work choice.</p>
+      <span class="badge live">LIVE</span>
+    </a>
+    <a class="card" href="retargeter/">
+      <h3>Retargeter Training</h3>
+      <p>Distilling ManipTrans functional transfer into a reusable per-hand retargeter
+      R and its inverse R⁻¹ — method, pair construction, evaluation protocol.</p>
+      <span class="badge live">METHOD LIVE · RESULTS PENDING</span>
+    </a>
+    <a class="card" href="base-policy/">
+      <h3>Base Policy Training</h3>
+      <p>Human-centric point-cloud policy π<sub>H</sub>: architecture study and pretraining.</p>
+      <span class="badge tbd">TBD</span>
+    </a>
+  </div>
+
+  <footer>DPP / ICLR'27 workstream · internal working notes · beomjun</footer>
+</div>
+</body>
+</html>

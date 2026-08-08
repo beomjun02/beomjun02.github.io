@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Related Works — DPP-ICLR27</title>
+<link rel="stylesheet" href="../assets/paper.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="crumbs"><a href="/">home</a> / <a href="../">DPP-ICLR27</a> / related works</nav>
+
+  <header class="paper">
+    <h1>Human→Robot Hand Retargeting: a Working Survey</h1>
+    <p class="meta">Working note · 2026-08-08 · citation counts are a Semantic Scholar snapshot (2026-08-08); “—” = rate-limited, verify manually</p>
+  </header>
+
+  <h2>1&nbsp;&nbsp;Taxonomy</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Family</th><th>Representative</th><th>Mechanism</th><th>Failure mode (evidence)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>① Pose-based</strong></td><td>DexPilot; AnyTeleop/dex-retargeting (optimization) · GeoRT, EgoVLA MLPs, LAD (learned)</td><td>match hand geometry (fingertip/keyvector)</td><td>blind to the object — HRDexDB Tab. 4: kinematic init is the <em>worst</em> grasp initializer (42.4/30.3% vs 69.7/84.8% no-prior); our cross-hand 0/96 on Wuji/Sharpa</td></tr>
+      <tr><td><strong>② Object-based (functional)</strong></td><td>DexMachina (“functional retargeting”), ManipTrans, DexTrack, Human2Sim2Robot, HuDOR, Do-As-I-Do/SPIDER</td><td>match the effect on the object (RL/MPC tracking of demo object states)</td><td>no reusable module — one policy per demo (DexMachina) / per task (ManipTrans); controller consumes robot-kinematic references (DexTrack)</td></tr>
+      <tr><td><strong>③ Shared action spaces</strong></td><td>CrossDex (eigengrasps), UHAS, LAD, EgoScale adapters</td><td>bypass retargeting via a unified interface</td><td>fixed/kinematically-derived interfaces without functional grounding; EgoScale needs 54 h of aligned robot play data</td></tr>
+      <tr><td>④ Hardware</td><td>DexUMI</td><td>exoskeleton constrains the human to robot kinematics</td><td>per-hand hardware; doesn't scale across hands</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="note">The empty cell: a <em>learned, closed-loop, per-hand retargeter</em> (①'s form)
+  trained from <em>object-motion-matched pairs</em> (②'s objective) with no robot demonstrations
+  and no task data, composable with a frozen human-action policy. A 26-work sweep (2026-08-07)
+  found no occupant; nearest misses are DexMachina, DexTrack, EgoScale, and LAD, each failing ≥2
+  of: human-only base / frozen at transfer / reusable module / functional pairing / no robot demos
+  / ≥3 hands closed-loop.</p>
+
+  <h2>2&nbsp;&nbsp;Chronological survey</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Date</th><th>Work</th><th>Cites</th><th>Family</th><th>One-liner</th></tr></thead>
+    <tbody>
+      <tr><td>2019-10</td><td>DexPilot (ICRA'20)</td><td>322</td><td>①</td><td>Vision teleop origin — per-frame optimization matching human hand geometry to Allegro.</td></tr>
+      <tr><td>2023-07</td><td>AnyTeleop (RSS'23)</td><td>297</td><td>①</td><td>General teleop + the <code>dex-retargeting</code> library — de-facto standard kinematic retargeter (our g_E).</td></tr>
+      <tr><td>2024-07</td><td>OmniGrasp (NeurIPS'24)</td><td>61</td><td>②</td><td>Simulated humanoid RL drives objects along arbitrary trajectories — object-trajectory reward precedent.</td></tr>
+      <tr><td>2024-10</td><td>CrossDex (ICLR'25)</td><td>36</td><td>③</td><td>Eigengrasp (PCA of human poses) action space + fixed per-hand map; 4-hand RL grasping.</td></tr>
+      <tr><td>2024-10</td><td>HuDOR (ICLR'25)</td><td>36</td><td>②</td><td>Real-world residual RL from a single human video's object point-track reward.</td></tr>
+      <tr><td>2025-02</td><td>DexTrack (ICLR'25)</td><td>29</td><td>②</td><td>Kinematic references (GRAB/TACO) → generalist reference-conditioned tracking controller, RL+IL flywheel; one hand per system.</td></tr>
+      <tr><td>2025-03</td><td>GeoRT (IROS'25)</td><td>31</td><td>①</td><td>Neural kinematic retargeter, ~1 kHz, unsupervised geometric objectives.</td></tr>
+      <tr><td>2025-03</td><td><strong>ManipTrans (CVPR'25)</strong></td><td><strong>90</strong></td><td>②</td><td>Generalist hand imitator + per-task residual RL; releases DexManipNet (3.3K eps / 1.2K objects, Inspire+MANO among 4 hands). <strong>Our base work / data engine.</strong></td></tr>
+      <tr><td>2025-04</td><td>Human2Sim2Robot (CoRL'25)</td><td>45</td><td>②</td><td>One demo's object-pose trajectory as the only reward (hand-tracking terms ablated as harmful) → per-task sim2real RL.</td></tr>
+      <tr><td>2025-05</td><td>DexUMI (CoRL'25)</td><td>—</td><td>④</td><td>Per-hand exoskeleton physically constrains the human to robot kinematics.</td></tr>
+      <tr><td>2025-05</td><td>DexMachina</td><td>—</td><td>②</td><td>Coins “functional retargeting”; per-demo per-hand RL with decaying virtual object controllers; 6 hands, bimanual/articulated.</td></tr>
+      <tr><td>2025-06</td><td>Latent Action Diffusion (mimic)</td><td>24</td><td>③</td><td>Contrastive latent action space from kinematic pairs + frozen per-hand decoders; needs robot co-training data.</td></tr>
+      <tr><td>2025-09</td><td>CEDex</td><td>—</td><td>② (static)</td><td>Human-like contact representations → cross-embodiment grasp generation at scale.</td></tr>
+      <tr><td>2025-10</td><td>DexCanvas</td><td>2</td><td>②</td><td>70 h mocap seed → RL-actuated MANO re-execution → 7,000 h with forces (1% test release).</td></tr>
+      <tr><td>2025-11</td><td>SPIDER</td><td>—</td><td>②</td><td>Physics-informed annealed-MPPI retargeting (Do-As-I-Do's engine), 9 embodiments.</td></tr>
+      <tr><td>2026-02</td><td>EgoScale</td><td>—</td><td>③</td><td>20k-h egocentric VLA + per-embodiment adapters — but adapters require 54 h aligned robot play.</td></tr>
+      <tr><td>2026-04</td><td>HRDexDB</td><td>1</td><td>dataset</td><td>Real paired human-robot grasps (semantic pairing); provides the “kinematic init is worst” evidence.</td></tr>
+      <tr><td>2026-06</td><td>Do-As-I-Do</td><td>—</td><td>②</td><td>In-the-wild video → reconstruction → SPIDER MPPI → feasible Sharpa trajectories (code MIT, data unreleased).</td></tr>
+      <tr><td>2026-07</td><td>UHAS</td><td>—</td><td>③</td><td>Sphere-deformation unified action space + analytic IK across hands incl. MANO.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>3&nbsp;&nbsp;Base-work choice: ManipTrans</h2>
+  <p>Chosen over DexTrack (the other candidate) on result quality and assets: highest citations in
+  the functional class, four hands including <em>both</em> Inspire and articulated MANO, released
+  imitator checkpoints, and — decisively — <strong>DexManipNet</strong>, whose episodes preserve
+  per-frame human↔robot correspondence and hand us functional pairs without paying their 61
+  per-task RL trainings. For a <em>data engine</em>, per-task residual training is acceptable;
+  amortization is our contribution, not theirs.</p>
+  <p><strong>Positioning sentence</strong>: <em>we adopt ManipTrans' transfer as the data engine
+  and distill its output into a bidirectional per-hand retargeter that composes with a frozen
+  human policy; “functional retargeting” as a problem name follows DexMachina; the
+  amortized-controller lineage is DexTrack's.</em></p>
+  <p>Verified compatibility (2026-08-08): ManipTrans' Inspire URDF matches our dex-urdf Inspire on
+  all 12 joint origins to 0.00 mm (same RH56 mechanism; tip sites differ 2.0–4.6 mm; mimic ratios
+  and limits differ across conventions — handled by labeling in the 6 independent joints). The
+  released dataset uses the <code>inspire</code> hand class (Inspire FTP's URDF is not
+  redistributable and ships no public checkpoints).</p>
+
+  <footer>DPP / ICLR'27 workstream · survey snapshot 2026-08-08 · beomjun</footer>
+</div>
+</body>
+</html>
