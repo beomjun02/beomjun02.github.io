@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-13 · SpaceFormer data engine — dex-pointwam</title>
+<meta name="description" content="Experiment log: SpaceFormer-style per-point language-grounded 3D data engine on ego human video — parity audit result.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-08-13 · spaceformer-data-engine</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · dex-pointwam</p>
+    <h1>SpaceFormer's caption protocol transfers to ego video; its static clustering does not</h1>
+    <p class="lede">Building the human-data engine for the PointWAM 3D encoder (Mosaic3D post-training): SAM2 instance masks + VLM captions + SigLIP2 targets mined from EgoDex/VITRA ego video. A faithful re-implementation of the SpaCeFormer-3M pipeline (paper App. A.6/A.7 + MaskClustering code) was run head-to-head against our scene-flow variant on the same 10 episodes.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-13 → 08-24</dd></div>
+      <div><dt>Outcome</dt><dd>coverage 94.3% (ours) vs 57.9% (SF-faithful); caption: Gemma-3+A.7 adopted-worthy</dd></div>
+      <div><dt>Env</dt><dd class="mono">sjw_alinlab · SAM2 hiera_large · Gemma-3-12b / Qwen3-VL-8B (vLLM) · SigLIP2 so400m</dd></div>
+      <div><dt>Campaign</dt><dd class="mono">EgoDex 141k/324k sidecars (43.6%, 08-23)</dd></div>
+      <div><dt>Full report</dt><dd class="mono">maskcap_pilot/human_data_engine.html · egodex_maskcap{,_sf}.py</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>Two components audited, opposite outcomes. <b>Captioning:</b> the paper's A.7 protocol (system+user prompt, red-outline crop + masked cutout per view, Gemma 3) produces SpaceFormer-grade paragraph captions on ego video — our earlier Gemma failure was protocol mismatch, not the model. <b>Clustering:</b> the original static MaskClustering collapses on ego (labeled points 94.3%→57.9%, instances 12→6.2/ep) because moving objects and hands break view consensus — a quantitative justification for our scene-flow merge. Recommended default: <b>hybrid</b> = our merge + their captions.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>Result</h2>
+      <p class="sub">Same 10 EgoDex episodes, three pipeline variants. Coverage = share of 3D points with an instance label.</p>
+      <div class="chart" role="img" aria-label="Labeled point coverage: ours scene-flow merge 94.3 percent, hybrid ours merge with A.7 Gemma captions 94.3 percent, SpaceFormer-faithful MaskClustering 57.9 percent.">
+        <div class="crow">
+          <span class="clabel">ours v3 (scene-flow merge)<span class="cnote">10 ep · 12.0 inst/ep</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:94.3%"></span></span><span class="cval">94.3%</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">hybrid (our merge + A.7 Gemma)<span class="cnote">10 ep · 12.0 inst/ep</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:94.3%"></span></span><span class="cval">94.3%</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">SF-faithful (MaskClustering)<span class="cnote">10 ep · 6.2 inst/ep</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:57.9%"></span></span><span class="cval">57.9%</span>
+        </div>
+      </div>
+      <figure style="margin-top:22px">
+        <img src="assets/sf_panel_example.jpg" alt="clean_tableware with 5 diverse paragraph captions per instance" loading="lazy">
+        <figcaption>SF-faithful demo (EgoDex clean_tableware) — 5 diverse paragraph captions per instance, A.7 protocol verbatim, Gemma-3-12b. Caption quality matches the paper's own examples.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>The pipeline &amp; parity audit</h2>
+      <p class="sub">Ego RGB → VGGT-Omega depth (metric via GT-hand scale) → flow-tracked 3D points → SAM2 instance masks → per-instance caption → SigLIP2 1152-d target. The audit re-implements the original spec component by component.</p>
+      <figure>
+        <img src="assets/pipeline.jpg" alt="five-stage pipeline diagram" loading="lazy">
+        <figcaption>The data engine. Every 3D point gets: instance id (cross-clip consistent) + caption + SigLIP2 embedding — the Mosaic3D/SpaceFormer training-pair format.</figcaption>
+      </figure>
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Component</th><th>SpaceFormer original</th><th>This audit</th><th>Parity</th></tr></thead>
+          <tbody>
+            <tr><td>2D masker</td><td class="mono">SAM2, per-view, class-agnostic (params undisclosed)</td><td class="mono">SAM2 AMG hiera_large, pps 32</td><td>match</td></tr>
+            <tr><td>Scene points</td><td class="mono">RGB-D scan reconstruction</td><td class="mono">union of clip anchor clouds (VGGT depth + GT cam)</td><td class="muted">ego substitution</td></tr>
+            <tr><td>Clustering</td><td class="mono">MaskClustering: vis .3 / cont .8 / underseg .3 / consensus .9 / point .5</td><td class="mono">same params, ported</td><td>match</td></tr>
+            <tr><td>Visibility test</td><td class="mono">depth-based occlusion</td><td class="mono">in-frustum only</td><td class="muted">approximation</td></tr>
+            <tr><td>View selection</td><td class="mono">weighted k-medoids (time dist, mask-px weights)</td><td class="mono">same, K=5</td><td>match</td></tr>
+            <tr><td>Captioner</td><td class="mono">Gemma 3 + A.7 system/user prompt, outline-crop + cutout pairs</td><td class="mono">gemma-3-12b-it, prompt verbatim</td><td>match</td></tr>
+            <tr><td>Captions / instance</td><td class="mono">5 (mechanism undisclosed)</td><td class="mono">5 via k-medoid view-pair rotation</td><td class="muted">interpretation</td></tr>
+            <tr><td>Text target</td><td class="mono">SigLIP2</td><td class="mono">siglip2-so400m → (G,5,1152)</td><td>match</td></tr>
+            <tr><td>Human embodiment</td><td class="mono">absent (static indoor scans)</td><td class="mono">embod-labeled agent instances, VLM bypassed</td><td class="muted">ego delta</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>What to check in the galleries</h2>
+      <p class="sub">Reviewer checklist for the per-instance grids below (tiles sorted by point count, descending). Each tile isolates one instance's points over a dimmed frame, with its caption.</p>
+      <ul class="clean">
+        <li><span class="mk i">1</span><span><span class="lt">Caption ↔ points agreement (the #1 failure mode).</span><span class="ld">Do the lit points sit ON the thing the caption names? Watch large background instances whose caption names a nearby object instead (e.g. a table captioned as "bowl" — context bleed from the A.7 outline-crop). This was the v0 bbox-hijack; v3/SF reduce but don't eliminate it.</span></span></li>
+        <li><span class="mk i">2</span><span><span class="lt">Mask extent / merging.</span><span class="ld">Does one instance swallow two things (floor+hand merged, our known SAM2 failure on charge_device id1)? Conversely, is one surface split into several ids with conflicting captions (over-segmentation)?</span></span></li>
+        <li><span class="mk i">3</span><span><span class="lt">Instance count sanity.</span><span class="ld">ours ≈12/ep vs SF-faithful ≈6/ep. Too few = manipulation objects got absorbed into table-scale instances; too many = fragmented surfaces inflating caption noise.</span></span></li>
+        <li><span class="mk i">4</span><span><span class="lt">Small-object point support.</span><span class="ld">Sorted order makes this visible: manipulated objects (fork, knife, bottle) often carry only 14–33 points in SF-faithful. Is that enough signal for a per-point encoder target? This is the core coverage argument for our merge.</span></span></li>
+        <li><span class="mk i">5</span><span><span class="lt">Caption quality itself.</span><span class="ld">Head noun correct? Attributes (color/material/shape) right? Spatial-relation sentence sensible? Backgrounds described as walls/floors (correct) rather than invented objects (the old v0 hallucination)?</span></span></li>
+        <li><span class="mk i">6</span><span><span class="lt">Agent handling.</span><span class="ld">Hand/forearm tiles tagged [agent] with template captions — are actual hand pixels covered by them, and NOT leaking into object instances ("person: hand holding X" head-nouns)?</span></span></li>
+        <li><span class="mk i">7</span><span><span class="lt">VITRA-specific.</span><span class="ld">240p source: are captions still grounded (the bowl episodes are a good positive), and how bad is context bleed on background tiles?</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>EgoDex — SF-faithful, 10 episodes</h2>
+      <p class="sub">MaskClustering (consensus 0.9) + A.7 Gemma-3 ×5 captions. Tiles sorted by #points.</p>
+      <figure><img src="assets/egodex_clean_tableware.jpg" alt="clean_tableware per-instance grid" loading="lazy"><figcaption>clean_tableware — table surfaces dominate; fork/knife/bottle at 14–26 pt.</figcaption></figure>
+      <figure><img src="assets/egodex_charge_uncharge_device.jpg" alt="charge_uncharge_device per-instance grid" loading="lazy"><figcaption>charge_uncharge_device</figcaption></figure>
+      <figure><img src="assets/egodex_assemble_jenga.jpg" alt="assemble_jenga per-instance grid" loading="lazy"><figcaption>assemble_jenga</figcaption></figure>
+      <figure><img src="assets/egodex_clean_cups.jpg" alt="clean_cups per-instance grid" loading="lazy"><figcaption>clean_cups</figcaption></figure>
+      <figure><img src="assets/egodex_braid_unbraid.jpg" alt="braid_unbraid per-instance grid" loading="lazy"><figcaption>braid_unbraid</figcaption></figure>
+      <figure><img src="assets/egodex_clean_surface.jpg" alt="clean_surface per-instance grid" loading="lazy"><figcaption>clean_surface</figcaption></figure>
+      <figure><img src="assets/egodex_charge_uncharge_airpods.jpg" alt="charge_uncharge_airpods per-instance grid" loading="lazy"><figcaption>charge_uncharge_airpods</figcaption></figure>
+      <figure><img src="assets/egodex_deal_gather_cards.jpg" alt="deal_gather_cards per-instance grid" loading="lazy"><figcaption>deal_gather_cards</figcaption></figure>
+      <figure><img src="assets/egodex_fidget_magnetic_spinner_rings.jpg" alt="fidget_magnetic_spinner_rings per-instance grid" loading="lazy"><figcaption>fidget_magnetic_spinner_rings</figcaption></figure>
+      <figure><img src="assets/egodex_flip_pages.jpg" alt="flip_pages per-instance grid" loading="lazy"><figcaption>flip_pages</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>VITRA — SF-protocol captions, 5 episodes</h2>
+      <p class="sub">Our flow-merge + A.7 Gemma-3 captions on 240p something-something v2. Tiles sorted by #points.</p>
+      <figure><img src="assets/vitra_somethingsomethingv2_100002_ep_000000.jpg" alt="VITRA bowl episode grid" loading="lazy"><figcaption>100002 — id2 nails the ceramic bowl; id1 (background table) shows context bleed ("bowl" caption on table points).</figcaption></figure>
+      <figure><img src="assets/vitra_somethingsomethingv2_100000_ep_000000.jpg" alt="VITRA scissors episode grid" loading="lazy"><figcaption>100000 — scissors / arm / tiles / cushion all as paragraph captions.</figcaption></figure>
+      <figure><img src="assets/vitra_somethingsomethingv2_100005_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100005</figcaption></figure>
+      <figure><img src="assets/vitra_somethingsomethingv2_100019_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100019</figcaption></figure>
+      <figure><img src="assets/vitra_somethingsomethingv2_100020_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100020</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Diagnosis</h2>
+      <p class="sub">Why each component behaves the way it does on ego video.</p>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Gemma was never the problem — the protocol was.</span><span class="ld">08-20 Gemma trial with our Qwen-tuned montage prompt re-hallucinated background objects. With A.7 verbatim (outline crop + cutout pairs, system+user split), the same model writes walls as walls and objects as rich paragraphs.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Static MaskClustering breaks on motion.</span><span class="ld">Its view-consensus assumes a rigid world; moving objects + hand interventions kill consensus, so clusters die (12→6.2 inst/ep) and coverage drops to 57.9%. Small manipulated objects survive with only 14–33 points. Our scene-flow merge keeps point identity through motion — 94.3% at 12.0 inst/ep.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Caption-region context bleed persists at a lower rate.</span><span class="ld">A.7's outline crop keeps context for the spatial-relation sentence, so a background instance occasionally describes a nearby foreground object (VITRA id1 "bowl"). Earlier caption history on this axis: v0 bbox-hijack ("earbud case" on floor points) → v1 abstain regressed held objects → v3 masked-crop fixed backgrounds → SF A.7 richest captions, small bleed remains.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Remaining mask-level errors are SAM2's, not the captioner's.</span><span class="ld">charge_device id1 merges floor+hand into one mask; no prompt fixes a wrong mask. Lever: AMG post-processing (co-planar merge, embod-before-AMG) + gold-GT audit (HOT3D mesh-reprojection as an accuracy ruler).</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Timeline</h2>
+      <ul class="timeline">
+        <li class="acc"><span class="tdate">2026-08-13</span><span class="tt">Workstream opened</span>
+          <p>Scope set with user: comprehensive SpaceFormer-faithful mask+caption+SigLIP2 on EgoDex+VITRA for the PointWAM 3D backbone. Sample → QA → pilot → EgoDex-full campaign (7 parts × 12 shards, keeper cron).</p></li>
+        <li><span class="tdate">2026-08-14</span><span class="tt">Cross-clip merge + VITRA adapter validated</span>
+          <p>Episode-global instances via 3D-IoU + scene-flow merge (~6× caption cost cut); VITRA flows share the EgoDex contract — one adapter flag.</p></li>
+        <li class="bad"><span class="tdate">2026-08-19</span><span class="tt">Caption v0 bbox-hijack found and fixed</span>
+          <p>User spotted background instances captioned as invented objects. Root cause: caption crop was the mask's bounding box, not the mask — a floor's bbox contains a held case. v1 (abstain) regressed held objects; v3 (masked-crop only) fixed backgrounds while keeping objects. The 10-figure set re-captioned same-day.</p></li>
+        <li><span class="tdate">2026-08-20</span><span class="tt">First Gemma-3 trial fails — flagged as protocol suspicion</span>
+          <p>gemma-3-12b with our Qwen montage prompt re-hallucinated backgrounds; kept Qwen v3 as default pending a faithful-protocol test.</p></li>
+        <li class="ok"><span class="tdate">2026-08-23</span><span class="tt">Parity audit: faithful pipeline built and run</span>
+          <p>Paper App. A.6/A.7 + MaskClustering code read in depth; <span class="mono">egodex_maskcap_sf.py</span> implements canonical world cloud, point-in-mask matrix, original clustering params, k-medoids views, A.7 Gemma ×5 captions. 10 EgoDex + 5 VITRA demos rendered; coverage numbers above.</p></li>
+        <li><span class="tdate">2026-08-24</span><span class="tt">Per-instance grids (sorted) + this report</span>
+          <p>All 15 demos re-rendered as point-count-sorted verification grids; reviewer checklist added. Campaign at 141k/324k EgoDex episodes (43.6%).</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Decision: switch campaign captioner to hybrid (our merge + A.7 Gemma).</span><span class="ld">Costs: paragraph captions are slower; 5 vs 1–2 captions/instance trade-off. Awaiting user verdict on the galleries above.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">HOT3D + HOI4D onboarding (user action required).</span><span class="ld">HOT3D presigned URLs expired — re-accept license at projectaria.com, then <span class="mono">datasets_human/hot3d/download_hot3d_subset.sh</span> automates a 5-seq subset. HOI4D OneDrive links are browser-gated. Both documented in <span class="mono">datasets_human/SETUP.md</span>.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Mask-level fixes.</span><span class="ld">Embod-before-AMG, co-planar surface merge, tiny-instance filter; HOT3D mesh-GT as a quantitative label-accuracy ruler.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">EgoDex campaign continues (v3 captions).</span><span class="ld">141k/324k done; task-stratified ordering + 2× extractor speedup proposed for freeze coverage.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">09</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Production pipeline</span><span class="ld mono">PointWAM/data_prep/egodex_annotation/egodex/egodex_maskcap.py (v3 default · CAPTION_STYLE=sf for A.7)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Faithful pipeline</span><span class="ld mono">…/egodex_maskcap_sf.py · run_fig10_sf_faithful.sbatch (job 122958)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Demos + grids</span><span class="ld mono">maskcap_pilot/ppt_deliverables/sf_faithful/{,grids/} · sidecars: recap_demo/fig10_sidecars_{v3,sf_gemma,sf_faithful}, vitra5_sf_gemma</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Campaign output</span><span class="ld mono">maskcap_pilot/egodex{,_part2,_part3}/ · keeper cron maskcap_egodex</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Position doc</span><span class="ld mono">maskcap_pilot/human_data_engine.html (claude artifact, Parity Audit section)</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · spaceformer data engine · updated 2026-08-24</p></div></footer>
+
+</body>
+</html>

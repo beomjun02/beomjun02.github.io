@@ -10,9 +10,9 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "Clock arms (16 / 16-half-res / 30 raw frames) campaign continues. 08-06: scene-density study filed - EE-centered sampling schemes designed (3-5x near-hand density at equal 12k budget); VGGT-Omega encoder proposal filed, two 1-GPU-hour de-riskers pending go.",
+    "text": "SpaceFormer data engine: parity audit filed (hybrid = our merge + A.7 Gemma captions recommended, user review pending). EgoDex maskcap campaign 141k/324k. HOT3D/HOI4D onboarding blocked on browser-gated downloads.",
     "status": "active",
-    "updated": "2026-08-06"
+    "updated": "2026-08-24"
    }
   },
   "dex-point-policy": {
@@ -153,6 +153,15 @@
     "retraction"
    ],
    "updated": "2026-07-31"
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-13",
+   "slug": "spaceformer-data-engine",
+   "title": "SpaceFormer's caption protocol transfers to ego video; its static clustering does not",
+   "status": "running",
+   "updated": "2026-08-24",
+   "tldr": "Human-data engine for the PointWAM 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA ego video. A faithful SpaCeFormer-3M re-implementation (A.6/A.7 prompts verbatim, MaskClustering params, Gemma-3, 5 captions/instance) run head-to-head on 10 episodes: captions are adopted-worthy (earlier Gemma failure was protocol mismatch), but static MaskClustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep — quantitatively justifying our scene-flow merge. Recommended default: hybrid. EgoDex campaign 141k/324k (43.6%)."
   }
  ]
 }
