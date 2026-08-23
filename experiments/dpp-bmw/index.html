@@ -18,9 +18,9 @@
   <div class="wrap">
     <div class="brand">DPP-BMW <b>·</b> BMW assembly rig</div>
     <nav>
+      <a href="#logs">Logs</a>
       <a href="#pipe">Pipeline</a>
       <a href="#status">Status</a>
-      <a href="#logs">Logs</a>
       <a href="/experiments/">Lab</a>
     </nav>
     <button class="toggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
@@ -47,6 +47,20 @@
     <figcaption>bmw_0821 run000 — per-object masks (jig · bracket · ecu) over the 4-camera rig; object points are lifted to the shared BA world.</figcaption>
   </figure>
 </div></div></div>
+
+<section id="logs"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Archive</div>
+    <h2>All logs</h2>
+    <p>Newest first. Each log is one question, ended by a verdict.</p>
+  </div>
+  <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-08-23-bmw0821-base-and-augmentation/">bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation</a></h3>
+      <p><code>2026-08-22 → 08-23 · done</code> — Full pipeline reproduced on a fresh 60-run batch; 7 base policies (Exp1 initdest/subtask ×3, Exp2 subsample×point-aug ×4) trained to 100k and verified. Point-shift augmentation verified consistent (relative geometry preserved to ±1 cm at a 50 cm shift). Eval next.</p>
+    </div></div>
+  </div>
+</div></section>
 
 <section id="pipe"><div class="wrap">
   <div class="sec-head reveal">
@@ -77,20 +91,6 @@
     <div class="item"><span class="badge done">done</span><div><h3>Data pipeline (bmw_0821, 60 runs)</h3><p>hand pose · export · contact · object points · merge — all 60/60.</p></div></div>
     <div class="item"><span class="badge done">done</span><div><h3>Base policies — 7 checkpoints</h3><p>Exp1: initdest/subtask matrix (3). Exp2: subsample × point-augmentation (4). All @ 100k, verified.</p></div></div>
     <div class="item"><span class="badge wip">next</span><div><h3>Eval / rollout</h3><p>Success-rate across the 7 to read subsample, point-aug, and initdest/subtask effects.</p></div></div>
-  </div>
-</div></section>
-
-<section id="logs"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">Archive</div>
-    <h2>All logs</h2>
-    <p>Newest first. Each log is one question, ended by a verdict.</p>
-  </div>
-  <div class="road reveal">
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="logs/2026-08-23-bmw0821-base-and-augmentation/">bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation</a></h3>
-      <p><code>2026-08-22 → 08-23 · done</code> — Full pipeline reproduced on a fresh 60-run batch; 7 base policies (Exp1 initdest/subtask ×3, Exp2 subsample×point-aug ×4) trained to 100k and verified. Point-shift augmentation verified consistent (relative geometry preserved to ±1 cm at a 50 cm shift). Eval next.</p>
-    </div></div>
   </div>
 </div></section>
 
