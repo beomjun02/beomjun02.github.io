@@ -163,9 +163,21 @@
 
 <main class="wrap">
 
+  <!-- ALL LOGS -->
+  <section>
+    <h2><span class="n">01</span>All logs</h2>
+    <p class="sub">Every log in this project, newest first. The registry is <code>/experiments/logs.json</code>; keep this list in sync when a log is added or its status changes.</p>
+    <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt"><a href="logs/2026-08-13-spaceformer-data-engine/">SpaceFormer&#39;s caption protocol transfers to ego video; its static clustering does not</a> · <code>2026-08-13 → 08-24 · running</code></span><span class="ld">Human-data engine for the 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA. A faithful SpaCeFormer-3M re-implementation (A.7 prompts verbatim, MaskClustering params, Gemma-3 ×5 captions) vs our scene-flow variant on the same 10 episodes: captions adopted-worthy, static clustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep. Hybrid (our merge + their captions) recommended; 15 sorted per-instance galleries + reviewer checklist in the log. Campaign 141k/324k.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-08-06-scene-density-and-vggt-omega/">Scene density: the 12k budget, EE-centered sampling, and a VGGT-Omega proposal</a> · <code>2026-08-06 · done</code></span><span class="ld">Near-field starvation is an allocation problem: 54% of the 12,000-point budget lands beyond 1.5 m, ~2% within 20 cm of the hand, while the source holds 5× more near-hand geometry than the random cap keeps. EE-centered sampling (banded/gaussian) recovers 3–5× near-hand density at equal budget. Every scheme is still a heuristic for a token budget PTv3 imposes by construction — VGGT-Omega encoder proposal filed (pixel-dense geometry, ~1,041 tokens/frame, perspective foveation for free), two 1-GPU-hour de-riskers pending.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt"><a href="logs/2026-08-02-closed-loop-evaluation-dpp-task/">Closed-loop evaluation on the DPP task</a> · <code>2026-07-29 → present · running</code></span><span class="ld">The pretrained model picks nothing up in sim. Not a stall and not oscillation — a coherent trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted. Chunk-length mismatch is the leading candidate: our shipped chunk spans 30 raw frames against the reference policy’s 16.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-07-15-initial-development-and-egodex-pretraining/">Initial development and pretraining on EgoDex</a> · <code>2026-06 → 2026-07-15 · done</code></span><span class="ld">Porting PointWAM to a 12-keypoint dexterous hand. At 5.2M clips held-out <code>robot_l2_moved</code> is 0.06057 ± 0.00017 m; the world-modelling branch buys −4.7% (z≈12) and the gap grows with scale rather than washing out. Open-loop only.</span></span></li>
+    </ul>
+  </section>
+
   <!-- HERO VIDEO -->
   <section>
-    <h2><span class="n">01</span>The result, in one clip</h2>
+    <h2><span class="n">02</span>The result, in one clip</h2>
     <p class="sub">Dex-PointWAM in closed loop (ego head-camera view). The arm travels straight from its rest pose to the
       bottle and the fingers arrive on the object — a <b>sensible, purposeful reach</b>. This is what "말이 되는 움직임"
       (a motion that makes sense) looks like, and it is the milestone we set out to hit.</p>
@@ -181,7 +193,7 @@
 
   <!-- GOAL -->
   <section>
-    <h2><span class="n">02</span>Goal</h2>
+    <h2><span class="n">03</span>Goal</h2>
     <p class="sub">Make Dex-PointWAM succeed in the sim "like DPP" — at minimum produce a sensible motion (no weird
       thrashing), and ideally reach DPP-level task success. Three tiers:</p>
     <ul class="clean">
@@ -193,7 +205,7 @@
 
   <!-- BEFORE / AFTER -->
   <section>
-    <h2><span class="n">03</span>Before → after</h2>
+    <h2><span class="n">04</span>Before → after</h2>
     <p class="sub">The starting point (07-22) was a hand that just <b>rotated in place</b> and never reached — 0/24 on every
       object. Two deploy-side bugs were masking the model's real behavior. Fixing them revived the reach.</p>
     <div class="two">
@@ -212,7 +224,7 @@
 
   <!-- WHAT WE FIXED -->
   <section>
-    <h2><span class="n">04</span>What we fixed</h2>
+    <h2><span class="n">05</span>What we fixed</h2>
     <p class="sub">Every fix is deploy-side (bridge / policy / launcher) — the WIP model files were never touched.</p>
     <ul class="clean">
       <li><span class="mk ok">✓</span><span><span class="lt">Rate bug — 2× too-fast replay.</span><span class="ld">The policy advanced one predicted step per control step (<code>si = t % Q</code>), replaying a 10-step chunk at twice its recorded speed. Each predicted step is now held for the right number of control steps, and the playback code asserts the ratio is an exact integer rather than rounding. <em>The seconds originally quoted here are withdrawn — the source rate is not settled (see the 08-02 log, §05); spans are stated in raw frames.</em></span></span></li>
@@ -224,7 +236,7 @@
 
   <!-- DIAGNOSIS -->
   <section>
-    <h2><span class="n">05</span>Why the grasp still fails</h2>
+    <h2><span class="n">06</span>Why the grasp still fails</h2>
     <p class="sub">The hand reaches the object and even touches it (11/24 episodes nudge/partially lift the bottle), but the
       fingers close <b>beside</b> the object, not around it — the predicted <b>hand orientation is palm-up</b>, so a standing
       bottle can't be grasped no matter how the grip closes.</p>
@@ -245,7 +257,7 @@
 
   <!-- DPP TABLE -->
   <section>
-    <h2><span class="n">06</span>Recalibrating the DPP baseline</h2>
+    <h2><span class="n">07</span>Recalibrating the DPP baseline</h2>
     <p class="sub">A key mid-course correction: the DPP number we were chasing (70%) turned out to be a myth. The realistic,
       reproducible baseline in this benchmark is ~27% — and success swings a lot with <code>num_envs</code> (PhysX
       parallel-solver non-determinism, which the benchmark's own README flags).</p>
@@ -276,7 +288,7 @@
 
   <!-- NEXT -->
   <section>
-    <h2><span class="n">07</span>If resumed</h2>
+    <h2><span class="n">08</span>If resumed</h2>
     <p class="sub">Closing at Tier-0 by decision. The grasp-pose gap is a training-level problem; the tractable directions:</p>
     <div class="steps">
       <div class="card"><div><b>Domain-randomize the real training.</b><br><span class="muted">Add point-cloud jitter / dropout (currently absent) + a longer, grasp-focused PnP-500 finetune, to make the predicted grasp orientation robust to sim-cloud OOD.</span></div></div>
@@ -287,7 +299,7 @@
 
   <!-- ARTIFACTS -->
   <section style="border-bottom:0">
-    <h2><span class="n">08</span>Artifacts</h2>
+    <h2><span class="n">09</span>Artifacts</h2>
     <ul class="clean">
       <li><span class="mk i">·</span><span><span class="lt">Checkpoints</span><span class="ld mono">dpp_ckpts_1p9s/pnp500_ft_ext1/model-best.pt (reach) · dexpointwam/contact_ft/model-best.pt (contact head, robot_l2 0.0349)</span></span></li>
       <li><span class="mk i">·</span><span><span class="lt">Deploy code</span><span class="ld mono">openarm_sim/parallel_eval/policy_pointwam.py · PointWAM/deploy/dpp_bridge_server.py</span></span></li>
@@ -299,17 +311,6 @@
 </main>
 
 
-  <!-- ALL LOGS -->
-  <section>
-    <h2><span class="n">09</span>All logs</h2>
-    <p class="sub">Every log in this project, newest first. The registry is <code>/experiments/logs.json</code>; keep this list in sync when a log is added or its status changes.</p>
-    <ul class="clean">
-      <li><span class="mk i">·</span><span><span class="lt"><a href="logs/2026-08-13-spaceformer-data-engine/">SpaceFormer&#39;s caption protocol transfers to ego video; its static clustering does not</a> · <code>2026-08-13 → 08-24 · running</code></span><span class="ld">Human-data engine for the 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA. A faithful SpaCeFormer-3M re-implementation (A.7 prompts verbatim, MaskClustering params, Gemma-3 ×5 captions) vs our scene-flow variant on the same 10 episodes: captions adopted-worthy, static clustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep. Hybrid (our merge + their captions) recommended; 15 sorted per-instance galleries + reviewer checklist in the log. Campaign 141k/324k.</span></span></li>
-      <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-08-06-scene-density-and-vggt-omega/">Scene density: the 12k budget, EE-centered sampling, and a VGGT-Omega proposal</a> · <code>2026-08-06 · done</code></span><span class="ld">Near-field starvation is an allocation problem: 54% of the 12,000-point budget lands beyond 1.5 m, ~2% within 20 cm of the hand, while the source holds 5× more near-hand geometry than the random cap keeps. EE-centered sampling (banded/gaussian) recovers 3–5× near-hand density at equal budget. Every scheme is still a heuristic for a token budget PTv3 imposes by construction — VGGT-Omega encoder proposal filed (pixel-dense geometry, ~1,041 tokens/frame, perspective foveation for free), two 1-GPU-hour de-riskers pending.</span></span></li>
-      <li><span class="mk i">·</span><span><span class="lt"><a href="logs/2026-08-02-closed-loop-evaluation-dpp-task/">Closed-loop evaluation on the DPP task</a> · <code>2026-07-29 → present · running</code></span><span class="ld">The pretrained model picks nothing up in sim. Not a stall and not oscillation — a coherent trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted. Chunk-length mismatch is the leading candidate: our shipped chunk spans 30 raw frames against the reference policy’s 16.</span></span></li>
-      <li><span class="mk ok">✓</span><span><span class="lt"><a href="logs/2026-07-15-initial-development-and-egodex-pretraining/">Initial development and pretraining on EgoDex</a> · <code>2026-06 → 2026-07-15 · done</code></span><span class="ld">Porting PointWAM to a 12-keypoint dexterous hand. At 5.2M clips held-out <code>robot_l2_moved</code> is 0.06057 ± 0.00017 m; the world-modelling branch buys −4.7% (z≈12) and the gap grows with scale rather than washing out. Open-loop only.</span></span></li>
-    </ul>
-  </section>
 
 <footer>
   <div class="wrap">

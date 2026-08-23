@@ -18,6 +18,7 @@
   <div class="wrap">
     <div class="brand">Dexterous&nbsp;Point&nbsp;Policy <b>·</b> ICLR&nbsp;2027</div>
     <nav>
+      <a href="#logs">Logs</a>
       <a href="#diagnosis">Diagnosis</a>
       <a href="#contact">Contact</a>
       <a href="#sim">Dexterity</a>
@@ -58,6 +59,28 @@
       Learned tactile model, BMW run000.</figcaption>
   </figure>
 </div></div></div>
+
+<section id="logs"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Lab notebook</div>
+    <h2>All logs</h2>
+  </div>
+  <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-08-07-functional-retargeter-restructure/">One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0</a> <span class="who">· 2026-08-07</span></h3>
+      <p>Restructure verified (4/5), 4 papers + 26-work sweep read (no 5/5 collision), and the design closed in five rounds: task-agnostic retargeter (no robot demos, no task data), MANO-θ both ways, two-hand play pairing on the MANO clock. Spec: DESIGN.md; pilot gated on C1–C4 + sign-off.</p></div></div>
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-07-31-benchmark-jitter/">Four poses cannot estimate a success rate</a> <span class="who">· 2026-07-31 → 08-01</span></h3>
+      <p>Benchmark defect fixed (4 → 512 initial conditions), baseline re-measured with valid CIs, cross-hand result made rigorous, and the paired contact-label verdict at matched 370k.</p></div></div>
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-07-30-contact-auto-vs-oracle/">Rebuilding the object points beats the shipped pipeline</a> <span class="who">· 2026-07-30 → 07-31</span></h3>
+      <p>2048-pt sensor-metric rebuild (+13.6 pts); label comparison undecided at 180k — resolved by the paired 370k verdict in the benchmark-jitter log.</p></div></div>
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-07-29-contact-and-hand-rollouts/">Contact generalizes; the 6-point abstraction breaks on hand scale</a> <span class="who">· 2026-07-29 → 07-31</span></h3>
+      <p>Tactile predictor F1 0.70; Inspire 29.2% vs Wuji/Sharpa 0/24 — scale, not DOF; scale-fix repairs IK and still scores zero.</p></div></div>
+  </div>
+  <p style="margin-top:14px;font-size:13.5px"><em>Registry: <code>/experiments/logs.json</code> — keep this list in sync when a log is added or closes.</em></p>
+</div></section>
 
 <!-- ================= DIAGNOSIS ================= -->
 <section id="diagnosis"><div class="wrap">
@@ -282,27 +305,6 @@
 </div></section>
 
 
-<section id="logs"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">Lab notebook</div>
-    <h2>All logs</h2>
-  </div>
-  <div class="road reveal">
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="logs/2026-08-07-functional-retargeter-restructure/">One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0</a> <span class="who">· 2026-08-07</span></h3>
-      <p>Restructure verified (4/5), 4 papers + 26-work sweep read (no 5/5 collision), and the design closed in five rounds: task-agnostic retargeter (no robot demos, no task data), MANO-θ both ways, two-hand play pairing on the MANO clock. Spec: DESIGN.md; pilot gated on C1–C4 + sign-off.</p></div></div>
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="logs/2026-07-31-benchmark-jitter/">Four poses cannot estimate a success rate</a> <span class="who">· 2026-07-31 → 08-01</span></h3>
-      <p>Benchmark defect fixed (4 → 512 initial conditions), baseline re-measured with valid CIs, cross-hand result made rigorous, and the paired contact-label verdict at matched 370k.</p></div></div>
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="logs/2026-07-30-contact-auto-vs-oracle/">Rebuilding the object points beats the shipped pipeline</a> <span class="who">· 2026-07-30 → 07-31</span></h3>
-      <p>2048-pt sensor-metric rebuild (+13.6 pts); label comparison undecided at 180k — resolved by the paired 370k verdict in the benchmark-jitter log.</p></div></div>
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="logs/2026-07-29-contact-and-hand-rollouts/">Contact generalizes; the 6-point abstraction breaks on hand scale</a> <span class="who">· 2026-07-29 → 07-31</span></h3>
-      <p>Tactile predictor F1 0.70; Inspire 29.2% vs Wuji/Sharpa 0/24 — scale, not DOF; scale-fix repairs IK and still scores zero.</p></div></div>
-  </div>
-  <p style="margin-top:14px;font-size:13.5px"><em>Registry: <code>/experiments/logs.json</code> — keep this list in sync when a log is added or closes.</em></p>
-</div></section>
 
 <footer><div class="wrap">
   <div>

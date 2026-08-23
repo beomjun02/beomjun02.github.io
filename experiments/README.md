@@ -45,7 +45,7 @@ Start a new log only when the question changes, the open log reached a verdict (
 2. Copy `_template/log.html` → `index.html`; fill ALL-CAPS placeholders; uncomment optional blocks; delete unused sections. House rules are in the template's header comment.
 3. Media into the log's own `assets/`: H.264 mp4 ≤5 MB + poster jpg; stills ≤500 KB, `loading="lazy"` below the fold.
 4. Append one entry to `logs.json` (schema in the file).
-5. Add the log to the **project hub's "All logs" section**, newest first — the hub is the project's full time-ordered archive and the only place logs are listed. The home page (`experiments/index.html`) never changes when a log is added: it carries only project tiles (name + fixed thumbnail).
+5. Add the log to the **project hub's "All logs" section**, newest first — the hub is the project's full time-ordered archive and the only place logs are listed. **This section is the FIRST section of the hub** (immediately after the header/hero), so clicking a project tile lands on the log list without scrolling; presentation content follows below. The home page (`experiments/index.html`) never changes when a log is added: it carries only project tiles (name + fixed thumbnail).
 
 New project: hub `index.html` (with an "All logs" section) + `logs/` + a fixed `assets/thumb.jpg` (16:9, ≤200 KB, changed rarely), register in `logs.json` `projects`, add a tile in `experiments/index.html`.
 
