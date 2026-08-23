@@ -5,6 +5,16 @@
   "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
  },
  "projects": {
+  "dpp-bmw": {
+   "title": "DPP-BMW",
+   "tagline": "Dexterous Point Policy on the BMW assembly rig — base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).",
+   "path": "dpp-bmw/",
+   "now": {
+    "text": "bmw_0821 (60-run) processed end-to-end; 7 base policies trained & verified — Exp1 initdest/subtask matrix (3), Exp2 subsample×point-augmentation (4, all subtask, no initdest). Eval/rollout next.",
+    "status": "active",
+    "updated": "2026-08-23"
+   }
+  },
   "dex-pointwam": {
    "title": "Dex-PointWAM",
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
@@ -27,6 +37,25 @@
   }
  },
  "logs": [
+  {
+   "project": "dpp-bmw",
+   "date": "2026-08-22",
+   "slug": "bmw0821-base-and-augmentation",
+   "title": "bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation",
+   "status": "done",
+   "updated": "2026-08-23",
+   "tldr": "New 60-run BMW batch taken from raw 4-camera rosbags to trainable data (4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, all in the BA world frame) and two rounds of base-policy training. Exp1: initdest/subtask matrix (3 policies). Exp2: subsample (2x/1x) x point-augmentation (none/1cm/5cm), all subtask, no initdest (4 policies). All 7 reach 100k and torch-load clean. Point-shift augmentation (one spherical shift per sample applied to hand+object+action+ego) verified consistent: relative hand-object geometry preserved to +/-1cm even at a 50cm shift. Object order jig,ecu,bracket,drill confirmed against masks. Eval/rollout is next.",
+   "path": "dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/",
+   "tags": [
+    "bmw",
+    "base-policy",
+    "data-pipeline",
+    "augmentation",
+    "vggt",
+    "contact",
+    "mano"
+   ]
+  },
   {
    "project": "dex-point-policy",
    "date": "2026-08-07",

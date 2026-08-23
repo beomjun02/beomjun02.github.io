@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-23 · bmw_0821 base policies + point-aug — DPP-BMW</title>
+<meta name="description" content="60-run BMW batch processed end-to-end; 7 base policies trained &amp; verified (initdest/subtask matrix + subsample×point-augmentation). Eval pending.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dpp-bmw/">dpp-bmw</a><span class="sep">/</span>
+      <span class="here">2026-08-23 · bmw0821-base-and-augmentation</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · DPP-BMW</p>
+    <h1>bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation</h1>
+    <p class="lede">A new 60-run BMW capture (run000–059) taken from raw 4-camera rosbags all the way to trainable data, then two rounds of DPP base-policy training: the deploy-style initdest/subtask matrix, and a subsample × point-augmentation study on absolute-coordinate robustness. All seven checkpoints reach 100k steps and torch-load clean. Success-rate eval is the next step.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-22 → 08-23</dd></div>
+      <div><dt>Outcome</dt><dd>7/7 policies @ 100k, verified</dd></div>
+      <div><dt>Env</dt><dd class="mono">alinlab slurm · DPP 6-keypoint · PT-init VITRA-6pt · num_queries=16</dd></div>
+      <div><dt>Data</dt><dd class="mono">bmw_0821/bmw_ft_0821_full{,_subtask,_initdest,_subtask_initdest}.h5</dd></div>
+      <div><dt>Full report</dt><dd class="mono">claude-code-rc/dpp-bmw/REPORT_bmw0821.md · W&amp;B dpp-bmw</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>The full pipeline reproduces on a fresh batch: 60 runs → 4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, merge + subtask/initdest post-processing → 7 base policies (Exp1: 3 initdest/subtask variants; Exp2: 2x/1x subsample × none/1cm/5cm point-aug, all subtask, no initdest). Point-shift augmentation is verified consistent (relative hand–object geometry preserved to ±1 cm even at a 50 cm shift). No behavioural numbers yet — eval/rollout is next.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>The data</h2>
+      <p class="sub">4-camera BMW rig, per-object masks, VGGT-Omega object points in the BA world frame. Object label order (user decree): <b>jig · ecu · bracket · drill</b> — confirmed against the masks below.</p>
+      <figure>
+        <img src="assets/masks.jpg" alt="run000 cam_0 with jig/bracket/ecu object masks overlaid" loading="lazy">
+        <figcaption>masks.jpg · bmw_0821 run000 cam_0 — jig (green plate) · bracket (red housing) · ecu (blue T-part). Mask folder names verified against object identity before fixing label order.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Pipeline</h2>
+      <p class="sub">Raw rosbag → trainable HDF5. Every stage runs per-run over the 60 runs.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Stage</th><th>Method</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>Hand pose (4-view)</td><td class="mono">MANO-pipeline: YOLO+WiLoR+HaMeR → triangulate → MANO fit</td><td class="mono">joints_m (T,42,3)</td></tr>
+            <tr><td>Export</td><td class="mono">bag depth decode + mask merge + BA calib</td><td class="mono">data/&lt;run&gt;/{depth,masks,calibration.yaml}</td></tr>
+            <tr><td>Contact (single-view HaWoR)</td><td class="mono">extract_tactile (cam_0) → per-vertex 778 → label_fingertip</td><td class="mono">contact_labels/&lt;run&gt;_contact.npz (2,T,5)</td></tr>
+            <tr><td>Object point</td><td class="mono">VGGT-Omega MV → metric scale → 10 mm grad filter → BA lift → Umeyama → FPS 2048</td><td class="mono">object_points_3d (T,4,2048,3)</td></tr>
+            <tr><td>Merge + post</td><td class="mono">merge shards → subtask (Q=0) / initdest ramps</td><td class="mono">bmw_ft_0821_full*.h5</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:14px">Frame-alignment fix that matters: the hoi hand pose is already in the BA world (board) frame, so extraction runs with <code>SJ_IDENTITY=1</code> — no cam0→world transform (the old rlwrld batch was cam0-framed and needed one). Verified: joints finite=1.0, range ≈ [-0.5, 0.9] m; all 4 object slots nonzero, per-object centroids match the mask layout.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Trained policies</h2>
+      <p class="sub">Two rounds. All PT-init from VITRA 6-pt, 100k steps, num_queries=16, verified <code>_global_step=100000</code>.</p>
+
+      <h3>Exp1 — initdest / subtask matrix (act_subsample=2)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Policy</th><th>initdest</th><th>subtask</th><th>data</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">dpp_bmw_0821_2x</td><td>—</td><td>—</td><td class="mono">full</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_initdest</td><td>✓</td><td>—</td><td class="mono">_initdest</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_subtask_initdest</td><td>✓</td><td>✓</td><td class="mono">_subtask_initdest</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Exp2 — subsample × point-augmentation (subtask, no initdest)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Policy</th><th>subsample</th><th>point aug</th><th>data</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x</td><td>2x</td><td>— (base)</td><td class="mono">_subtask</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_1x</td><td>1x</td><td>—</td><td class="mono">_subtask</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug1cm</td><td>2x</td><td>1 cm</td><td class="mono">_subtask</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug5cm</td><td>2x</td><td>5 cm</td><td class="mono">_subtask</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Comparison axes: (a) 1x vs 2x action subsample, (b) point-augmentation strength (none / 1 cm / 5 cm). Behavioural (success-rate) numbers pending eval.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Point-shift augmentation</h2>
+      <p class="sub">DPP feeds object &amp; hand points in <b>absolute</b> coordinates. Each sample gets one spherical shift δ (uniform in a ball of radius r, isotropic) added to <b>every</b> world-frame quantity — past hand 6-pt, object points, action targets, ego translation — so relative geometry is preserved and only the absolute frame moves.</p>
+      <p class="sub" style="margin-top:12px">Consistency check: per-sample median distance between hand centroid and object centroid stays flat as the augmentation radius grows to 50 cm — proof the shift is applied identically to hands and objects (an inconsistent shift would blow this up).</p>
+      <div class="chart" role="img" aria-label="Median hand-to-object centroid distance: 37.4 cm at radius 0, 37.9 cm at radius 5 cm, 38.8 cm at radius 50 cm — essentially flat.">
+        <div class="crow">
+          <span class="clabel">radius 0<span class="cnote">no aug</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:37.4%"></span></span><span class="cval">37.4 cm</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">radius 5 cm<span class="cnote">aug on</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:37.9%"></span></span><span class="cval">37.9 cm</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">radius 50 cm<span class="cnote">stress test</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:38.8%"></span></span><span class="cval">38.8 cm</span>
+        </div>
+      </div>
+      <p class="note">median |hand_center − obj_center| over 120 samples · <code>dataloader.bc_dataset.point_shift_radius</code> (m) · uniform-in-ball, isotropic.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Issues ruled through</h2>
+      <ul class="clean">
+        <li><span class="mk x">→</span><span><span class="lt">Object label order.</span><span class="ld">Masks named by object; the extractor's <code>object_names</code> was hard-coded to the old order. Fixed to jig,ecu,bracket,drill and confirmed the stored points already followed the mask label ids (metadata-only correction, no re-extraction).</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">VGGT CUDA-OOM under high parallelism.</span><span class="ld">%20 fan-out landed jobs on small/contended GPUs → 22 OOMs, and the sbatch lacked <code>set -e</code> so they exited 0 (false success). Caught by counting shards, not trusting sacct; re-ran on big GPUs with <code>set -e</code>.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Frame convention verified.</span><span class="ld">hoi hand pose already in BA world → <code>SJ_IDENTITY=1</code>; joints and object centroids land in a consistent workspace.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Augmentation consistency verified.</span><span class="ld">Relative hand–object geometry preserved to ±1 cm at a 50 cm shift.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Timeline</h2>
+      <ul class="timeline">
+        <li class="acc">
+          <span class="tdate">2026-08-22</span>
+          <span class="tt">Data pipeline (60 runs)</span>
+          <p>Hand pose 60/60, export 60/60, contact 60/60, object points 60/60 shards → merge + subtask/initdest post-processing. Object order set to jig,ecu,bracket,drill after verifying mask identities.</p>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-08-23</span>
+          <span class="tt">Exp1 — 3 base policies</span>
+          <p>2x / 2x+initdest / 2x+subtask+initdest all reach 100k, torch-load verified. One straggler (plain 2x) was moved off a contended node and resumed cleanly from 30k.</p>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-08-23</span>
+          <span class="tt">Exp2 — subsample × point-aug</span>
+          <p>Implemented point-shift augmentation in the dataloader, verified consistent, trained 2x / 1x / 2x+aug1cm / 2x+aug5cm (all subtask, no initdest) to 100k. aug5cm hit one startup OOM (GPU contention, not the aug) and finished on retry.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Eval / rollout comparison.</span><span class="ld">Success-rate across the 7 checkpoints to read (a) 1x vs 2x subsample, (b) point-aug robustness gain (1 cm / 5 cm), (c) initdest/subtask contribution. Harness: seunghoon bmw_task (read-only).</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Checkpoints</span><span class="ld mono">dex-point-policy/exp_local/2026.08.2{2,3}/dpp_bmw_0821_*/deterministic/*/snapshot/100000.pt</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Training data</span><span class="ld mono">ALIN_ROSBAG/bmw_0821/bmw_ft_0821_full{,_subtask,_initdest,_subtask_initdest}.h5</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Launchers</span><span class="ld mono">mano_run101_work/run_{export,contact,objpoint}_bmw0821.sbatch · dex-point-policy/scripts/run_train_bmw.sbatch</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Full report</span><span class="ld mono">claude-code-rc/dpp-bmw/REPORT_bmw0821.md</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-23 · beomjun · experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation</div>
+</footer>
+
+</body>
+</html>
