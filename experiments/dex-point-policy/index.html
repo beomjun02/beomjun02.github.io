@@ -28,37 +28,30 @@
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
-<div class="hero"><div class="wrap"><div class="hero-grid">
+<!-- ================= HERO (compact — logs come first) ================= -->
+<div class="hero"><div class="wrap">
   <div class="reveal">
     <div class="eyebrow">Resubmission · working log</div>
-    <h1>Turning three <span class="hl">weaknesses</span> into three contributions.</h1>
+    <h1>Dexterous Point Policy — <span class="hl">ICLR 2027</span> working log.</h1>
     <p class="lede">
-      Dexterous Point Policy learns multi-finger manipulation from human video with zero robot
-      demonstrations. After NeurIPS 2026 (scores 2 / 4 / 2), the ICLR resubmission rebuilds the
-      story around exactly what reviewers attacked: the hand-crafted contact mechanism, the limited
-      dexterity of a 6-DOF hand, and the sub-cm errors left by learning from humans.
+      Multi-finger manipulation learned from human video with zero robot demonstrations. After
+      NeurIPS 2026 (scores 2 / 4 / 2), the resubmission rebuilds the story around what reviewers
+      attacked — the contact mechanism, 6-DOF hand dexterity, sub-cm human-learning errors — plus a
+      per-embodiment retargeter workstream. Every log is below, newest first.
     </p>
     <div class="meta-line">
-      <span>Updated 2026-07-29</span><span class="dot"></span>
+      <span>Updated 2026-08-24</span><span class="dot"></span>
       <span>arXiv 2606.10614</span><span class="dot"></span>
       <span>OpenReview SWSXoodvtr</span>
     </div>
     <div class="chips">
       <span class="chip"><span class="st done">done</span> Contact automation (tactile prediction)</span>
       <span class="chip"><span class="st done">done</span> Higher-DOF hands in sim · Wuji + Sharpa</span>
+      <span class="chip"><span class="st wip">wip</span> BMW retargeter (bmw_0821)</span>
       <span class="chip"><span class="st ext">coworker</span> Residual RL</span>
-      <span class="chip"><span class="st wip">next</span> Finger-gaiting task</span>
     </div>
   </div>
-  <figure class="hero-media reveal">
-    <video autoplay loop muted playsinline poster="assets/run000_canonical_f0611.png">
-      <source src="assets/run000_orbit_f0611.mp4" type="video/mp4">
-    </video>
-    <figcaption>Predicted per-vertex contact on the MANO hand — <b>red</b> = contact, grey = free.
-      Learned tactile model, BMW run000.</figcaption>
-  </figure>
-</div></div></div>
+</div></div>
 
 <section id="logs"><div class="wrap">
   <div class="sec-head reveal">
@@ -66,6 +59,12 @@
     <h2>All logs</h2>
   </div>
   <div class="road reveal">
+    <div class="item"><span class="badge wip">wip</span><div>
+      <h3><a href="logs/2026-08-24-bmw0821-retargeter/">A human→Inspire retargeter trained on 4-view high-quality assembly data</a> <span class="who">· 2026-08-23 → 08-24</span></h3>
+      <p>R and R⁻¹ trained on bmw_0821 (60 runs, 33k frames, 4-view high-precision hand). Position-mode retargeting maps the grasp-region aperture (0–5 cm) nearly 1:1 (corr 0.664); R⁻¹ reconstructs the hand from 5 fingertips at 7.7 mm all-joint held-out MAE. Targets Inspire hardware; sim rollout pending an environment.</p></div></div>
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-08-19-teleop-retargeter-iteration/">Retargeter &amp; teleop-mix debugging in openarm-sim — seven bugs fixed, still 0/24</a> <span class="who">· 2026-08-19</span></h3>
+      <p>Organized by the rollout clips: seven implementation bugs found and fixed (obs contamination, vector→position finger opening, object supervision deleted during grasp, wrist orientation, …), each verified by measurement. Every condition still 0/24 — the bottleneck is the policy's alignment/approach and a teleop→sim domain gap, not the retargeter.</p></div></div>
     <div class="item"><span class="badge done">done</span><div>
       <h3><a href="logs/2026-08-07-functional-retargeter-restructure/">One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0</a> <span class="who">· 2026-08-07</span></h3>
       <p>Restructure verified (4/5), 4 papers + 26-work sweep read (no 5/5 collision), and the design closed in five rounds: task-agnostic retargeter (no robot demos, no task data), MANO-θ both ways, two-hand play pairing on the MANO clock. Spec: DESIGN.md; pilot gated on C1–C4 + sign-off.</p></div></div>

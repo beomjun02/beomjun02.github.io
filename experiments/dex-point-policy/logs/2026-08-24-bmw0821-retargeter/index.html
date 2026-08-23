@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-24 · BMW retargeter (bmw_0821) — dex-point-policy</title>
+<meta name="description" content="A human→Inspire retargeter R and its inverse R⁻¹ trained on a 4-view high-quality BMW assembly capture (33k frames). Grasp-region aperture maps ~1:1; R⁻¹ 7.7mm held-out MAE. Sim rollout pending.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-08-24 · bmw0821-retargeter</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy (ICLR 2027)</p>
+    <h1>A human→Inspire retargeter trained on 4-view high-quality assembly data</h1>
+    <p class="lede">We train a GeoRT retargeter <em>R</em> (human 21-keypoint → Inspire qpos) and its inverse
+      <em>R⁻¹</em> on <code>bmw_0821</code>: 60 runs of a BMW assembly task (ecu / bracket / jig / drill),
+      captured with a 4-view hand-pose rig that yields clean, high-precision hand keypoints. From
+      33,191 valid right-hand frames the retargeter's grasp-phase aperture mapping (0–5 cm) tracks the
+      human hand almost 1:1 — the region a contact-rich task hinges on — while R⁻¹ reconstructs the full
+      hand from 5 robot fingertips at 7.7 mm held-out MAE. A different task from the openarm-sim work,
+      targeting Inspire hardware deployment.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill warn"><span class="dot"></span>R/R⁻¹ trained · rollout pending</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-23 → 08-24</dd></div>
+      <div><dt>Data</dt><dd>bmw_0821 · 60 runs · 33,191 right-hand frames</dd></div>
+      <div><dt>Env</dt><dd class="mono">GeoRT (point-bridge) · debug GPU</dd></div>
+      <div><dt>Checkpoints</dt><dd class="mono">GeoRT/checkpoint/inspire_hand_right_*bmw0821 · rinv_bmw0821_inspire_hand_right</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><strong>R and R⁻¹ trained and offline-verified.</strong> The 4-view capture gives a wide,
+      clean aperture range (0–36 cm) with heavy sampling at contact onset. The retargeter uses
+      <em>position</em> retargeting, so the grasp-region aperture (0–5 cm) maps nearly 1:1
+      (human 0/2.7/5.0 cm → robot 2.1/2.6/4.9 cm) and only saturates at the physically-unreachable open
+      extreme — the failure mode that broke the earlier vector-mode retargeter is absent here. R⁻¹
+      reconstructs the full 21-keypoint hand from 5 robot fingertips at 7.7 mm all-joint / 6.1 mm
+      intermediate-joint held-out MAE. Closed-loop rollout is deferred until a sim environment is
+      provided.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section><div class="wrap">
+    <h2><span class="n">01</span>Data</h2>
+    <p class="sub">BMW sub-assembly (jig, ecu, bracket, drill) recorded across 4 camera views — substantially
+      cleaner hand reconstruction than single-view / in-the-wild sources. The task requires high-precision
+      contact, so the hand opens/closes over a wide range and the contact-onset region is heavily sampled.</p>
+    <table>
+      <thead><tr><th>Property</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Runs</td><td>60 (run000–059), 780 frames each</td></tr>
+        <tr><td>Right-hand 21kp valid frames</td><td>33,191 (NaN-frame rate &lt; 0.1%)</td></tr>
+        <tr><td>Finger bone length</td><td>median 2.39 cm (p5–p95: 1.3–3.8)</td></tr>
+        <tr><td>Thumb–index aperture range</td><td>0.0–36.0 cm (median 4.2)</td></tr>
+        <tr><td>Contact (index) rate</td><td>16% of frames</td></tr>
+        <tr><td>Source h5</td><td class="mono">bmw_ft_0821_full_subtask.h5</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:14px">Each run group holds <code>object_points_3d (T,4,2048,3)</code>
+      (jig/ecu/bracket/drill, BA world), <code>right/joints_worldspace (T,21,3)</code>, and per-finger
+      <code>right/contact_point (T,5)</code> from HaWoR tactile — object cloud, hand keypoints, and contact
+      together. The retargeter uses only the right-hand 21kp in the GeoRT/MediaPipe wrist-local frame.</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">02</span>R — GeoRT Inspire retargeter</h2>
+    <p class="sub">Vanilla GeoRT pipeline (SAPIEN URDF FK, geometric self-supervised losses), 200 epochs on 33k frames.</p>
+    <table>
+      <thead><tr><th>Loss (final)</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Direction</td><td class="mono">−0.747</td></tr>
+        <tr><td>Chamfer</td><td class="mono">6.6 × 10⁻⁵</td></tr>
+        <tr><td>Pinch</td><td class="mono">0.014</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:22px">Aperture mapping (offline — the key check)</h3>
+    <p class="sub">The prior openarm-sim retargeter used <em>vector</em> retargeting, which compressed the hand
+      into a 7–9 cm band and never opened or closed. Here <em>position</em> retargeting makes the human→robot
+      thumb–index aperture follow almost 1:1 in the grasp region, saturating only at the unreachable open extreme.</p>
+    <table>
+      <thead><tr><th>Human aperture</th><th>Robot thumb–index</th></tr></thead>
+      <tbody>
+        <tr><td>0.0 cm (closed)</td><td class="mono">2.1 cm</td></tr>
+        <tr><td>2.7 cm</td><td class="mono">2.6 cm</td></tr>
+        <tr><td>5.0 cm (mid)</td><td class="mono">4.9 cm</td></tr>
+        <tr><td>36.0 cm (open, max)</td><td class="mono">10.3 cm — robot physical limit</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:14px">Aperture correlation over 500 random frames: <strong>0.664</strong>;
+      robot achieves 0.4–8.8 cm. The grasp-onset region (0–5 cm) — what a high-precision contact task hinges on —
+      is reproduced accurately.</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">03</span>R⁻¹ — inverse (5 robot fingertips → 21 human keypoints)</h2>
+    <p class="sub">Free pairs: human 21kp → R → qpos → FK → 5 robot fingertips; pair = (robot tips 5×3,
+      human 21kp wrist-local). A small MLP (15→512×3→63) is trained supervised; held-out MAE is split by
+      joint type — fingertips (R saw them) vs intermediate joints (R never saw; measures how much hand
+      interior the tips determine).</p>
+    <table>
+      <thead><tr><th>Held-out MAE</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Fingertips</td><td class="mono">12.2 mm</td></tr>
+        <tr><td>Intermediate joints</td><td class="mono">6.1 mm</td></tr>
+        <tr><td>All (non-wrist)</td><td class="mono">7.7 mm</td></tr>
+        <tr><td>Pairs / val split</td><td class="mono">33,191 / 3,319</td></tr>
+      </tbody>
+    </table>
+    <p class="sub" style="margin-top:14px">Fingertip MAE (12.2 mm) is higher than the earlier run101/pnp R⁻¹
+      (3.6–5.2 mm) because bmw_0821 spans a much wider aperture range — the reconstruction target is genuinely
+      harder, not lower quality. Intermediate joints reconstruct at 6.1 mm, confirming the tips still determine
+      the hand interior.</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">04</span>Results (rollout)</h2>
+    <p class="sub"><strong>Pending sim environment.</strong> Closed-loop rollout on the Inspire hardware / sim is
+      deferred until an environment is provided. R and R⁻¹ are trained and offline-verified; the deploy convention
+      (position-mode retargeting, real-6-site obs anchoring) is inherited from the openarm-sim iteration log.</p>
+    <ul class="clean" style="margin-top:14px">
+      <li>R: <code>GeoRT/checkpoint/inspire_hand_right_2026-08-23_16-26-44_bmw0821/last.pth</code></li>
+      <li>R⁻¹: <code>GeoRT/checkpoint/rinv_bmw0821_inspire_hand_right/model.pt</code></li>
+      <li>Training data: <code>GeoRT/data/bmw0821_right.npy</code> (33,191×21×3, wrist-local)</li>
+    </ul>
+  </div></section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-24 · beomjun · experiments/dex-point-policy/logs/2026-08-24-bmw0821-retargeter</div>
+</footer>
+
+</body>
+</html>

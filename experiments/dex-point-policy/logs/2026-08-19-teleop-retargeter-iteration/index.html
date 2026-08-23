@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-19 · Retargeter iteration (openarm-sim) — dex-point-policy</title>
+<meta name="description" content="openarm-sim retargeter / teleop-mix debugging organized by rollout clips: seven implementation bugs found and fixed, an SR table (all 0/24), and the two remaining bottlenecks — policy alignment and a teleop→sim domain gap.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-point-policy/">dex-point-policy</a><span class="sep">/</span>
+      <span class="here">2026-08-19 · teleop-retargeter-iteration</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · Dexterous Point Policy (ICLR 2027)</p>
+    <h1>Retargeter &amp; teleop-mix debugging in openarm-sim — seven bugs fixed, still 0/24</h1>
+    <p class="lede">A debugging session on the openarm-sim deployment of the 21-keypoint human base policy with a
+      dexret Inspire retargeter. Working from the rollout clips, we found and fixed seven implementation bugs
+      (obs contamination, finger-open compression, object supervision, wrist orientation, …), each verified by
+      measurement. All conditions still land at SR 0/24: the remaining bottleneck is not the retargeter but the
+      policy's alignment/approach and a teleop→sim domain gap.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill warn"><span class="dot"></span>bugs fixed · SR still 0/24</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-19</dd></div>
+      <div><dt>Metric</dt><dd><code>success_at_end</code> · bottle · 24 ep · train-cells</dd></div>
+      <div><dt>Env</dt><dd class="mono">openarm-sim · dexret Inspire retargeter · debug GPU</dd></div>
+      <div><dt>Qualitative</dt><dd>rollout video only (read by the user, not analyzed here)</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><strong>Seven implementation-layer bugs removed and verified by measurement</strong> — finger
+      open/close, wrist orientation, object supervision, obs contamination. Yet every condition remains
+      <strong>SR 0/24</strong>. The grasp-success bottleneck is not the retargeter but (1) policy alignment /
+      approach — the scratch-150k policy has not learned the grasp phase, so a PT-initialized fine-tune is the
+      lever; and (2) a teleop→sim domain gap — even teleop-only 100% lands at 0, so the real demo distribution
+      does not match the sim eval distribution. Both are decisions outside this session's implementation-fix scope.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section><div class="wrap">
+    <h2><span class="n">01</span>The clips, in order</h2>
+    <p class="sub">Each clip set is one experiment state; following them in order tells the story.</p>
+    <table>
+      <thead><tr><th>#</th><th>Clip set</th><th>What it shows</th><th>SR</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td>dexret rollout (inspire_v3 / sharpa_v3 / GRIP0), 12 clips</td>
+          <td>In-place circling + fingers pre-curled. Cause: R⁻¹ OOD blows up, Kabsch drags the wrist slot 10→19 cm off, believed-start resets every chunk.</td><td class="mono">0/24</td></tr>
+        <tr><td>②</td><td>obs-fix, 4 clips</td>
+          <td>After overwriting the 6 anchor slots with real sites + clamping R⁻¹ bone lengths: obs gap 5.7–13.1 → 0.0 cm, tracking error 0.2–0.9 cm. Moves cleanly.</td><td class="mono">0/24</td></tr>
+        <tr><td>③</td><td>GT-replay ladder (policy removed), v1→v5</td>
+          <td>v1 knocks the bottle on contact; v5 forms a cage then drops it during carry. The execution chain nearly reaches a grasp without the policy.</td><td class="mono">0/4</td></tr>
+        <tr><td>④</td><td>teleop label QA (v2), 2 clips</td>
+          <td>41-ep teleop extraction/conversion. v1 labels were corrupted (R⁻¹ OOD, 41 cm aperture); v2 hybrid labels (anchors from robot FK) normalize them.</td><td class="mono">—</td></tr>
+        <tr><td>⑤</td><td>teleop-mix rollout (v3 object-fixed, position)</td>
+          <td>Hand opens/closes correctly; fails at approach/alignment.</td><td class="mono">0/24</td></tr>
+        <tr><td>⑥</td><td>teleop v4 (wrist-orientation fixed, position)</td>
+          <td>Wrist-bend bug fixed; approach/alignment failure persists.</td><td class="mono">0/24</td></tr>
+        <tr><td>⑦</td><td>GeoRT retarget 1×3 mesh (run101 / pnp300; skeleton + real-video human)</td>
+          <td>Retargeter quality visualization (Human | Inspire | Sharpa).</td><td class="mono">—</td></tr>
+      </tbody>
+    </table>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">02</span>Implementation bugs found &amp; fixed (all measured)</h2>
+    <table>
+      <thead><tr><th>#</th><th>Bug</th><th>Symptom</th><th>Fix</th><th>Verified</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>obs R⁻¹ OOD + Kabsch contamination</td><td>in-place stalling</td><td>overwrite 6 real anchors + clamp bone lengths</td><td class="mono">obs gap 13→0 cm</td></tr>
+        <tr><td>2</td><td>dexret <em>vector</em> compression</td><td>hand won't open</td><td><strong>position mode</strong></td><td class="mono">open 9.2 / closed 3.9 cm (vs 8.7/7.3 stuck)</td></tr>
+        <tr><td>3</td><td>dexret scale 1.15 (operator-hand assumption)</td><td>fingers half-curled</td><td>per-finger recalibration</td><td class="mono">offline aperture 5→8 cm</td></tr>
+        <tr><td>4</td><td>arm-IK vs finger scale mismatch</td><td>palm rammed into object</td><td>aperture-blend on both</td><td class="mono">—</td></tr>
+        <tr><td>5</td><td>teleop object cloud 6 cm hand-removal</td><td>object deleted during grasp</td><td>rigid-offset tracking</td><td class="mono">hand–object 28.8→0.8 cm</td></tr>
+        <tr><td>6</td><td>teleop proprio zero-fill</td><td>silent 0% mix risk</td><td>identity rot6d</td><td class="mono">loader passes</td></tr>
+        <tr><td>7</td><td>teleop wrist orientation (Rhb@MT_sites)</td><td>wrist bent from t=0</td><td>Kabsch onto real tip sites</td><td class="mono">label = robot tips</td></tr>
+      </tbody>
+    </table>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">03</span>Success-rate results (all 0/24)</h2>
+    <table>
+      <thead><tr><th>Policy / mix</th><th>Object cloud</th><th>Mode</th><th>SR</th></tr></thead>
+      <tbody>
+        <tr><td>scratch-150k</td><td>—</td><td>vector</td><td class="mono">0/24</td></tr>
+        <tr><td>scratch-150k</td><td>—</td><td>position</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 10%</td><td>v1</td><td>vector</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 20%</td><td>v1</td><td>vector</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 50%</td><td>v1</td><td>vector</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 70%</td><td>v1</td><td>vector</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 20%</td><td>v3 (object-fixed)</td><td>position</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 50%</td><td>v3</td><td>position</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 100% (only)</td><td>v3</td><td>position</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 20%</td><td>v4 (wrist-fixed)</td><td>position</td><td class="mono">0/24</td></tr>
+        <tr><td>teleop 100% (only)</td><td>v4</td><td>position</td><td class="mono">0/24</td></tr>
+      </tbody>
+    </table>
+  </div></section>
+
+  <section><div class="wrap">
+    <h2><span class="n">04</span>Verdict — two remaining bottlenecks</h2>
+    <p class="sub">The seven implementation-layer bugs were all removed and verified (finger open/close, wrist
+      orientation, object supervision, obs contamination). Yet every condition remains SR 0/24. The grasp-success
+      bottleneck is not the retargeter but:</p>
+    <ul class="clean">
+      <li><span class="mk i">1</span><span><span class="lt">Policy alignment / approach.</span><span class="ld">The scratch-150k policy has not learned the grasp phase; a PT-initialized fine-tune is the lever.</span></span></li>
+      <li><span class="mk i">2</span><span><span class="lt">teleop→sim domain gap.</span><span class="ld">Even teleop-only 100% lands at 0 — the real demo distribution does not match the sim eval distribution.</span></span></li>
+    </ul>
+    <p class="sub" style="margin-top:14px">Both are decisions outside this session's implementation-fix scope
+      (PT-init fine-tune / domain-matched re-extraction).</p>
+  </div></section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-19 · beomjun · experiments/dex-point-policy/logs/2026-08-19-teleop-retargeter-iteration</div>
+</footer>
+
+</body>
+</html>
