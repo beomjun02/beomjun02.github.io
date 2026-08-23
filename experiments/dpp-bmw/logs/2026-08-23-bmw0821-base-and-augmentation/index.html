@@ -180,10 +180,41 @@
   <section>
     <div class="wrap">
       <h2><span class="n">08</span>Artifacts &amp; repro</h2>
-      <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">Checkpoints</span><span class="ld mono">dex-point-policy/exp_local/2026.08.2{2,3}/dpp_bmw_0821_*/deterministic/*/snapshot/100000.pt</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Training data</span><span class="ld mono">ALIN_ROSBAG/bmw_0821/bmw_ft_0821_full{,_subtask,_initdest,_subtask_initdest}.h5</span></span></li>
+
+      <h3>Checkpoints</h3>
+      <p class="sub">Root <code>/sjw_alinlab2/home/beomjun/dex-point-policy/</code> · all <code>snapshot/100000.pt</code> · W&amp;B project <code>dpp-bmw</code>.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Policy</th><th>snapshot path (rel. to root)</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">dpp_bmw_0821_2x</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x/deterministic/155028_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_initdest</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x_initdest/deterministic/155147_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_subtask_initdest</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x_subtask_initdest/deterministic/155054_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x/deterministic/153708_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_1x</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_1x/deterministic/153832_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug1cm</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x_aug1cm/deterministic/154001_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug5cm</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x_aug5cm/deterministic/171256_hidden_dim_512/snapshot/100000.pt</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Training data</h3>
+      <p class="sub">Root <code>/virtual_lab/sjw_alinlab/beomjun/ALIN_ROSBAG/bmw_0821/</code>. Each run group carries <code>object_points_3d (T,4,2048,3)</code>, <code>right/joints_worldspace (T,21,3)</code>, <code>right/contact_point (T,5)</code>.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>HDF5</th><th>content</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">bmw_ft_0821_full.h5</td><td>base merge (obj + hand + contact)</td></tr>
+            <tr><td class="mono">bmw_ft_0821_full_subtask.h5</td><td>+ subtask conditioning (Exp2 data)</td></tr>
+            <tr><td class="mono">bmw_ft_0821_full_initdest.h5</td><td>+ initdest ramps</td></tr>
+            <tr><td class="mono">bmw_ft_0821_full_subtask_initdest.h5</td><td>+ subtask + initdest</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="clean" style="margin-top:18px">
+        <li><span class="mk i">·</span><span><span class="lt">Intermediates</span><span class="ld mono">bmw_0821/{dpp_shards, contact_labels, data, hoi_bmw_0821}/</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Launchers</span><span class="ld mono">mano_run101_work/run_{export,contact,objpoint}_bmw0821.sbatch · dex-point-policy/scripts/run_train_bmw.sbatch</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">PT init</span><span class="ld mono">dex-point-policy/data/pretrain_ckpt/dpp_pt_100k.pt (VITRA 6-pt)</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Full report</span><span class="ld mono">claude-code-rc/dpp-bmw/REPORT_bmw0821.md</span></span></li>
       </ul>
     </div>
