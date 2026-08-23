@@ -27,11 +27,11 @@
   </div>
 </header>
 
-<div class="hero"><div class="wrap"><div class="hero-grid">
+<div class="hero"><div class="wrap">
   <div class="reveal">
     <div class="eyebrow">Base policy · real human data only</div>
-    <h1>A BMW-assembly base policy trained on <span class="hl">real human demonstrations</span> — no sim, no residual RL.</h1>
-    <p class="lede">Raw 4-camera rosbags become a Dexterous Point Policy: 4-view MANO hand pose, single-view HaWoR contact, and VGGT-Omega object points, all in one BA world frame. The newest 60-run batch (bmw_0821) is processed end-to-end and 7 base policies are trained and verified.</p>
+    <h1>DPP-BMW <span class="hl">→</span> base policy on real human demonstrations</h1>
+    <p class="lede">Raw 4-camera rosbags become a Dexterous Point Policy: 4-view MANO hand pose, single-view HaWoR contact, and VGGT-Omega object points, all in one BA world frame. No sim, no residual RL. Newest batch bmw_0821 (60 runs) processed end-to-end; 7 base policies trained and verified.</p>
     <div class="meta-line">
       <span>Updated 2026-08-23</span><span class="dot"></span>
       <span>bmw_0821 · 60 runs · jig · ecu · bracket · drill</span>
@@ -42,11 +42,7 @@
       <span class="chip"><span class="st wip">next</span> eval / rollout</span>
     </div>
   </div>
-  <figure class="hero-media reveal">
-    <div class="frame"><img src="/experiments/dpp-bmw/assets/thumb.jpg" alt="BMW rig with jig/bracket/ecu object masks overlaid"></div>
-    <figcaption>bmw_0821 run000 — per-object masks (jig · bracket · ecu) over the 4-camera rig; object points are lifted to the shared BA world.</figcaption>
-  </figure>
-</div></div></div>
+</div></div>
 
 <section id="logs"><div class="wrap">
   <div class="sec-head reveal">
@@ -80,6 +76,10 @@
     <div class="item"><span class="badge done">3</span><div><h3>Object points (VGGT-Omega)</h3><p>multi-view depth → metric scale → grad filter → BA lift → Umeyama → FPS 2048.</p></div></div>
     <div class="item"><span class="badge done">4</span><div><h3>Merge + subtask/initdest</h3><p>per-run shards → conditioned training HDF5.</p></div></div>
   </div>
+  <figure class="media reveal" style="margin-top:26px">
+    <div class="frame"><img src="/experiments/dpp-bmw/assets/thumb.jpg" alt="BMW rig with jig/bracket/ecu object masks overlaid"></div>
+    <figcaption><b>bmw_0821 run000.</b> Per-object masks (jig · bracket · ecu) over the 4-camera rig; object points lift to the shared BA world.</figcaption>
+  </figure>
 </div></section>
 
 <section id="status"><div class="wrap">
