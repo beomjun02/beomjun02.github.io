@@ -55,18 +55,18 @@
         <figcaption>masks.jpg · bmw_0821 run000 cam_0 — jig (green plate) · bracket (red housing) · ecu (blue T-part). Mask folder names verified against object identity before fixing label order.</figcaption>
       </figure>
 
-      <h3 style="margin-top:26px">Hand keypoints + object clouds (BA world)</h3>
-      <p class="sub">What the policy actually consumes: the actor hand's 21 keypoints (yellow skeleton) and the four per-object 2048-pt clouds (jig=green · ecu=blue · bracket=red · drill=orange), all in one BA world frame. run000, post-fix (left/actor hand).</p>
+      <h3 style="margin-top:26px">Hand keypoints + object clouds, matched to cam_0</h3>
+      <p class="sub">What the policy actually consumes, put in the reference camera's frame: <b>left = cam_0 RGB observation</b>, <b>right = the point representation</b> — actor hand's 21 keypoints (yellow skeleton) + the four per-object 2048-pt clouds (jig=green · ecu=blue · bracket=red · drill=orange), all in the BA world. run000, post-fix (left/actor hand).</p>
       <div class="grid2">
         <figure class="card">
-          <h3><span class="tag">rotating</span> fixed timestep</h3>
+          <h3><span class="tag">rotating</span> about the table</h3>
           <video class="vid" src="assets/handobj_turntable.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/handobj_turntable.jpg"></video>
-          <figcaption>360° turntable at the frame where the hand is nearest the objects — shows the 3D hand–object contact geometry.</figcaption>
+          <figcaption>Fixed frame (hand nearest the objects); the point cloud rotates about the <b>table plane normal</b> (fit to the object points) — the 3D hand–object contact geometry. Left: the cam_0 image at that frame.</figcaption>
         </figure>
         <figure class="card">
           <h3><span class="tag">playback</span> full episode</h3>
           <video class="vid" src="assets/handobj_episode.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/handobj_episode.jpg"></video>
-          <figcaption>Fixed camera, full episode — the actor hand moving through the assembly while objects stay on the jig.</figcaption>
+          <figcaption>Full episode. Right panel = the points <b>projected into cam_0</b> (same K + extrinsic), so it is pixel-aligned with the RGB on the left.</figcaption>
         </figure>
       </div>
     </div>
