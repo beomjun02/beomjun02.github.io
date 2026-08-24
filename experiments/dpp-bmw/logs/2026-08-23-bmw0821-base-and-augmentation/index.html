@@ -54,6 +54,21 @@
         <img src="assets/masks.jpg" alt="run000 cam_0 with jig/bracket/ecu object masks overlaid" loading="lazy">
         <figcaption>masks.jpg · bmw_0821 run000 cam_0 — jig (green plate) · bracket (red housing) · ecu (blue T-part). Mask folder names verified against object identity before fixing label order.</figcaption>
       </figure>
+
+      <h3 style="margin-top:26px">Hand keypoints + object clouds (BA world)</h3>
+      <p class="sub">What the policy actually consumes: the actor hand's 21 keypoints (yellow skeleton) and the four per-object 2048-pt clouds (jig=green · ecu=blue · bracket=red · drill=orange), all in one BA world frame. run000, post-fix (left/actor hand).</p>
+      <div class="grid2">
+        <figure class="card">
+          <h3><span class="tag">rotating</span> fixed timestep</h3>
+          <video class="vid" src="assets/handobj_turntable.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/handobj_turntable.jpg"></video>
+          <figcaption>360° turntable at the frame where the hand is nearest the objects — shows the 3D hand–object contact geometry.</figcaption>
+        </figure>
+        <figure class="card">
+          <h3><span class="tag">playback</span> full episode</h3>
+          <video class="vid" src="assets/handobj_episode.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/handobj_episode.jpg"></video>
+          <figcaption>Fixed camera, full episode — the actor hand moving through the assembly while objects stay on the jig.</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
