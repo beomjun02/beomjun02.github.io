@@ -41,6 +41,11 @@
       <p class="k">Verdict</p>
       <p>The full pipeline reproduces on a fresh batch: 60 runs → 4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, merge + subtask/initdest post-processing → 7 base policies (Exp1: 3 initdest/subtask variants; Exp2: 2x/1x subsample × none/1cm/5cm point-aug, all subtask, no initdest). Point-shift augmentation is verified consistent (relative hand–object geometry preserved to ±1 cm even at a 50 cm shift). No behavioural numbers yet — eval/rollout is next.</p>
     </div>
+
+    <div class="verdict" style="border-color:#f59e0b">
+      <p class="k">⚠ Correction (2026-08-24)</p>
+      <p>The policies first trained here used the <b>wrong hand</b> — the extractor stored the background <b>right</b> hand (~55 cm from the objects) instead of the actor <b>left</b> hand. All 60 runs were re-extracted on the actor hand and all 7 policies retrained; the checkpoint paths in §08 now point to the corrected <code>exp_local/2026.08.24</code> set (originals archived in <code>_wronghand_bak_2026.08.24/</code>). Full root-cause in the <a href="/experiments/dpp-bmw/logs/2026-08-24-lefthand-refix/">left-hand re-extract + retrain log</a>.</p>
+    </div>
   </div>
 </header>
 
@@ -202,13 +207,13 @@
         <table>
           <thead><tr><th>Policy</th><th>snapshot path (rel. to root)</th></tr></thead>
           <tbody>
-            <tr><td class="mono">dpp_bmw_0821_2x</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x/deterministic/155028_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_2x_initdest</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x_initdest/deterministic/155147_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_2x_subtask_initdest</td><td class="mono">exp_local/2026.08.22/dpp_bmw_0821_2x_subtask_initdest/deterministic/155054_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_subtask_2x</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x/deterministic/153708_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_subtask_1x</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_1x/deterministic/153832_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug1cm</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x_aug1cm/deterministic/154001_hidden_dim_512/snapshot/100000.pt</td></tr>
-            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug5cm</td><td class="mono">exp_local/2026.08.23/dpp_bmw_0821_subtask_2x_aug5cm/deterministic/171256_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_2x/deterministic/145219_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_initdest</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_2x_initdest/deterministic/145338_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_subtask_initdest</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_2x_subtask_initdest/deterministic/150115_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_subtask_2x/deterministic/150218_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_1x</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_subtask_1x/deterministic/150555_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug1cm</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_subtask_2x_aug1cm/deterministic/150829_hidden_dim_512/snapshot/100000.pt</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug5cm</td><td class="mono">exp_local/2026.08.24/dpp_bmw_0821_subtask_2x_aug5cm/deterministic/154354_hidden_dim_512/snapshot/100000.pt</td></tr>
           </tbody>
         </table>
       </div>

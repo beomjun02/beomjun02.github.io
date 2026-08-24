@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-24 · left-hand re-extract + retrain — DPP-BMW</title>
+<meta name="description" content="BMW is a left-hand task, but extraction had stored the background right hand. Root-caused, re-extracted all 60 runs on the actor left hand, and retrained all 7 base policies. These supersede the earlier checkpoints.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dpp-bmw/">dpp-bmw</a><span class="sep">/</span>
+      <span class="here">2026-08-24 · lefthand-refix</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · DPP-BMW</p>
+    <h1>BMW is a left-hand task — re-extract on the actor hand + retrain all 7</h1>
+    <p class="lede">The extractor picked the wrong hand. BMW demos are performed with the <b>left</b> hand, but the pipeline had stored the <b>background right</b> hand that drifts into view — ~55 cm from the objects, never touching them. Every base policy was learning from a hand that never did the task. Root-caused, re-extracted all 60 runs on the actor left hand, and retrained all 7 checkpoints. These <b>supersede</b> the policies in the base log.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-24 → 08-25</dd></div>
+      <div><dt>Outcome</dt><dd>60/60 re-extracted · 7/7 retrained @ 100k, verified</dd></div>
+      <div><dt>Root cause</dt><dd class="mono">extract picked hand slot 0 (background right) not 1 (actor left)</dd></div>
+      <div><dt>Fix</dt><dd class="mono">DPP_JOINTS_SLOT=1 · DPP_CONTACT_IDX=0 + hand→object sanity assert</dd></div>
+      <div><dt>Superseded</dt><dd class="mono">exp_local/2026.08.2{2,3}/* → _wronghand_bak_2026.08.24/</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>Two hands are reconstructed per frame; single-hand BMW demos use the left. The DPP extractor defaulted to the first valid slot, which was the operator's <b>right</b> hand resting in the background — mean position ~55 cm from the object centroid, never in contact. Fixed by selecting the actor slot explicitly (<code>DPP_JOINTS_SLOT=1</code>) with the matching HaWoR contact index (<code>DPP_CONTACT_IDX=0</code>, cross-ordered), plus a pre-save assert that flags any run whose hand sits &gt;50 cm from the objects. Re-extracted 60/60 (hand→object 9.6–14.4 cm, zero far-flags), rebuilt the 4 training HDF5s, and retrained all 7 base policies to 100k — all torch-load verified. The <a href="/experiments/dpp-bmw/logs/2026-08-24-chord-contact-wrench/">CHORD contact study</a> and the hand+object viz both run on this corrected data.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>The bug</h2>
+      <p class="sub">The MANO pipeline reconstructs <b>two</b> hands per frame (both operators' hands are in view). BMW is a single-hand, <b>left</b>-hand task; the actor hand is the one that reaches the parts. The DPP extractor selected the first slot with a valid track — which was the <b>background right</b> hand.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Hand slot</th><th>identity</th><th>mean position (BA world)</th><th>to object centroid</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0 (was used)</td><td>background right</td><td class="mono">[−0.14, −0.46, 0.83]</td><td><b>~55 cm</b> — never contacts</td></tr>
+            <tr><td class="mono">1 (actor)</td><td>left, does the task</td><td class="mono">[0.17, −0.11, 0.67]</td><td><b>~11 cm</b> — reaches parts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Consequence: object points, contact labels and action targets were all consistent with each other, so nothing crashed and the data looked plausible — but the <b>hand</b> the policy imitated never touched a part. This is why it was caught by geometry (hand-to-object distance), not by any pipeline error.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>The fix</h2>
+      <p class="sub">Explicit actor-slot selection, the cross-ordered contact index, and a loud sanity gate — in <code>extract_alin_dpp.py</code>, env-driven so it stays reproducible.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Knob</th><th>Value</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">DPP_JOINTS_SLOT</td><td class="mono">1</td><td>select the actor (left) hand, not the first valid slot</td></tr>
+            <tr><td class="mono">DPP_CONTACT_IDX</td><td class="mono">0</td><td>HaWoR single-view orders hands opposite the 4-view fit — actor tactile is index 0</td></tr>
+            <tr><td>sanity assert</td><td class="mono">&gt;0.5 m ⇒ FAR flag</td><td>prints hand→object distance per run; loud-fails a wrong-hand pick</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The cross-index (mesh/joints actor = 1, tactile actor = 0) is the subtle part: the 4-view MANO fit and the single-view HaWoR contact number the two hands in opposite order. Both were pinned down and asserted, not assumed.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Verification</h2>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">All 60 runs on the actor hand.</span><span class="ld">hand→object centroid distance 9.6–14.4 cm across the batch; <b>zero</b> FAR flags (was ~55 cm for the background hand).</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">run000 spot-check.</span><span class="ld">actor mesh sits 11.0 cm from the objects vs 52.7 cm for the background hand — an unambiguous separation.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Data rebuilt.</span><span class="ld">All 4 training HDF5s (full / +subtask / +initdest / +subtask+initdest) regenerated from the corrected shards.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Retrained + verified.</span><span class="ld">7/7 base policies reach 100k and torch-load clean (<code>_global_step=100000</code>).</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Corrected checkpoints — the authoritative set</h2>
+      <p class="sub">Root <code>/sjw_alinlab2/home/beomjun/dex-point-policy/</code> · all under <code>exp_local/2026.08.24/</code> · <code>&lt;name&gt;/deterministic/&lt;id&gt;_hidden_dim_512/snapshot/100000.pt</code>. These replace the 2026.08.2{2,3} checkpoints (now in <code>_wronghand_bak_2026.08.24/</code>).</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Policy</th><th>id dir</th><th>step</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">dpp_bmw_0821_2x</td><td class="mono">145219_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_initdest</td><td class="mono">145338_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_2x_subtask_initdest</td><td class="mono">150115_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_1x</td><td class="mono">150555_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x</td><td class="mono">150218_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug1cm</td><td class="mono">150829_hidden_dim_512</td><td>100000 ✓</td></tr>
+            <tr><td class="mono">dpp_bmw_0821_subtask_2x_aug5cm</td><td class="mono">154354_hidden_dim_512</td><td>100000 ✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Training data (corrected): <code>ALIN_ROSBAG/bmw_0821/bmw_ft_0821_full{,_subtask,_initdest,_subtask_initdest}.h5</code>. The <code>dpp_bmw_0821_2x</code> run died once at step 65k (node SIGTERM); a fail-loud watcher caught it and it resumed from the 65k snapshot on a fresh node.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Timeline</h2>
+      <ul class="timeline">
+        <li class="acc">
+          <span class="tdate">2026-08-24</span>
+          <span class="tt">Wrong hand found</span>
+          <p>Noticed BMW is left-hand only; the stored hand sat ~55 cm from the objects — the background right hand. Root-caused to first-valid-slot selection in the extractor.</p>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-08-24</span>
+          <span class="tt">Re-extract 60/60</span>
+          <p>DPP_JOINTS_SLOT=1 + DPP_CONTACT_IDX=0 + sanity assert. All 60 runs re-extracted on the actor hand (9.6–14.4 cm, FAR=0); 4 HDF5s rebuilt.</p>
+        </li>
+        <li class="ok">
+          <span class="tdate">2026-08-24 → 08-25</span>
+          <span class="tt">Retrain 7/7</span>
+          <p>All base policies retrained from PT to 100k on the corrected data. One straggler died at 65k and resumed cleanly on a fresh node. Old wrong-hand checkpoints moved to <code>_wronghand_bak_2026.08.24/</code>.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Artifacts</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>What</th><th>Path</th></tr></thead>
+          <tbody>
+            <tr><td>Extractor (env-driven)</td><td class="mono">ALIN_ROSBAG/extract_alin_dpp.py</td></tr>
+            <tr><td>Object-point launcher</td><td class="mono">mano_run101_work/run_objpoint_bmw0821.sbatch</td></tr>
+            <tr><td>Train launcher</td><td class="mono">dex-point-policy/scripts/{run_train_bmw.sbatch,train_bmw.sh}</td></tr>
+            <tr><td>Corrected data</td><td class="mono">ALIN_ROSBAG/bmw_0821/bmw_ft_0821_full*.h5</td></tr>
+            <tr><td>Superseded ckpts</td><td class="mono">dex-point-policy/_wronghand_bak_2026.08.24/</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-25 · beomjun · experiments/dpp-bmw/logs/2026-08-24-lefthand-refix</div>
+</footer>
+
+</body>
+</html>

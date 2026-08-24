@@ -33,7 +33,7 @@
     <h1>DPP-BMW <span class="hl">→</span> base policy on real human demonstrations</h1>
     <p class="lede">Raw 4-camera rosbags become a Dexterous Point Policy: 4-view MANO hand pose, single-view HaWoR contact, and VGGT-Omega object points, all in one BA world frame. No sim, no residual RL. Newest batch bmw_0821 (60 runs) processed end-to-end; 7 base policies trained and verified.</p>
     <div class="meta-line">
-      <span>Updated 2026-08-24</span><span class="dot"></span>
+      <span>Updated 2026-08-25</span><span class="dot"></span>
       <span>bmw_0821 · 60 runs · jig · ecu · bracket · drill</span>
     </div>
     <div class="chips">
@@ -51,6 +51,10 @@
     <p>Newest first. Each log is one question, ended by a verdict.</p>
   </div>
   <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="logs/2026-08-24-lefthand-refix/">BMW is a left-hand task — re-extract on the actor hand + retrain all 7</a></h3>
+      <p><code>2026-08-24 → 08-25 · done</code> — The extractor had stored the background <b>right</b> hand (~55&nbsp;cm from the objects), not the actor <b>left</b>. Root-caused, re-extracted 60/60 on the actor hand (9.6–14.4&nbsp;cm, FAR=0), retrained all 7 base policies to 100k @ <code>exp_local/2026.08.24</code>. These supersede the earlier checkpoints.</p>
+    </div></div>
     <div class="item"><span class="badge done">done</span><div>
       <h3><a href="logs/2026-08-24-chord-contact-wrench/">CHORD contact-wrench on the BMW demo — vs the HaWoR predicted tactile map</a></h3>
       <p><code>2026-08-24 · done</code> — NVIDIA CHORD's contact map + friction-cone wrench (force/torque), from CHORD's real code, computed on run000 and compared to HaWoR tactile. CHORD's 1&nbsp;cm geometric contact is a strict subset of HaWoR's dense soft field (precision 1.00); same fingers &amp; grasp episodes (per-finger F1 ≈ 0.69, intensity corr ≈ 0.55).</p>
@@ -101,10 +105,10 @@
 <footer><div class="wrap">
   <div>
     <div style="color:var(--ink);font-weight:600;font-size:14px">DPP-BMW — base policy on real human data</div>
-    <div style="margin-top:6px">Internal page · updated 2026-08-23</div>
+    <div style="margin-top:6px">Internal page · updated 2026-08-25</div>
   </div>
   <div class="paths">
-    <div>ckpt <code>dex-point-policy/exp_local/2026.08.2{2,3}/dpp_bmw_0821_*/…/snapshot/100000.pt</code></div>
+    <div>ckpt <code>dex-point-policy/exp_local/2026.08.24/dpp_bmw_0821_*/…/snapshot/100000.pt</code> (left-hand corrected)</div>
     <div>data <code>ALIN_ROSBAG/bmw_0821/bmw_ft_0821_full{,_subtask,_initdest,_subtask_initdest}.h5</code></div>
     <div>report <code>claude-code-rc/dpp-bmw/REPORT_bmw0821.md</code> · logs <code>/experiments/dpp-bmw/logs/</code></div>
   </div>
