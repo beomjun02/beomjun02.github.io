@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-24 · CHORD contact-wrench vs HaWoR tactile — DPP-BMW</title>
+<meta name="description" content="NVIDIA CHORD's contact-wrench (contact map + friction-cone force/torque) computed on a BMW demo from 3D hand–object distance, compared qualitatively and quantitatively against the HaWoR predicted tactile map.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dpp-bmw/">dpp-bmw</a><span class="sep">/</span>
+      <span class="here">2026-08-24 · chord-contact-wrench</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · DPP-BMW</p>
+    <h1>CHORD contact-wrench on the BMW demo — vs the HaWoR predicted tactile map</h1>
+    <p class="lede">NVIDIA <b>CHORD</b> turns a 3D hand–object distance field into a physical grasp signal: a contact map, then a friction-cone <b>wrench</b> (force + torque) per hand link. Using CHORD's <em>actual public code</em> and default hyperparameters, computed on bmw_0821 run000 from the MANO hand mesh + the posed-CAD object surface (mvpose 6D pose), and compared — spatially and numerically — against our HaWoR per-vertex tactile prediction.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>done</span></dd></div>
+      <div><dt>Date</dt><dd>2026-08-24</dd></div>
+      <div><dt>Demo</dt><dd class="mono">bmw_0821 run000 · 551 valid frames</dd></div>
+      <div><dt>Method</dt><dd class="mono">CHORD (arXiv 2607.00033) · nvidia-isaac/video_to_data</dd></div>
+      <div><dt>Inputs</dt><dd class="mono">MANO mesh · mvpose posed CAD · HaWoR tactile</dd></div>
+      <div><dt>Code</dt><dd class="mono">mano_run101_work/chord_bmw.py · chord_viz.py</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>CHORD's hard-geometric contact (surface within <b>1&nbsp;cm</b>) is a strict <b>subset</b> of HaWoR's much denser soft tactile field: at any tactile&nbsp;&gt;&nbsp;0, every CHORD-contact vertex also carries predicted tactile (<b>precision = 1.00</b>), while HaWoR fires on ~6× more of the hand. The two agree on <b>the same grasp episodes and the same fingers</b> — per-finger F1 ≈ 0.69, frame-level any-contact F1 = 0.74, and contact-intensity correlates 0.54–0.58. Peak contact-map overlap is <b>F1 0.47 / IoU 0.31</b> when HaWoR is thresholded to its top ~25% of the hand. CHORD additionally yields a physically-grounded friction-cone wrench (force + torque) that HaWoR's tactile map does not provide.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>What CHORD computes</h2>
+      <p class="sub">Per frame, from the posed object surface (points + <b>inward</b> normals) and the MANO hand mesh (vertices + <b>outward</b> normals). Taken from CHORD's real code — the contact stage is imported directly (<code>contact_utils.py</code>); the wrench stage is a verbatim copy of <code>tasks/v2d/mdp/utils.py</code>.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Step</th><th>CHORD function</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>1 · contact detect</td><td class="mono">approximate_contact_with_id</td><td>object point in contact iff nearest hand vertex &lt; <b>1&nbsp;cm</b></td></tr>
+            <tr><td>2 · link aggregate</td><td class="mono">compute_hand_link_contact_positions</td><td>assign contacts to nearest of 16 MANO links; <b>softmax(−dist)</b> weighted position/normal; part-id by mode vote</td></tr>
+            <tr><td>3 · object contact</td><td class="mono">find_object_contact_positions</td><td>nearest object vertex + normal per link</td></tr>
+            <tr><td>4 · friction cone</td><td class="mono">compute_friction_cone_edges</td><td>rays <code>n + μ(cosθ·t₁ + sinθ·t₂)</code>, K edges + normal; <b>μ = 0.5</b></td></tr>
+            <tr><td>5 · wrench space</td><td class="mono">compute_wrench_space</td><td>per force <code>f</code>: torque <code>τ = p×f</code>; wrench <code>w = [f, τ/r_c]</code>, r<sub>c</sub> = object bounding-ball radius</td></tr>
+            <tr><td>6 · support fn</td><td class="mono">compute_wrench_space_support_function</td><td><code>support(d) = clamp(maxₙ dᵀw, ≥0)</code> over a 6D basis — the grasp's wrench-resisting capacity</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Hyperparameters are CHORD defaults, unchanged: contact threshold <b>0.01 m</b>, friction <b>μ = 0.5</b>, friction-cone K = 8 edges + normal, torque scale r<sub>c</sub> = per-object bounding-ball radius, support basis = 64 directions on the scaled 6D sphere. Full derivation in <code>claude-code-rc/dpp-bmw/CHORD_algorithm.md</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Inputs on the BMW demo</h2>
+      <p class="sub">Everything lives in the shared <b>BA world frame</b> (world = cam2 = calibration reference), so hand, objects and tactile are directly comparable with no extra transform.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Input</th><th>Source</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Hand mesh</td><td class="mono">MANO-pipeline verts_m (895,1556,3)</td><td>actor hand (index 1, 778 verts) + MANO faces → outward vertex normals</td></tr>
+            <tr><td>Object surface</td><td class="mono">mvpose 6D pose → CAD</td><td>per-frame object→world pose on RAW mesh verts; ~1500 sampled surface pts/obj; inward normals</td></tr>
+            <tr><td>Tactile (compare)</td><td class="mono">HaWoR contact_outputs (2,895,778)</td><td>actor tactile (index 0), per-vertex scalar force</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:14px">Two alignment facts pinned down before any number was computed: <b>(a)</b> the actor is mesh index 1 (11.0 cm to objects vs 52.7 cm for the background hand) but tactile index 0 (638 valid frames vs 210) — HaWoR single-view orders hands opposite to the 4-view fit; <b>(b)</b> poses/shard run on the 780-frame data timeline, verts/tactile on the 895-frame HOI timeline — mapped by nearest actor-wrist match, residual <b>0.000 mm</b> (exact subset). 551 frames have valid actor tactile.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Qualitative — same regions, tighter</h2>
+      <p class="sub">Coordinate-matched to <b>cam0</b>: <b>left</b> = RGB observation, <b>middle</b> = CHORD contact (red = hand vertices within 1 cm; yellow arrow = net contact-normal force), <b>right</b> = HaWoR tactile (turbo heatmap). Object points in grey.</p>
+      <figure class="card">
+        <video class="vid" src="assets/compare.mp4" autoplay loop muted playsinline preload="metadata" poster="assets/compare.jpg"></video>
+        <figcaption>Full episode. CHORD's red contact core sits inside HaWoR's warm tactile region and lights up on the same fingers during each grasp — HaWoR simply spreads wider and softer.</figcaption>
+      </figure>
+      <figure style="margin-top:20px">
+        <img src="assets/compare_frames.jpg" alt="Four representative frames: RGB, CHORD contact, HaWoR tactile side by side" loading="lazy">
+        <figcaption>compare_frames.jpg · frames 77 / 257 / 642 / 751 (approach → press part → grasp drill → release). At the two grasps (rows 2–3) CHORD's red core and HaWoR's hot fingers/palm coincide; on approach/release (rows 1,4) both are faint.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Quantitative</h2>
+      <p class="sub">Pooled over 551 valid frames. HaWoR tactile is a <b>dense soft field</b> (≈100% of the hand carries non-zero tactile on valid frames), so we sweep its binarization threshold; CHORD is the fixed 1 cm geometric contact.</p>
+
+      <h3>Contact-map agreement (per-vertex) vs HaWoR threshold</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>tactile &gt;</th><th>hand covered</th><th>precision</th><th>recall</th><th>F1</th><th>IoU</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0.00</td><td>100%</td><td>1.00</td><td>0.16</td><td>0.28</td><td>0.16</td></tr>
+            <tr><td class="mono">0.02</td><td>35%</td><td>0.71</td><td>0.33</td><td>0.45</td><td>0.29</td></tr>
+            <tr><td class="mono">0.05</td><td>25%</td><td>0.59</td><td>0.39</td><td><b>0.47</b></td><td><b>0.31</b></td></tr>
+            <tr><td class="mono">0.10</td><td>17%</td><td>0.46</td><td>0.44</td><td>0.45</td><td>0.29</td></tr>
+            <tr><td class="mono">0.20</td><td>9%</td><td>0.29</td><td>0.50</td><td>0.37</td><td>0.23</td></tr>
+            <tr><td class="mono">0.30</td><td>6%</td><td>0.19</td><td>0.55</td><td>0.29</td><td>0.17</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Precision 1.00 at threshold 0 → CHORD's geometric contact is a strict subset of predicted tactile. Overlap peaks (F1 0.47 / IoU 0.31) when HaWoR is cut to its top ~25% of the hand — matching CHORD's tight 1 cm band.</p>
+
+      <h3 style="margin-top:24px">Per-finger agreement (CHORD 1 cm vs HaWoR &gt; 0.05, F1)</h3>
+      <div class="chart" role="img" aria-label="Per-finger F1: thumb 0.69, index 0.68, middle 0.70, ring 0.69, pinky 0.72, palm 0.25.">
+        <div class="crow"><span class="clabel">pinky</span><span class="ctrack"><span class="cbar" style="--v:71.6%"></span></span><span class="cval">0.72</span></div>
+        <div class="crow"><span class="clabel">middle</span><span class="ctrack"><span class="cbar" style="--v:69.7%"></span></span><span class="cval">0.70</span></div>
+        <div class="crow"><span class="clabel">thumb</span><span class="ctrack"><span class="cbar" style="--v:69.4%"></span></span><span class="cval">0.69</span></div>
+        <div class="crow"><span class="clabel">ring</span><span class="ctrack"><span class="cbar" style="--v:68.9%"></span></span><span class="cval">0.69</span></div>
+        <div class="crow"><span class="clabel">index</span><span class="ctrack"><span class="cbar" style="--v:68.2%"></span></span><span class="cval">0.68</span></div>
+        <div class="crow"><span class="clabel">palm<span class="cnote">disagreement</span></span><span class="ctrack"><span class="cbar" style="--v:25.4%"></span></span><span class="cval">0.25</span></div>
+      </div>
+      <p class="note">All five fingers agree tightly (F1 ≈ 0.68–0.72). The palm is where the two diverge: HaWoR rarely predicts strong palm tactile, while geometric proximity still fires when the hand rests on a part. Frame-level any-contact F1 = 0.74 (precision 1.00, recall 0.59).</p>
+
+      <h3 style="margin-top:24px">Intensity over time</h3>
+      <figure>
+        <img src="assets/timeline.jpg" alt="Per-finger contact timelines for CHORD and HaWoR, plus normalized intensity curves" loading="lazy">
+        <figcaption>timeline.jpg · Top: CHORD per-finger contact. Middle: HaWoR tactile (&gt;0.05) per finger. Bottom: CHORD #contacts, CHORD wrench-support, and HaWoR tactile total (normalized). All three rise and fall on the same two grasp episodes (≈frames 80–200 and 330–520). Correlation: #contacts↔tactile 0.58, wrench-support↔tactile 0.54.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>What this says</h2>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">The two signals are consistent.</span><span class="ld">Geometric contact and learned tactile agree on when (grasp episodes), where (fingers), and how hard (intensity corr ≈ 0.55). Neither contradicts the other.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">CHORD = tight core; HaWoR = soft halo.</span><span class="ld">CHORD marks only surface actually within 1 cm (precision 1.00, subset). HaWoR predicts a broad, soft pressure field — useful for a dense reward, looser as a contact mask.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">CHORD adds physics HaWoR lacks.</span><span class="ld">The friction-cone <b>wrench</b> gives a force direction + torque and a grasp-support scalar — a physically-grounded contact signal, not just a per-vertex probability.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Palm is the one disagreement.</span><span class="ld">Worth a look before either signal is trusted on palm-heavy contacts; fingers are reliable.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Artifacts &amp; repro</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>What</th><th>Path</th></tr></thead>
+          <tbody>
+            <tr><td>Compute (CHORD contact + wrench)</td><td class="mono">mano_run101_work/chord_bmw.py</td></tr>
+            <tr><td>Sweep + viz</td><td class="mono">mano_run101_work/chord_viz.py</td></tr>
+            <tr><td>CHORD code</td><td class="mono">mano_run101_work/CHORD_repo (nvidia-isaac/video_to_data)</td></tr>
+            <tr><td>Outputs</td><td class="mono">mano_run101_work/chord_out/run000/{chord.npz,metrics.json,metrics_sweep.json}</td></tr>
+            <tr><td>Object 6D pose</td><td class="mono">ALIN_ROSBAG/bmw_0821/pose_mvpose/run000/poses/*.yaml</td></tr>
+            <tr><td>HaWoR tactile</td><td class="mono">ALIN_ROSBAG/bmw_0821/contact_outputs/run000.npz</td></tr>
+            <tr><td>Algorithm notes</td><td class="mono">claude-code-rc/dpp-bmw/CHORD_algorithm.md</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Env <code>vitra</code> (trimesh 4.11 + torch 2.3). Reproduce: <code>python chord_bmw.py run000 &amp;&amp; python chord_viz.py run000</code>. Posed-CAD 6D poses courtesy of the DPP-ICLR27 mvpose run on run000.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-24 · beomjun · experiments/dpp-bmw/logs/2026-08-24-chord-contact-wrench</div>
+</footer>
+
+</body>
+</html>
