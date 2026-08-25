@@ -11,9 +11,9 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Phase 1 in progress (2026-08-25): 1.2 point-budget gallery v2 LIVE (5 TACO tasks, hand-search/object-search GIF sweeps with human MANO + Sharpa Wave hands, N ≤ 4096) — awaiting owner's N_obj/N_hand pick; 1.1 dataset decision pending with owner (inventory done: TACO via CHORD is the only released Sharpa pairing; GRAB/ARCTIC/OakInk2/HOT3D surveyed). Then 1.3 preprocessing.",
+    "text": "Phase 1 in progress (2026-08-26): deck #1 (action item 1.2 point budget) LIVE — one sweep N_obj = N_hand = N ∈ {128…4096} on 5 CHORD-TACO tasks, human MANO | Sharpa Wave; awaiting the owner's N pick and the 1.1 dataset decision (recommend TACO + ARCTIC + GRAB) plus sign-off on the TACO parquet pull / CHORD native-run check. Then 1.3 preprocessing.",
     "status": "active",
-    "updated": "2026-08-25"
+    "updated": "2026-08-26"
    }
   },
   "dpp-bmw": {
@@ -53,11 +53,11 @@
    "project": "3d-wam",
    "date": "2026-08-25",
    "slug": "point-budget-gallery",
-   "title": "Point-budget gallery v2: 5 TACO tasks × hand-search / object-search GIF sweeps (human MANO + Sharpa Wave from CHORD, N ≤ 4096) — owner picks N_obj / N_hand",
+   "title": "Point budget for 3D-WAM — one N for hands and objects, TACO + Sharpa (deck #1, action item 1.2) — owner picks N",
    "status": "running",
-   "updated": "2026-08-25",
-   "tldr": "Action item 1.2, v2 (replaces v1 GRAB grids). CHORD's TACO release (HF, CC-BY-4.0): 5 sequences with 5 different verbs / tools / targets, each with human MANO hands + Sharpa Wave hands (both L/R) + rigid tool and target in one world frame at 30 fps; TACO object meshes (424 MB). Per task 3 whole-episode GIFs (2×3 panels, 840 px): hand search (objects at 4096/object, N_hand ∈ {128…4096}/hand) with human hands and with Sharpa hands, object search (hands at 4096/hand, N_obj ∈ {128…4096}/object). Flat colours: right hand green, left purple, tool orange, target amber. Conventions from schema/code, checked mechanically: Sharpa link frames = world poses (reproduce yourdfpy FK to < 0.001 mm); MANO via manotorch flat_hand_mean=True/center_idx=0 reproduces the parquet joints to < 0.001 mm; 180/180 specs bit-exact; 15 GIFs, 6.2 MB total. Data fact: the HF top-level non-brush parquets have NO MANO columns (34 cols) — only taco/-subfolder sequences carry MANO. No image judged by the tool; owner picks.",
-   "path": "3d-wam/logs/2026-08-25-point-budget-gallery/",
+   "updated": "2026-08-26",
+   "tldr": "Deck #1 (replaces the v2 log). Tracked sampler verified on CHORD's TACO release (human MANO + Sharpa Wave + tool/target); one sweep N_obj = N_hand = N ∈ {128…4096} rendered for 5 tasks, human | Sharpa GIF + MP4. Asks: N (512/1024/2048, compute case for 1024), datasets TACO + ARCTIC + GRAB, sign-off on the TACO parquet pull and CHORD native run.",
+   "path": "3d-wam/decks/2026-08-25-point-budget/",
    "tags": [
     "CHORD",
     "MANO",
@@ -65,7 +65,8 @@
     "TACO",
     "action-item-1.2",
     "point-sampling"
-   ]
+   ],
+   "format": "deck"
   },
   {
    "project": "dex-point-policy",

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #1 · action item 1.2 · from _template/deck.html + deck-example (DECK-STYLE.md §3–4). Caps audited in headless
+     Chromium 1440×810 light+dark: 8 main slides · thesis ≤ 20 words · ≤ 4 one-line bullets · ≤ 3 media/band · Agenda 4+3 · Asks 3 · cut list last. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-26 · Point budget — 3D-WAM</title>
+<meta name="description" content="Deck: one point budget N for hands and objects on CHORD's TACO release (human MANO + Sharpa Wave); sweep N = 128 … 4096 rendered for 5 tasks; owner picks N.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="point budget · action item 1.2" data-date="2026-08-26">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <p class="eyebrow">3D-WAM · action item 1.2 · deck #1</p>
+  <h1>Point budget for 3D-WAM — one N for hands and objects, TACO + Sharpa</h1>
+  <p class="verdict-line">Sampler verified on human MANO + Sharpa Wave TACO episodes; one sweep N = 128 … 4096 rendered for 5 tasks — N is the owner's pick.</p>
+  <div class="meta">
+    <div class="row"><span class="pill acc"><span class="dot"></span>running</span><span>2026-08-25 → 08-26</span></div>
+    <div><b>3D-WAM</b> · <a href="/experiments/3d-wam/">hub</a></div>
+    <div>Presented by beomjun · 2026-08-26</div>
+  </div>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-verdict">
+  <h2>Overview</h2>
+  <p class="thesis"><span class="k">[TL;DR]</span> Sampler verified on human and Sharpa TACO episodes; one sweep N = 128 … 4096 rendered — the decision is N.</p>
+  <ul>
+    <li>Sampler: dense area sample → FPS on the template; sampled once, tracked</li>
+    <li>Sharpa pairs: CHORD's TACO release — MANO + Sharpa Wave + object 6D</li>
+    <li>Sweep: N<sub>obj</sub> = N<sub>hand</sub> = N ∈ {128 … 4096}, 5 TACO tasks, human | Sharpa</li>
+    <li>Open: N (owner) · datasets TACO + ARCTIC + GRAB · data-pull sign-off</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif" alt="hit hammer toy: one sweep, six panels N = 128 to 4096, human MANO hands">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · hit · hammer · toy, 54 frames @ 10 fps</figcaption></figure>
+  </div>
+  <p class="foot">sources: ~/3d-wam/viz/README_v3.md · out_v3/ · inventory/INVENTORY.md</p>
+</section>
+
+<!-- SECTION: agenda -->
+<section class="slide s-agenda">
+  <h2>Today</h2>
+  <p class="thesis">Four items to report, three to decide — the decision on N is where the time goes.</p>
+  <div class="cols">
+    <div class="col"><h3>Report<span class="n">4 · ~1 min each</span></h3>
+      <ul><li>Sampler done, specs verified</li><li>Sharpa source = CHORD TACO release</li>
+          <li>v3 sweeps: 5 tasks, human | Sharpa</li><li>Data facts: MANO · schema · specs</li></ul></div>
+    <div class="col discuss"><h3>Discuss<span class="n">3 · most of the time</span></h3>
+      <ul><li>N — 512 · 1024 · 2048</li><li>Datasets — trio vs GRAB → OakInk2</li><li>Data pull sign-off — TACO, CHORD</li></ul></div>
+  </div>
+  <p class="foot">prep: inventory → triage (report / discuss / FYI / drop) · DECK-STYLE.md §4</p>
+</section>
+
+<!-- SECTION: evidence 1/3 (s-compare, thesis only) -->
+<section class="slide s-compare">
+  <h2>Sweep · hit · hammer · toy</h2>
+  <p class="thesis">One sweep per task: the same N for each hand and each object, six budgets, whole episode.</p>
+  <div class="band">
+    <figure><h3 class="lbl">human MANO</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif" alt="hit hammer toy, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.mp4">MP4</a></figcaption></figure>
+    <figure><h3 class="lbl">Sharpa Wave</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_sharpa.gif" alt="hit hammer toy, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · Sharpa Wave · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_sharpa.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_sharpa.mp4">MP4</a></figcaption></figure>
+  </div>
+  <p class="foot">TACO seq 20231102_070 · 161 frames @ 30 fps · stride 3 → 54 frames @ 10 fps · 1.0×</p>
+</section>
+
+<!-- SECTION: evidence 2/3 -->
+<section class="slide s-compare">
+  <h2>Sweep · pour in some · kettle · bowl</h2>
+  <p class="thesis">Human and Sharpa panels share sampler, camera, box and colours; only the hand mesh changes.</p>
+  <div class="band">
+    <figure><h3 class="lbl">human MANO</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_human.gif" alt="pour in some kettle bowl, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_human.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_human.mp4">MP4</a></figcaption></figure>
+    <figure><h3 class="lbl">Sharpa Wave</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_sharpa.gif" alt="pour in some kettle bowl, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · Sharpa Wave · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_sharpa.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/pour_in_some__kettle__bowl_20231019_001_sharpa.mp4">MP4</a></figcaption></figure>
+  </div>
+  <p class="foot">TACO seq 20231019_001 · 125 frames @ 30 fps · stride 3 → 42 frames @ 10 fps · 1.0×</p>
+</section>
+
+<!-- SECTION: evidence 3/3 -->
+<section class="slide s-compare">
+  <h2>Sweep · empty · teapot · cup</h2>
+  <p class="thesis">Specs are saved per (entity, N); a larger stored budget trims to a smaller one by FPS prefix.</p>
+  <div class="band">
+    <figure><h3 class="lbl">human MANO</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_human.gif" alt="empty teapot cup, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_human.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_human.mp4">MP4</a></figcaption></figure>
+    <figure><h3 class="lbl">Sharpa Wave</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_sharpa.gif" alt="empty teapot cup, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · Sharpa Wave · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_sharpa.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/empty__teapot__cup_20230927_040_sharpa.mp4">MP4</a></figcaption></figure>
+  </div>
+  <p class="foot">TACO seq 20230927_040 · 227 frames @ 30 fps · stride 4 → 57 frames @ 10 fps · 1.33×</p>
+</section>
+
+<!-- SECTION: asks -->
+<section class="slide s-ask">
+  <h2>Asks</h2>
+  <p class="thesis">Three decisions, each with a recommendation; no answer means the recommendation stands.</p>
+  <ol class="asks">
+    <li><span class="lead">Point budget N — per hand and per object</span><span class="who">owner · by eye</span>
+        <span class="opts">Options: 512 · 1024 · 2048 — specs stored to 4096; a larger budget trims by FPS prefix</span>
+        <span class="rec">Recommendation: 1024 (compute only) — 4 × 1024 = 4,096 tracks × T = 16, PointWorld-scale</span></li>
+    <li><span class="lead">Datasets for 1.1</span><span class="who">owner</span>
+        <span class="opts">Options: TACO + ARCTIC + GRAB · swap GRAB → OakInk2 if per-sequence language matters more</span>
+        <span class="rec">Recommendation: the trio — ARCTIC is CHORD's reference dataset; GRAB is local with contacts</span></li>
+    <li><span class="lead">Data acquisition — sign-off</span><span class="who">owner</span>
+        <span class="opts">Options: TACO pull now (855 MANO parquets, ~0.5 GB) · CHORD native-run check first · both</span>
+        <span class="rec">Recommendation: start the TACO pull now; check CHORD runs natively (no Docker) in parallel</span></li>
+  </ol>
+</section>
+
+<!-- SECTION: next -->
+<section class="slide s-next">
+  <h2>Next steps</h2>
+  <p class="thesis">Phase 1 closes with N and the dataset trio; preprocessing and the two data checks follow.</p>
+  <div class="band"><div class="tbl"><table>
+    <thead><tr><th>#</th><th>item</th><th>owner</th><th>ETA / status</th></tr></thead>
+    <tbody>
+      <tr><td>1.2</td><td>N decision — recorded as this deck's verdict</td><td class="who">owner</td><td class="eta">today</td></tr>
+      <tr><td>1.3</td><td>Preprocessing at the chosen N — same sampler, saved .npz specs loaded (never resampled), TACO first</td><td class="who">agent</td><td class="eta">after the N pick · ETA TBD</td></tr>
+      <tr><td>1.1a</td><td>TACO pull — the 855 MANO-bearing CHORD parquets (~0.5 GB), selected by schema, not folder</td><td class="who">agent</td><td class="eta">on sign-off</td></tr>
+      <tr><td>1.1b</td><td>CHORD pipeline native run (no Docker) → Sharpa retargets for ARCTIC, then GRAB</td><td class="who">agent</td><td class="eta">on sign-off · ETA TBD</td></tr>
+      <tr><td>1.1c</td><td>GRAB subject MANO templates (v_templates) — locate; else neutral shape stays</td><td class="who">agent</td><td class="eta">open</td></tr>
+    </tbody>
+  </table></div></div>
+  <p class="foot">work list: /experiments/3d-wam/#actions · TBD is literal — no ETAs are set</p>
+</section>
+
+<!-- SECTION: appendix A1 · remaining task 1/2 -->
+<section class="slide s-compare">
+  <h2>Appendix A1 · cut · knife · plate</h2>
+  <p class="thesis ctx">Same sweep, fourth task — N<sub>obj</sub> = N<sub>hand</sub> = N over six budgets; not presented, kept for the pick.</p>
+  <div class="band">
+    <figure><h3 class="lbl">human MANO</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_human.gif" alt="cut knife plate, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_human.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_human.mp4">MP4</a></figcaption></figure>
+    <figure><h3 class="lbl">Sharpa Wave</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_sharpa.gif" alt="cut knife plate, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · Sharpa Wave · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_sharpa.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_sharpa.mp4">MP4</a></figcaption></figure>
+  </div>
+  <p class="foot">TACO seq 20231013_085 · 187 frames @ 30 fps · stride 4 → 47 frames @ 10 fps · 1.33×</p>
+</section>
+
+<!-- SECTION: appendix A2 · remaining task 2/2 -->
+<section class="slide s-compare">
+  <h2>Appendix A2 · dust · roller · box</h2>
+  <p class="thesis ctx">Same sweep, fifth task — N<sub>obj</sub> = N<sub>hand</sub> = N over six budgets; not presented, kept for the pick.</p>
+  <div class="band">
+    <figure><h3 class="lbl">human MANO</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_human.gif" alt="dust roller box, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · human MANO · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_human.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_human.mp4">MP4</a></figcaption></figure>
+    <figure><h3 class="lbl">Sharpa Wave</h3><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_sharpa.gif" alt="dust roller box, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · Sharpa Wave · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_sharpa.gif">GIF</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dust__roller__box_20231104_004_sharpa.mp4">MP4</a></figcaption></figure>
+  </div>
+  <p class="foot">TACO seq 20231104_004 · 117 frames @ 30 fps · stride 3 → 39 frames @ 10 fps · 1.0×</p>
+</section>
+
+<!-- SECTION: appendix A3 · data findings -->
+<section class="slide s-appendix">
+  <h2>Appendix A3 · data findings</h2>
+  <div class="cols">
+    <dl class="kv">
+      <dt>F1</dt><dd><b>GRAB MANO needs flat_hand_mean=True.</b> GRAB's stored fullpose is reproduced from its PCA-24 params only with flat_hand_mean=True; ManipTrans' GRAB loader (main/dataset/grab_full_dataset_dexhand.py:83) uses the smplx default → 71 mm offset.</dd>
+      <dt>F2</dt><dd><b>CHORD's HF release has two parquet schemas.</b> Top-level taco_* dirs of every non-brush verb (62 seqs, 34 columns) carry Sharpa + objects but NO MANO; the 855 taco/-only seqs carry MANO (62 columns). Select by schema, not folder.</dd>
+    </dl>
+    <dl class="kv">
+      <dt>F3</dt><dd><b>Spec determinism is CPU-bound at the last bit.</b> Re-sampling on another node: 162/180 bit-exact (objects 60/60, Sharpa 60/60, MANO 42/60). MANO/FK float64 templates differ in the last bits and break FPS ties: 17 = same set in a different order; 1 (empty__teapot left hand, N = 2048) diverges from FPS index 526, ≤ 2.85 mm. Downstream loads the saved .npz specs — never resamples.</dd>
+      <dt>F4</dt><dd><b>GRAB subject MANO templates (v_templates) are not on disk</b> → hand shape falls back to neutral until they are located.</dd>
+    </dl>
+  </div>
+  <p class="foot">sources: README_v2.md (schema) · README_v3.md (determinism) · v1 GRAB notes</p>
+</section>
+
+<!-- SECTION: appendix A4 · Sharpa source · inventory · conventions -->
+<section class="slide s-appendix">
+  <h2>Appendix A4 · Sharpa source · dataset inventory · conventions</h2>
+  <div class="cols">
+    <dl class="kv">
+      <dt>Sharpa source</dt><dd>NVIDIA CHORD / Video-to-Data: hand-only target Sharpa Wave (22 DoF). Released dataset = TACO only (HF nvidia/video-to-data-robot-dexterity-task-library-and-dataset, CC-BY-4.0): motion_v1.parquet per sequence = MANO both hands + Sharpa + object 6D, 30 fps; the LeRobot episodes are kinematic replays, not RL.</dd>
+      <dt>Others</dt><dd>ARCTIC / GRAB / OakInk2 / HOT3D Sharpa retargets must be generated locally with the CHORD pipeline (checkouts under /virtual_lab/sjw_alinlab/beomjun/); native (non-Docker) run untested.</dd>
+      <dt>Assumed</dt><dd>World up-axis z (camera elev 22°, azim −60°) — not in the TACO README nor the CHORD loader; view angle only, identical in every panel.</dd>
+    </dl>
+    <dl class="kv">
+      <dt>Inventory</dt><dd>GRAB local + complete (vertex contact labels, 1 intent verb/seq) · TACO not local (~16 GB hand poses; CHORD parquets carry MANO → only Object_Models 424 MB, downloaded, + parquets needed) · OakInk2 partial (richest text) · HOT3D poses local, no labels · ARCTIC local (CHORD's reference). Pick TACO + ARCTIC + GRAB; GRAB → OakInk2 if language matters more.</dd>
+      <dt>Hands</dt><dd>MANO: manotorch ManoLayer(use_pca=False, flat_hand_mean=True, center_idx=0), parquet betas, verts + trans → parquet joints matched &lt; 0.001 mm · Sharpa: URDF link meshes placed from parquet world-frame link poses, yourdfpy FK matched &lt; 0.001 mm · objects: 0.01 · V_cm + 6D pose.</dd>
+    </dl>
+  </div>
+  <p class="foot">sources: INVENTORY.md (recommendation) · README_v2.md (conventions) · CHORD docs</p>
+</section>
+
+<!-- SECTION: appendix A5 · setup · repro -->
+<section class="slide s-appendix">
+  <h2>Appendix A5 · setup · repro</h2>
+  <div class="cols">
+    <dl class="kv">
+      <dt>Env</dt><dd>alinlab Slurm debug · conda 3dwam = maniptrans clone + pyarrow, huggingface_hub (py3.8, torch 1.13.1, manotorch 0.0.2, trimesh 4.12, yourdfpy 0.0.56) · CPU only</dd>
+      <dt>Code</dt><dd>~/3d-wam/viz/{pointsample.py, taco_sweeps.py, taco_sweeps_v3.py} · specs reused from out_v2/&lt;task&gt;/spec_*.npz (36 per task)</dd>
+      <dt>Data</dt><dd>/virtual_lab/sjw_alinlab/beomjun/3d-wam/data/taco/ — 5 motion_v1.parquet (HF) + 10 NNN_cm.obj (TACO Object_Models) · CHORD sharpawave URDFs</dd>
+      <dt>Sampler</dt><dd>20·N area-weighted dense sample (seed 0) → FPS to N → (face_id, bary) spec per (entity, N), N ∈ {128 … 4096}; labels class / instance / MANO-part or URDF-link; saved .npz</dd>
+      <dt>Render</dt><dd>3 × 2 panels 1200×800, 10 fps, stride max(3, ⌈T/60⌉), whole episode · marker area 0.5 × clip(240/√N, 2, 20) pt² (halved vs v2) · R #2a9d4f · L #7a3fb8 · tool #f28e2b · target #e0b428 · bg #f6f5f2</dd>
+    </dl>
+    <div>
+      <pre><code># on a Slurm debug allocation (salloc … --no-shell; README_v3)
+conda activate 3dwam &amp;&amp; cd ~/3d-wam/viz
+python taco_sweeps_v3.py --run --smoke --tasks taco/taco_dust__roller__box_20231104_004
+python taco_sweeps_v3.py --run --workers 10   # ≈ 2 min on 20 cores
+python taco_sweeps_v3.py --verify --table     # checks + bit-exact specs</code></pre>
+      <ul><li>--verify (logs/v3_verify.log, job 130053): 10 GIFs 1200×800 @ 10 fps, 128 colours, GIF = MP4 = rendered frames, GIF ≤ 1.5 MB, MP4 h264 yuv420p, posters ≤ 200 KB, bbox == v2 for 5/5 tasks</li></ul>
+    </div>
+  </div>
+  <p class="foot">README_v3.md (commands, table) · README_v2.md · out_v3/&lt;task&gt;/meta.json</p>
+</section>
+
+<!-- SECTION: appendix A6 · artifacts · cut list -->
+<section class="slide s-appendix">
+  <h2>Appendix A6 · artifacts · cut list</h2>
+  <div class="band"><div class="tbl"><table>
+    <thead><tr><th>task</th><th>TACO seq</th><th>frames</th><th>stride</th><th>GIF frames</th><th>speed</th><th>GIF MB h / S</th><th>MP4 MB h / S</th></tr></thead>
+    <tbody>
+      <tr><td>hit · hammer · toy</td><td>20231102_070</td><td>161</td><td>3</td><td>54</td><td>1.0×</td><td>0.84 / 1.09</td><td>0.24 / 0.34</td></tr>
+      <tr><td>cut · knife · plate</td><td>20231013_085</td><td>187</td><td>4</td><td>47</td><td>1.33×</td><td>0.50 / 0.58</td><td>0.15 / 0.18</td></tr>
+      <tr><td>pour in some · kettle · bowl</td><td>20231019_001</td><td>125</td><td>3</td><td>42</td><td>1.0×</td><td>1.03 / 1.12</td><td>0.29 / 0.34</td></tr>
+      <tr><td>dust · roller · box</td><td>20231104_004</td><td>117</td><td>3</td><td>39</td><td>1.0×</td><td>0.95 / 1.07</td><td>0.30 / 0.36</td></tr>
+      <tr><td>empty · teapot · cup</td><td>20230927_040</td><td>227</td><td>4</td><td>57</td><td>1.33×</td><td>0.81 / 1.03</td><td>0.22 / 0.30</td></tr>
+    </tbody>
+  </table></div>
+    <p class="cut"><b>Files</b> assets/&lt;task&gt;_{human,sharpa}.{gif,mp4,jpg} = out_v3 sweep_* verbatim · 10 GIFs 9.01 MB · 10 MP4s 2.73 MB · 10 posters ≤ 71 KB · 1200×800, 10 fps, 128 colours</p>
+    <p class="cut"><b>Cut list</b> (dropped from this deck, kept on disk / in the sources): v1 GRAB 4×4 grids (10 demos × 16 budgets at the grasp frame, 512/512 flow clips, 16 cross-demo overviews; viz/out/) · v2 two-sweep GIFs (hand search at N<sub>obj</sub> = 4096, object search at N<sub>hand</sub> = 4096; 15 GIFs 840×670, out_v2/) and v2 overview images · Sharpa Wave canonical-pose sample · HOT3D as a candidate dataset (no labels, clutter) · motion_v1.parquet 62-column schema listing (README_v2) · GIF encoding fallbacks (none needed) · v1/v2 timeline of the retired log · related work / method (hub) · pairing MANO-less top-level parquets via TACO Hand_Poses (15 GB, not pursued).</p>
+  </div>
+  <p class="foot">retired log 2026-08-25-point-budget-gallery/ → redirects to this deck</p>
+</section>
+
+</main>
+</body>
+</html>
