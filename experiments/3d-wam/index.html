@@ -56,7 +56,7 @@
   <div class="sec-head reveal">
     <div class="eyebrow">ALL LOGS</div>
     <h2>Experiment log</h2>
-    <p>No logs yet — the first opens with the episode schema and the GRAB→point-flow converter.</p>
+    <p>No logs yet — the first opens with Phase 1: three datasets out of GRAB · TACO · OakInk2 · HOT3D · ARCTIC, Sharpa episodes from CHORD, and the N-point sampling gallery.</p>
   </div>
 </div></section>
 
@@ -293,7 +293,7 @@
     <table>
       <thead><tr><th>source</th><th>gives</th></tr></thead>
       <tbody>
-        <tr class="hero-row"><td>human demonstrations — GRAB (ARCTIC if bimanual needed)</td><td>mesh+pose ⇒ exact point-matched flow; verb-level language from intent labels</td></tr>
+        <tr class="hero-row"><td>human demonstrations — three of GRAB · TACO · OakInk2 · HOT3D · ARCTIC (selection = action item 1.1)</td><td>mesh+pose ⇒ exact point-matched flow; verb-level language from intent / task labels</td></tr>
         <tr><td>Sharpa episodes — CHORD episodes if released (CHORD's primary hand is Sharpa); else a ManipTrans run on the same mocap with the Sharpa URDF; DexManipNet as ready-made fallback (Inspire hand — switches the robot embodiment, concept unchanged)</td><td>robot-embodiment supervision</td></tr>
         <tr><td>splits — task-overlap construction</td><td>Sharpa sees a controlled fraction of the human task set (0 / 25 / 50%); zero-shot task×object cells reserved from day one</td></tr>
       </tbody>
@@ -305,31 +305,30 @@
 <section id="experiments"><div class="wrap">
   <div class="sec-head reveal">
     <div class="eyebrow">EXPERIMENTS · PILOT</div>
-    <h2>Four evaluations</h2>
-    <p>GRAB-scale data, 100–200M model, single node, no robot hardware.</p>
+    <h2>Three evaluations</h2>
+    <p>Three of GRAB · TACO · OakInk2 · HOT3D · ARCTIC; human and Sharpa hand; 100–200M model; single node; no robot hardware. Numbered as in Phase 3 of the work list.</p>
   </div>
   <div class="road reveal">
-    <div class="item"><span class="badge plan">planned</span><div>
-      <h3>Oracle replay ceiling (control)</h3><p>Ground-truth mocap flow through the identical Procrustes+IK+Isaac pipeline before any model evaluation. Every later number is read relative to this ceiling.</p></div></div>
-    <div class="item"><span class="badge plan">planned</span><div>
-      <h3>In-distribution replay</h3><p>Sharpa on its trained tasks; on the same scene, swapping the instruction must change the generated behavior appropriately.</p></div></div>
-    <div class="item"><span class="badge plan">planned</span><div>
-      <h3>Zero-shot transfer (headline)</h3><p>Sharpa on tasks demonstrated only by humans. Robot-zero-shot: the model saw the task, the embodiment did not; unseen = held-out task×object combinations within the mocap vocabulary. Main figure: zero-shot success vs task-overlap fraction.</p></div></div>
-    <div class="item"><span class="badge plan">planned</span><div>
-      <h3>Factorization analysis</h3><p>Object-flow invariance under embodiment conditioning; tag-swap probe (Sharpa geometry, human tag) measuring geometry vs tag reliance.</p></div></div>
+    <div class="item"><span class="badge plan">3.1</span><div>
+      <h3>Unseen tasks — generalizability (headline)</h3><p>Sharpa on tasks demonstrated only by humans. Robot-zero-shot: the model saw the task, the embodiment did not; unseen = held-out task×object cells within the mocap vocabulary, reserved from day one. Reference: the same measurement on Sharpa's trained tasks (in-distribution). Main figure: zero-shot success vs task-overlap fraction (0 / 25 / 50%).</p></div></div>
+    <div class="item"><span class="badge plan">3.2</span><div>
+      <h3>Open-loop evaluation</h3><p>Generated flow against held-out ground-truth flow, per class (object / hand) and per horizon step; on the same scene, swapping the instruction must change the generated flow appropriately. No simulator in the loop.</p></div></div>
+    <div class="item"><span class="badge plan">3.3</span><div>
+      <h3>Closed-loop evaluation</h3><p>openarm-sim (TBD): decoded joints executed chunk by chunk, regenerating per chunk. Control = the oracle replay ceiling — ground-truth flow through the identical Procrustes+IK+sim pipeline, measured before any model; every closed-loop number is read relative to it.</p></div></div>
   </div>
 
   <div class="sec-head reveal" style="margin-top:34px">
-    <h2>Ablations</h2>
-    <p>Each removes one word of the claim, at matched parameters and data.</p>
+    <h2>Ablations and analysis</h2>
+    <p>Each ablation removes one word of the claim, at matched parameters and data.</p>
   </div>
   <div class="tbl-wrap reveal">
     <table>
-      <thead><tr><th>ablation</th><th>question it settles</th></tr></thead>
+      <thead><tr><th>ablation / probe</th><th>question it settles</th></tr></thead>
       <tbody>
         <tr><td>regression head on the same tokens</td><td>is generation needed?</td></tr>
         <tr><td>21-keypoint sparse variant</td><td>is density needed?</td></tr>
         <tr><td>embodiment-only generation (no object flow)</td><td>is joint scene prediction needed?</td></tr>
+        <tr><td>factorization probe — tag swap (Sharpa geometry, human tag); object-flow invariance under embodiment conditioning</td><td>does the embodiment conditioning ride on the geometry or on the tag?</td></tr>
       </tbody>
     </table>
   </div>
