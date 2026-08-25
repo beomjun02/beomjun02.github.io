@@ -5,6 +5,16 @@
     "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
   },
   "projects": {
+    "3d-wam": {
+      "title": "3D-WAM",
+      "tagline": "3D world-action model \u2014 language-conditioned generative model over labeled 4D point flow \u2014 policy, world model, and retargeter in one masked-generation objective. Concept stage.",
+      "path": "3d-wam/",
+      "now": {
+        "text": "Concept closed 2026-08-25 (claims ladder H1\u2013H5; stress-tested vs sim-proxy-scalability and CHORD-distillation critiques; full spec in Claude project). Next: item-0 unified schema + GRAB\u2192point-flow converter, then pilot M1\u2013M5.",
+        "status": "active",
+        "updated": "2026-08-25"
+      }
+    },
     "dpp-bmw": {
       "title": "DPP-BMW",
       "tagline": "Dexterous Point Policy on the BMW assembly rig — base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).",

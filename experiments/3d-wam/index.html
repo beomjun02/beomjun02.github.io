@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>3D-WAM — a 3D world-action model over labeled point flow</title>
+<meta name="description" content="3D-WAM concept: a language-conditioned generative model over labeled 4D point flow — policy, world model, and retargeter in one masked-generation objective.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/experiments/assets/present.css">
+<script src="/experiments/assets/present.js" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">3D-WAM <b>·</b> CONCEPT</div>
+    <nav>
+      <a href="#s1">Novelty</a>
+      <a href="#s2">Claims</a>
+      <a href="#s3">Design</a>
+      <a href="#s4">Stress tests</a>
+      <a href="#s5">Plan</a>
+      <a href="/experiments/">Lab</a>
+    </nav>
+    <button class="toggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
+  </div>
+</header>
+
+<div class="hero"><div class="wrap"><div class="hero-grid">
+  <div class="reveal">
+    <div class="eyebrow">3D-WAM · 3D WORLD-ACTION MODEL · CONCEPT v0.1 · 2026-08-25</div>
+    <h1>Acting, world modeling, and retargeting as <span class="hl">one generative model</span> over labeled 4D point flow.</h1>
+    <p class="lede">Scene and embodiment are one labeled point set; the model generates point-matched
+      flow chunks for all of it — video-generation techniques, one extra dimension, two structural wins:
+      the embodiment's points are part of the output, so <b>generation&nbsp;=&nbsp;action</b> (no inverse-dynamics gap),
+      and cross-embodiment transfer becomes <b>inpainting across the label axis</b>.</p>
+    <div class="meta-line">
+      <span>Updated 2026-08-25</span><span class="dot"></span>
+      <span>full spec: Claude project “Point Policy”</span><span class="dot"></span>
+      <span>no runs yet — concept + pilot plan</span>
+    </div>
+    <div class="chips">
+      <span class="chip"><span class="st done">done</span> concept closed — claims ladder H1–H5, stress-tested</span>
+      <span class="chip"><span class="st wip">next</span> item-0 schema + GRAB→flow converter, then pilot M1–M5</span>
+    </div>
+  </div>
+  <figure class="hero-media reveal">
+    <img src="assets/hero.jpg" alt="Labeled static points at t=0 and the generated flow chunk: object flow (green) and hand flow (red), which is the action.">
+    <figcaption>Schematic, not a run — <b>labeled points in, flow chunk out</b>; the red hand-flow <i>is</i> the action, recovered to joints by per-link Procrustes + IK.</figcaption>
+  </figure>
+</div></div></div>
+
+<section id="logs"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">ALL LOGS</div>
+    <h2>Experiment log</h2>
+    <p>No logs yet — the first opens with pilot item 0 (unified schema + GRAB→point-flow converter).</p>
+  </div>
+</div></section>
+
+<section id="s1"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">WHY THIS EXISTS</div>
+    <h2>Three things nobody has assembled</h2>
+    <p>Each component is de-risked by an existing work; the assembly — generative, language-conditioned,
+      joint hand+object flow with an explicit embodiment-swap objective — is the open slot.</p>
+  </div>
+
+  <div class="decisions reveal">
+    <div class="dec"><div class="q">N1</div><h4>Generation = action</h4>
+      <p>Video-gen robotics needs an IDM to turn predicted futures into actions. Here the embodiment's
+        points are generated too, so predicting the future <i>is</i> the action; the IDM collapses into IK.
+        Policy and world model are the same sampled object.</p></div>
+    <div class="dec"><div class="q">N2</div><h4>Retargeting = masked inference</h4>
+      <p>Condition on object flow, swap the embodiment label, inpaint the hand. Trained explicitly on
+        pair-constructed corpora (same mocap executed by human and robot hands). One forward pass where
+        CHORD spends hours of per-task RL — opens real-time imitation of a live demonstrator.</p></div>
+    <div class="dec"><div class="q">N3</div><h4>One action space for all embodiments</h4>
+      <p>Human data is not a pretraining tier — it is the same modality as robot data. Cross-embodiment
+        co-training transfers through the action space itself, provable via transfer matrices,
+        human↔robot data exchange rates, and zero-paired-supervision tasks.</p></div>
+  </div>
+
+  <div class="tbl-wrap reveal" style="margin-top:30px">
+    <table>
+      <thead><tr><th>neighbor</th><th>establishes</th><th>lacks (= our delta)</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://arxiv.org/abs/2601.03782">PointWorld</a> (NVlabs '26)</td><td>point flow as action at scale (2M traj); MPC at 0.1 s; design-study goldmine</td><td>action-<i>conditioned</i> world model only — no language, no generation of embodiment flow, no dex hands, no human data</td></tr>
+        <tr><td><a href="https://www.alphaxiv.org/abs/2606.10614">Dexterous Point Policy</a> ('26)</td><td>points→IK works on real dex hand (75% vs VLA 1%); contact channel +71%</td><td>6 sparse points, regression, no scene generation</td></tr>
+        <tr><td><a href="https://arxiv.org/html/2603.08485v1">3PoinTr</a> ('26)</td><td>dense 3D scene flow from human video; 20-demo policies</td><td>no language, open-loop, embodiment deleted</td></tr>
+        <tr><td><a href="https://nvidia-isaac.github.io/video_to_data/chord/">CHORD</a> + <a href="https://arxiv.org/abs/2503.21860">ManipTrans</a></td><td>human demos → sim-ready robot-hand episodes; the paired data engine (CHORD's primary hand is Sharpa)</td><td>per-task-instance pipelines: new demo + RL per task, privileged sim state, no policy prior</td></tr>
+        <tr><td>π0 / GR00T-class VLAs</td><td>open-vocabulary semantics from VLM pretraining</td><td>disjoint per-robot action spaces; human video demoted to pretraining; no geometry-native transfer</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Positioning line: our relation to CHORD is a video foundation model's relation to its data engine.</p>
+</div></section>
+
+<section id="s2"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">CLAIMS LADDER</div>
+    <h2>Five claims, each with a named experiment that can fail</h2>
+  </div>
+  <div class="road reveal">
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>H1 — the representation suffices</h3><p>Generated flow → per-link Procrustes + IK → sim replay task success (pilot M1–M5, GRAB→ARCTIC→paired subset).</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>H2 — one masked objective unifies policy / world model / retargeting</h3><p>The data pyramid is one spectrum sorted by what is observable — static scans → action-free video → human HOI → paired retargeted → robot teleop — one loss, different masks.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>H3 — cross-embodiment transfer is positive and quantified (headline)</h3><p>Transfer matrix + human↔robot data exchange-rate curves + zero-paired-supervision tasks (E4). Matched-budget and additive mixes to kill the task-diversity confound.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>H4 — the world-model half is load-bearing</h3><p>Drop object-flow generation at matched params: if action success doesn't fall, the claim dies. Also: verifier-filtered sampling (the model rejects its own futures that miss the instruction).</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>H5 — it scales</h3><p>H1–H4 vs data scale, PointWorld-style scaling-curve methodology.</p></div></div>
+  </div>
+</div></section>
+
+<section id="s3"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">DESIGN v0.1</div>
+    <h2>Every default is falsifiable, none is a commitment</h2>
+  </div>
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead><tr><th>component</th><th>v0.1 default</th></tr></thead>
+      <tbody>
+        <tr><td>representation</td><td>per-point xyz + instance embed + class label; embodiment = small closed set (human:1, inspire:2, sharpa:3…); embodiment points sampled from MANO/URDF mesh <b>with link IDs</b> (keeps IK closed-form); target = Δx over T=16 @ 10 Hz + per-point contact logits</td></tr>
+        <tr><td>semantics</td><td>objects get <i>continuous</i> per-point features (SigLIP/DINO distilled) in phase 2 — integer object labels are a semantic dead end for language</td></tr>
+        <tr><td>backbone</td><td>one token per point-track; factorized DiT — spatial attn over PTv3-serialized order, temporal along each track; MM-DiT text conditioning; ~100–200M pilot</td></tr>
+        <tr><td>objective</td><td>conditional flow matching + CFG; aux contact BCE, per-instance SE(3) rigidity, penetration penalty; best-of-N with analytic verifiers at inference</td></tr>
+        <tr><td>masking menu</td><td>full generation · object-conditioned hand inpainting (retargeting) · hand-conditioned object outpainting (world model) · <b>embodiment swap on paired data</b> · partial-cloud conditioning (occlusion robustness free)</td></tr>
+        <tr><td>deployment</td><td>Procrustes+IK → joints; contact-triggered over-closure; ManipTrans-style residual tracker for the contact-rich last mile; closed loop = regenerate per chunk (distillation deferred past pilot)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap reveal" style="margin-top:26px">
+    <table>
+      <thead><tr><th>data tier</th><th>sources</th><th>gives</th></tr></thead>
+      <tbody>
+        <tr class="hero-row"><td>2 — mocap HOI (pilot)</td><td>CHORD's confirmed list: GRAB · ARCTIC · TACO · OakInk · HOT3D · DexYCB · H2O</td><td>mesh+pose ⇒ <b>exact</b> point-matched flow; verb-level language via intent labels</td></tr>
+        <tr><td>2R — paired robot</td><td>DexManipNet; CHORD tasks if released; fallback: run ManipTrans ourselves on the same mocap (mints unlimited pairs for our hands)</td><td>the embodiment-swap supervision</td></tr>
+        <tr><td>1 — lifted web video (phase 2)</td><td>VGGT-Ω / SpatialTrackerV2 / TAPIP3D over Ego4D, EPIC, EgoDex-class</td><td>open-vocabulary language — without it the model follows ~50 verbs and stops</td></tr>
+        <tr><td>3 — real teleop (phase 3)</td><td>small, ours</td><td>hardware calibration; FK makes robot logs the cleanest labels in the corpus</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Known limits kept honest: points can't carry appearance events (buttons, screens), liquids, granular media; kinematic flow is force-blind — contact channels + residual tracking are the hedge, not an afterthought.</p>
+</div></section>
+
+<section id="s4"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">STRESS TESTS</div>
+    <h2>Two critiques, answered with experiments</h2>
+  </div>
+
+  <div class="reframe reveal">
+    <div class="row h"><div class="cell">CRITIQUE</div><div class="cell arrow" style="background:var(--surface-2)"></div><div class="cell">RESPONSE</div></div>
+    <div class="row"><div class="cell weak">“Robot data comes from a sim proxy — every new embodiment means retraining the data-generation pipeline.”</div><div class="cell arrow">→</div><div class="cell win"><b>Half-true; it's a compute cost, not a labor cost</b> — VLAs pay per-embodiment in human teleop; we re-run retargeting on a fixed human corpus. Morphology-conditioned encoding should make it sub-linear (E1), and after v1 the proxy is bootstrap-only: generate → IK replay in sim → reward-filter → fine-tune (E2). Concession tracked: retargeting survivorship bias (~18% hardest skills missing) — audit + teleop top-up.</div></div>
+    <div class="row"><div class="cell weak">“This is just CHORD + a 3D-point distilled model.”</div><div class="cell arrow">→</div><div class="cell win"><b>Wrong as description, right as eval constraint.</b> The pattern proves too much (π0 is “just teleop + a tokenizer”). CHORD is a per-task data factory — no language, no closed loop, no prior; most of our training data never touches it, and the adapter is swappable. But the pilot must evaluate on splits the teacher never produced (E4), or the critique becomes true. Separating demo: amortized retargeting (E3).</div></div>
+  </div>
+
+  <div class="tbl-wrap reveal" style="margin-top:26px">
+    <table>
+      <thead><tr><th>exp</th><th>question it settles</th></tr></thead>
+      <tbody>
+        <tr><td>E1</td><td>leave-one-embodiment-out + 0/10/100-episode adaptation curves — does the K-th training embodiment cheapen the K+1-th? (embodiment scaling law)</td></tr>
+        <tr><td>E2</td><td>new-hand onboarding by self-improvement alone (no retargeting policy): zero-shot generate → sim IK replay → filter → fine-tune, vs the full RL pipeline</td></tr>
+        <tr><td>E3</td><td>amortized retargeting head-to-head: same new human demos, one-pass swap vs ManipTrans/CHORD — success and wall-clock</td></tr>
+        <tr><td>E4</td><td>human-only→robot split (zero paired supervision, reserved from day one) + beat-the-teacher analysis under verifier-filtered sampling</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<section id="s5"><div class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">PILOT PLAN</div>
+    <h2>Gates before glory</h2>
+    <p>Scope: GRAB only → ARCTIC (bimanual, articulated) → paired robot subset. ~100–200M model, single node, no robot needed through M5.</p>
+  </div>
+  <div class="road reveal">
+    <div class="item"><span class="badge wip">next</span><div>
+      <h3>0 · Schema + viz infra</h3><p>One episode format for all tiers; rerun.io viewer; 20-clip sanity gallery. Everything stands on this.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>M1–M2 · Data + physicality</h3><p>Tier-2 converters, captions, stats audit; unconditional generations match data on rigidity / penetration / contact stats.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>M3 · Language steerability</h3><p>Held-out GRAB intents: same scene, swapped instruction ⇒ appropriately different flow (CFG sweep). Fails here ⇒ fix conditioning before any Tier-1 work.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>M4 · Embodiment swap</h3><p>Object-conditioned hand inpainting quality on the paired subset.</p></div></div>
+    <div class="item"><span class="badge plan">planned</span><div>
+      <h3>M5 · Sim replay (the truth metric)</h3><p>Recovered joints executed in Isaac on ManipTrans/CHORD tasks. Flow ADE can look excellent while every grasp fails — this is the number that predicts deployment.</p></div></div>
+  </div>
+
+  <p class="note" style="margin-top:22px">Baselines, each ablating one word of the thesis: regression transformer on the same tokens (is <i>generation</i> needed?) · 21-keypoint sparse variant (is <i>density</i> needed?) · action-only head (is the <i>world model</i> needed?).<br>
+  Kill criteria: L1 good + M5 ≈ 0 ⇒ kinematic→dynamic gap dominates, pivot to contact/wrench channels before scaling · no M3 steerability on GRAB's small vocabulary ⇒ conditioning broken · sparse ≈ dense everywhere ⇒ drop density, keep the generative + swap machinery.</p>
+
+  <div class="eyebrow" style="margin-top:40px;margin-bottom:6px">Open decisions</div>
+  <div class="decisions reveal">
+    <div class="dec"><div class="q">D1</div><h4>Positions vs displacements</h4><p>Displacements compose with frame-0 conditioning; positions avoid drift. Ablate at M2.</p></div>
+    <div class="dec"><div class="q">D2</div><h4>Latent set VAE</h4><p>Skip for pilot (points are compact); revisit when N grows past the attention budget.</p></div>
+    <div class="dec"><div class="q">D3</div><h4>Curriculum order</h4><p>Noisy-broad (Tier 1) → clean-narrow (Tier 2) or the reverse — decide when Tier 1 exists.</p></div>
+    <div class="dec"><div class="q">D4</div><h4>Video-DiT init</h4><p>TrackCraft3R says video diffusion weights repurpose to 3D tracking — worth one stretch run vs from-scratch.</p></div>
+    <div class="dec"><div class="q">D5</div><h4>IK layer in training</h4><p>From the start (reachability-aware generation) or only after M5 — cost vs benefit unknown.</p></div>
+  </div>
+
+  <p class="note" style="margin-top:26px">References:
+    <a href="https://arxiv.org/abs/2601.03782">PointWorld</a> ·
+    <a href="https://arxiv.org/html/2607.00148">3D Point World Models</a> ·
+    <a href="https://arxiv.org/html/2607.00033v1">CHORD</a> ·
+    <a href="https://arxiv.org/abs/2503.21860">ManipTrans</a> ·
+    <a href="https://www.alphaxiv.org/abs/2606.10614">Dexterous Point Policy</a> ·
+    <a href="https://arxiv.org/html/2603.08485v1">3PoinTr</a> ·
+    <a href="https://point-policy.github.io/">Point Policy</a> ·
+    <a href="https://cvlab-kaist.github.io/TrackCraft3r/">TrackCraft3R</a> ·
+    <a href="https://spatialtracker.github.io/">SpatialTrackerV2</a> ·
+    <a href="https://tapip3d.github.io/">TAPIP3D</a></p>
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — concept hub</div>
+    <div style="margin-top:6px">Internal page · updated 2026-08-25</div>
+  </div>
+  <div class="paths">
+    <div>spec <code>Claude project “Point Policy” › claude/3d-wam-concept.md</code></div>
+    <div>logs <code>/experiments/3d-wam/logs/</code></div>
+  </div>
+</div></footer>
+
+</body>
+</html>
