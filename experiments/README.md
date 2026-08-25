@@ -2,34 +2,55 @@
 
 Served at `https://beomjun02.github.io/experiments/`. Contract for any agent adding content. Deploy = commit + push to `main` (live in ~1 min).
 
-## Two formats — pick by job
+## Three formats — pick by job
 
-| | **Log** (default) | **Presentation** |
-|---|---|---|
-| For | every experiment record | project hubs, milestone showcases |
-| Template | `_template/log.html` | `_template/presentation.html` |
-| Styling | `assets/lab.css` + `lab.js` | `assets/present.css` + `present.js` |
-| Character | data-first, verdict-first | editorial, hero + story |
+| | **Deck** (default for new records, 2026-08-26) | **Log** (legacy records) | **Presentation** |
+|---|---|---|---|
+| For | every new experiment record — shown in the lab meeting | existing records; kept as they are | project hubs, milestone showcases |
+| Template | `_template/deck.html` · worked example `_template/deck-example/` · rules `_template/DECK-STYLE.md` | `_template/log.html` | `_template/presentation.html` |
+| Styling | `assets/lab.css` (tokens) + `assets/deck.css` + `deck.js` | `assets/lab.css` + `lab.js` | `assets/present.css` + `present.js` |
+| Character | 16:9 slides, one message per slide, media-first, hard caps | long page, data-first, verdict-first | editorial, hero + story |
 
-Both are light/dark (follow the viewer, toggle persists, shared across formats). All styling comes from the shared CSS — never redefine tokens per page.
+All three are light/dark (follow the viewer, toggle persists, shared across formats). All styling comes from the shared CSS — never redefine tokens per page.
+
+### Deck grammar (full rules and the reference-deck citations: `_template/DECK-STYLE.md`)
+
+1. **Title** — the question · one-line verdict · status pill · date · project · presenter.
+2. **Overview** — `[TL;DR]` thesis · ≤ 4 bullets · one media.
+3. **Agenda** (mandatory) — two columns: Report (≤ 4) | Discuss (≤ 3).
+4. **Evidence slides** — topic title + ONE thesis sentence (≤ 20 words) + ≤ 4 one-line bullets + an evidence band (≤ 3 media, or one table); progressive build-up with `data-steps`.
+5. **Next steps** — numbered table: item · owner · ETA/status. 6. **Asks** (mandatory, ≤ 3) — each = options + one recommendation.
+7. **Appendix** — dense mono: setup · repro · data facts (what a Log's §Setup/§Artifacts held); the last one ends with the cut list.
+Main deck ≤ 8 slides. Meeting-prep protocol: inventory → triage (report / discuss / FYI / drop) → budget 5–10 min → order. Over a cap → cut, never shrink the font. GIF and H.264 MP4 embed natively; ← → / `o` overview / `f` fullscreen / `?` help; `#/n` deep links; ⌘P prints one 16:9 page per slide.
 
 ## Structure
 
 ```
 experiments/
 ├── index.html        home: project tiles only — name + fixed thumbnail (<project>/assets/thumb.jpg)
-├── logs.json         registry — one entry per log; drives both dashboard sections
-├── assets/           lab.css|js (Log) · present.css|js (Presentation)
-├── _template/        log.html · presentation.html
+├── logs.json         registry — one entry per record (deck or log); drives both dashboard sections
+├── assets/           lab.css|js (tokens, Log) · deck.css|js (Deck) · present.css|js (Presentation)
+├── _template/        deck.html · deck-example/ · DECK-STYLE.md · log.html · presentation.html
 └── <project>/
-    ├── index.html    hub (Presentation format)
+    ├── index.html    hub (Presentation format); its "All logs" section lists decks and logs, newest first
     ├── assets/
-    └── logs/YYYY-MM-DD-<slug>/   one log: index.html + its own assets/
+    ├── decks/YYYY-MM-DD-<slug>/  one deck: index.html + its own assets/
+    └── logs/YYYY-MM-DD-<slug>/   one log (legacy): index.html + its own assets/
 ```
 
-## Scope — one log = one question, ended by a verdict
+## Scope — one record (deck or log) = one question, ended by a verdict
 
-A log is a **workstream record, not a changelog entry**. The unit is a **question** (≈ one action item / one campaign): the log opens when work on the question starts, accumulates dated Timeline entries while it is open, and closes when the question reaches a verdict (`done` / `closed` / `failed`). Duration is however long that takes — hours to ~2 weeks. If a question is still open after ~2 weeks, split it. A single fix, run, or config sweep is a Timeline entry *inside* the current log — never a log of its own. Weekly summaries are **views over logs, not logs**: link the logs, don't duplicate them.
+A record is a **workstream record, not a changelog entry**. The unit is a **question** (≈ one action item / one campaign): the record opens when work on the question starts, is updated in place while it is open, and closes when the question reaches a verdict (`done` / `closed` / `failed`). Duration is however long that takes — hours to ~2 weeks. If a question is still open after ~2 weeks, split it. A single fix, run, or config sweep is an update *inside* the current record (a deck refreshes its verdict, evidence and asks; a log adds a Timeline entry) — never a record of its own. Weekly summaries are **views over records, not records**: link them, don't duplicate them.
+
+## Add a new deck
+
+1. Check `logs.json` for an open deck (or log) on the same question — if there is one, update it (below).
+2. `mkdir -p <project>/decks/YYYY-MM-DD-<slug>/assets`; copy `_template/deck.html` → `index.html`; copy slides from `_template/deck-example/` by their `<!-- SECTION: … -->` comment; fill ALL-CAPS placeholders; run the pre-publish check in the template header (caps).
+3. Media into the deck's own `assets/`: H.264 mp4 ≤5 MB + poster jpg, GIF ≤3 MB; absolute paths when reusing another record's media.
+4. Append one entry to `logs.json` with `"format": "deck"` (schema in the file).
+5. Add the deck to the **project hub's "All logs" section**, newest first — that section is the project's full archive of decks and logs and the only place records are listed.
+
+## Add a new log (legacy format — only when extending an existing log)
 
 **Before creating one, check `logs.json`** for a log in that project still on the same question (usually `status: running`). If there is one, update it instead:
 

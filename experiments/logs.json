@@ -2,6 +2,7 @@
  "_schema": {
   "projects": "slug → {title, tagline, path}",
   "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+  "format": "optional per entry: \"deck\" | \"log\" (default log). Deck = the meeting slide-deck record (README.md \"Deck\"), folder <project>/decks/YYYY-MM-DD-<slug>/; same scope rule (one deck = one question, update the open one). Existing entries without the key are logs.",
   "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
  },
  "projects": {
