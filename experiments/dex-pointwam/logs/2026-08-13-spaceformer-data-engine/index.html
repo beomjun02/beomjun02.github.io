@@ -30,10 +30,10 @@
 
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
-      <div><dt>Dates</dt><dd>2026-08-13 → 08-24</dd></div>
+      <div><dt>Dates</dt><dd>2026-08-13 → 08-25</dd></div>
       <div><dt>Outcome</dt><dd>coverage 94.3% (ours) vs 57.9% (SF-faithful); caption: Gemma-3+A.7 adopted-worthy</dd></div>
       <div><dt>Env</dt><dd class="mono">sjw_alinlab · SAM2 hiera_large · Gemma-3-12b / Qwen3-VL-8B (vLLM) · SigLIP2 so400m</dd></div>
-      <div><dt>Campaign</dt><dd class="mono">EgoDex 141k/324k sidecars (43.6%, 08-23)</dd></div>
+      <div><dt>Campaign</dt><dd class="mono">EgoDex ~178k/324k sidecars (55%, 08-25) · two-pass fleet</dd></div>
       <div><dt>Full report</dt><dd class="mono">maskcap_pilot/human_data_engine.html · egodex_maskcap{,_sf}.py</dd></div>
     </dl>
 
@@ -143,6 +143,32 @@
     </div>
   </section>
 
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05b</span>New-dataset vetting — DexYCB · AriaEverydayActivities · EPIC-KITCHENS (5 scenes each)</h2>
+      <p class="sub">Same reviewer checklist as §03. DexYCB = real RGB-D (per-point ids, sorted by #points). AEA (found on the shared root <code>/virtual_lab/dataset/</code>, Aria + MPS 3D available) and EPIC = RGB-only mask demos (encoder-tier vetting, sorted by area). HOT3D/HOI4D remain gated on browser downloads; Ego-Exo4D is not on the server — AEA is the license-free Aria stand-in.</p>
+      <h3>DexYCB (RGB-D, gold hand+object)</h3>
+      <figure><img src="assets/newds_dexycb_data_000000.jpg" alt="newds_dexycb_data_000000.jpg" loading="lazy"><figcaption>dexycb_data_000000 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <figure><img src="assets/newds_dexycb_data_000001.jpg" alt="newds_dexycb_data_000001.jpg" loading="lazy"><figcaption>dexycb_data_000001 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <figure><img src="assets/newds_dexycb_data_000002.jpg" alt="newds_dexycb_data_000002.jpg" loading="lazy"><figcaption>dexycb_data_000002 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <figure><img src="assets/newds_dexycb_data_000003.jpg" alt="newds_dexycb_data_000003.jpg" loading="lazy"><figcaption>dexycb_data_000003 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <figure><img src="assets/newds_dexycb_data_000004.jpg" alt="newds_dexycb_data_000004.jpg" loading="lazy"><figcaption>dexycb_data_000004 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <h3>AriaEverydayActivities (Aria preview RGB; MPS point clouds/poses/gaze on disk)</h3>
+      <figure><img src="assets/newds_aea_loc1_script1_seq1_rec1.jpg" alt="newds_aea_loc1_script1_seq1_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script1_seq1_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_aea_loc1_script4_seq2_rec1.jpg" alt="newds_aea_loc1_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script4_seq2_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_aea_loc2_script2_seq3_rec1.jpg" alt="newds_aea_loc2_script2_seq3_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script2_seq3_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_aea_loc2_script4_seq2_rec1.jpg" alt="newds_aea_loc2_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script4_seq2_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_aea_loc3_script2_seq1_rec2.jpg" alt="newds_aea_loc3_script2_seq1_rec2.jpg" loading="lazy"><figcaption>aea_loc3_script2_seq1_rec2 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <h3>EPIC-KITCHENS (RGB-only)</h3>
+      <figure><img src="assets/newds_epic_P01_01_30.jpg" alt="newds_epic_P01_01_30.jpg" loading="lazy"><figcaption>epic_P01_01_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_epic_P01_01_60.jpg" alt="newds_epic_P01_01_60.jpg" loading="lazy"><figcaption>epic_P01_01_60 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_epic_P15_12_30.jpg" alt="newds_epic_P15_12_30.jpg" loading="lazy"><figcaption>epic_P15_12_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_epic_P15_12_60.jpg" alt="newds_epic_P15_12_60.jpg" loading="lazy"><figcaption>epic_P15_12_60 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds_epic_P22_05_30.jpg" alt="newds_epic_P22_05_30.jpg" loading="lazy"><figcaption>epic_P22_05_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <h2><span class="n">06</span>Diagnosis</h2>
@@ -172,6 +198,8 @@
           <p>Paper App. A.6/A.7 + MaskClustering code read in depth; <span class="mono">egodex_maskcap_sf.py</span> implements canonical world cloud, point-in-mask matrix, original clustering params, k-medoids views, A.7 Gemma ×5 captions. 10 EgoDex + 5 VITRA demos rendered; coverage numbers above.</p></li>
         <li><span class="tdate">2026-08-24</span><span class="tt">Per-instance grids (sorted) + this report</span>
           <p>All 15 demos re-rendered as point-count-sorted verification grids; reviewer checklist added. Campaign at 141k/324k EgoDex episodes (43.6%).</p></li>
+        <li class="ok"><span class="tdate">2026-08-25</span><span class="tt">Two-pass fleet + new datasets</span>
+          <p>Pipeline split into pass 1 (SAM2 masks + SF crop dump, hiera_small/pps24 after an A/B: 1.57× faster, coverage identical 94.3%) and pass 2 (dedicated Gemma-3 vLLM captioner, V1 engine + CUDA graphs, dynamic lock-file claiming after a static-hash starvation bug). Fleet spread over background/sjw/h100 (bad node worker-node1001 auto-excluded; a stale cron on another login node neutralised). EgoDex ~55% done; part3 pass-1 complete. New-dataset demos above (15).</p></li>
       </ul>
     </div>
   </section>
@@ -203,7 +231,7 @@
 
 </main>
 
-<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · spaceformer data engine · updated 2026-08-24</p></div></footer>
+<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · spaceformer data engine · updated 2026-08-25</p></div></footer>
 
 </body>
 </html>

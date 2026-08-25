@@ -1,241 +1,241 @@
 {
-  "_schema": {
-    "projects": "slug → {title, tagline, path}",
-    "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
-    "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ "_schema": {
+  "projects": "slug → {title, tagline, path}",
+  "logs": "one entry per log (a log = 1–2 weeks on one question, NOT one per small step); date = start YYYY-MM-DD (matches folder); optional updated = last change; status ∈ running|done|closed|blocked|failed; path relative to experiments/",
+  "note": "Index pages render from this file, sorted by updated||date. Agents: prefer UPDATING the project's open log (bump updated, refresh tldr/status) over appending a new entry — see README.md 'Scope'."
+ },
+ "projects": {
+  "3d-wam": {
+   "title": "3D-WAM",
+   "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
+   "path": "3d-wam/",
+   "now": {
+    "text": "Concept v0.3 (2026-08-25): reduced to the core — one conditioning pattern, no masking menu, all deferred machinery removed from the page; headline = zero-shot success vs task-overlap sweep. Next: episode schema + GRAB→point-flow converter, then the oracle replay ceiling.",
+    "status": "active",
+    "updated": "2026-08-25"
+   }
   },
-  "projects": {
-    "3d-wam": {
-      "title": "3D-WAM",
-      "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
-      "path": "3d-wam/",
-      "now": {
-        "text": "Concept v0.3 (2026-08-25): reduced to the core \u2014 one conditioning pattern, no masking menu, all deferred machinery removed from the page; headline = zero-shot success vs task-overlap sweep. Next: episode schema + GRAB\u2192point-flow converter, then the oracle replay ceiling.",
-        "status": "active",
-        "updated": "2026-08-25"
-      }
-    },
-    "dpp-bmw": {
-      "title": "DPP-BMW",
-      "tagline": "Dexterous Point Policy on the BMW assembly rig — base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).",
-      "path": "dpp-bmw/",
-      "now": {
-        "text": "bmw_0821 (60-run) processed end-to-end; 7 base policies trained & verified — Exp1 initdest/subtask matrix (3), Exp2 subsample×point-augmentation (4, all subtask, no initdest). Eval/rollout next.",
-        "status": "active",
-        "updated": "2026-08-23"
-      }
-    },
-    "dex-pointwam": {
-      "title": "Dex-PointWAM",
-      "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
-      "path": "dex-pointwam/",
-      "now": {
-        "text": "SpaceFormer data engine: parity audit filed (hybrid = our merge + A.7 Gemma captions recommended, user review pending). EgoDex maskcap campaign 141k/324k. HOT3D/HOI4D onboarding blocked on browser-gated downloads.",
-        "status": "active",
-        "updated": "2026-08-24"
-      }
-    },
-    "dex-point-policy": {
-      "title": "Dexterous Point Policy",
-      "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
-      "path": "dex-point-policy/",
-      "now": {
-        "text": "Functional-retargeter restructure: design CLOSED v1.0 (DESIGN.md) - task-agnostic R, MANO-theta both ways, two-hand play pairing. Next: critical-path checks C1-C4 (MANO-in-Isaac, DexCanvas, EgoDex theta, g_E rebase), then the Inspire pilot pending sign-off.",
-        "status": "active",
-        "updated": "2026-08-07"
-      },
-      "updated": "2026-08-24"
-    }
+  "dpp-bmw": {
+   "title": "DPP-BMW",
+   "tagline": "Dexterous Point Policy on the BMW assembly rig — base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).",
+   "path": "dpp-bmw/",
+   "now": {
+    "text": "bmw_0821 (60-run) processed end-to-end; 7 base policies trained & verified — Exp1 initdest/subtask matrix (3), Exp2 subsample×point-augmentation (4, all subtask, no initdest). Eval/rollout next.",
+    "status": "active",
+    "updated": "2026-08-23"
+   }
   },
-  "logs": [
-    {
-      "project": "dex-point-policy",
-      "date": "2026-08-24",
-      "slug": "bmw0821-retargeter",
-      "title": "A human→Inspire retargeter trained on 4-view high-quality assembly data",
-      "status": "wip",
-      "updated": "2026-08-24",
-      "tldr": "R and R⁻¹ trained on bmw_0821 (60 runs, 33,191 frames, 4-view high-precision hand pose). Position-mode retargeting maps the grasp-region aperture (0–5 cm) nearly 1:1 (human 0/2.7/5.0 → robot 2.1/2.6/4.9 cm; corr 0.664), saturating only at the physically-unreachable open extreme. R⁻¹ reconstructs the full 21-keypoint hand from 5 robot fingertips at 7.7 mm all-joint / 6.1 mm intermediate held-out MAE. Different task from the openarm-sim work; targets Inspire hardware. Sim rollout pending an environment.",
-      "path": "dex-point-policy/logs/2026-08-24-bmw0821-retargeter/",
-      "tags": [
-        "retargeter",
-        "bmw",
-        "inspire",
-        "GeoRT",
-        "R-inverse"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-08-19",
-      "slug": "teleop-retargeter-iteration",
-      "title": "Retargeter & teleop-mix debugging in openarm-sim — seven bugs fixed, still 0/24",
-      "status": "done",
-      "updated": "2026-08-19",
-      "tldr": "Debugging the openarm-sim deployment of the 21kp policy + dexret Inspire retargeter, organized by the rollout clips. Seven implementation bugs found and fixed, each verified by measurement: obs R⁻¹ OOD + Kabsch contamination (stalling), dexret vector→position (finger opening), scale 1.15 miscalibration, arm-IK/finger scale mismatch, teleop object-cloud 6cm hand-removal (object deleted during grasp, 28.8→0.8cm), proprio zero-fill, wrist orientation. Every condition still SR 0/24 — the bottleneck is the policy's alignment/approach and a teleop→sim domain gap, not the retargeter.",
-      "path": "dex-point-policy/logs/2026-08-19-teleop-retargeter-iteration/",
-      "tags": [
-        "retargeter",
-        "teleop",
-        "openarm-sim",
-        "debugging",
-        "inspire"
-      ]
-    },
-    {
-      "project": "dpp-bmw",
-      "date": "2026-08-22",
-      "slug": "bmw0821-base-and-augmentation",
-      "title": "bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation",
-      "status": "done",
-      "updated": "2026-08-23",
-      "tldr": "New 60-run BMW batch taken from raw 4-camera rosbags to trainable data (4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, all in the BA world frame) and two rounds of base-policy training. Exp1: initdest/subtask matrix (3 policies). Exp2: subsample (2x/1x) x point-augmentation (none/1cm/5cm), all subtask, no initdest (4 policies). All 7 reach 100k and torch-load clean. Point-shift augmentation (one spherical shift per sample applied to hand+object+action+ego) verified consistent: relative hand-object geometry preserved to +/-1cm even at a 50cm shift. Object order jig,ecu,bracket,drill confirmed against masks. Eval/rollout is next.",
-      "path": "dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/",
-      "tags": [
-        "bmw",
-        "base-policy",
-        "data-pipeline",
-        "augmentation",
-        "vggt",
-        "contact",
-        "mano"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-08-07",
-      "slug": "functional-retargeter-restructure",
-      "title": "One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0",
-      "status": "done",
-      "updated": "2026-08-07",
-      "tldr": "Workstream restructured around a frozen human-data base policy + a learned per-embodiment retargeter whose objective is FUNCTIONAL: the object must follow the source's 3D trajectory. Theory verdict 4/5; 4 papers read in full + a 26-work sweep (no 5/5 collision - the paper hangs on one ablation: the same retargeter trained on kinematic vs object-motion-matched pairs). Design closed same-day at v1.0 after five discussion rounds: MANO-theta interfaces both ways (R: theta->q residual over a geometric prior; R-1: q->theta), W=1 per-step at control rate, wrist 6D + arm IK outside R, and a hard principle - the retargeter is TASK-AGNOSTIC (no robot demos, no task data; pairs from two-hand sim play where the MANO hand leads and the robot tracks the recorded object trajectory on the same clock; benchmark objects held out). Spec: DPP-ICLR2027/retargeter/DESIGN.md. Pilot ~3-4 H100-d gated on C1-C4 checks + sign-off.",
-      "path": "dex-point-policy/logs/2026-08-07-functional-retargeter-restructure/",
-      "tags": [
-        "restructure",
-        "retargeting",
-        "cross-embodiment",
-        "literature",
-        "design",
-        "novelty"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-08-06",
-      "slug": "scene-density-and-vggt-omega",
-      "title": "Scene density: the 12k budget, EE-centered sampling, and a VGGT-Omega proposal",
-      "status": "done",
-      "updated": "2026-08-06",
-      "tldr": "The near-field starvation is an ALLOCATION problem, not a sensor problem: 54% of the 12,000-point budget lands beyond 1.5 m and ~2% within 20 cm of the hand, while the source holds 5x more near-hand geometry than the random cap keeps. EE-centered sampling (banded/gaussian) recovers 3-5x near-hand density at equal budget, on both sim and EgoDex sides. Every scheme is still a heuristic for spending a capped token budget PTv3 imposes by construction - a VGGT-Omega encoder proposal (pixel-dense geometry, ~1,041 tokens/frame, perspective foveation for free) is filed with two 1-GPU-hour de-riskers pending.",
-      "path": "dex-pointwam/logs/2026-08-06-scene-density-and-vggt-omega/",
-      "tags": [
-        "representation",
-        "point-cloud",
-        "sampling",
-        "vggt-omega",
-        "architecture",
-        "analysis"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-07-15",
-      "slug": "initial-development-and-egodex-pretraining",
-      "title": "Initial development and pretraining on EgoDex",
-      "status": "done",
-      "updated": "2026-08-02",
-      "tldr": "Porting PointWAM to a 12-keypoint dexterous hand and pretraining on EgoDex. At 5.2M clips held-out robot_l2_moved is 0.06057 +/- 0.00017 m; the world-modelling branch buys -4.7% (z~12) and the gap GROWS with scale rather than washing out. Open-loop only, and the run was still improving at the budget limit.",
-      "path": "dex-pointwam/logs/2026-07-15-initial-development-and-egodex-pretraining/",
-      "tags": [
-        "pretraining",
-        "egodex",
-        "world-model",
-        "ablation",
-        "open-loop",
-        "scaling"
-      ]
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-08-02",
-      "slug": "closed-loop-evaluation-dpp-task",
-      "title": "Closed-loop evaluation on the DPP task",
-      "status": "running",
-      "updated": "2026-08-03",
-      "tldr": "The same checkpoint picks nothing up. Not a stall and not oscillation: a COHERENT trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted. Leading candidate is a chunk-length mismatch: our shipped chunk spans 30 raw frames against DPP's 16, so three finetune arms (16, 16 at half resolution, 30 frames) are in flight. Corrected 2026-08-03: the SOURCE RATE IS NOT SETTLED - the 20 Hz figure is a delivered-rate label, not a sensor measurement, so the arms are defined in frames and no result depends on it.",
-      "path": "dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/",
-      "tags": [
-        "closed-loop",
-        "sim",
-        "retraction",
-        "clock",
-        "evaluation",
-        "embodiment-gap"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-31",
-      "slug": "benchmark-jitter",
-      "title": "Four poses cannot estimate a success rate",
-      "status": "done",
-      "updated": "2026-08-01",
-      "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Fixing it (1cm per-episode jitter) moves the 3-object mean only 23.2 -> 22.9% but changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose vs 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand now has non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs Wuji/Sharpa 0/96 [0-3.85]) with IK residuals reproducing the earlier study to within a millimetre. And the contact-label question finally resolved, paired on identical initial conditions at a matched 370k steps: the HUMAN label wins bottle (-8.0, p=0.031) and box (-10.9, p=5e-05) and loses only ball (+2.5, where neither policy is competent) - the opposite of the 07-30 reading, which had compared checkpoints at different steps selected on bottle alone. Since that human label is one grasp bit copied across five fingers, a 1-bit label trains a better policy than a genuine 5-bit one.",
-      "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
-      "tags": [
-        "methodology",
-        "statistics",
-        "benchmark",
-        "sim",
-        "cross-hand",
-        "pre-registration"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-30",
-      "slug": "contact-auto-vs-oracle",
-      "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
-      "status": "done",
-      "updated": "2026-07-31",
-      "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter. [2026-07-31] Protocol note: these numbers are from the 4-condition benchmark. Re-measured under 1cm jitter the 3-object mean holds (23.2 -> 22.9%) but the ball goes 1.4 -> 6.4%; the label comparison is being re-run at matched budget with a pre-registered paired analysis.",
-      "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
-      "tags": [
-        "data-quality",
-        "contact",
-        "ablation",
-        "depth-gradient",
-        "sim",
-        "methodology"
-      ]
-    },
-    {
-      "project": "dex-point-policy",
-      "date": "2026-07-29",
-      "slug": "contact-and-hand-rollouts",
-      "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
-      "status": "done",
-      "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). [2026-07-31] Re-run at 96 eps/hand on the jittered protocol: reproduces with non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs 0/96 [0-3.85]).",
-      "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
-      "tags": [
-        "contact",
-        "tactile",
-        "sim",
-        "isaac",
-        "hand-swap",
-        "6-point",
-        "retraction"
-      ],
-      "updated": "2026-07-31"
-    },
-    {
-      "project": "dex-pointwam",
-      "date": "2026-08-13",
-      "slug": "spaceformer-data-engine",
-      "title": "SpaceFormer's caption protocol transfers to ego video; its static clustering does not",
-      "status": "running",
-      "updated": "2026-08-24",
-      "tldr": "Human-data engine for the PointWAM 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA ego video. A faithful SpaCeFormer-3M re-implementation (A.6/A.7 prompts verbatim, MaskClustering params, Gemma-3, 5 captions/instance) run head-to-head on 10 episodes: captions are adopted-worthy (earlier Gemma failure was protocol mismatch), but static MaskClustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep — quantitatively justifying our scene-flow merge. Recommended default: hybrid. EgoDex campaign 141k/324k (43.6%)."
-    }
-  ]
+  "dex-pointwam": {
+   "title": "Dex-PointWAM",
+   "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
+   "path": "dex-pointwam/",
+   "now": {
+    "text": "Two-pass maskcap fleet (pass1 SAM2 hiera_small, pass2 Gemma-3 dynamic claiming) across background/sjw/h100; EgoDex ~55%, part4 in progress; VITRA next. New-dataset demos: DexYCB/AEA/EPIC done.",
+    "status": "active",
+    "updated": "2026-08-25"
+   }
+  },
+  "dex-point-policy": {
+   "title": "Dexterous Point Policy",
+   "tagline": "Point-cloud dexterous manipulation policy — ICLR 2027 resubmission workstream.",
+   "path": "dex-point-policy/",
+   "now": {
+    "text": "Functional-retargeter restructure: design CLOSED v1.0 (DESIGN.md) - task-agnostic R, MANO-theta both ways, two-hand play pairing. Next: critical-path checks C1-C4 (MANO-in-Isaac, DexCanvas, EgoDex theta, g_E rebase), then the Inspire pilot pending sign-off.",
+    "status": "active",
+    "updated": "2026-08-07"
+   },
+   "updated": "2026-08-24"
+  }
+ },
+ "logs": [
+  {
+   "project": "dex-point-policy",
+   "date": "2026-08-24",
+   "slug": "bmw0821-retargeter",
+   "title": "A human→Inspire retargeter trained on 4-view high-quality assembly data",
+   "status": "wip",
+   "updated": "2026-08-24",
+   "tldr": "R and R⁻¹ trained on bmw_0821 (60 runs, 33,191 frames, 4-view high-precision hand pose). Position-mode retargeting maps the grasp-region aperture (0–5 cm) nearly 1:1 (human 0/2.7/5.0 → robot 2.1/2.6/4.9 cm; corr 0.664), saturating only at the physically-unreachable open extreme. R⁻¹ reconstructs the full 21-keypoint hand from 5 robot fingertips at 7.7 mm all-joint / 6.1 mm intermediate held-out MAE. Different task from the openarm-sim work; targets Inspire hardware. Sim rollout pending an environment.",
+   "path": "dex-point-policy/logs/2026-08-24-bmw0821-retargeter/",
+   "tags": [
+    "retargeter",
+    "bmw",
+    "inspire",
+    "GeoRT",
+    "R-inverse"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-08-19",
+   "slug": "teleop-retargeter-iteration",
+   "title": "Retargeter & teleop-mix debugging in openarm-sim — seven bugs fixed, still 0/24",
+   "status": "done",
+   "updated": "2026-08-19",
+   "tldr": "Debugging the openarm-sim deployment of the 21kp policy + dexret Inspire retargeter, organized by the rollout clips. Seven implementation bugs found and fixed, each verified by measurement: obs R⁻¹ OOD + Kabsch contamination (stalling), dexret vector→position (finger opening), scale 1.15 miscalibration, arm-IK/finger scale mismatch, teleop object-cloud 6cm hand-removal (object deleted during grasp, 28.8→0.8cm), proprio zero-fill, wrist orientation. Every condition still SR 0/24 — the bottleneck is the policy's alignment/approach and a teleop→sim domain gap, not the retargeter.",
+   "path": "dex-point-policy/logs/2026-08-19-teleop-retargeter-iteration/",
+   "tags": [
+    "retargeter",
+    "teleop",
+    "openarm-sim",
+    "debugging",
+    "inspire"
+   ]
+  },
+  {
+   "project": "dpp-bmw",
+   "date": "2026-08-22",
+   "slug": "bmw0821-base-and-augmentation",
+   "title": "bmw_0821: 60-run batch to 7 verified base policies — initdest/subtask matrix + point-shift augmentation",
+   "status": "done",
+   "updated": "2026-08-23",
+   "tldr": "New 60-run BMW batch taken from raw 4-camera rosbags to trainable data (4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, all in the BA world frame) and two rounds of base-policy training. Exp1: initdest/subtask matrix (3 policies). Exp2: subsample (2x/1x) x point-augmentation (none/1cm/5cm), all subtask, no initdest (4 policies). All 7 reach 100k and torch-load clean. Point-shift augmentation (one spherical shift per sample applied to hand+object+action+ego) verified consistent: relative hand-object geometry preserved to +/-1cm even at a 50cm shift. Object order jig,ecu,bracket,drill confirmed against masks. Eval/rollout is next.",
+   "path": "dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/",
+   "tags": [
+    "bmw",
+    "base-policy",
+    "data-pipeline",
+    "augmentation",
+    "vggt",
+    "contact",
+    "mano"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-08-07",
+   "slug": "functional-retargeter-restructure",
+   "title": "One frozen human policy, N functional retargeters — verified 4/5, design closed v1.0",
+   "status": "done",
+   "updated": "2026-08-07",
+   "tldr": "Workstream restructured around a frozen human-data base policy + a learned per-embodiment retargeter whose objective is FUNCTIONAL: the object must follow the source's 3D trajectory. Theory verdict 4/5; 4 papers read in full + a 26-work sweep (no 5/5 collision - the paper hangs on one ablation: the same retargeter trained on kinematic vs object-motion-matched pairs). Design closed same-day at v1.0 after five discussion rounds: MANO-theta interfaces both ways (R: theta->q residual over a geometric prior; R-1: q->theta), W=1 per-step at control rate, wrist 6D + arm IK outside R, and a hard principle - the retargeter is TASK-AGNOSTIC (no robot demos, no task data; pairs from two-hand sim play where the MANO hand leads and the robot tracks the recorded object trajectory on the same clock; benchmark objects held out). Spec: DPP-ICLR2027/retargeter/DESIGN.md. Pilot ~3-4 H100-d gated on C1-C4 checks + sign-off.",
+   "path": "dex-point-policy/logs/2026-08-07-functional-retargeter-restructure/",
+   "tags": [
+    "restructure",
+    "retargeting",
+    "cross-embodiment",
+    "literature",
+    "design",
+    "novelty"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-06",
+   "slug": "scene-density-and-vggt-omega",
+   "title": "Scene density: the 12k budget, EE-centered sampling, and a VGGT-Omega proposal",
+   "status": "done",
+   "updated": "2026-08-06",
+   "tldr": "The near-field starvation is an ALLOCATION problem, not a sensor problem: 54% of the 12,000-point budget lands beyond 1.5 m and ~2% within 20 cm of the hand, while the source holds 5x more near-hand geometry than the random cap keeps. EE-centered sampling (banded/gaussian) recovers 3-5x near-hand density at equal budget, on both sim and EgoDex sides. Every scheme is still a heuristic for spending a capped token budget PTv3 imposes by construction - a VGGT-Omega encoder proposal (pixel-dense geometry, ~1,041 tokens/frame, perspective foveation for free) is filed with two 1-GPU-hour de-riskers pending.",
+   "path": "dex-pointwam/logs/2026-08-06-scene-density-and-vggt-omega/",
+   "tags": [
+    "representation",
+    "point-cloud",
+    "sampling",
+    "vggt-omega",
+    "architecture",
+    "analysis"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-07-15",
+   "slug": "initial-development-and-egodex-pretraining",
+   "title": "Initial development and pretraining on EgoDex",
+   "status": "done",
+   "updated": "2026-08-02",
+   "tldr": "Porting PointWAM to a 12-keypoint dexterous hand and pretraining on EgoDex. At 5.2M clips held-out robot_l2_moved is 0.06057 +/- 0.00017 m; the world-modelling branch buys -4.7% (z~12) and the gap GROWS with scale rather than washing out. Open-loop only, and the run was still improving at the budget limit.",
+   "path": "dex-pointwam/logs/2026-07-15-initial-development-and-egodex-pretraining/",
+   "tags": [
+    "pretraining",
+    "egodex",
+    "world-model",
+    "ablation",
+    "open-loop",
+    "scaling"
+   ]
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-02",
+   "slug": "closed-loop-evaluation-dpp-task",
+   "title": "Closed-loop evaluation on the DPP task",
+   "status": "running",
+   "updated": "2026-08-03",
+   "tldr": "The same checkpoint picks nothing up. Not a stall and not oscillation: a COHERENT trajectory (chunk-to-chunk cosine +0.99) converging on a fixed point 16 cm from the object. Three of our own statistics retracted. Leading candidate is a chunk-length mismatch: our shipped chunk spans 30 raw frames against DPP's 16, so three finetune arms (16, 16 at half resolution, 30 frames) are in flight. Corrected 2026-08-03: the SOURCE RATE IS NOT SETTLED - the 20 Hz figure is a delivered-rate label, not a sensor measurement, so the arms are defined in frames and no result depends on it.",
+   "path": "dex-pointwam/logs/2026-08-02-closed-loop-evaluation-dpp-task/",
+   "tags": [
+    "closed-loop",
+    "sim",
+    "retraction",
+    "clock",
+    "evaluation",
+    "embodiment-gap"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-31",
+   "slug": "benchmark-jitter",
+   "title": "Four poses cannot estimate a success rate",
+   "status": "done",
+   "updated": "2026-08-01",
+   "tldr": "The openarm-sim eval driver placed the object at the exact centre of its grid cell every episode, so a 512-episode run was four initial conditions repeated 128 times. Fixing it (1cm per-episode jitter) moves the 3-object mean only 23.2 -> 22.9% but changes what every number means: cells had saturated at 0/128 and 128/128, and the tennis ball scored 1.4% at the centre pose vs 6.4% under jitter, a 4.6x per-object error. Cross-hand re-run at 96 eps/hand now has non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs Wuji/Sharpa 0/96 [0-3.85]) with IK residuals reproducing the earlier study to within a millimetre. And the contact-label question finally resolved, paired on identical initial conditions at a matched 370k steps: the HUMAN label wins bottle (-8.0, p=0.031) and box (-10.9, p=5e-05) and loses only ball (+2.5, where neither policy is competent) - the opposite of the 07-30 reading, which had compared checkpoints at different steps selected on bottle alone. Since that human label is one grasp bit copied across five fingers, a 1-bit label trains a better policy than a genuine 5-bit one.",
+   "path": "dex-point-policy/logs/2026-07-31-benchmark-jitter/",
+   "tags": [
+    "methodology",
+    "statistics",
+    "benchmark",
+    "sim",
+    "cross-hand",
+    "pre-registration"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-30",
+   "slug": "contact-auto-vs-oracle",
+   "title": "Rebuilding the object points beats the shipped pipeline; the contact-label winner flips by object",
+   "status": "done",
+   "updated": "2026-07-31",
+   "tldr": "Rebuilt DPP's object points (128 -> 2048 pts, mask erosion -> depth-gradient rejection, sensor-metric depth fusion) and trained two otherwise-identical finetunes that differ only in the contact label. Mean success_at_end over bottle/box/ball at 512 episodes each: learned-tactile label 36.8%, human label 31.7%, shipped 128-pt baseline 23.2%. The two labels trade places by object (human wins bottle 76.6 vs 49.0, loses box 14.6 vs 44.7 and ball 3.9 vs 16.6), and both checkpoints were selected on bottle alone, so no label claim survives. Measured why the labels differ at all: the human annotation is one grasp bit copied across five fingers (1.21 distinct finger columns of 5 over 69k frames, contact head 0.98 acc) while the learned tactile is a real 5-bit target (0.70). Also found the benchmark has four initial conditions, not 512 - the driver runs with zero position jitter. [2026-07-31] Protocol note: these numbers are from the 4-condition benchmark. Re-measured under 1cm jitter the 3-object mean holds (23.2 -> 22.9%) but the ball goes 1.4 -> 6.4%; the label comparison is being re-run at matched budget with a pre-registered paired analysis.",
+   "path": "dex-point-policy/logs/2026-07-30-contact-auto-vs-oracle/",
+   "tags": [
+    "data-quality",
+    "contact",
+    "ablation",
+    "depth-gradient",
+    "sim",
+    "methodology"
+   ]
+  },
+  {
+   "project": "dex-point-policy",
+   "date": "2026-07-29",
+   "slug": "contact-and-hand-rollouts",
+   "title": "Contact generalizes to PnP/Tool; the 6-point abstraction breaks on hand scale",
+   "status": "done",
+   "tldr": "Learned tactile-contact transfers to PnP (F1 0.70) and Tool (spray power-grip recovers ring+pinky; microwave's low F1 is a thumb-free GT artifact). DPP in the openarm-sim PnP benchmark scores 29.2% with Inspire (reproducing the ~27% baseline bit-for-bit) and 0/24 with both Wuji (20-DOF) and Sharpa (22-DOF) — the cause is finger reach, not DOF count: the retargeting IK displaces the wrist 2.8-5.4 cm. Rescaling fingertip targets fixes the IK and still scores 0/24, because DPP's input is six points too. Two earlier sim claims withdrawn; the debugging also found the bottle's object cloud smears past 30 cm on 14.2% of fine-tune frames (missing depth-gradient filter). [2026-07-31] Re-run at 96 eps/hand on the jittered protocol: reproduces with non-overlapping intervals (Inspire 25.0% [17.4-34.5] vs 0/96 [0-3.85]).",
+   "path": "dex-point-policy/logs/2026-07-29-contact-and-hand-rollouts/",
+   "tags": [
+    "contact",
+    "tactile",
+    "sim",
+    "isaac",
+    "hand-swap",
+    "6-point",
+    "retraction"
+   ],
+   "updated": "2026-07-31"
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-13",
+   "slug": "spaceformer-data-engine",
+   "title": "SpaceFormer's caption protocol transfers to ego video; its static clustering does not",
+   "status": "running",
+   "updated": "2026-08-25",
+   "tldr": "Human-data engine for the PointWAM 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA ego video. A faithful SpaCeFormer-3M re-implementation (A.6/A.7 prompts verbatim, MaskClustering params, Gemma-3, 5 captions/instance) run head-to-head on 10 episodes: captions are adopted-worthy (earlier Gemma failure was protocol mismatch), but static MaskClustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep — quantitatively justifying our scene-flow merge. Recommended default: hybrid. EgoDex campaign ~178k/324k (55%); two-pass fleet (SAM2 pass + Gemma pass) with A/B-validated fast masker; 15 new-dataset demos (DexYCB/AEA/EPIC)."
+  }
+ ]
 }
