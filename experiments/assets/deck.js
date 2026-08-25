@@ -7,11 +7,13 @@
      <main class="deck" data-project="…" data-deck="…" data-date="YYYY-MM-DD">
        <section class="slide s-…"> … </section>   (one per slide)
    Progressive disclosure: <ul data-steps> — one step per <li>; the current
-   <li> is bold, siblings dim (CSS). <li data-show="#id"> boxes that element
-   while it is current. Any element with data-step="n" (1-based) appears from
-   step n on. Steps are part of the URL: #/slide or #/slide/step (1-based).
+   <li> is bold, siblings light grey (CSS). <li data-show="#id"> boxes that
+   element while it is current. Any element with data-step="n" (1-based)
+   appears from step n on. Steps are part of the URL: #/slide or #/slide/step.
    Keys: → ↓ Space PgDn Enter l j · ← ↑ PgUp Backspace h k · Home End ·
-   o/Esc overview · f fullscreen · d theme · ? help · swipe on touch. */
+   o/Esc overview · f fullscreen · d theme · ? help · swipe on touch.
+   Nothing visible is injected except the slide number bottom-right (.sn);
+   theme is toggled with `d` only — no button, no progress bar. */
 (function () {
   'use strict';
   var root = document.documentElement, KEY = 'lab-theme';
@@ -32,12 +34,10 @@
     var slides = [].slice.call(deck.querySelectorAll(':scope > .slide'));
     var N = slides.length; if (!N) return;
     var body = document.body, narrowMQ = matchMedia('(max-width: 699px)');
-    var meta = [deck.getAttribute('data-project'), deck.getAttribute('data-deck'),
-                deck.getAttribute('data-date')].filter(Boolean).join(' · ');
 
-    // per-slide footer strip + step count
+    // per-slide number (bottom-right, 8 pt grey — our only addition to the reference) + step count
     slides.forEach(function (s, i) {
-      s.appendChild(el('div', 'sf', (meta ? meta + ' · ' : '') + '<b>' + (i + 1) + ' / ' + N + '</b>'));
+      s.appendChild(el('div', 'sn', String(i + 1)));
       var k = s.querySelectorAll('[data-steps] > li').length;
       [].forEach.call(s.querySelectorAll('[data-step]'), function (e) {
         k = Math.max(k, parseInt(e.getAttribute('data-step'), 10) || 0);
@@ -46,29 +46,25 @@
       s.setAttribute('aria-label', 'Slide ' + (i + 1) + ' of ' + N);
     });
 
-    // HUD
-    var prog = el('div', 'progress'), live = el('div', 'sr'), btn = el('button', 'theme-btn');
+    // invisible mechanics: live region for screen readers + the ? help overlay
+    var live = el('div', 'sr');
     live.setAttribute('aria-live', 'polite'); live.setAttribute('aria-atomic', 'true');
-    btn.type = 'button'; btn.title = 'Toggle theme (d)';
     var help = el('div', 'help', '<div class="card" role="dialog" aria-label="Keyboard help"><h3>Keys</h3><dl>' +
       '<dt>→ ↓ Space PgDn</dt><dd>next step / slide</dd>' +
       '<dt>← ↑ PgUp Bksp</dt><dd>previous</dd>' +
       '<dt>Home / End</dt><dd>first / last slide</dd>' +
       '<dt>o · Esc</dt><dd>overview (click a slide to jump)</dd>' +
-      '<dt>f</dt><dd>fullscreen</dd><dt>d</dt><dd>light / dark</dd>' +
+      '<dt>f</dt><dd>fullscreen</dd><dt>d</dt><dd>light / dark theme (no button — the stage carries no chrome)</dd>' +
       '<dt>?</dt><dd>this help</dd>' +
       '<dt>#/n · #/n/s</dt><dd>deep link to slide n (step s)</dd>' +
       '<dt>⌘P</dt><dd>PDF — one 16:9 page per slide</dd></dl></div>');
-    body.appendChild(prog); body.appendChild(live); body.appendChild(btn); body.appendChild(help);
+    body.appendChild(live); body.appendChild(help);
 
-    function paintBtn() { btn.textContent = theme() === 'dark' ? '◐ light' : '◑ dark'; }
     function toggleTheme() {
       var next = theme() === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
       try { localStorage.setItem(KEY, next); } catch (e) {}
-      paintBtn();
     }
-    paintBtn(); btn.addEventListener('click', toggleTheme);
 
     // state
     var cur = 0, step = 0;
@@ -103,7 +99,6 @@
       slides.forEach(function (s, j) { s.classList.toggle('active', j === n); });
       applyStep(slides[n]);
       media();
-      prog.style.width = (N > 1 ? (n / (N - 1)) * 100 : 100) + '%';
       live.textContent = 'Slide ' + (n + 1) + ' of ' + N +
         (slides[n].steps ? ', step ' + (step + 1) + ' of ' + slides[n].steps : '');
       var h = '#/' + (n + 1) + (step ? '/' + (step + 1) : '');

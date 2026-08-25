@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <!-- ═══════════════════════════════════════════════════════════════════
-  EXAMPLE DECK — one canonical slide per section type, in the reference
-  deck's style (see _template/DECK-STYLE.md §1). Agents: read THIS instead of
-  the reference PDF; copy a slide by its "SECTION: …" comment into a
-  copy of _template/deck.html. Content is real (3D-WAM concept hub + the
-  point-budget gallery log); media are reused by absolute path. This deck
-  obeys every hard cap in DECK-STYLE.md §4: 8 main slides + 1 appendix,
-  one thesis ≤ 20 words, ≤ 4 one-line bullets, ≤ 3 media per band,
-  Agenda 4 + 3, Asks 3 with options + one recommendation, cut list last.
+  EXAMPLE DECK — one canonical slide per section of the FIXED structure
+  (DECK-STYLE.md §3): 1 Title · 2 Overview · 3 Method (1–3 slides) ·
+  4 Results (1–3 slides, cumulative numbered sub-agenda) · 5 Discussion &
+  Action items · appendix (optional; content variants such as a related-work
+  table live here, not in the main flow). Agents: read THIS instead of the
+  reference PDF; copy a slide by its "SECTION: …" comment into a copy of
+  _template/deck.html. Content is real (3D-WAM concept hub + deck #1); media
+  reused by absolute path. Obeys every hard cap in §4: 7 main slides,
+  one thesis ≤ 20 words on ONE line, ≤ 4 one-line bullets, ≤ 3 media per band.
+  Style (2026-08-26): no visible chrome — the slide number bottom-right is our
+  only addition to the reference · title slide = reference p01 (centred block:
+  title · one context line · bold venue · date · presenter — nothing else) ·
+  figures fill the band, one italic grey caption UNDER each (label first), no
+  heading above · links / sources only in <p class="footnote"> · lists are
+  plain: bold lead + "(owner · ETA)", Options / Recommendation as sub-bullets.
 ═══════════════════════════════════════════════════════════════════ -->
 <html lang="en">
 <head>
@@ -15,7 +22,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-08-25 · Example deck — 3D-WAM</title>
-<meta name="description" content="Worked example of the DECK format: one slide per section type, filled with 3D-WAM concept-hub content.">
+<meta name="description" content="Worked example of the DECK format: one slide per section of the fixed structure, filled with 3D-WAM concept-hub content.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -23,58 +30,139 @@
 <body class="deck-page">
 <main class="deck" data-project="3D-WAM" data-deck="example deck · section types" data-date="2026-08-25">
 
-<!-- SECTION: title · always first · rules: the QUESTION as title (blue, bold, centred), one-line verdict
-     under it, status pill + dates, project + hub link, presenter. No figure, no logo. -->
+<!-- SECTION: title · = reference p01, literally: centred block — deck title (bold blue, 1–2 lines) · ONE plain context
+     line · ONE bold venue line · date · "Presented by". Nothing else: no pill, eyebrow, lede, metadata, footnote or URL. -->
 <section class="slide s-title">
-  <p class="eyebrow">3D-WAM · example deck — one canonical slide per section type</p>
   <h1>Can a robot execute tasks demonstrated only by humans, via generated labeled 4D point flow?</h1>
-  <p class="verdict-line">Concept v0.4, no runs yet — Phase 1 (data): point-budget sweeps built and verified; dataset choice 1.1 open.</p>
-  <div class="meta">
-    <div class="row"><span class="pill acc"><span class="dot"></span>running</span><span>2026-08-25</span></div>
-    <div><b>3D-WAM</b> · <a href="/experiments/3d-wam/">hub</a></div>
-    <div>Presented by beomjun</div>
-  </div>
+  <p class="ctx">3D-WAM · example deck — one canonical slide per section</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 25<br>Presented by beomjun</p>
 </section>
 
-<!-- SECTION: overview · always second · rules: thesis prefixed [TL;DR] (≤ 20 words), ≤ 4 one-line
-     bullets (what ran · the number · what is open · status), ONE media in the band, source line in .foot. -->
-<section class="slide s-verdict">
+<!-- SECTION: overview · ONE slide = TL;DR + today's agenda: <b>[TL;DR]</b> thesis (plain bold, ≤ 20 words, ONE line),
+     ≤ 4 one-line bullets saying what was DONE and what is to DISCUSS today (no two-column layout, no separate
+     Agenda slide); 1–2 media filling the band, caption UNDER each (label first); sources in the footnote. -->
+<section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><span class="k">[TL;DR]</span> Observation and action share one labeled point set; one generative model predicts the whole scene's flow.</p>
+  <p class="thesis"><b>[TL;DR]</b> One labeled point set is observation and action; one model predicts its flow.</p>
   <ul>
-    <li>Embodiment points are predicted too: flow → Procrustes + IK → joints, no retargeter</li>
-    <li>Training mixes human demos with Sharpa-hand episodes over overlapping task sets</li>
-    <li>Claim: robot-zero-shot on human-only tasks, read against an oracle replay ceiling</li>
-    <li>Status: Phase 1 (data) — 1.2 sweeps built; 1.1 dataset decision open</li>
+    <li>Done: concept v0.4 — embodiment points predicted too: flow → Procrustes + IK → joints</li>
+    <li>Done: Phase 1 data — point-budget sweeps v3 built and verified on TACO (human | Sharpa)</li>
+    <li>Claim to test: robot-zero-shot on human-only tasks, read against an oracle replay ceiling</li>
+    <li>Discuss: N<sub>hand</sub> / N<sub>obj</sub> pick · datasets for 1.1 · backbone base for 2.2</li>
   </ul>
   <div class="band">
-    <figure><img src="/experiments/3d-wam/logs/2026-08-25-point-budget-gallery/assets/hit__hammer__toy_20231102_070_handsearch_human.gif" alt="hit hammer toy: hand search, human MANO hands, six panels">
-      <figcaption>Point-budget sweep, hand search: objects fixed at 4096 pts/object; panels N<sub>hand</sub> = 128 … 4096 per hand · TACO hit · hammer · toy, 54 frames @ 10 fps</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif" alt="hit hammer toy: one sweep, six panels N = 128 to 4096, human MANO hands">
+      <figcaption>human MANO — N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · TACO hit · hammer · toy</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_sharpa.gif" alt="hit hammer toy: one sweep, six panels N = 128 to 4096, Sharpa Wave hands">
+      <figcaption>Sharpa Wave — same sweep; same sampler, camera, box and colours</figcaption></figure>
   </div>
-  <p class="foot">spec: Claude project “Point Policy” › claude/3d-wam-concept.md · gallery log 2026-08-25</p>
+  <p class="footnote">right hand green · left hand purple · tool orange · target amber · 54 frames @ 10 fps · spec: Claude project “Point Policy” › claude/3d-wam-concept.md · deck #1 2026-08-26</p>
 </section>
 
-<!-- SECTION: agenda · MANDATORY, third · rules: two columns Report (≤ 4, done, no input needed) |
-     Discuss (≤ 3, needs the supervisor's judgment — these become the Asks). Items ≤ 40 characters.
-     Comes from the meeting-prep protocol (DECK-STYLE.md §4): inventory → triage → budget → order. -->
-<section class="slide s-agenda">
-  <h2>Today</h2>
-  <p class="thesis">Four items to report, three to discuss — the discussion is where the time goes.</p>
-  <div class="cols">
-    <div class="col"><h3>Report<span class="n">4 · ~1 min each</span></h3>
-      <ul><li>Point-budget sweeps v2 built, verified</li><li>Conventions fixed from CHORD code</li>
-          <li>Data fact: top-level parquets lack MANO</li><li>Deck format replaces the Log page</li></ul></div>
-    <div class="col discuss"><h3>Discuss<span class="n">3 · most of the time</span></h3>
-      <ul><li>N<sub>hand</sub> / N<sub>obj</sub> pick from the sweeps</li><li>Dataset choice for 1.1</li><li>Backbone base for 2.2</li></ul></div>
+<!-- SECTION: method · 1–3 slides titled "Method (1): …", "Method (2): …" (reference p8–9) · rules: thesis states the
+     mechanism in one sentence, ≤ 3 bullets, 1–2 figures filling the band; caption says "schematic, not a run" when it is one. -->
+<section class="slide s-method">
+  <h2>Method (1): Representation and model</h2>
+  <p class="thesis">One token per point track; a factorized DiT generates Δx over T = 16 by flow matching.</p>
+  <ul>
+    <li>Representation: xyz + class/instance label; embodiment points add link ID + tag</li>
+    <li>Conditioning: frame-0 points + instruction + embodiment tag → full scene flow; one loss</li>
+    <li>Decoding: per-link Procrustes + IK → joint commands; closed loop = regenerate per chunk</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled points at t=0 and the generated flow chunk: object flow and hand flow">
+      <figcaption>Schematic, not a run — labeled points at t = 0 in, point-matched flow chunk out; embodiment rows decode to joints</figcaption></figure>
   </div>
-  <p class="foot">prep: inventory → triage (report / discuss / FYI / drop) → budget 5–10 min → order · DECK-STYLE.md §4</p>
+  <p class="footnote">model table: /experiments/3d-wam/#method · backbone 100–200M for the pilot · CFM + classifier-free guidance</p>
 </section>
 
-<!-- SECTION: related-work · when positioning is part of the question · rules: topic title + thesis naming
-     the delta, ≤ 1 bullet, the band holds ONE compact comparison table (neighbor · establishes · lacks). -->
+<!-- SECTION: method · second method slide: the data side -->
+<section class="slide s-method">
+  <h2>Method (2): Data — the point-budget sampler</h2>
+  <p class="thesis">Each template is sampled once at N ∈ {128 … 4096} and tracked; human and Sharpa share the sweep.</p>
+  <ul>
+    <li>20·N area-weighted dense sample (seed 0) → farthest-point sampling to N → (face_id, bary) spec</li>
+    <li>Sharpa pairs from CHORD's TACO release: MANO both hands + Sharpa Wave + object 6D, 30 fps</li>
+    <li>A larger stored budget trims to a smaller one by FPS-order prefix — the pick is reversible</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.jpg" alt="first frame, human MANO hands, six panels N = 128 to 4096">
+      <figcaption>human MANO, first frame — the same N for each hand and object; panels N = 128 … 4096</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_sharpa.jpg" alt="first frame, Sharpa Wave hands, six panels N = 128 to 4096">
+      <figcaption>Sharpa Wave, first frame — same specs' N per entity, same camera and box</figcaption></figure>
+  </div>
+  <p class="footnote">pointsample.py · specs out_v2/&lt;task&gt;/spec_*.npz · MANO joints &lt; 0.001 mm · Sharpa FK &lt; 0.001 mm · deck #1 2026-08-26</p>
+</section>
+
+<!-- SECTION: results · 1–3 slides, all titled "Results" (reference p10–12): <ol class="agenda"> = the cumulative
+     numbered sub-agenda — the current item <li class="on"> is bold with its sub-bullets (what is shown, numbers only
+     if measured); the others are light grey with sub-bullets hidden. 1–3 media fill the band, NO heading above them;
+     captions (label first) say what is shown and which parameter varies — never how it looks. -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Point budget sweep (1.2)
+      <ul><li>10 GIFs, 5 TACO tasks, N<sub>obj</sub> = N<sub>hand</sub> = N ∈ {128 … 4096}; specs 180/180 bit-exact</li>
+          <li>no model numbers yet — a data-phase artifact for the owner's pick, by eye</li></ul></li>
+    <li>Reference clip: 4-view hand–object points in one BA world frame</li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_human.gif" alt="cut knife plate: one sweep, six panels N = 128 to 4096, human MANO hands">
+      <figcaption>human MANO — N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096 · cut · knife · plate</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_sharpa.gif" alt="cut knife plate: one sweep, six panels N = 128 to 4096, Sharpa Wave hands">
+      <figcaption>Sharpa Wave — N<sub>obj</sub> = N<sub>hand</sub> = N, panels 128 … 4096</figcaption></figure>
+  </div>
+  <p class="footnote">TACO 20231013_085 · 187 frames @ 30 fps, stride 4 → 47 @ 10 fps (1.33×) · right hand green · left purple · tool orange · target amber · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_human.gif">human.gif</a> · <a href="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/cut__knife__plate_20231013_085_sharpa.gif">sharpa.gif</a></p>
+</section>
+
+<!-- SECTION: results · second item active; a video in the band (autoplay, muted, loop; poster = first frame) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Point budget sweep (1.2)</li>
+    <li class="on">Reference clip: 4-view hand–object points in one BA world frame
+      <ul><li>bmw_0821 (dpp-bmw): fixed frame, hand nearest the objects; view rotates about the table normal</li>
+          <li>what the 3D-WAM observation looks like on the real rig — no model in the loop</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><video src="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.mp4" poster="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>4-view point cloud, bmw_0821 — left: cam_0 image; right: fused points, turntable view · 6 s</figcaption></figure>
+  </div>
+  <p class="footnote">clip: <a href="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.mp4">handobj_turntable.mp4</a> (dpp-bmw log 2026-08-23, 1158×460)</p>
+</section>
+
+<!-- SECTION: discussion-actions · ONE slide (two if unavoidable): bold thesis · "Discussion:" numbered items, each a
+     bold decision + "(who decides)" with sub-bullets "Options: …" and "Recommendation: …" · "Action items:" numbered
+     plain bullets with "(id · owner · ETA)" — ETAs only if real, TBD otherwise. Silence defaults to the recommendation. -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three decisions, each with a recommendation; silence means the recommendation stands.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Point budget N<sub>hand</sub> / N<sub>obj</sub></b> (owner)
+      <ul><li>Options: 512 · 1024 · 2048 · 4096 per entity — specs are stored for every N</li>
+          <li>Recommendation: keep specs at 4096, trim by FPS-order prefix in 1.3 — reversible</li></ul></li>
+    <li><b>Datasets for 1.1</b> (owner)
+      <ul><li>Options: TACO via CHORD (Sharpa pairs released) · GRAB · ARCTIC · OakInk2 · HOT3D (via ManipTrans)</li>
+          <li>Recommendation: TACO first; add two others as the ManipTrans budget allows</li></ul></li>
+    <li><b>Deck replaces Log for new records?</b> (owner)
+      <ul><li>Options: decks only · decks + new logs · logs only</li>
+          <li>Recommendation: decks only for new questions; existing logs untouched</li></ul></li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Preprocessing — episode format at the chosen budget (1.3 · agent · after 1.1 + 1.2, ETA TBD)</li>
+    <li>Data structure + architecture base, PointWorld vs video model (2.1–2.2 · agent · TBD)</li>
+    <li>Evaluations 3.1–3.3: zero-shot vs overlap, open-loop error, closed-loop vs oracle (planned)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix · variant: related-work table (a content slide kept out of the main flow) · rules: topic title +
+     thesis naming the delta, ≤ 1 bullet, the band holds ONE compact comparison table (neighbor · establishes · lacks). -->
 <section class="slide s-table">
-  <h2>Related work</h2>
-  <p class="thesis">Every neighbor establishes one piece; none generates embodiment flow from language with dense hands.</p>
+  <h2>Appendix · Related work</h2>
+  <p class="thesis">Each neighbor has one piece; none generates dense-hand embodiment flow from language.</p>
   <ul><li>CHORD / ManipTrans are data supply: robot-hand episodes minted from human mocap</li></ul>
   <div class="band"><div class="tbl">
     <table class="compact">
@@ -88,85 +176,7 @@
       </tbody>
     </table>
   </div></div>
-  <p class="foot">arxiv 2601.03782 · alphaxiv 2606.10614 · arxiv 2603.08485 · arxiv 2607.00033 · arxiv 2503.21860</p>
-</section>
-
-<!-- SECTION: method · when the mechanism must be understood before the results · rules: thesis states the
-     mechanism in one sentence, ≤ 3 bullets (representation · conditioning · decoding), ONE figure/diagram
-     with a caption that says "schematic, not a run" when it is one. -->
-<section class="slide s-claim">
-  <h2>Method</h2>
-  <p class="thesis">One token per point track; a factorized DiT generates Δx over T = 16 at 10 Hz by flow matching.</p>
-  <ul>
-    <li>Representation: xyz + class/instance label; embodiment points add link ID + tag</li>
-    <li>Conditioning: frame-0 points + instruction + embodiment tag → full scene flow; one loss</li>
-    <li>Decoding: per-link Procrustes + IK → joint commands; closed loop = regenerate per chunk</li>
-  </ul>
-  <div class="band">
-    <figure><img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled points at t=0 and the generated flow chunk: object flow and hand flow">
-      <figcaption>Schematic, not a run: labeled points at t = 0 in, point-matched flow chunk out; embodiment rows decode to joints (per-link Procrustes + IK)</figcaption></figure>
-  </div>
-  <p class="foot">model table: /experiments/3d-wam/#method · backbone 100–200M for the pilot · CFM + classifier-free guidance</p>
-</section>
-
-<!-- SECTION: results · one per evidence item · rules: numbered CUMULATIVE agenda (<ol data-steps>): the
-     current item is bold, siblings dim; data-show boxes the matching media; a "→" line appears on the
-     last step (data-step). 2–3 media side by side under labels (GIF, MP4 both fine); captions say what is
-     shown and which parameter varies, never how it looks. Numbers on the slide only if measured. -->
-<section class="slide s-compare">
-  <h2>Experiments</h2>
-  <p class="thesis">Three evaluations are planned; today's only artifact is the data-phase point-budget sweep.</p>
-  <ol data-steps>
-    <li data-show="#f-gif">Point budget (1.2): 15 GIF sweeps, 5 TACO tasks, N ≤ 4096; specs bit-exact</li>
-    <li data-show="#f-mp4">Reference clip: 4-view hand–object points in one BA world frame (dpp-bmw)</li>
-    <li>3.1–3.3: zero-shot vs overlap 0/25/50 %; open-loop error; closed-loop vs oracle</li>
-  </ol>
-  <p class="so" data-step="3">→ No model numbers yet; closed-loop numbers are read against the oracle replay ceiling</p>
-  <div class="band">
-    <figure id="f-gif"><h3 class="lbl">object search · human MANO hands</h3>
-      <img src="/experiments/3d-wam/logs/2026-08-25-point-budget-gallery/assets/cut__knife__plate_20231013_085_objsearch_human.gif" alt="cut knife plate: object search, six panels">
-      <figcaption>hands fixed at 4096 pts/hand; panels N<sub>obj</sub> = 128 … 4096 per object · TACO cut · knife · plate, 47 frames @ 10 fps (1.33×)</figcaption></figure>
-    <figure id="f-mp4"><h3 class="lbl">4-view point cloud · bmw_0821</h3>
-      <video src="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.mp4" poster="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>handobj_turntable.mp4 · fixed frame (hand nearest the objects), view rotates about the table-plane normal; left: cam_0 image · 6 s, 1158×460</figcaption></figure>
-  </div>
-  <p class="foot">gallery: /experiments/3d-wam/logs/2026-08-25-point-budget-gallery/ · clip: dpp-bmw log 2026-08-23</p>
-</section>
-
-<!-- SECTION: next · after the evidence · rules: numbered table # · item · owner · ETA/status (≤ 5 rows);
-     ETAs only if real — write TBD otherwise; owners as in the project's work list. -->
-<section class="slide s-next">
-  <h2>Next steps</h2>
-  <p class="thesis">Phase 1 closes with the dataset and budget picks; preprocessing at the chosen budget follows.</p>
-  <div class="band"><div class="tbl"><table>
-    <thead><tr><th>#</th><th>item</th><th>owner</th><th>ETA / status</th></tr></thead>
-    <tbody>
-      <tr><td>1.1</td><td>Datasets — three of GRAB · TACO · OakInk2 · HOT3D · ARCTIC; Sharpa pairs via CHORD first</td><td class="who">owner + agent</td><td class="eta">open — decide today</td></tr>
-      <tr><td>1.2</td><td>Point budget — N<sub>hand</sub>, N<sub>obj</sub> from the sweeps</td><td class="who">owner</td><td class="eta">sweeps live 08-25 · pick pending</td></tr>
-      <tr><td>1.3</td><td>Preprocessing — episode format at the chosen budget</td><td class="who">agent</td><td class="eta">after 1.1 + 1.2 · ETA TBD</td></tr>
-      <tr><td>2.1</td><td>Data structure — xyz, labels, embodiment tag</td><td class="who">agent</td><td class="eta">planned · ETA TBD</td></tr>
-      <tr><td>2.2</td><td>Architecture — base: PointWorld vs a video-generation model</td><td class="who">owner + agent</td><td class="eta">planned · ETA TBD</td></tr>
-    </tbody>
-  </table></div></div>
-  <p class="foot">work list: /experiments/3d-wam/#actions · no ETAs are set in the hub yet — TBD is literal</p>
-</section>
-
-<!-- SECTION: asks · MANDATORY, ≤ 3 · rules: every ask = who decides, the options, ONE recommendation
-     (the "→" line). Silence defaults to the recommendation. These are the Discuss items of the Agenda. -->
-<section class="slide s-ask">
-  <h2>Asks</h2>
-  <p class="thesis">Three decisions, each with a recommendation; no answer means the recommendation stands.</p>
-  <ol class="asks">
-    <li><span class="lead">Point budget N<sub>hand</sub> / N<sub>obj</sub></span><span class="who">owner</span>
-        <span class="opts">Options: 512 · 1024 · 2048 · 4096 per entity — specs are stored for every N</span>
-        <span class="rec">Recommendation: keep specs at 4096, trim by FPS-order prefix in 1.3 — reversible</span></li>
-    <li><span class="lead">Datasets for 1.1</span><span class="who">owner</span>
-        <span class="opts">Options: TACO via CHORD (Sharpa pairs released) · GRAB · ARCTIC · OakInk2 · HOT3D (via ManipTrans)</span>
-        <span class="rec">Recommendation: TACO first; add two others as the ManipTrans budget allows</span></li>
-    <li><span class="lead">Deck replaces Log for new records?</span><span class="who">owner</span>
-        <span class="opts">Options: decks only · decks + new logs · logs only</span>
-        <span class="rec">Recommendation: decks only for new questions; existing logs untouched</span></li>
-  </ol>
+  <p class="footnote">arxiv 2601.03782 · alphaxiv 2606.10614 · arxiv 2603.08485 · arxiv 2607.00033 · arxiv 2503.21860</p>
 </section>
 
 <!-- SECTION: appendix · unlimited, read not presented · rules: dense mono, two columns (setup · repro |
@@ -180,24 +190,24 @@
         <dt>Data</dt><dd>HF nvidia/video-to-data-robot-dexterity-task-library-and-dataset · taco/&lt;seq&gt;/motion_v1.parquet × 5 · TACO Object_Models (10 meshes, cm × 0.01) · CHORD sharpawave URDFs</dd>
         <dt>Hands</dt><dd>MANO: manotorch (use_pca=False, flat_hand_mean=True, center_idx=0), parquet betas → joints &lt; 0.001 mm · Sharpa: robot_*_frames = world link poses; FK match &lt; 0.001 mm</dd>
         <dt>Sampler</dt><dd>pointsample.py: 20·N dense (seed 0) → FPS to N → (face_id, bary) spec per (entity, N), N ∈ {128 … 4096}</dd>
-        <dt>Verify</dt><dd>--verify: 5/5 tasks · 180/180 specs bit-exact · 15 GIFs ≤ 840 px, ≤ 3 MB, 6.2 MB total</dd>
+        <dt>Verify</dt><dd>--verify (v3 --clean, job 130176): 5/5 tasks · 180/180 specs bit-exact · 10 GIFs 1200×800, ≤ 1.5 MB, 10.7 MB total</dd>
       </dl>
     </div>
     <div>
       <pre><code>conda activate 3dwam; cd ~/3d-wam/viz   # Slurm node
 python taco_sweeps.py --download --select  # data
 python taco_sweeps.py --check              # conventions
-python taco_sweeps.py --run --verify       # GIFs + checks</code></pre>
+python taco_sweeps_v3.py --run --clean --verify   # GIFs + checks</code></pre>
       <ul>
         <li>HF taco/ = 1,215 sequences; the 360 top-level taco_* dirs are a subset</li>
         <li>top-level brush: 62 columns (MANO + Sharpa + objects); other verbs: 34 — no MANO</li>
         <li>taco/-only 855 sequences carry MANO (49/53 footers probed); select on schema, not folder</li>
         <li>World up-axis not established (camera assumes z-up; view angle only)</li>
       </ul>
-      <p class="cut"><b>Cut list</b> (dropped from this deck, kept in the gallery log / hub): v1 GRAB grids (superseded) · per-GIF size table · MANO hand-mean note (v1) · ablation table (no runs) · phase-2 items 2.3–2.4 · colour convention</p>
+      <p class="cut"><b>Cut list</b> (dropped from this deck, kept in deck #1 / hub): v1 GRAB grids (superseded) · v2 two-sweep GIFs · per-GIF size table · MANO hand-mean note (v1) · ablation table (no runs) · phase-2 items 2.3–2.4 · colour convention · the old two-column Agenda and separate Asks / Next slides</p>
     </div>
   </div>
-  <p class="foot">sources: ~/3d-wam/viz/README_v2.md · /experiments/3d-wam/logs/2026-08-25-point-budget-gallery/ · /experiments/3d-wam/</p>
+  <p class="footnote">sources: ~/3d-wam/viz/README_v3.md · /experiments/3d-wam/decks/2026-08-25-point-budget/ · /experiments/3d-wam/</p>
 </section>
 
 </main>

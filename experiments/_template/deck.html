@@ -1,47 +1,66 @@
 <!DOCTYPE html>
 <!-- ═══════════════════════════════════════════════════════════════════
   DECK TEMPLATE — the meeting slide deck; default record for a new
-  experiment question. Contract: experiments/README.md. Style, grammar and
-  the reference-deck rules: _template/DECK-STYLE.md. WORKED EXAMPLE with one
-  canonical slide per section type: _template/deck-example/index.html —
+  experiment question. Contract: experiments/README.md. Style, structure
+  and the reference-deck rules: _template/DECK-STYLE.md. WORKED EXAMPLE
+  with one canonical slide per section: _template/deck-example/index.html —
   copy slides from there by their "SECTION: …" comment.
 
-  SCOPE: one deck = ONE question, ended by a verdict (same as a log). Check
-  logs.json first — if the project has an open deck on the question, UPDATE
-  it (title verdict, TL;DR, evidence, status pill, date; bump "updated").
+  LOOK (matches the owner's reference deck, DECK-STYLE.md §1): white stage,
+  NO VISIBLE CHROME — no progress bar, theme button, footer strip or logo;
+  the 8 pt grey slide number bottom-right is our ONLY addition to the
+  reference. A footnote (8 pt grey, bottom-left) appears only on slides
+  that declare <p class="footnote">. Title #0070C0 bold 24 pt · thesis bold
+  16 pt on ONE line · bullets 14 pt (sub 12 pt) · figures fill the band,
+  one italic grey caption UNDER each (label first), nothing above them ·
+  download links / sources only in the footnote · [TL;DR] plain bold.
+
+  FIXED STRUCTURE (every deck, this order; main deck ≤ 8 slides):
+    1 Title                 reference p01, literally — centred block only
+    2 Overview              ONE slide: [TL;DR] thesis + ≤ 4 bullets that say
+                            what was DONE and what is to DISCUSS today
+    3 Method (1–3 slides)   what you did — "Method (1): …", "Method (2): …"
+    4 Results (1–3 slides)  what you observed — all titled "Results", with
+                            the cumulative numbered sub-agenda 1./2./3.
+                            (current item bold, others light grey; p10–12)
+    5 Discussion & Action items  ONE slide (two if unavoidable): bold thesis
+                            · "Discussion:" numbered items, each Options /
+                            Recommendation sub-bullets · "Action items:"
+                            numbered bullets with (owner · ETA)
+    – Appendix (optional)   dense; content variants (related work, back-
+                            ground, data) live here, not in the main flow;
+                            the LAST appendix slide carries the cut list.
 
   MEETING-PREP PROTOCOL (5–10 min with the supervisor):
     1 INVENTORY  list every candidate item (results, findings, artifacts,
                  open questions, blockers) in a scratch list.
-    2 TRIAGE     REPORT  = done, no input needed → one line on Overview or
-                          one evidence slide;
-                 DISCUSS = needs the supervisor's judgment → Asks slide as
-                          options + my recommendation (the meeting time);
+    2 TRIAGE     REPORT  = done, no input needed → one Overview bullet or
+                          one Method/Results slide;
+                 DISCUSS = needs the supervisor's judgment → Discussion item
+                          as options + my recommendation (the meeting time);
                  FYI     = available, not spoken → appendix;   DROP.
     3 BUDGET     5–10 min ≈ 6–8 main slides, ~1 min each; DISCUSS gets most.
-    4 ORDER      Title → [TL;DR] → Agenda (report | discuss) → report slides
-                 → asks → next steps → appendix.
-    5 Agenda and Asks slides are MANDATORY.
-  HARD CAPS (overload harms attention — cut, never shrink the font):
-    main deck ≤ 8 slides · ONE thesis sentence per slide, ≤ 20 words ·
-    ≤ 4 bullets per slide, each ≤ 1 line at stage width · ≤ 3 media per
-    band · Agenda ≤ 4 report + ≤ 3 discuss · Asks ≤ 3, each options + one
-    recommendation · everything else → appendix or DROPPED; the last
-    appendix slide carries a one-line "cut list" of what was dropped.
-  PRE-PUBLISH CHECK (6 lines):
+  HARD CAPS (overload harms attention — cut text, never shrink the font):
+    main deck ≤ 8 slides · ONE thesis sentence per slide, ≤ 20 words and
+    ONE line at stage width (aim ≤ 14 words) · ≤ 4 bullets per slide, each
+    ≤ 1 line · ≤ 3 media per band · Discussion ≤ 3 items, each options +
+    one recommendation · Action items ≤ 4 · if a slide carries more text
+    than the corresponding reference page, cut text · everything else →
+    appendix or DROPPED; the last appendix slide carries the cut list.
+  PRE-PUBLISH CHECK:
     · count main slides (≤ 8) and media per band (≤ 3)
-    · count words of every .thesis (≤ 20) and bullets per slide (≤ 4)
-    · every bullet fits one line at 1440 px wide — none wraps
-    · Agenda ≤ 4 + ≤ 3; Asks ≤ 3 with options AND a recommendation each
+    · every .thesis ≤ 20 words AND one line at 1440 px; ≤ 4 bullets, none wraps
+    · title slide has exactly: title · context line · venue · date · presenter
+    · Discussion ≤ 3 with options AND a recommendation each; actions ≤ 4
     · cut list present on the last appendix slide; no image judged in text
     · over any cap → cut content or move it to the appendix; never resize
 
   To add a deck: mkdir -p <project>/decks/YYYY-MM-DD-<slug>/assets · copy this
   file as index.html · fill ALL-CAPS · media in assets/ (mp4 ≤ 5 MB + poster,
-  GIF ≤ 3 MB) · logs.json entry with "format": "deck" · list in the hub's
-  "All logs". Absolute asset paths. Status pill: running=acc · done=ok ·
-  closed=warn · blocked/failed=bad. Captions say what is shown and what
-  varies — never how it looks. Real numbers only.
+  GIF ≤ 1.5 MB, no text baked into images — the caption carries it) ·
+  logs.json entry with "format": "deck" · list in the hub's "All logs".
+  Absolute asset paths. Captions say what is shown and what varies — never
+  how it looks. Real numbers only.
 ═══════════════════════════════════════════════════════════════════ -->
 <html lang="en">
 <head>
@@ -57,86 +76,83 @@
 <body class="deck-page">
 <main class="deck" data-project="PROJECT" data-deck="SHORT-TITLE" data-date="YYYY-MM-DD">
 
-<!-- SECTION: title -->
+<!-- SECTION: title (reference p01: centred block only — nothing else) -->
 <section class="slide s-title">
-  <p class="eyebrow">PROJECT · ACTION-ITEM / CAMPAIGN</p>
-  <h1>The question this deck answers, as a question?</h1>
-  <p class="verdict-line">One-line verdict — what happened, the key number, what it means.</p>
-  <div class="meta">
-    <div class="row"><span class="pill acc"><span class="dot"></span>running</span><span>YYYY-MM-DD → MM-DD</span></div>
-    <div><b>PROJECT</b> · <a href="/experiments/PROJECT-SLUG/">hub</a></div>
-    <div>Presented by NAME</div>
-  </div>
+  <h1>Deck title — the question or the topic, one or two lines</h1>
+  <p class="ctx">PROJECT · ACTION-ITEM · one plain line of context</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">YYYY. MM. DD<br>Presented by NAME</p>
 </section>
 
-<!-- SECTION: overview -->
-<section class="slide s-verdict">
+<!-- SECTION: overview (TL;DR + today's agenda in ONE slide) -->
+<section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><span class="k">[TL;DR]</span> The verdict in one sentence (≤ 20 words), with the key number.</p>
+  <p class="thesis"><b>[TL;DR]</b> The verdict in one sentence (≤ 14 words, one line), with the key number.</p>
   <ul>
-    <li>What was run, against what baseline, on what setup</li>
-    <li>The one number that answers the question <span class="aside">n, protocol</span></li>
-    <li>What is still open</li>
+    <li>Done: what was run, against what baseline, on what setup</li>
+    <li>Done: the one number that answers the question <span class="aside">n, protocol</span></li>
+    <li>Discuss: DECISION-1 · DECISION-2 · DECISION-3</li>
   </ul>
   <div class="band">
-    <figure><img src="assets/HERO.gif" alt="ALT"><figcaption>what is shown · what varies · n frames, fps, px</figcaption></figure>
+    <figure><img src="assets/HERO-A.gif" alt="ALT"><figcaption>label — what is shown · what varies</figcaption></figure>
+    <figure><img src="assets/HERO-B.gif" alt="ALT"><figcaption>label — what is shown · what varies</figcaption></figure>
   </div>
-  <p class="foot">source: path/to/report.md · job id</p>
+  <p class="footnote">colour key · n frames @ fps · source: path/to/report.md · job id</p>
 </section>
 
-<!-- SECTION: agenda (mandatory) -->
-<section class="slide s-agenda">
-  <h2>Today</h2>
-  <p class="thesis">N items to report, M to discuss — the discussion is where the time goes.</p>
-  <div class="cols">
-    <div class="col"><h3>Report<span class="n">≤ 4</span></h3><ul><li>DONE-ITEM</li><li>DONE-ITEM</li></ul></div>
-    <div class="col discuss"><h3>Discuss<span class="n">≤ 3</span></h3><ul><li>DECISION-NEEDED</li></ul></div>
-  </div>
-</section>
-
-<!-- SECTION: evidence — s-claim (ONE visual) · s-compare (2–3 side by side) · s-table (one table) -->
-<section class="slide s-compare">
-  <h2>Topic title (label, not a sentence)</h2>
-  <p class="thesis">The one claim this slide's visuals support.</p>
-  <ol data-steps>
-    <li data-show="#fig-a">First point — boxes figure A while current</li>
-    <li data-show="#fig-b">Second point</li>
-  </ol>
-  <p class="so" data-step="2">→ Conclusion line, revealed on the last step.</p>
+<!-- SECTION: method (1–3 slides: "Method (1): …", "Method (2): …") -->
+<section class="slide s-method">
+  <h2>Method (1): Topic label</h2>
+  <p class="thesis">The mechanism in one sentence.</p>
+  <ul>
+    <li>Representation / setup</li>
+    <li>What was varied, what was held fixed</li>
+    <li>How it was checked</li>
+  </ul>
   <div class="band">
-    <figure id="fig-a"><h3 class="lbl">CONDITION-A</h3><img src="assets/A.gif" alt="A"><figcaption>what A shows · what varies</figcaption></figure>
-    <figure id="fig-b"><h3 class="lbl">CONDITION-B</h3><video src="assets/B.mp4" poster="assets/B.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>B.mp4 · condition · duration · view</figcaption></figure>
+    <figure><img src="assets/METHOD.jpg" alt="ALT"><figcaption>label — schematic, not a run · what the figure shows</figcaption></figure>
   </div>
-  <p class="foot">assets/… · produced by path/to/script.py</p>
+  <p class="footnote">code path · data path</p>
 </section>
 
-<!-- SECTION: next (action items: # · item · owner · ETA) -->
-<section class="slide s-next">
-  <h2>Next steps</h2>
-  <p class="thesis">What happens after this meeting, in order.</p>
-  <div class="band"><div class="tbl"><table>
-    <thead><tr><th>#</th><th>item</th><th>owner</th><th>ETA / status</th></tr></thead>
-    <tbody><tr><td>1.1</td><td>ITEM</td><td class="who">OWNER</td><td class="eta">DATE or status</td></tr></tbody>
-  </table></div></div>
+<!-- SECTION: results (1–3 slides, all titled "Results"; <li class="on"> = the item shown on this slide) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">First result
+      <ul><li>what is shown · n, protocol</li><li>the one measured number, if any</li></ul></li>
+    <li>Second result</li>
+    <li>Third result</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/A.gif" alt="A"><figcaption>label A — what A shows · what varies</figcaption></figure>
+    <figure><video src="assets/B.mp4" poster="assets/B.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>label B — condition · duration · view</figcaption></figure>
+  </div>
+  <p class="footnote">colour key · <a href="assets/A.gif">A.gif</a> · <a href="assets/B.mp4">B.mp4</a> · produced by path/to/script.py</p>
 </section>
 
-<!-- SECTION: asks (mandatory; ≤ 3, each options + one recommendation) -->
-<section class="slide s-ask">
-  <h2>Asks</h2>
-  <p class="thesis">What the meeting must decide.</p>
-  <ol class="asks">
-    <li><span class="lead">DECISION</span><span class="who">owner</span>
-        <span class="opts">Options: A · B · C</span><span class="rec">Recommendation: B, because …</span></li>
+<!-- SECTION: discussion-actions (ONE slide) -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">What the meeting must decide, in one sentence.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>DECISION</b> (owner)
+      <ul><li>Options: A · B · C</li><li>Recommendation: B, because …</li></ul></li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>ITEM (id · owner · ETA or TBD)</li>
   </ol>
 </section>
 
-<!-- SECTION: appendix (dense mono; last one carries the cut list) -->
+<!-- SECTION: appendix (dense; last one carries the cut list) -->
 <section class="slide s-appendix">
   <h2>Appendix · setup · repro · data facts</h2>
   <dl class="kv"><dt>Env</dt><dd>cluster · versions</dd><dt>Data</dt><dd>…</dd><dt>Checkpoint</dt><dd>path</dd></dl>
   <div class="band"><pre><code>sbatch scripts/JOB.sbatch  # ENV_VAR=…</code></pre>
     <p class="cut"><b>Cut list</b> (dropped from this deck): ITEM · ITEM · ITEM</p></div>
-  <p class="foot">full report: path/to/source.md · wandb · job id</p>
+  <p class="footnote">full report: path/to/source.md · wandb · job id</p>
 </section>
 
 </main>

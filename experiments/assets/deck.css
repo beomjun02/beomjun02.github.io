@@ -1,27 +1,45 @@
 /* ─────────────────────────────────────────────────────────────
    deck.css — the DECK format (meeting slide deck) for
-   beomjun02.github.io/experiments. Loads AFTER lab.css: tokens,
-   reset, .pill/.tag/.theme-btn come from there; nothing is redefined.
-   Reference look + grammar: _template/DECK-STYLE.md.
+   beomjun02.github.io/experiments. Loads AFTER lab.css: theme tokens
+   and the reset come from there. Reference look + grammar:
+   _template/DECK-STYLE.md §1 (T. Kim lab-seminar deck, 720×405 pt).
+
+   NO VISIBLE CHROME: no progress bar, theme toggle, footer strip or
+   logo. Painted on the stage besides the content: the 8 pt grey
+   footnote bottom-left (only when a slide has <p class="footnote">)
+   and the 8 pt grey slide number bottom-right — the latter is our
+   only addition to the reference.
 
    Geometry: a 16:9 stage letterboxed in the viewport. On .slide,
-   1em = 1% of the stage width in EVERY mode (screen, overview,
-   print, narrow), so a slide is identical on a laptop and a
-   projector. Reference: 720 pt wide → 1em ≙ 7.2 pt.
+   1em = 1 % of the stage width in EVERY mode (screen, overview,
+   print, narrow) → 1em ≙ 7.2 pt of the reference; 1 % of the stage
+   HEIGHT = 0.5625em. Sizes below are the reference's, converted:
+   title 24 pt = 3.33em · thesis 16 pt = 2.22em · bullets 14 pt =
+   1.94em · sub-bullets 12 pt = 1.67em · captions 11 pt = 1.53em ·
+   footnote / slide number 8 pt = 1.11em · left margin 22 pt = 3.1em.
    ───────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+/* reference palette (light = the PDF) → dark maps onto the site tokens */
+.deck{--title:#0070C0;--ink:#000;--cap:#595959;--dim:#B3B3B3;
+      --deck-sans:Calibri,Carlito,"Source Sans 3","Segoe UI","Helvetica Neue",Arial,sans-serif}
+:root[data-theme="dark"] .deck{--title:var(--acc);--ink:var(--txt);--cap:var(--mut);--dim:var(--mut2)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .deck{--title:var(--acc);--ink:var(--txt);--cap:var(--mut);--dim:var(--mut2)}}
 
 html,body{height:100%}
 body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
-               font-family:var(--sans);font-size:16px;line-height:1.35}
+               font-family:var(--deck-sans);font-size:16px;line-height:1.35}
 
 /* ── stage ──────────────────────────────────────────────────── */
 .deck{position:absolute;inset:0;margin:auto;--sw:min(1vw,1.777778vh);
-      width:min(100vw,177.7778vh);height:min(56.25vw,100vh);
-      background:var(--panel);box-shadow:var(--shadow)}
+      width:min(100vw,177.7778vh);height:min(56.25vw,100vh);background:var(--panel)}
 .slide{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;
-       background:var(--panel);color:var(--txt);font-size:var(--sw);line-height:1.35;
-       padding:3.3em 3.1em 4.8em}
+       background:var(--panel);color:var(--ink);font-family:var(--deck-sans);
+       font-size:var(--sw);line-height:1.375;padding:3.9em 3.1em 3.4em}
 .slide.active{display:flex}
+.slide>*{flex-shrink:0}          /* text never squeezes; only the band gives way */
+.slide>.band{flex-shrink:1}
 
 /* neutralise lab.css px sizing inside slides (everything is em = % of width) */
 .slide h1,.slide h2,.slide h3,.slide p,.slide ul,.slide ol,.slide li,.slide dl,.slide dt,.slide dd,
@@ -29,115 +47,99 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
   margin:0;padding:0;font-size:inherit;line-height:inherit;letter-spacing:0;max-width:none;
   font-weight:inherit;color:inherit;text-transform:none;border:0;background:none;
   box-shadow:none;border-radius:0;font-family:inherit;list-style:none}
-.slide a{color:var(--acc)}
-.slide code{font-family:var(--mono);font-size:.9em;background:var(--panel2);
-            padding:.04em .3em;border-radius:.25em}
+.slide a{color:var(--title);text-decoration:underline}
+.slide code{font-family:var(--mono);font-size:.9em}
 .slide .mono{font-family:var(--mono);font-size:.92em}
-.slide .pill{font-size:1.4em;padding:.15em .8em;gap:.45em}
-.slide .pill .dot{width:.5em;height:.5em}
-.slide .tag{font-size:1.15em;padding:.1em .55em;border-radius:.35em}
 .slide sub{font-size:.7em;line-height:0}
-
-/* ── content-slide skeleton: title → thesis → bullets → band ── */
-.slide h2{font-size:3.3em;font-weight:700;color:var(--acc);line-height:1.15;
-          letter-spacing:-.01em;margin-bottom:1em;text-wrap:balance}
-.slide .thesis{font-size:2.2em;font-weight:700;line-height:1.3;margin-bottom:.9em;text-wrap:pretty}
-.slide .thesis.ctx{font-weight:400}
-.thesis .k{color:var(--acc)}              /* [TL;DR] prefix */
-.slide ul,.slide ol{font-size:1.95em;line-height:1.38;counter-reset:item}
-.slide li{position:relative;padding-left:2.55em;margin:.15em 0}
-.slide ul>li::before{content:"•";position:absolute;left:.8em}
-.slide ol>li::before{content:counter(item) ".";counter-increment:item;position:absolute;left:.55em;
-                     font-weight:700}
-.slide li ul,.slide li ol{font-size:.857em;margin-top:.1em}
-.slide li li{padding-left:3em;margin:.05em 0}
-.slide li li::before{left:1em}
-.aside{font-weight:400;font-size:.86em;color:var(--mut)}
-.aside::before{content:"| ";color:var(--mut2)}
-.slide .so{font-size:1.95em;line-height:1.38;margin:.6em 0 0 2.55em}   /* "→ conclusion" line */
-.slide .subhead{font-size:2.2em;font-weight:700;margin:1.2em 0 .5em}
 .slide b,.slide strong{font-weight:700}
 
-/* evidence band — fills what is left of the slide */
-.band{flex:1;min-height:0;display:flex;gap:2.4em;align-items:stretch;justify-content:center;
-      margin-top:1.8em}
-.band>figure{flex:1 1 0;min-width:0;display:flex;flex-direction:column;min-height:0;margin:0}
-.band>figure>img,.band>figure>video{flex:1 1 0;min-height:0;width:auto;max-width:100%;height:auto;
-      align-self:center;object-fit:contain;display:block;background:transparent}
-.band figcaption{flex:0 0 auto;font-style:italic;font-size:1.5em;color:var(--mut);
-                 text-align:center;margin-top:.6em;line-height:1.35;text-wrap:pretty}
-.band .lbl{flex:0 0 auto;font-size:1.6em;font-weight:600;text-align:center;margin-bottom:.4em}
-.hl>img,.hl>video,.hl>.tbl{outline:.14em solid var(--txt);outline-offset:.4em}   /* active-item figure box */
+/* ── content-slide skeleton: title → thesis → bullets → band ── */
+.slide h2{font-size:3.333em;font-weight:700;color:var(--title);line-height:1.15;margin-bottom:1em;
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide .thesis{font-size:2.222em;font-weight:700;line-height:1.3;margin-bottom:.7em;white-space:nowrap}
+.slide .thesis.ctx{font-weight:400}
+.slide ul,.slide ol{font-size:1.944em;line-height:1.375;counter-reset:item}
+.slide li{position:relative;padding-left:2.55em;margin:.15em 0}
+.slide ul>li::before{content:"•";position:absolute;left:.77em}
+.slide ol>li::before{content:counter(item) ".";counter-increment:item;position:absolute;left:.55em;
+                     font-weight:700}
+.slide li ul,.slide li ol{font-size:.857em;margin-top:.1em;counter-reset:sub}
+.slide li li{padding-left:3em;margin:.05em 0}
+.slide li li::before{left:1em;font-weight:400}
+.slide li ol>li::before{content:counter(sub) ".";counter-increment:sub}
+.aside{font-weight:400;font-size:.86em;color:var(--cap)}
+.aside::before{content:"| ";color:var(--dim)}
+.slide .so{font-size:1.944em;line-height:1.375;margin:.6em 0 0 2.55em}   /* "→ conclusion" line */
+.slide .subhead{font-size:2.222em;font-weight:700;margin:.5em 0 .15em}   /* "Discussion:" / "Action items:" (p15) */
+
+/* evidence band — fills what is left; figures side by side, equal heights, full content width */
+.band{flex:1;min-height:0;display:flex;gap:2.4em;align-items:stretch;justify-content:center;margin-top:3.2em}
+.band>figure{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column;margin:0}
+.band>figure>img,.band>figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;
+      object-fit:contain;display:block;background:transparent}
+.band figcaption{flex:0 0 auto;font-style:italic;font-size:1.528em;color:var(--cap);text-align:center;
+                 margin-top:.3em;line-height:1.3;text-wrap:pretty}
+.hl>img,.hl>video,.hl>.tbl{outline:.14em solid var(--ink);outline-offset:.4em}   /* active-item figure box */
 
 /* table in the band (booktabs: rules above/below the header and at the foot) */
 .band>.tbl{flex:1 1 0;min-width:0;min-height:0;overflow:hidden}
 .slide table{width:100%;border-collapse:collapse;font-size:1.7em;line-height:1.3;
              font-variant-numeric:tabular-nums}
 .slide th{font-weight:700;text-align:left;padding:.35em .6em;
-          border-top:.09em solid var(--txt);border-bottom:.06em solid var(--txt)}
+          border-top:.09em solid var(--ink);border-bottom:.06em solid var(--ink)}
 .slide td{padding:.35em .6em;border-bottom:.04em solid var(--line);vertical-align:top}
-.slide tbody tr:last-child td{border-bottom:.09em solid var(--txt)}
+.slide tbody tr:last-child td{border-bottom:.09em solid var(--ink)}
 .slide td.mono,.slide th.mono{font-family:var(--mono);font-size:.88em}
 .slide td.num,.slide th.num{text-align:right}
 .slide tr.hero td{font-weight:700}
+.slide table.compact{font-size:1.45em}
 
-/* footnote (source/data paths) + per-slide footer injected by deck.js */
-.slide .foot,.slide .sf{position:absolute;bottom:1.9em;font-family:var(--mono);font-size:1.05em;
-          line-height:1.3;color:var(--mut)}
-.slide .foot{left:3.1em;right:42em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sf{right:3.1em;max-width:38em;color:var(--mut2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sf b{font-weight:600;color:var(--mut)}
+/* footnote (bottom-left, only when declared) + slide number (bottom-right, injected by deck.js) */
+.slide .footnote,.slide .sn{position:absolute;bottom:1.2em;font-size:1.111em;line-height:1.3;color:var(--cap)}
+.slide .footnote{left:3.1em;right:8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide .footnote a{color:inherit;text-decoration:none}
+.slide .sn{right:3.1em}
 
 /* ── layouts ─────────────────────────────────────────────────── */
-.s-title{justify-content:center;align-items:center;text-align:center;padding:6em 7em 7em}
-.s-title .eyebrow{font-family:var(--mono);font-size:1.3em;letter-spacing:.14em;text-transform:uppercase;
-                  color:var(--mut);margin:0 0 2.2em}
-.s-title h1{font-size:3.3em;font-weight:700;color:var(--acc);line-height:1.2;text-wrap:balance}
-.s-title .verdict-line{font-size:1.95em;line-height:1.4;margin-top:1.6em;max-width:88%;text-wrap:pretty}
-.s-title .meta{font-size:1.75em;line-height:1.45;margin-top:2em;display:grid;gap:.35em;justify-items:center}
-.s-title .meta .row{display:flex;gap:.7em;align-items:center;flex-wrap:wrap;justify-content:center}
-.s-title .meta a{text-decoration:underline}
+/* title slide = reference p01: centred block, title cap-top at 43.6 % of the height; context · bold venue · date + presenter */
+.s-title{justify-content:flex-start;align-items:center;text-align:center;padding:23.7em 5em 3.4em}
+.s-title h1{font-size:3.333em;font-weight:700;color:var(--title);line-height:1.2;text-wrap:balance}
+.s-title p{font-size:1.75em;line-height:1.38}
+.s-title .ctx{margin-top:1.63em}
+.s-title .venue,.s-title .when{margin-top:1.38em}
 
 .s-section{justify-content:center}
-.s-section .eyebrow{font-family:var(--mono);font-size:1.4em;letter-spacing:.14em;text-transform:uppercase;
-                    color:var(--mut);margin-bottom:1em}
-.s-section h2{font-size:4.6em;margin-bottom:.5em}
-.s-section p{font-size:2em;color:var(--mut);max-width:70%}
+.s-section h2{font-size:4.6em;margin-bottom:.5em;white-space:normal}
+.s-section p{font-size:2em;color:var(--cap);max-width:70%}
 
 .s-compare .band{gap:3em}
 .s-list .band{display:none}
 
-/* agenda: two columns Report | Discuss (caps ≤ 4 / ≤ 3 lines) */
-.s-agenda .cols{flex:1;min-height:0;margin-top:.6em;gap:4em}
-.s-agenda .col h3{font-size:2.2em;font-weight:700;margin-bottom:.45em;padding-bottom:.2em;
-                  border-bottom:.06em solid var(--txt)}
-.s-agenda .col h3 .n{font-family:var(--mono);font-weight:400;font-size:.62em;color:var(--mut);margin-left:.6em}
-.s-agenda .col.discuss h3{color:var(--acc);border-color:var(--acc)}
-.s-agenda .col ul{font-size:1.95em}
+/* results: the reference's cumulative numbered sub-agenda (p10–12) — 16 pt items, the current one (.on) bold with its
+   14 pt sub-bullets, the others light grey with sub-bullets hidden; one slide per item, same title "Results" */
+.slide ol.agenda{font-size:2.222em;line-height:1.35}
+.slide ol.agenda>li{padding-left:2.23em;margin:.12em 0}
+.slide ol.agenda>li::before{left:.4em}
+.slide ol.agenda>li:not(.on){color:var(--dim);font-weight:400}
+.slide ol.agenda>li.on{font-weight:700}
+.slide ol.agenda>li:not(.on)>ul{display:none}
+.slide ol.agenda>li>ul{font-size:.875em;font-weight:400;margin-top:.15em;line-height:1.4}
+.slide ol.agenda>li>ul>li{padding-left:2.57em;margin:.08em 0}
+.slide ol.agenda>li>ul>li::before{left:.9em}
 
-/* next steps: numbered table — # · item · owner · ETA/status */
-.s-next .band{margin-top:1em}
-.s-next td:first-child{font-weight:700;color:var(--acc);white-space:nowrap}
-.s-next td.who,.s-next td.eta{white-space:nowrap;font-family:var(--mono);font-size:.88em}
-
-/* asks: each = options + ONE recommendation (cap ≤ 3) */
-.s-ask ol.asks{font-size:1.95em;margin-top:.4em}
-.s-ask ol.asks>li{padding:.45em 0 .45em 2.55em;border-bottom:.04em solid var(--line)}
-.s-ask ol.asks>li:last-child{border-bottom:0}
-.s-ask ol.asks>li::before{top:.45em}
-.s-ask .lead{font-weight:700}
-.s-ask .who{font-family:var(--mono);font-size:.72em;color:var(--acc);margin-left:.6em;white-space:nowrap}
-.s-ask .opts,.s-ask .rec{display:block;font-size:.9em;margin-top:.1em}
-.s-ask .opts{color:var(--mut)}
-.s-ask .rec::before{content:"→ ";color:var(--acc);font-weight:700}
-.slide table.compact{font-size:1.45em}
+/* discussion & action items: plain numbered lists — bold lead + "(owner · ETA)", sub-bullets Options / Recommendation */
+.s-discuss .thesis{margin-bottom:.3em}
+.s-discuss .subhead{margin:.3em 0 .1em}
+.s-discuss ol{line-height:1.3}
+.s-discuss ol>li{margin:.05em 0}
+.s-discuss ol>li>ul{margin-top:.05em;line-height:1.25}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:2.4em;align-items:start}
 
 .s-appendix{font-family:var(--mono)}
-.s-appendix h2{font-family:var(--sans)}
-.s-appendix .thesis{font-family:var(--sans)}
+.s-appendix h2,.s-appendix .thesis{font-family:var(--deck-sans)}
 .slide .kv{display:grid;grid-template-columns:max-content 1fr;gap:.4em 1.4em;font-size:1.35em;line-height:1.4;
     align-content:start}
-.kv dt{color:var(--mut)}
+.kv dt{color:var(--cap)}
 .kv dd{overflow-wrap:anywhere}
 .s-appendix ul,.s-appendix ol{font-size:1.35em;line-height:1.4}
 .s-appendix .band{display:block;margin-top:1.4em}
@@ -145,24 +147,20 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
                 border-radius:.5em;padding:.8em 1em;white-space:pre-wrap;overflow-wrap:anywhere;
                 font-family:var(--mono)}
 .s-appendix table{font-size:1.35em}
-.s-appendix .cut{font-size:1.25em;line-height:1.4;color:var(--mut);margin-top:1em;border-top:.06em solid var(--line);padding-top:.6em}
-.s-appendix .cut b{color:var(--txt)}
-.s-appendix .foot{font-family:var(--mono)}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:2.4em;align-items:start}
+.s-appendix .cut{font-size:1.25em;line-height:1.4;color:var(--cap);margin-top:1em;border-top:.06em solid var(--line);padding-top:.6em}
+.s-appendix .cut b{color:var(--ink)}
 .s-appendix .cols{flex:1;min-height:0;overflow:hidden;grid-template-columns:1.1fr 1fr}
+.s-appendix .footnote{font-family:var(--mono)}
 
-/* ── progressive disclosure (siblings dim, current bold; no motion) ── */
-.stepping [data-steps]>li:not(.on){opacity:.35}
+/* ── progressive disclosure (inactive items light grey, current bold; no motion) ── */
+.stepping [data-steps]>li:not(.on){color:var(--dim)}
 .stepping [data-steps]>li.on{font-weight:700}
 .stepping [data-steps]>li.on li,.stepping [data-steps]>li.on .aside{font-weight:400}
 .stepping [data-steps]>li:not(.on)>ul,.stepping [data-steps]>li:not(.on)>ol{display:none}
 .stepping [data-step]{visibility:hidden}
 .stepping [data-step].on{visibility:visible}
 
-/* ── HUD (screen only) ───────────────────────────────────────── */
-.progress{position:fixed;left:0;top:0;height:3px;width:0;background:var(--acc);z-index:5}
-body.deck-page .theme-btn{position:fixed;right:10px;top:8px;z-index:6;opacity:.35}
-body.deck-page .theme-btn:hover,body.deck-page .theme-btn:focus-visible{opacity:1}
+/* ── invisible mechanics: live region, ? help overlay ───────── */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .help{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);z-index:9}
 .help.open{display:grid}
@@ -172,33 +170,30 @@ body.deck-page .theme-btn:hover,body.deck-page .theme-btn:focus-visible{opacity:
 .help dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0}
 .help dt{font-family:var(--mono);color:var(--acc);white-space:nowrap}
 .help dd{margin:0;color:var(--mut)}
-kbd{font-family:var(--mono);font-size:.92em;border:1px solid var(--line);border-radius:4px;
-    padding:0 .35em;background:var(--panel2)}
 
 /* ── overview: grid of live thumbnails (o / Esc), click to jump ── */
 body.ov{overflow:auto}
-body.ov .deck{position:static;width:auto;height:auto;margin:0;display:grid;box-shadow:none;
+body.ov .deck{position:static;width:auto;height:auto;margin:0;display:grid;
               grid-template-columns:repeat(3,1fr);gap:2vw;padding:2vw;background:var(--bg);
               --sw:calc((100vw - 8vw)/300)}
 body.ov .slide{display:flex;position:relative;inset:auto;aspect-ratio:16/9;width:100%;height:auto;
-               cursor:pointer;border:1px solid var(--line);border-radius:.6em}
+               cursor:pointer;border:1px solid var(--line)}
 body.ov .slide.active{outline:.35vw solid var(--acc);outline-offset:.2vw}
-body.ov .stepping [data-steps]>li{opacity:1;font-weight:inherit}
+body.ov .stepping [data-steps]>li{color:inherit;font-weight:inherit}
 body.ov .stepping [data-steps]>li>ul,body.ov .stepping [data-steps]>li>ol{display:block}
 body.ov .stepping [data-step]{visibility:visible}
 body.ov .hl>img,body.ov .hl>video,body.ov .hl>.tbl{outline:0}
-body.ov .progress{display:none}
 
 /* ── narrow screens: stacked slides, vertical scroll ─────────── */
 @media (max-width:699px){
   body.deck-page{overflow:auto}
-  .deck{position:static;width:100vw;height:auto;margin:0;display:block;box-shadow:none;--sw:1.35vw}
+  .deck{position:static;width:100vw;height:auto;margin:0;display:block;--sw:1.35vw}
   .slide{display:flex;position:relative;inset:auto;width:100vw;height:auto;min-height:56.25vw;
-         border-bottom:1px solid var(--line)}
-  .band>figure>img,.band>figure>video{flex:none;max-height:60vw}
+         border-bottom:1px solid var(--line);padding-bottom:4em}
+  .slide h2,.slide .thesis{white-space:normal}
+  .band>figure>img,.band>figure>video{flex:none;height:auto;max-height:60vw}
   .band{flex:none}
-  .progress{display:none}
-  .stepping [data-steps]>li{opacity:1;font-weight:inherit}
+  .stepping [data-steps]>li{color:inherit;font-weight:inherit}
   .stepping [data-steps]>li>ul,.stepping [data-steps]>li>ol{display:block}
   .stepping [data-step]{visibility:visible}
 }
@@ -208,12 +203,12 @@ body.ov .progress{display:none}
   @page{size:320mm 180mm;margin:0}
   html,body{height:auto}
   body.deck-page{overflow:visible;background:#fff}
-  .deck{position:static;width:auto;height:auto;margin:0;display:block;box-shadow:none;--sw:3.2mm}
+  .deck{position:static;width:auto;height:auto;margin:0;display:block;--sw:3.2mm}
   .slide{display:flex;position:relative;inset:auto;width:320mm;height:180mm;overflow:hidden;
          break-after:page;page-break-after:always;break-inside:avoid}
   .slide:last-child{break-after:auto;page-break-after:auto}
-  .progress,.help,.theme-btn,.sr{display:none!important}
-  .stepping [data-steps]>li{opacity:1!important;font-weight:inherit}
+  .help,.sr{display:none!important}
+  .stepping [data-steps]>li{color:inherit!important;font-weight:inherit}
   .stepping [data-steps]>li>ul,.stepping [data-steps]>li>ol{display:block!important}
   .stepping [data-step]{visibility:visible!important}
   .hl>img,.hl>video,.hl>.tbl{outline:0}
