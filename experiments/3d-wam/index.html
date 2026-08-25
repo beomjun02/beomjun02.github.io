@@ -106,7 +106,7 @@
       <thead><tr><th>source</th><th>gives</th></tr></thead>
       <tbody>
         <tr class="hero-row"><td>human demonstrations — GRAB (ARCTIC if bimanual needed)</td><td>mesh+pose ⇒ exact point-matched flow; verb-level language from intent labels</td></tr>
-        <tr><td>Sharpa episodes — DexManipNet, or a ManipTrans run on the same mocap</td><td>robot-embodiment supervision</td></tr>
+        <tr><td>Sharpa episodes — CHORD episodes if released (CHORD's primary hand is Sharpa); else a ManipTrans run on the same mocap with the Sharpa URDF; DexManipNet as ready-made fallback (Inspire hand — switches the robot embodiment, concept unchanged)</td><td>robot-embodiment supervision</td></tr>
         <tr><td>splits — task-overlap construction</td><td>Sharpa sees a controlled fraction of the human task set (0 / 25 / 50%); zero-shot task×object cells reserved from day one</td></tr>
       </tbody>
     </table>
@@ -156,7 +156,7 @@
     <div class="item"><span class="badge wip">1</span><div>
       <h3>Episode schema and converter</h3><p>One episode format; GRAB→point-flow converter; rerun.io viewer; 20-clip sanity gallery.</p></div></div>
     <div class="item"><span class="badge plan">2</span><div>
-      <h3>Sharpa episode supply</h3><p>DexManipNet or a ManipTrans run on the same mocap; build the task-overlap splits with reserved zero-shot cells.</p></div></div>
+      <h3>Robot episode supply</h3><p>Check the CHORD release first; else ManipTrans on the same mocap (Sharpa URDF), or DexManipNet (Inspire). Build the task-overlap splits with reserved zero-shot cells.</p></div></div>
     <div class="item"><span class="badge plan">3</span><div>
       <h3>Decoder and replay harness</h3><p>Per-link Procrustes + IK; Isaac replay; measure the oracle ceiling.</p></div></div>
     <div class="item"><span class="badge plan">4</span><div>
