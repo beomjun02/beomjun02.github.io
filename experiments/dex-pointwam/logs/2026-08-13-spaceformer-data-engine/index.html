@@ -65,7 +65,7 @@
         </div>
       </div>
       <figure style="margin-top:22px">
-        <img src="assets/sf_panel_example.jpg" alt="clean_tableware with 5 diverse paragraph captions per instance" loading="lazy">
+        <img src="assets/prod_open_close_insert_remove_tupperware.jpg" alt="production sample" loading="lazy">
         <figcaption>SF-faithful demo (EgoDex clean_tableware) — 5 diverse paragraph captions per instance, A.7 protocol verbatim, Gemma-3-12b. Caption quality matches the paper's own examples.</figcaption>
       </figure>
     </div>
@@ -116,8 +116,29 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">04</span>EgoDex — SF-faithful, 10 episodes</h2>
-      <p class="sub">MaskClustering (consensus 0.9) + A.7 Gemma-3 ×5 captions. Tiles sorted by #points.</p>
+      <h2><span class="n">04</span>Production output — the pipeline as it runs today (EgoDex 7 · VITRA 5)</h2>
+      <p class="sub"><b>Version:</b> two-pass hybrid — pass 1 SAM2 hiera_small (pps 24, ppb 256) + scene-flow merge; pass 2 Gemma-3-12b with the SpaceFormer A.7 protocol, one caption per instance, SigLIP2 target. EgoDex tiles are read straight from today's campaign sidecars; VITRA episodes were run through the identical two-pass config. Tiles sorted by #points; read with §03.</p>
+      <h3>EgoDex</h3>
+      <figure><img src="assets/prod_open_close_insert_remove_tupperware.jpg" alt="prod_open_close_insert_remove_tupperware.jpg" loading="lazy"><figcaption>open_close_insert_remove_tupperware — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_paint_clean_brush.jpg" alt="prod_paint_clean_brush.jpg" loading="lazy"><figcaption>paint_clean_brush — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_peel_place_sticker.jpg" alt="prod_peel_place_sticker.jpg" loading="lazy"><figcaption>peel_place_sticker — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_pick_up_and_put_down_case_or_bag.jpg" alt="prod_pick_up_and_put_down_case_or_bag.jpg" loading="lazy"><figcaption>pick_up_and_put_down_case_or_bag — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_play_piano.jpg" alt="prod_play_piano.jpg" loading="lazy"><figcaption>play_piano — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_push_pop_toy.jpg" alt="prod_push_pop_toy.jpg" loading="lazy"><figcaption>push_pop_toy — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <figure><img src="assets/prod_put_in_take_out_glasses.jpg" alt="prod_put_in_take_out_glasses.jpg" loading="lazy"><figcaption>put_in_take_out_glasses — campaign sidecar, two-pass hybrid</figcaption></figure>
+      <h3>VITRA</h3>
+      <figure><img src="assets/prod_vitra_somethingsomethingv2_100000_ep_000000.jpg" alt="prod_vitra_somethingsomethingv2_100000_ep_000000.jpg" loading="lazy"><figcaption>vitra_somethingsomethingv2_100000_ep_000000 — two-pass hybrid (identical config), 240p source, caption budget 15</figcaption></figure>
+      <figure><img src="assets/prod_vitra_somethingsomethingv2_100002_ep_000000.jpg" alt="prod_vitra_somethingsomethingv2_100002_ep_000000.jpg" loading="lazy"><figcaption>vitra_somethingsomethingv2_100002_ep_000000 — two-pass hybrid (identical config), 240p source, caption budget 15</figcaption></figure>
+      <figure><img src="assets/prod_vitra_somethingsomethingv2_100005_ep_000000.jpg" alt="prod_vitra_somethingsomethingv2_100005_ep_000000.jpg" loading="lazy"><figcaption>vitra_somethingsomethingv2_100005_ep_000000 — two-pass hybrid (identical config), 240p source, caption budget 15</figcaption></figure>
+      <figure><img src="assets/prod_vitra_somethingsomethingv2_100019_ep_000000.jpg" alt="prod_vitra_somethingsomethingv2_100019_ep_000000.jpg" loading="lazy"><figcaption>vitra_somethingsomethingv2_100019_ep_000000 — two-pass hybrid (identical config), 240p source, caption budget 15</figcaption></figure>
+      <figure><img src="assets/prod_vitra_somethingsomethingv2_100020_ep_000000.jpg" alt="prod_vitra_somethingsomethingv2_100020_ep_000000.jpg" loading="lazy"><figcaption>vitra_somethingsomethingv2_100020_ep_000000 — two-pass hybrid (identical config), 240p source, caption budget 15</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04b</span>Ablation — SpaceFormer-faithful variant (NOT the production pipeline), 10 episodes</h2>
+      <p class="sub">Kept as the parity-audit reference: original MaskClustering (consensus 0.9, static-world) + A.7 Gemma-3 ×5 captions, hiera_large masker. This is what SpaceFormer&#39;s own pipeline does on ego video — it is <b>not</b> what we ship (coverage 57.9% vs 94.3%, §01).</p>
       <figure><img src="assets/egodex_clean_tableware.jpg" alt="clean_tableware per-instance grid" loading="lazy"><figcaption>clean_tableware — table surfaces dominate; fork/knife/bottle at 14–26 pt.</figcaption></figure>
       <figure><img src="assets/egodex_charge_uncharge_device.jpg" alt="charge_uncharge_device per-instance grid" loading="lazy"><figcaption>charge_uncharge_device</figcaption></figure>
       <figure><img src="assets/egodex_assemble_jenga.jpg" alt="assemble_jenga per-instance grid" loading="lazy"><figcaption>assemble_jenga</figcaption></figure>
@@ -131,41 +152,30 @@
     </div>
   </section>
 
-  <section>
-    <div class="wrap">
-      <h2><span class="n">05</span>VITRA — SF-protocol captions, 5 episodes</h2>
-      <p class="sub">Our flow-merge + A.7 Gemma-3 captions on 240p something-something v2. Tiles sorted by #points.</p>
-      <figure><img src="assets/vitra_somethingsomethingv2_100002_ep_000000.jpg" alt="VITRA bowl episode grid" loading="lazy"><figcaption>100002 — id2 nails the ceramic bowl; id1 (background table) shows context bleed ("bowl" caption on table points).</figcaption></figure>
-      <figure><img src="assets/vitra_somethingsomethingv2_100000_ep_000000.jpg" alt="VITRA scissors episode grid" loading="lazy"><figcaption>100000 — scissors / arm / tiles / cushion all as paragraph captions.</figcaption></figure>
-      <figure><img src="assets/vitra_somethingsomethingv2_100005_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100005</figcaption></figure>
-      <figure><img src="assets/vitra_somethingsomethingv2_100019_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100019</figcaption></figure>
-      <figure><img src="assets/vitra_somethingsomethingv2_100020_ep_000000.jpg" alt="VITRA episode grid" loading="lazy"><figcaption>100020</figcaption></figure>
-    </div>
-  </section>
 
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05b</span>New-dataset vetting — DexYCB · AriaEverydayActivities · EPIC-KITCHENS (5 scenes each)</h2>
-      <p class="sub">Same reviewer checklist as §03. DexYCB = real RGB-D (per-point ids, sorted by #points). AEA (found on the shared root <code>/virtual_lab/dataset/</code>, Aria + MPS 3D available) and EPIC = RGB-only mask demos (encoder-tier vetting, sorted by area). HOT3D/HOI4D remain gated on browser downloads; Ego-Exo4D is not on the server — AEA is the license-free Aria stand-in.</p>
+      <h2><span class="n">05</span>New-dataset vetting — DexYCB · AriaEverydayActivities · EPIC-KITCHENS (5 scenes each)</h2>
+      <p class="sub"><b>Version:</b> production masker + captioner (SAM2 hiera_small pps 24 · A.7 Gemma-3), single frame per scene (these datasets have no flow H5 yet, so no cross-clip merge). Same reviewer checklist as §03. DexYCB = real RGB-D (per-point ids, sorted by #points). AEA (found on the shared root <code>/virtual_lab/dataset/</code>, Aria + MPS 3D available) and EPIC = RGB-only mask demos (encoder-tier vetting, sorted by area). HOT3D/HOI4D remain gated on browser downloads; Ego-Exo4D is not on the server — AEA is the license-free Aria stand-in.</p>
       <h3>DexYCB (RGB-D, gold hand+object)</h3>
-      <figure><img src="assets/newds_dexycb_data_000000.jpg" alt="newds_dexycb_data_000000.jpg" loading="lazy"><figcaption>dexycb_data_000000 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
-      <figure><img src="assets/newds_dexycb_data_000001.jpg" alt="newds_dexycb_data_000001.jpg" loading="lazy"><figcaption>dexycb_data_000001 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
-      <figure><img src="assets/newds_dexycb_data_000002.jpg" alt="newds_dexycb_data_000002.jpg" loading="lazy"><figcaption>dexycb_data_000002 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
-      <figure><img src="assets/newds_dexycb_data_000003.jpg" alt="newds_dexycb_data_000003.jpg" loading="lazy"><figcaption>dexycb_data_000003 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
-      <figure><img src="assets/newds_dexycb_data_000004.jpg" alt="newds_dexycb_data_000004.jpg" loading="lazy"><figcaption>dexycb_data_000004 — SAM2 + SF(A.7) Gemma-3, unprojected points, sorted by #points</figcaption></figure>
+      <figure><img src="assets/newds2_dexycb_data_000000.jpg" alt="newds2_dexycb_data_000000.jpg" loading="lazy"><figcaption>dexycb_data_000000 — production masker/captioner, unprojected RGB-D points</figcaption></figure>
+      <figure><img src="assets/newds2_dexycb_data_000001.jpg" alt="newds2_dexycb_data_000001.jpg" loading="lazy"><figcaption>dexycb_data_000001 — production masker/captioner, unprojected RGB-D points</figcaption></figure>
+      <figure><img src="assets/newds2_dexycb_data_000002.jpg" alt="newds2_dexycb_data_000002.jpg" loading="lazy"><figcaption>dexycb_data_000002 — production masker/captioner, unprojected RGB-D points</figcaption></figure>
+      <figure><img src="assets/newds2_dexycb_data_000003.jpg" alt="newds2_dexycb_data_000003.jpg" loading="lazy"><figcaption>dexycb_data_000003 — production masker/captioner, unprojected RGB-D points</figcaption></figure>
+      <figure><img src="assets/newds2_dexycb_data_000004.jpg" alt="newds2_dexycb_data_000004.jpg" loading="lazy"><figcaption>dexycb_data_000004 — production masker/captioner, unprojected RGB-D points</figcaption></figure>
       <h3>AriaEverydayActivities (Aria preview RGB; MPS point clouds/poses/gaze on disk)</h3>
-      <figure><img src="assets/newds_aea_loc1_script1_seq1_rec1.jpg" alt="newds_aea_loc1_script1_seq1_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script1_seq1_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_aea_loc1_script4_seq2_rec1.jpg" alt="newds_aea_loc1_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script4_seq2_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_aea_loc2_script2_seq3_rec1.jpg" alt="newds_aea_loc2_script2_seq3_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script2_seq3_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_aea_loc2_script4_seq2_rec1.jpg" alt="newds_aea_loc2_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script4_seq2_rec1 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_aea_loc3_script2_seq1_rec2.jpg" alt="newds_aea_loc3_script2_seq1_rec2.jpg" loading="lazy"><figcaption>aea_loc3_script2_seq1_rec2 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds2_aea_loc1_script1_seq1_rec1.jpg" alt="newds2_aea_loc1_script1_seq1_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script1_seq1_rec1 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_aea_loc1_script4_seq2_rec1.jpg" alt="newds2_aea_loc1_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc1_script4_seq2_rec1 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_aea_loc2_script2_seq3_rec1.jpg" alt="newds2_aea_loc2_script2_seq3_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script2_seq3_rec1 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_aea_loc2_script4_seq2_rec1.jpg" alt="newds2_aea_loc2_script4_seq2_rec1.jpg" loading="lazy"><figcaption>aea_loc2_script4_seq2_rec1 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_aea_loc3_script2_seq1_rec2.jpg" alt="newds2_aea_loc3_script2_seq1_rec2.jpg" loading="lazy"><figcaption>aea_loc3_script2_seq1_rec2 — production masker/captioner, RGB-only</figcaption></figure>
       <h3>EPIC-KITCHENS (RGB-only)</h3>
-      <figure><img src="assets/newds_epic_P01_01_30.jpg" alt="newds_epic_P01_01_30.jpg" loading="lazy"><figcaption>epic_P01_01_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_epic_P01_01_60.jpg" alt="newds_epic_P01_01_60.jpg" loading="lazy"><figcaption>epic_P01_01_60 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_epic_P15_12_30.jpg" alt="newds_epic_P15_12_30.jpg" loading="lazy"><figcaption>epic_P15_12_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_epic_P15_12_60.jpg" alt="newds_epic_P15_12_60.jpg" loading="lazy"><figcaption>epic_P15_12_60 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
-      <figure><img src="assets/newds_epic_P22_05_30.jpg" alt="newds_epic_P22_05_30.jpg" loading="lazy"><figcaption>epic_P22_05_30 — SAM2 masks + SF(A.7) Gemma-3, sorted by area</figcaption></figure>
+      <figure><img src="assets/newds2_epic_P01_01_30.jpg" alt="newds2_epic_P01_01_30.jpg" loading="lazy"><figcaption>epic_P01_01_30 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_epic_P01_01_60.jpg" alt="newds2_epic_P01_01_60.jpg" loading="lazy"><figcaption>epic_P01_01_60 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_epic_P15_12_30.jpg" alt="newds2_epic_P15_12_30.jpg" loading="lazy"><figcaption>epic_P15_12_30 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_epic_P15_12_60.jpg" alt="newds2_epic_P15_12_60.jpg" loading="lazy"><figcaption>epic_P15_12_60 — production masker/captioner, RGB-only</figcaption></figure>
+      <figure><img src="assets/newds2_epic_P22_05_30.jpg" alt="newds2_epic_P22_05_30.jpg" loading="lazy"><figcaption>epic_P22_05_30 — production masker/captioner, RGB-only</figcaption></figure>
     </div>
   </section>
 
@@ -278,7 +288,7 @@
 
 </main>
 
-<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · spaceformer data engine · updated 2026-08-25</p></div></footer>
+<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · spaceformer data engine · updated 2026-08-25 (galleries regenerated on the current pipeline)</p></div></footer>
 
 </body>
 </html>
