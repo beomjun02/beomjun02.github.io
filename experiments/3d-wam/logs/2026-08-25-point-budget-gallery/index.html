@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-08-25 · Point-budget gallery — 3D-WAM</title>
-<meta name="description" content="Experiment log: deterministic tracked N-point sampling on 10 GRAB demos over N_obj × N_hand ∈ {128,256,512,1024}²; the owner picks the budget by eye.">
+<meta name="description" content="Experiment log: v2 — two point-budget sweeps (hand search, object search) as animated GIFs on 5 TACO tasks with human MANO and Sharpa Wave hands from CHORD's release, N up to 4096; the owner picks the budget by eye.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <script src="/experiments/assets/lab.js" defer></script>
 </head>
@@ -25,21 +25,21 @@
 <header class="page">
   <div class="wrap">
     <p class="eyebrow">Experiment log · 3D-WAM · action item 1.2</p>
-    <h1>Point-budget gallery: 10 GRAB demos × 16 budgets, sampler deterministic and tracked — awaiting the owner's pick</h1>
-    <p class="lede">A deterministic uniform point sampler (area-weighted dense sample → farthest-point sampling, sampled once on the template mesh and tracked per frame) applied to the object mesh and the MANO right hand of 10 GRAB demonstrations, rendered at every N<sub>obj</sub> × N<sub>hand</sub> ∈ {128, 256, 512, 1024}². The same sampler is exercised on the Sharpa Wave right-hand URDF. No image was judged by the tool author — the budget is chosen by eye by the owner.</p>
+    <h1>Point-budget gallery v2: 5 TACO tasks × hand-search and object-search sweeps, human MANO and Sharpa Wave hands, N up to 4096 — awaiting the owner's pick</h1>
+    <p class="lede">The deterministic tracked sampler from v1 (area-weighted dense sample → farthest-point sampling on the template mesh, re-evaluated per frame) applied to CHORD's TACO release: each task is one bimanual sequence with human MANO hands, Sharpa Wave hands (CHORD's retarget) and two rigid objects (tool, target), all in one world frame at 30 fps. Two sweeps, rendered as whole-episode animations: <b>hand search</b> (objects fixed at 4096 points, N<sub>hand</sub> = 128 … 4096) and <b>object search</b> (hands fixed at 4096 points, N<sub>obj</sub> = 128 … 4096). No image was judged by the tool author — the budget is chosen by eye by the owner.</p>
 
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running · owner decision pending</span></dd></div>
       <div><dt>Dates</dt><dd>2026-08-25</dd></div>
-      <div><dt>Outcome</dt><dd>10 demos · 16 budgets each · 80/80 sample specs bit-exact on re-run</dd></div>
-      <div><dt>Env</dt><dd class="mono">alinlab slurm debug · conda maniptrans (py3.8, torch 1.13.1, smplx, trimesh 4.12, yourdfpy) · CPU only</dd></div>
-      <div><dt>Data</dt><dd class="mono">ManipTrans/data/grab_full (GRAB, 120 Hz, right hand) · GeoRT sharpa_right URDF</dd></div>
-      <div><dt>Full report</dt><dd class="mono">~/3d-wam/viz/README.md · out/&lt;seq&gt;/meta.json · logs/full.log</dd></div>
+      <div><dt>Outcome</dt><dd>5 tasks · 15 GIF sweeps · 180/180 sample specs bit-exact on re-run · Sharpa link frames reproduce yourdfpy FK to < 0.001 mm</dd></div>
+      <div><dt>Env</dt><dd class="mono">alinlab slurm debug · conda 3dwam (= maniptrans clone + pyarrow, huggingface_hub; py3.8, torch 1.13.1, manotorch, trimesh, yourdfpy) · CPU only</dd></div>
+      <div><dt>Data</dt><dd class="mono">HF nvidia/video-to-data-robot-dexterity-task-library-and-dataset (CC-BY-4.0) taco/&lt;seq&gt;/motion_v1.parquet × 5 · TACO Object_Models (CC-BY-4.0, 10 meshes) · CHORD sharpawave URDFs</dd></div>
+      <div><dt>Full report</dt><dd class="mono">~/3d-wam/viz/README_v2.md · out_v2/&lt;task&gt;/meta.json · logs/v2_run.log</dd></div>
     </dl>
 
     <div class="verdict">
       <p class="k">Verdict</p>
-      <p>Open. The tool is done and mechanically verified (files, sizes, H.264/yuv420p, bit-exact determinism); which N<sub>obj</sub> / N<sub>hand</sub> to carry into preprocessing (item 1.3) is the owner's call from the galleries below. Two data facts surfaced on the way: GRAB's stored hand pose reproduces only with <code>flat_hand_mean=True</code> (ManipTrans' own GRAB loader uses the default and carries a ~71 mm offset), and the subject-specific MANO templates are not on disk (neutral template used).</p>
+      <p>Open. The tool is done and mechanically verified (files, GIF width ≤ 840 px, sizes, frame counts, bit-exact determinism of every sample spec); which N<sub>obj</sub> / N<sub>hand</sub> to carry into preprocessing (item 1.3) is the owner's call from the sweeps below. Conventions were established from CHORD's schema and code, not from the pictures: Sharpa link frames are world-frame poses (they reproduce yourdfpy forward kinematics of the wrist pose + 22 joints to < 0.001 mm), and the MANO parameters reproduce the parquet's own joints to < 0.001 mm with manotorch <code>flat_hand_mean=True, center_idx=0</code>.</p>
     </div>
   </div>
 </header>
@@ -48,101 +48,123 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">01</span>How to read the galleries</h2>
-      <p class="sub">Every 4×4 grid: <b>rows = N<sub>hand</sub></b> 128 → 1024 top to bottom, <b>cols = N<sub>obj</sub></b> 128 → 1024 left to right. One frame per demo — the frame with the most hand vertices within 1 cm of the object surface (the grasp moment). Same camera and bounding box in all 16 panels; box size in cm in the panel title. Object points blue; hand points coloured by MANO part (16 parts, tab20). Clips: N<sub>obj</sub> = N<sub>hand</sub> = 512, the whole demo subsampled to ≤100 frames at 10 fps, camera fixed to the sequence's union box, every 8th point drags a 4-frame grey trail — this is what "tracked" looks like.</p>
+      <h2><span class="n">01</span>How to read the sweeps</h2>
+      <p class="sub">Every GIF is one 2×3 panel animation of the <b>whole episode</b> (30 fps source, 10 fps playback; stride 3 = real time, larger strides are labelled in the header). <b>Hand search:</b> both objects at N<sub>obj</sub> = 4096 points each; panels N<sub>hand</sub> = 128, 256, 512, 1024, 2048, 4096 per hand. <b>Object search:</b> both hands at N<sub>hand</sub> = 4096 each; panels N<sub>obj</sub> = 128 … 4096 per object. Same camera (elev 22°, azim −60°) and the same bounding box (union of the episode, all entities) in all six panels and in all three GIFs of a task. <b>Colours:</b> right hand <span style="color:#2a9d4f">■ green</span>, left hand <span style="color:#7a3fb8">■ purple</span> (one flat hue per hand, identical for human and Sharpa), tool <span style="color:#f28e2b">■ orange</span>, target <span style="color:#e0b428">■ amber</span>. Marker size shrinks with N so that dense budgets do not merge into a blob. Both hands appear in every panel.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2><span class="n">02</span>Per-demo grids and flow clips</h2>
-      <p class="sub">10 demos, 10 objects, 10 intents, 5 subjects. Left: the 16-budget grid at the grasp frame. Right: the 512/512 tracked clip over the demo.</p>
+      <h2><span class="n">02</span>Tasks — hand search (human), hand search (Sharpa), object search (human)</h2>
+      <p class="sub">5 TACO triplets (verb · tool · target), 5 different verbs, 10 different objects, both hands active in every sequence (parquet contact labels active in 62–89 % of frames per hand; wrist travel ≥ 7.7 cm). Per task, top to bottom: hand search with the human MANO hands, hand search with the Sharpa Wave hands, object search with the human hands at full budget.</p>
 
-      <div class="grid2">
-        <figure class="card"><h3><span class="tag">gs1</span> mug · drink</h3><img src="assets/gs1_mug_drink_1_grid.jpg" alt="mug drink 4x4 budget grid" loading="lazy"><figcaption>1334 frames · grasp frame 359 · mug 11.6×8.2×10.5 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> mug · drink · 512/512</h3><video class="vid" src="assets/gs1_mug_drink_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>96 frames, stride 14, 10 fps</figcaption></figure>
+      <h3><span class="tag">20231102_070</span> hit · hammer · toy</h3>
+      <p class="sub">TACO <code>(hit, hammer, toy)/20231102_070</code> · 161 frames @ 30 fps (5.4 s) · stride 3 → 54 frames at 10 fps (1.0× real time) · tool mesh 139 (33.8×13.1×3.2 cm) · target mesh 081 (16.8×5.4×7.0 cm) · box 53 cm</p>
+      <figure class="card">
+        <h3>hand search · human MANO hands</h3>
+        <img src="assets/hit__hammer__toy_20231102_070_handsearch_human.gif" alt="hit hammer toy: hand search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>hit · hammer · toy — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 54 frames, 10 fps, 840×670 px, 0.5 MB · <a href="assets/hit__hammer__toy_20231102_070_handsearch_human.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>hand search · Sharpa Wave hands</h3>
+        <img src="assets/hit__hammer__toy_20231102_070_handsearch_sharpa.gif" alt="hit hammer toy: hand search · Sharpa Wave hands" loading="lazy" width="840" height="670">
+        <figcaption>hit · hammer · toy — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 54 frames, 10 fps, 840×670 px, 0.6 MB · <a href="assets/hit__hammer__toy_20231102_070_handsearch_sharpa.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>object search · human MANO hands</h3>
+        <img src="assets/hit__hammer__toy_20231102_070_objsearch_human.gif" alt="hit hammer toy: object search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>hit · hammer · toy — hands fixed at N<sub>hand</sub> = 4096 per hand; panels N<sub>obj</sub> = 128 … 4096 per object · 54 frames, 10 fps, 840×670 px, 0.5 MB · <a href="assets/hit__hammer__toy_20231102_070_objsearch_human.jpg">poster</a></figcaption>
+      </figure>
 
-        <figure class="card"><h3><span class="tag">gs9</span> hammer · pass</h3><img src="assets/gs9_hammer_pass_1_grid.jpg" alt="hammer pass 4x4 budget grid" loading="lazy"><figcaption>600 frames · grasp frame 361 · hammer 20.5×11.7×2.3 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> hammer · pass · 512/512</h3><video class="vid" src="assets/gs9_hammer_pass_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>100 frames, stride 6, 10 fps</figcaption></figure>
+      <h3><span class="tag">20231013_085</span> cut · knife · plate</h3>
+      <p class="sub">TACO <code>(cut, knife, plate)/20231013_085</code> · 187 frames @ 30 fps (6.2 s) · stride 4 → 47 frames at 10 fps (1.33× real time) · tool mesh 073 (23.8×2.4×1.6 cm) · target mesh 166 (24.3×24.3×2.3 cm) · box 61 cm</p>
+      <figure class="card">
+        <h3>hand search · human MANO hands</h3>
+        <img src="assets/cut__knife__plate_20231013_085_handsearch_human.gif" alt="cut knife plate: hand search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>cut · knife · plate — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 47 frames, 10 fps, 840×670 px, 0.3 MB · <a href="assets/cut__knife__plate_20231013_085_handsearch_human.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>hand search · Sharpa Wave hands</h3>
+        <img src="assets/cut__knife__plate_20231013_085_handsearch_sharpa.gif" alt="cut knife plate: hand search · Sharpa Wave hands" loading="lazy" width="840" height="670">
+        <figcaption>cut · knife · plate — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 47 frames, 10 fps, 840×670 px, 0.3 MB · <a href="assets/cut__knife__plate_20231013_085_handsearch_sharpa.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>object search · human MANO hands</h3>
+        <img src="assets/cut__knife__plate_20231013_085_objsearch_human.gif" alt="cut knife plate: object search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>cut · knife · plate — hands fixed at N<sub>hand</sub> = 4096 per hand; panels N<sub>obj</sub> = 128 … 4096 per object · 47 frames, 10 fps, 840×670 px, 0.3 MB · <a href="assets/cut__knife__plate_20231013_085_objsearch_human.jpg">poster</a></figcaption>
+      </figure>
 
-        <figure class="card"><h3><span class="tag">gs10</span> sphere (medium) · lift</h3><img src="assets/gs10_spheremedium_lift_grid.jpg" alt="sphere lift 4x4 budget grid" loading="lazy"><figcaption>808 frames · grasp frame 339 · sphere 8.0×8.0×7.3 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> sphere · lift · 512/512</h3><video class="vid" src="assets/gs10_spheremedium_lift_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>90 frames, stride 9, 10 fps</figcaption></figure>
+      <h3><span class="tag">20231019_001</span> pour in some · kettle · bowl</h3>
+      <p class="sub">TACO <code>(pour in some, kettle, bowl)/20231019_001</code> · 125 frames @ 30 fps (4.2 s) · stride 3 → 42 frames at 10 fps (1.0× real time) · tool mesh 199 (19.1×13.2×18.2 cm) · target mesh 190 (13.9×13.9×5.0 cm) · box 56 cm</p>
+      <figure class="card">
+        <h3>hand search · human MANO hands</h3>
+        <img src="assets/pour_in_some__kettle__bowl_20231019_001_handsearch_human.gif" alt="pour in some kettle bowl: hand search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>pour in some · kettle · bowl — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 42 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/pour_in_some__kettle__bowl_20231019_001_handsearch_human.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>hand search · Sharpa Wave hands</h3>
+        <img src="assets/pour_in_some__kettle__bowl_20231019_001_handsearch_sharpa.gif" alt="pour in some kettle bowl: hand search · Sharpa Wave hands" loading="lazy" width="840" height="670">
+        <figcaption>pour in some · kettle · bowl — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 42 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/pour_in_some__kettle__bowl_20231019_001_handsearch_sharpa.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>object search · human MANO hands</h3>
+        <img src="assets/pour_in_some__kettle__bowl_20231019_001_objsearch_human.gif" alt="pour in some kettle bowl: object search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>pour in some · kettle · bowl — hands fixed at N<sub>hand</sub> = 4096 per hand; panels N<sub>obj</sub> = 128 … 4096 per object · 42 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/pour_in_some__kettle__bowl_20231019_001_objsearch_human.jpg">poster</a></figcaption>
+      </figure>
 
-        <figure class="card"><h3><span class="tag">gs3</span> binoculars · offhand</h3><img src="assets/gs3_binoculars_offhand_1_grid.jpg" alt="binoculars offhand 4x4 budget grid" loading="lazy"><figcaption>811 frames · grasp frame 459 · binoculars 14.2×4.8×10.9 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> binoculars · offhand · 512/512</h3><video class="vid" src="assets/gs3_binoculars_offhand_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>91 frames, stride 9, 10 fps</figcaption></figure>
+      <h3><span class="tag">20231104_004</span> dust · roller · box</h3>
+      <p class="sub">TACO <code>(dust, roller, box)/20231104_004</code> · 117 frames @ 30 fps (3.9 s) · stride 3 → 39 frames at 10 fps (1.0× real time) · tool mesh 076 (18.1×13.3×5.0 cm) · target mesh 087 (17.9×12.4×8.2 cm) · box 50 cm</p>
+      <figure class="card">
+        <h3>hand search · human MANO hands</h3>
+        <img src="assets/dust__roller__box_20231104_004_handsearch_human.gif" alt="dust roller box: hand search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>dust · roller · box — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 39 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/dust__roller__box_20231104_004_handsearch_human.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>hand search · Sharpa Wave hands</h3>
+        <img src="assets/dust__roller__box_20231104_004_handsearch_sharpa.gif" alt="dust roller box: hand search · Sharpa Wave hands" loading="lazy" width="840" height="670">
+        <figcaption>dust · roller · box — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 39 frames, 10 fps, 840×670 px, 0.5 MB · <a href="assets/dust__roller__box_20231104_004_handsearch_sharpa.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>object search · human MANO hands</h3>
+        <img src="assets/dust__roller__box_20231104_004_objsearch_human.gif" alt="dust roller box: object search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>dust · roller · box — hands fixed at N<sub>hand</sub> = 4096 per hand; panels N<sub>obj</sub> = 128 … 4096 per object · 39 frames, 10 fps, 840×670 px, 0.5 MB · <a href="assets/dust__roller__box_20231104_004_objsearch_human.jpg">poster</a></figcaption>
+      </figure>
 
-        <figure class="card"><h3><span class="tag">gs9</span> teapot · pour</h3><img src="assets/gs9_teapot_pour_2_grid.jpg" alt="teapot pour 4x4 budget grid" loading="lazy"><figcaption>761 frames · grasp frame 271 · teapot 23.5×14.5×11.2 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> teapot · pour · 512/512</h3><video class="vid" src="assets/gs9_teapot_pour_2_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>96 frames, stride 8, 10 fps</figcaption></figure>
-
-        <figure class="card"><h3><span class="tag">gs4</span> wineglass · toast</h3><img src="assets/gs4_wineglass_toast_1_grid.jpg" alt="wineglass toast 4x4 budget grid" loading="lazy"><figcaption>618 frames · grasp frame 273 · wineglass 7.1×7.1×17.2 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> wineglass · toast · 512/512</h3><video class="vid" src="assets/gs4_wineglass_toast_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>89 frames, stride 7, 10 fps</figcaption></figure>
-
-        <figure class="card"><h3><span class="tag">gs3</span> apple · eat</h3><img src="assets/gs3_apple_eat_1_grid.jpg" alt="apple eat 4x4 budget grid" loading="lazy"><figcaption>644 frames · grasp frame 375 · apple 8.7×8.2×9.8 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> apple · eat · 512/512</h3><video class="vid" src="assets/gs3_apple_eat_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>92 frames, stride 7, 10 fps</figcaption></figure>
-
-        <figure class="card"><h3><span class="tag">gs10</span> camera · take picture</h3><img src="assets/gs10_camera_takepicture_3_grid.jpg" alt="camera takepicture 4x4 budget grid" loading="lazy"><figcaption>720 frames · grasp frame 337 · camera 11.6×4.7×6.8 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> camera · take picture · 512/512</h3><video class="vid" src="assets/gs10_camera_takepicture_3_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>90 frames, stride 8, 10 fps</figcaption></figure>
-
-        <figure class="card"><h3><span class="tag">gs4</span> stapler · staple</h3><img src="assets/gs4_stapler_staple_1_grid.jpg" alt="stapler staple 4x4 budget grid" loading="lazy"><figcaption>680 frames · grasp frame 208 · stapler 12.3×3.0×4.1 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> stapler · staple · 512/512</h3><video class="vid" src="assets/gs4_stapler_staple_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>98 frames, stride 7, 10 fps</figcaption></figure>
-
-        <figure class="card"><h3><span class="tag">gs9</span> doorknob · use</h3><img src="assets/gs9_doorknob_use_2_grid.jpg" alt="doorknob use 4x4 budget grid" loading="lazy"><figcaption>651 frames · grasp frame 250 · doorknob 10.0×6.5×7.5 cm</figcaption></figure>
-        <figure class="card"><h3><span class="tag">clip</span> doorknob · use · 512/512</h3><video class="vid" src="assets/gs9_doorknob_use_2_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>93 frames, stride 7, 10 fps</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2><span class="n">03</span>Cross-demo overviews, one per budget pairing</h2>
-      <p class="sub">Each image: the 10 demos at their grasp frame for one (N<sub>hand</sub>, N<sub>obj</sub>). Ordered by N<sub>hand</sub> then N<sub>obj</sub>; use these to check that a budget that looks right on one object holds across the others.</p>
-      <div class="grid2">
-        <figure class="card"><h3><span class="tag">hand 128</span> obj 128</h3><img src="assets/overview_hand128_obj128.jpg" alt="overview hand 128 obj 128" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 128</span> obj 256</h3><img src="assets/overview_hand128_obj256.jpg" alt="overview hand 128 obj 256" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 128</span> obj 512</h3><img src="assets/overview_hand128_obj512.jpg" alt="overview hand 128 obj 512" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 128</span> obj 1024</h3><img src="assets/overview_hand128_obj1024.jpg" alt="overview hand 128 obj 1024" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 256</span> obj 128</h3><img src="assets/overview_hand256_obj128.jpg" alt="overview hand 256 obj 128" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 256</span> obj 256</h3><img src="assets/overview_hand256_obj256.jpg" alt="overview hand 256 obj 256" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 256</span> obj 512</h3><img src="assets/overview_hand256_obj512.jpg" alt="overview hand 256 obj 512" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 256</span> obj 1024</h3><img src="assets/overview_hand256_obj1024.jpg" alt="overview hand 256 obj 1024" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 512</span> obj 128</h3><img src="assets/overview_hand512_obj128.jpg" alt="overview hand 512 obj 128" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 512</span> obj 256</h3><img src="assets/overview_hand512_obj256.jpg" alt="overview hand 512 obj 256" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 512</span> obj 512</h3><img src="assets/overview_hand512_obj512.jpg" alt="overview hand 512 obj 512" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 512</span> obj 1024</h3><img src="assets/overview_hand512_obj1024.jpg" alt="overview hand 512 obj 1024" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 1024</span> obj 128</h3><img src="assets/overview_hand1024_obj128.jpg" alt="overview hand 1024 obj 128" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 1024</span> obj 256</h3><img src="assets/overview_hand1024_obj256.jpg" alt="overview hand 1024 obj 256" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 1024</span> obj 512</h3><img src="assets/overview_hand1024_obj512.jpg" alt="overview hand 1024 obj 512" loading="lazy"></figure>
-        <figure class="card"><h3><span class="tag">hand 1024</span> obj 1024</h3><img src="assets/overview_hand1024_obj1024.jpg" alt="overview hand 1024 obj 1024" loading="lazy"></figure>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2><span class="n">04</span>Robot hand: the same sampler on the Sharpa Wave right hand</h2>
-      <p class="sub">No Sharpa motion data exists locally yet, so the robot path is exercised on the URDF at the canonical pose plus two synthetic joint configurations. Row 1: N = 128 / 256 / 512 / 1024 at q = 0, coloured by URDF link (33 links). Row 2: the N = 512 tracked set at q = 0, 35 % and 70 % of joint range, and its per-point flow lines.</p>
-      <figure>
-        <img src="assets/sharpa_canonical_grid.jpg" alt="Sharpa Wave right hand sampled at four budgets and tracked across three joint configurations" loading="lazy">
-        <figcaption>GeoRT/assets/sharpa_right/right_sharpa_wave.urdf · 33 links, 22 actuated joints · FK via yourdfpy · merged visual mesh 113,639 verts</figcaption>
+      <h3><span class="tag">20230927_040</span> empty · teapot · cup</h3>
+      <p class="sub">TACO <code>(empty, teapot, cup)/20230927_040</code> · 227 frames @ 30 fps (7.6 s) · stride 4 → 57 frames at 10 fps (1.33× real time) · tool mesh 088 (12.7×9.3×5.6 cm) · target mesh 007 (6.2×6.5×13.2 cm) · box 52 cm</p>
+      <figure class="card">
+        <h3>hand search · human MANO hands</h3>
+        <img src="assets/empty__teapot__cup_20230927_040_handsearch_human.gif" alt="empty teapot cup: hand search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>empty · teapot · cup — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 57 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/empty__teapot__cup_20230927_040_handsearch_human.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>hand search · Sharpa Wave hands</h3>
+        <img src="assets/empty__teapot__cup_20230927_040_handsearch_sharpa.gif" alt="empty teapot cup: hand search · Sharpa Wave hands" loading="lazy" width="840" height="670">
+        <figcaption>empty · teapot · cup — objects fixed at N<sub>obj</sub> = 4096 per object; panels N<sub>hand</sub> = 128 … 4096 per hand · 57 frames, 10 fps, 840×670 px, 0.5 MB · <a href="assets/empty__teapot__cup_20230927_040_handsearch_sharpa.jpg">poster</a></figcaption>
+      </figure>
+      <figure class="card">
+        <h3>object search · human MANO hands</h3>
+        <img src="assets/empty__teapot__cup_20230927_040_objsearch_human.gif" alt="empty teapot cup: object search · human MANO hands" loading="lazy" width="840" height="670">
+        <figcaption>empty · teapot · cup — hands fixed at N<sub>hand</sub> = 4096 per hand; panels N<sub>obj</sub> = 128 … 4096 per object · 57 frames, 10 fps, 840×670 px, 0.4 MB · <a href="assets/empty__teapot__cup_20230927_040_objsearch_human.jpg">poster</a></figcaption>
       </figure>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2><span class="n">05</span>Setup</h2>
+      <h2><span class="n">03</span>Setup</h2>
       <div class="tbl">
         <table>
           <thead><tr><th>Component</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Data</td><td class="mono">/virtual_lab/sjw_alinlab/beomjun/retargeter/code/ManipTrans/data/grab_full · GRAB re-packed as npz (1306 sequences, 120 Hz, 29 intents) · objects/&lt;name&gt;/mesh.obj in GRAB's canonical frame</td></tr>
-            <tr><td>Hand</td><td class="mono">smplx MANO right, use_pca=True, 24 comps, flat_hand_mean=True (GRAB's own convention; matches stored fullpose to 0.000 mm) · betas = 0 (subject templates not on disk)</td></tr>
-            <tr><td>Object</td><td class="mono">V_t = R(global_orient_t) · V_canonical + transl_t · world frame, z-up, metres</td></tr>
-            <tr><td>Sampler</td><td class="mono">area-weighted 20·N dense sample (rng seed 0, per call) → farthest-point sampling to N (start = farthest from centroid) → (face_id, barycentric) spec, evaluated per frame · FPS order stored so any prefix is a valid smaller budget</td></tr>
-            <tr><td>Labels</td><td class="mono">class_id 0 object / 1 human hand / 2 robot hand · instance_id · part_id = MANO 16-part skinning argmax (hand) / URDF link index (robot) / 0 (object)</td></tr>
-            <tr><td>Grasp frame</td><td class="mono">argmax_t #hand vertices within 1 cm of the object surface (cKDTree)</td></tr>
-            <tr><td>Robot hand</td><td class="mono">/sjw_alinlab2/home/beomjun/omni-pilot-alinlab/GeoRT/assets/sharpa_right/right_sharpa_wave.urdf · yourdfpy FK · fixed link order → vertex→link id kept across configs</td></tr>
-            <tr><td>Render</td><td class="mono">matplotlib Agg 3D scatter · grid.jpg ≤ 327 KB · flow.mp4 h264 yuv420p 720×720 10 fps ≤ 0.16 MB · ~20 s per demo on 4 CPU threads</td></tr>
+            <tr><td>Data</td><td class="mono">HF dataset nvidia/video-to-data-robot-dexterity-task-library-and-dataset (ungated, CC-BY-4.0) → taco/&lt;seq&gt;/motion_v1.parquet (1 row = whole sequence, 62 columns: MANO both hands + Sharpa Wave both hands + 2 rigid objects, 30 fps) · object meshes NNN_cm.obj from the official TACO Object_Models release (Dropbox, 424 MB zip; 10 meshes extracted) · CHORD-adapted Sharpa Wave URDFs nv_robotic_grounding_src/…/assets/urdfs/sharpawave/{right,left}_sharpa_wave.urdf</td></tr>
+            <tr><td>Human hands</td><td class="mono">manotorch ManoLayer(use_pca=False, flat_hand_mean=True, center_idx=0) — the same call CHORD's read_mano.py makes; pose = [global_orient(3), finger_pose(45)], betas from the parquet (per hand), verts = layer(pose, betas).verts + trans (wrist joint = trans) · closed-wrist faces (1538) · template for sampling = zero pose with the same betas</td></tr>
+            <tr><td>Sharpa hands</td><td class="mono">robot_{right,left}_frames (T, 67, 7) = world-frame [x y z qw qx qy qz] of pinocchio frames (universe, root_joint, 23 body frames named as the URDF links, joint frames, retarget sites). Each URDF link's visual STL is placed directly by its named body frame; the 10 fixed-joint children without a frame (*_elastomer, *_fingertip) are chained through the URDF fixed-joint origin. Template for sampling = all joints 0, root at identity (yourdfpy FK). Fixed link order → fixed topology → tracked points</td></tr>
+            <tr><td>Objects</td><td class="mono">V_world = R(object_body_wxyz) · (0.01 · V_cm) + object_body_position, per body in object_body_names = [tool, target]; ids from object_mesh_paths</td></tr>
+            <tr><td>Sampler</td><td class="mono">pointsample.py unchanged from v1: area-weighted 20·N dense sample (rng seed 0, fresh per call) → farthest-point sampling to N (start = farthest from centroid) → (face_id, barycentric) spec evaluated per frame · N ∈ {128, 256, 512, 1024, 2048, 4096} per hand / per object · one spec per (entity, N), saved as .npz</td></tr>
+            <tr><td>Labels</td><td class="mono">class_id 0 object / 1 human hand / 2 robot hand · instance_id 0 tool, 1 right hand, 2 left hand, 3 target · part_id = MANO 16-part skinning argmax (human) / URDF link index (Sharpa) / 0 (object)</td></tr>
+            <tr><td>Frames</td><td class="mono">stride = max(3, ceil(T/60)) over the whole episode → 39–57 frames per GIF at 10 fps playback</td></tr>
+            <tr><td>Render</td><td class="mono">matplotlib Agg 3D scatter, one scatter per panel (per-point depth order), 840×670 px figure, 2×3 panels ≈ 280 px each, light neutral background · ffmpeg palettegen/paletteuse (bayer dither, ≤ 128 colours) → GIF ≤ 3 MB each (fallbacks: fewer frames → fewer colours → narrower; none needed) · poster jpg = first frame</td></tr>
           </tbody>
         </table>
       </div>
@@ -151,40 +173,62 @@
 
   <section>
     <div class="wrap">
-      <h2><span class="n">06</span>Data facts surfaced (not judgments of the pictures)</h2>
+      <h2><span class="n">04</span>Data facts surfaced (not judgments of the pictures)</h2>
       <ul class="clean">
-        <li><span class="mk x">!</span><span><span class="lt">MANO hand-mean convention.</span><span class="ld">GRAB's stored <code>fullpose</code> is reproduced from its PCA-24 params only with <code>flat_hand_mean=True</code>; smplx's default (<code>False</code>) adds the hand mean twice and lands 71 mm off. ManipTrans' <code>main/dataset/grab_full_dataset_dexhand.py:83</code> uses the default — its GRAB hand poses carry that offset. Not touched here; relevant to the retargeter campaign that ran on it.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Subject templates missing.</span><span class="ld"><code>tools/subject_meshes/*_rhand.ply</code> are not on disk, so the neutral MANO shape is used (ManipTrans does the same). Fingers may sit slightly off the mocap subject's.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Left hand, body, table not sampled.</span><span class="ld">Loaded but out of scope for this gallery (right hand only).</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">No Sharpa motion.</span><span class="ld">No retargeted GRAB→Sharpa trajectories locally; <code>points_from_mesh_sequence(V_seq, faces, spec)</code> is the ready entry point once per-frame robot vertices exist (any FK).</span></span></li>
+        <li><span class="mk x">!</span><span><span class="lt">HF release has two parquet variants.</span><span class="ld">The 360 top-level <code>taco_*</code> dirs are a subset of the 1,215 under <code>taco/</code>. Top-level <code>brush</code>-verb sequences carry 62 columns (MANO + Sharpa + objects); the 62 top-level sequences of every other verb carry only 34 (Sharpa + objects, <b>no MANO</b>). The 855 sequences that exist only under <code>taco/</code> carry MANO (49/53 probed footers; the 4 misses were top-level duplicates). The five tasks here were taken from that set.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sharpa frames are world-frame poses, body frames = URDF link frames.</span><span class="ld">Established from the schema README ("World frame for wrist and object body poses"), from the frame list (frame 0 = <code>universe</code> at the origin, <code>right_hand_C_MC</code> = the wrist pose exactly) and mechanically: yourdfpy FK of (wrist pose, 22 joint angles) on the CHORD URDF matches the parquet's 23 body frames to < 0.001 mm / < 0.001° max over all tasks and frames. No FK is needed to place the meshes.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">MANO convention reproduced.</span><span class="ld">The parquet's <code>mano_*_joints</code> are reproduced to < 0.001 mm (16 kinematic joints, both hands, all tasks) by manotorch with <code>flat_hand_mean=True, center_idx=0</code> and the stored betas; <code>mano_flat_hand_mean=True</code>, <code>mano_center_idx=0</code> are also stored in the file. In smplx terms this is <code>vertices − joints[0] + trans</code>, i.e. the wrist joint sits at <code>trans</code>.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">MANO hand-mean convention (v1, GRAB).</span><span class="ld">GRAB's stored <code>fullpose</code> is reproduced from its PCA-24 params only with <code>flat_hand_mean=True</code>; smplx's default (<code>False</code>) adds the hand mean twice and lands 71 mm off. ManipTrans' <code>main/dataset/grab_full_dataset_dexhand.py:83</code> uses the default. Still relevant to the retargeter campaign that ran on it.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">TACO meshes are in centimetres.</span><span class="ld"><code>NNN_cm.obj</code> × 0.01 (CHORD loader: <code>vertex_scale=0.01</code>); the HF task library ships no object assets, only the parquet and the LeRobot chunks.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Not established: the world frame's up axis.</span><span class="ld">Neither the TACO README nor the CHORD loader documents it (no ground alignment in the loader). The camera assumes z-up (hands sit at z ≈ 0.6 m); it only changes the viewing angle, identically in all panels.</span></span></li>
       </ul>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2><span class="n">07</span>Next</h2>
+      <h2><span class="n">05</span>Next</h2>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">Owner picks N<sub>obj</sub>, N<sub>hand</sub> from §02–§03.</span><span class="ld">The FPS prefix property means a larger stored budget can be trimmed later without resampling.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Item 1.1 dataset selection.</span><span class="ld">Inventory of GRAB / TACO / OakInk2 / HOT3D / ARCTIC and CHORD's Sharpa release in progress; the three chosen datasets go through this sampler in item 1.3.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Sharpa motion source.</span><span class="ld">CHORD release, else ManipTrans on the same mocap with the Sharpa URDF above.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Owner picks N<sub>obj</sub>, N<sub>hand</sub> from §02.</span><span class="ld">Specs are saved per (entity, N); a larger stored budget can be trimmed by FPS-order prefix without resampling.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Item 1.1 dataset decision (with owner).</span><span class="ld">TACO via CHORD is the only source with released Sharpa pairs; the inventory covers GRAB / ARCTIC / OakInk2 / HOT3D as well.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Item 1.3 preprocessing</span><span class="ld">runs the same sampler over the chosen datasets at the chosen budget; the MANO-less top-level parquets must be avoided (or paired with TACO's own Hand_Poses).</span></span></li>
       </ul>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <h2><span class="n">06</span>Artifacts &amp; repro</h2>
       <ul class="clean">
-        <li><span class="mk i">·</span><span><span class="lt">Code</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/{pointsample.py, grab_gallery.py, verify_outputs.py} · README.md</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Outputs</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/out/&lt;seq&gt;/{grid.jpg, flow.mp4, spec_obj_N.npz, spec_hand_N.npz, meta.json} · out/overview/ · out/sharpa_canonical/</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Verification</span><span class="ld mono">verify_outputs.py: 10/10 demos OK · 80/80 specs bit-exact · all clips h264/yuv420p · logs/full.log</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Code</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/{taco_sweeps.py, pointsample.py} · README_v2.md (env, commands, schema, conventions, GIF specs, task table)</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Outputs</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/out_v2/&lt;task&gt;/{handsearch_human, handsearch_sharpa, objsearch_human}.{gif,jpg} · spec_{hand_human,hand_sharpa}_{right,left}_N.npz · spec_obj_{tool,target}_N.npz · meta.json</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Data</span><span class="ld mono">/virtual_lab/sjw_alinlab/beomjun/3d-wam/data/taco/{hf/taco/&lt;seq&gt;/motion_v1.parquet, Object_Models.zip, object_models_released/NNN_cm.obj}</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Verification</span><span class="ld mono">taco_sweeps.py --verify: 5/5 tasks OK · 180/180 specs bit-exact · all GIFs ≤ 840 px wide, ≤ 3 MB, total 6.2 MB · logs/v2_verify.log</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">v1 (superseded)</span><span class="ld mono">out/ (GRAB grids, overviews, clips, Sharpa canonical) kept on disk; removed from this page</span></span></li>
       </ul>
-      <pre><code>conda activate maniptrans && cd ~/3d-wam/viz
-python grab_gallery.py --check-mano   # pose-convention self-check
-python grab_gallery.py                # 10 demos + 16 overviews (Slurm node; login node is memory-capped)
-python grab_gallery.py --sharpa       # robot-hand canonical demo
-python verify_outputs.py              # mechanical checks</code></pre>
+      <pre><code>conda activate 3dwam && cd ~/3d-wam/viz          # on a Slurm node (login node is memory-capped)
+python taco_sweeps.py --download --select        # 5 parquets via hf_hub_download + 10 TACO meshes; both-hands-active table
+python taco_sweeps.py --check                    # conventions: MANO joints vs parquet, Sharpa frames vs yourdfpy FK
+python taco_sweeps.py --run                      # sample + render + encode the 15 GIFs
+python taco_sweeps.py --verify                   # mechanical checks + bit-exact spec re-run</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Timeline</h2>
+      <ul class="timeline">
+        <li>
+          <span class="tdate">2026-08-25</span>
+          <span class="tt">v1 — GRAB, 4×4 grids, N ≤ 1024, Sharpa canonical only (superseded)</span>
+          <p>10 GRAB right-hand demos × 16 (N<sub>hand</sub>, N<sub>obj</sub>) budgets as static grids at the grasp frame, 512/512 flow clips, 16 cross-demo overviews, Sharpa Wave URDF sampled at the canonical pose. Object blue, hand coloured by MANO part. Superseded the same day: grids overflowed the content width, hand/object colours were hard to tell apart, no robot motion. Files kept on disk under viz/out/.</p>
+        </li>
+        <li class="acc">
+          <span class="tdate">2026-08-25</span>
+          <span class="tt">v2 — TACO + Sharpa from CHORD, GIF sweeps, N ≤ 4096</span>
+          <p>Switched to CHORD's TACO release (MANO + Sharpa Wave + tool/target in one parquet), both hands, 5 tasks. Two sweeps rendered as whole-episode GIFs (2×3 panels, ≤ 840 px), flat per-hand colours (green R, purple L) vs warm objects (orange tool, amber target). Conventions established from schema/code and checked mechanically; 15 GIFs, 180/180 specs bit-exact. Owner's pick pending.</p>
+        </li>
+      </ul>
     </div>
   </section>
 

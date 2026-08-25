@@ -10,7 +10,7 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Phase 1 in progress (2026-08-25): 1.2 point-budget gallery LIVE (10 GRAB demos × 16 budgets + Sharpa URDF) — awaiting owner's N_obj/N_hand pick; 1.1 dataset inventory (CHORD Sharpa availability, GRAB/TACO/OakInk2/HOT3D/ARCTIC) running. Then 1.3 preprocessing.",
+    "text": "Phase 1 in progress (2026-08-25): 1.2 point-budget gallery v2 LIVE (5 TACO tasks, hand-search/object-search GIF sweeps with human MANO + Sharpa Wave hands, N ≤ 4096) — awaiting owner's N_obj/N_hand pick; 1.1 dataset decision pending with owner (inventory done: TACO via CHORD is the only released Sharpa pairing; GRAB/ARCTIC/OakInk2/HOT3D surveyed). Then 1.3 preprocessing.",
     "status": "active",
     "updated": "2026-08-25"
    }
@@ -52,17 +52,18 @@
    "project": "3d-wam",
    "date": "2026-08-25",
    "slug": "point-budget-gallery",
-   "title": "Point-budget gallery: 10 GRAB demos × 16 budgets — owner picks N_obj / N_hand",
+   "title": "Point-budget gallery v2: 5 TACO tasks × hand-search / object-search GIF sweeps (human MANO + Sharpa Wave from CHORD, N ≤ 4096) — owner picks N_obj / N_hand",
    "status": "running",
    "updated": "2026-08-25",
-   "tldr": "Action item 1.2. Deterministic tracked N-point sampler (area-weighted dense → FPS, sampled once on the template, re-evaluated per frame; labels class/instance/MANO-part or URDF-link) on 10 GRAB demos (10 objects, 10 intents, 5 subjects): 4×4 grids over N_hand × N_obj ∈ {128,256,512,1024}² at the grasp frame, 512/512 flow clips, 16 cross-demo overviews, Sharpa Wave URDF (33 links) through the same sampler. Mechanically verified (80/80 specs bit-exact, h264/yuv420p); no image judged by the tool — owner picks the budget. Data facts: GRAB hand pose reproduces only with flat_hand_mean=True (ManipTrans' GRAB loader carries a 71 mm offset); subject MANO templates missing → neutral shape.",
+   "tldr": "Action item 1.2, v2 (replaces v1 GRAB grids). CHORD's TACO release (HF, CC-BY-4.0): 5 sequences with 5 different verbs / tools / targets, each with human MANO hands + Sharpa Wave hands (both L/R) + rigid tool and target in one world frame at 30 fps; TACO object meshes (424 MB). Per task 3 whole-episode GIFs (2×3 panels, 840 px): hand search (objects at 4096/object, N_hand ∈ {128…4096}/hand) with human hands and with Sharpa hands, object search (hands at 4096/hand, N_obj ∈ {128…4096}/object). Flat colours: right hand green, left purple, tool orange, target amber. Conventions from schema/code, checked mechanically: Sharpa link frames = world poses (reproduce yourdfpy FK to < 0.001 mm); MANO via manotorch flat_hand_mean=True/center_idx=0 reproduces the parquet joints to < 0.001 mm; 180/180 specs bit-exact; 15 GIFs, 6.2 MB total. Data fact: the HF top-level non-brush parquets have NO MANO columns (34 cols) — only taco/-subfolder sequences carry MANO. No image judged by the tool; owner picks.",
    "path": "3d-wam/logs/2026-08-25-point-budget-gallery/",
    "tags": [
-    "point-sampling",
-    "GRAB",
+    "CHORD",
     "MANO",
     "Sharpa",
-    "action-item-1.2"
+    "TACO",
+    "action-item-1.2",
+    "point-sampling"
    ]
   },
   {
