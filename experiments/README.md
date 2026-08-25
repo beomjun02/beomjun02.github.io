@@ -15,12 +15,13 @@ All three are light/dark (follow the viewer, toggle persists, shared across form
 
 ### Deck grammar (full rules and the reference-deck citations: `_template/DECK-STYLE.md`)
 
-1. **Title** — the question · one-line verdict · status pill · date · project · presenter.
-2. **Overview** — `[TL;DR]` thesis · ≤ 4 bullets · one media.
-3. **Agenda** (mandatory) — two columns: Report (≤ 4) | Discuss (≤ 3).
-4. **Evidence slides** — topic title + ONE thesis sentence (≤ 20 words) + ≤ 4 one-line bullets + an evidence band (≤ 3 media, or one table); progressive build-up with `data-steps`.
-5. **Next steps** — numbered table: item · owner · ETA/status. 6. **Asks** (mandatory, ≤ 3) — each = options + one recommendation.
-7. **Appendix** — dense mono: setup · repro · data facts (what a Log's §Setup/§Artifacts held); the last one ends with the cut list.
+1. **Title** — reference p01 literally: centred block — title · one plain context line · bold "Lab meeting" · date · presenter. Nothing else.
+2. **Overview** — ONE slide: `[TL;DR]` thesis (one line) · ≤ 4 bullets saying what was done and what is to discuss today · 1–2 media filling the band.
+3. **Method (1–3 slides)** — "Method (1): …": thesis (≤ 20 words, one line) + ≤ 3 one-line bullets + 1–2 figures with captions under them.
+4. **Results (1–3 slides)** — all titled "Results": cumulative numbered sub-agenda (current item bold, others light grey) + ≤ 3 media.
+5. **Discussion & Action items** — ONE slide: thesis · "Discussion:" items (options + one recommendation) · "Action items:" (owner · ETA).
+6. **Appendix** (optional) — dense mono: setup · repro · data facts · content variants (related work, background); the last one ends with the cut list.
+No visible chrome on the stage (no progress bar, theme button, footer); the slide number bottom-right is the only addition to the reference deck.
 Main deck ≤ 8 slides. Meeting-prep protocol: inventory → triage (report / discuss / FYI / drop) → budget 5–10 min → order. Over a cap → cut, never shrink the font. GIF and H.264 MP4 embed natively; ← → / `o` overview / `f` fullscreen / `?` help; `#/n` deep links; ⌘P prints one 16:9 page per slide.
 
 ## Structure

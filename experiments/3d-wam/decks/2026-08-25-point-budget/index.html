@@ -27,12 +27,12 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Sampler verified (human + Sharpa TACO); sweep N = 128 … 4096 rendered — pick N.</p>
+  <p class="thesis"><b>[TL;DR]</b> Sampler verified (human + Sharpa TACO); sweep N = 128 … 4096 rendered — N = 2048.</p>
   <ul>
     <li>Done: sampler — dense area sample → FPS on the template; sampled once, tracked</li>
     <li>Done: Sharpa pairs from CHORD's TACO release — MANO + Sharpa Wave + object 6D</li>
     <li>Done: one sweep N<sub>obj</sub> = N<sub>hand</sub> = N ∈ {128 … 4096}, 5 TACO tasks, human | Sharpa</li>
-    <li>Discuss: N (512 · 1024 · 2048) · datasets TACO + ARCTIC + GRAB · data-pull sign-off</li>
+    <li>Decided: N = 2048 · Discuss: datasets (trio vs CHORD's full task set) · data-pull sign-off</li>
   </ul>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif" alt="hit hammer toy: one sweep, six panels N = 128 to 4096, human MANO hands">
@@ -139,14 +139,14 @@
 <!-- SECTION: discussion-actions -->
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Three decisions, each with a recommendation; silence means the recommendation stands.</p>
+  <p class="thesis">N = 2048 is decided; two decisions remain, each with a recommendation.</p>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Point budget N — per hand and per object</b> (owner, by eye)
-      <ul><li>Options: 512 · 1024 · 2048 — specs stored to 4096; a larger budget trims by FPS prefix</li>
-          <li>Recommendation: 1024 (compute only) — 4 × 1024 = 4,096 tracks × T = 16, PointWorld-scale</li></ul></li>
+    <li><b>Decided: N = 2048</b> per hand and per object (owner, 2026-08-26)
+      <ul><li>specs stored to 4096; trim to 2048 by FPS-order prefix — recorded as this deck's verdict</li></ul></li>
     <li><b>Datasets for 1.1</b> (owner)
       <ul><li>Options: TACO + ARCTIC + GRAB · swap GRAB → OakInk2 if per-sequence language matters more</li>
+          <li>Option: CHORD's full curated task set (4,739 tasks, 7 source datasets) instead of three — feasibility check running</li>
           <li>Recommendation: the trio — ARCTIC is CHORD's reference dataset; GRAB is local with contacts</li></ul></li>
     <li><b>Data acquisition — sign-off</b> (owner)
       <ul><li>Options: TACO pull now (855 MANO parquets, ~0.5 GB) · CHORD native-run check first · both</li>
@@ -154,8 +154,8 @@
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Record the N decision as this deck's verdict (1.2 · owner · today)</li>
-    <li>Preprocess TACO at the chosen N from the saved specs, never resampled (1.3 · agent · after the pick)</li>
+    <li>Preprocess TACO at N = 2048 from the saved specs, FPS-prefix trim (1.3 · agent · next)</li>
+    <li>Record N = 2048 in the hub work list and the deck verdict (1.2 · agent · today)</li>
     <li>TACO pull + CHORD native-run check; locate GRAB v_templates (1.1 · agent · on sign-off)</li>
   </ol>
 </section>

@@ -53,10 +53,10 @@
    "project": "3d-wam",
    "date": "2026-08-25",
    "slug": "point-budget-gallery",
-   "title": "Point budget for 3D-WAM — one N for hands and objects, TACO + Sharpa (deck #1, action item 1.2) — owner picks N",
+   "title": "Point budget for 3D-WAM — one N for hands and objects, TACO + Sharpa (deck #1, action item 1.2) — N = 2048 decided",
    "status": "running",
    "updated": "2026-08-26",
-   "tldr": "Deck #1 (replaces the v2 log). Tracked sampler verified on CHORD's TACO release (human MANO + Sharpa Wave + tool/target); one sweep N_obj = N_hand = N ∈ {128…4096} rendered for 5 tasks, human | Sharpa GIF + MP4. Asks: N (512/1024/2048, compute case for 1024), datasets TACO + ARCTIC + GRAB, sign-off on the TACO parquet pull and CHORD native run.",
+   "tldr": "Deck #1 (replaces the v2 log). Tracked sampler verified on CHORD's TACO release (human MANO + Sharpa Wave + tool/target); one sweep N_obj = N_hand = N ∈ {128…4096} rendered for 5 tasks, human | Sharpa GIF + MP4 (re-rendered without in-image text 08-26). Decided 2026-08-26: N = 2048 per hand and per object (specs stored to 4096, trimmed by FPS prefix). Open: datasets — TACO + ARCTIC + GRAB vs CHORD's full curated task set (4,739 tasks, 7 source datasets; feasibility check running) — and sign-off on the TACO parquet pull + CHORD native run. Now: 1.3 preprocessing at N = 2048.",
    "path": "3d-wam/decks/2026-08-25-point-budget/",
    "tags": [
     "CHORD",
