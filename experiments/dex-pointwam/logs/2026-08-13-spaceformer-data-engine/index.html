@@ -169,6 +169,53 @@
     </div>
   </section>
 
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05c</span>Throughput after the two-pass rebuild — and the ETA</h2>
+      <p class="sub">Measured on the live fleet, 60-minute windows (08-25 18:00 KST). Same data, same models in kind; the gains are architectural (decoupled SAM2/VLM passes, dedicated captioner GPUs with dynamic work claiming, A/B-validated hiera_small masker).</p>
+      <div class="chart" role="img" aria-label="Final sidecars per hour: single-pass fleet 484, two-pass fleet 2009. GPU-seconds per episode: 56 before, 27 after.">
+        <div class="crow">
+          <span class="clabel">two-pass fleet (15 GPUs)<span class="cnote">finals / hour · 08-25</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:100%"></span></span><span class="cval">2,009</span>
+        </div>
+        <div class="crow">
+          <span class="clabel">single-pass fleet (12 GPUs)<span class="cnote">finals / hour · 08-24</span></span>
+          <span class="ctrack"><span class="cbar" style="--v:24%"></span></span><span class="cval">484</span>
+        </div>
+      </div>
+      <div class="tbl" style="margin-top:22px">
+        <table>
+          <thead><tr><th>Stage</th><th>Before (single-pass, Qwen v3)</th><th>After (two-pass, Gemma A.7)</th><th>What changed</th></tr></thead>
+          <tbody>
+            <tr><td>Masks (pass 1)</td><td class="mono">30.8 s/ep · hiera_large, pps 32</td><td class="mono">14.8 s/ep · hiera_small, pps 24, ppb 256</td><td>GPU no longer shared with a vLLM server; A/B: coverage 94.3% → 94.3%, manipulanda split finer</td></tr>
+            <tr><td>Captions (pass 2)</td><td class="mono">inline, sequential VLM calls</td><td class="mono">9.0 s/ep · 30–60 captions/ep</td><td>dedicated Gemma-3-12b vLLM (V1 engine, CUDA graphs, 32 seqs) + 16-way client pool; lock-file claiming replaced static hash sharding (which had starved running workers)</td></tr>
+            <tr><td>GPU-s per episode</td><td class="mono">≈56</td><td class="mono">≈27</td><td>2.1× cheaper per episode</td></tr>
+            <tr><td>Effective GPUs</td><td class="mono">5–9</td><td class="mono">15 (28 queued)</td><td>partition rotation background / sjw_alinlab / h100; bad node auto-excluded</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:26px">Progress &amp; ETA (EgoDex → VITRA, full datasets)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Milestone</th><th>at 15 effective GPUs (now)</th><th>at ~30 (if the queue drains)</th></tr></thead>
+          <tbody>
+            <tr><td>EgoDex done so far</td><td class="mono" colspan="2">182,232 / 324,167 episodes (56.2%) — parts 1–2 complete, part 3 84%, part 4 started</td></tr>
+            <tr><td>EgoDex 100%</td><td class="mono">3.0 d → 2026-08-28</td><td class="mono">1.5 d → 08-27</td></tr>
+            <tr><td>VITRA 20% (166k)</td><td class="mono">+1.9 d → 08-30</td><td class="mono">+1.0 d → 08-28</td></tr>
+            <tr><td>VITRA 100% (830k)</td><td class="mono">+9.6 d → 09-07</td><td class="mono">+4.8 d → 09-02</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:13px">VITRA per-episode cost is an estimate (~15 GPU-s: 240p frames, caption budget 15/episode); EgoDex numbers are measured. The 09-02 freeze needs ~30 effective GPUs for VITRA 100%; EgoDex alone lands 5 days before the freeze at today's fleet.</p>
+      <h3 style="margin-top:26px">Production samples (two-pass hybrid output, sorted by #points)</h3>
+      <p class="sub">Straight from the campaign sidecars written today — not the demo set. Read with §03: e.g. in <em>play_piano</em>, id 4 (the keyboard) is right, while the largest surface instance (id 1, bedsheet under the keyboard) inherits the keyboard&#39;s description — the known context-bleed mode of the A.7 outline crop (§06).</p>
+      <figure><img src="assets/prod_pick_up_and_put_down_case_or_bag.jpg" alt="prod_pick_up_and_put_down_case_or_bag.jpg" loading="lazy"><figcaption>pick_up_and_put_down_case_or_bag — campaign sidecar (two-pass: SAM2-small masks · A.7 Gemma-3 captions), tiles sorted by #points</figcaption></figure>
+      <figure><img src="assets/prod_play_piano.jpg" alt="prod_play_piano.jpg" loading="lazy"><figcaption>play_piano — campaign sidecar (two-pass: SAM2-small masks · A.7 Gemma-3 captions), tiles sorted by #points</figcaption></figure>
+      <figure><img src="assets/prod_put_in_take_out_glasses.jpg" alt="prod_put_in_take_out_glasses.jpg" loading="lazy"><figcaption>put_in_take_out_glasses — campaign sidecar (two-pass: SAM2-small masks · A.7 Gemma-3 captions), tiles sorted by #points</figcaption></figure>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <h2><span class="n">06</span>Diagnosis</h2>
