@@ -98,6 +98,194 @@
     </table>
   </div>
 
+  <figure class="media reveal" style="margin-top:26px">
+    <div style="background:var(--surface);padding:22px 16px">
+    <svg viewBox="0 0 980 360" role="img" aria-label="One labeled point set: hand and object points at frame 0 become rows of one array; frame-0 positions and labels are given, the flow chunk is generated; embodiment rows decode to joint commands." style="width:100%;height:auto;display:block;font-family:var(--font-m)">
+      <defs>
+        <marker id="f1m" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+        <marker id="f1r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--accent)"/></marker>
+        <marker id="f1g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--ok)"/></marker>
+      </defs>
+
+      <!-- scene panel -->
+      <rect x="20" y="36" width="230" height="306" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="135" y="58" text-anchor="middle" font-size="11.5" fill="var(--muted)">scene at t = 0</text>
+      <rect x="52" y="70" width="112" height="20" rx="10" fill="var(--accent-weak)" stroke="var(--accent)" stroke-width="0.8"/>
+      <text x="108" y="84" text-anchor="middle" font-size="11" fill="var(--accent)">tag : sharpa</text>
+      <!-- hand dots -->
+      <g fill="var(--accent)">
+        <circle cx="85" cy="208" r="4"/><circle cx="107" cy="203" r="4"/><circle cx="129" cy="208" r="4"/>
+        <circle cx="90" cy="233" r="4"/><circle cx="112" cy="230" r="4"/><circle cx="134" cy="233" r="4"/>
+        <circle cx="62" cy="188" r="4"/><circle cx="48" cy="170" r="4"/>
+        <circle cx="82" cy="173" r="4"/><circle cx="76" cy="146" r="4"/><circle cx="73" cy="122" r="4"/>
+        <circle cx="104" cy="166" r="4"/><circle cx="102" cy="139" r="4"/><circle cx="101" cy="113" r="4"/>
+        <circle cx="126" cy="169" r="4"/><circle cx="128" cy="142" r="4"/><circle cx="129" cy="120" r="4"/>
+        <circle cx="148" cy="178" r="4"/><circle cx="152" cy="156" r="4"/>
+      </g>
+      <text x="100" y="260" text-anchor="middle" font-size="11" fill="var(--accent)">embodiment points</text>
+      <!-- cup dots -->
+      <g fill="var(--ok)">
+        <circle cx="196" cy="252" r="4"/><circle cx="212" cy="252" r="4"/>
+        <circle cx="180" cy="260" r="4"/><circle cx="180" cy="281" r="4"/><circle cx="180" cy="302" r="4"/>
+        <circle cx="228" cy="260" r="4"/><circle cx="228" cy="281" r="4"/><circle cx="228" cy="302" r="4"/>
+        <circle cx="196" cy="310" r="4"/><circle cx="212" cy="310" r="4"/>
+        <circle cx="241" cy="268" r="4"/><circle cx="247" cy="281" r="4"/><circle cx="241" cy="294" r="4"/>
+      </g>
+      <text x="178" y="330" text-anchor="middle" font-size="11" fill="var(--ok)">object points (cup)</text>
+
+      <!-- panel -> array -->
+      <line x1="256" y1="190" x2="306" y2="190" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f1m)"/>
+      <text x="282" y="178" text-anchor="middle" font-size="10.5" fill="var(--muted)">N tracks</text>
+
+      <!-- array headers -->
+      <text x="480" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">given (frame 0)</text>
+      <text x="800" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">generated (T = 16 @ 10 Hz)</text>
+      <g font-size="10.5" fill="var(--muted)" text-anchor="middle">
+        <text x="360" y="76">xyz₀</text><text x="432" y="76">class</text><text x="486" y="76">inst</text><text x="548" y="76">link</text><text x="612" y="76">tag</text>
+        <text x="800" y="76">Δx₁&#160;&#160;Δx₂&#160;&#160;⋯&#160;&#160;Δx₁₆</text>
+      </g>
+      <line x1="644" y1="42" x2="644" y2="290" stroke="var(--line-2)" stroke-dasharray="4 4"/>
+
+      <!-- row 1: hand -->
+      <rect x="324" y="88" width="312" height="28" rx="6" fill="var(--surface-2)"/>
+      <rect x="652" y="88" width="296" height="28" rx="6" fill="var(--accent-weak)"/>
+      <circle cx="340" cy="102" r="3.5" fill="var(--accent)"/>
+      <g font-size="11" fill="var(--ink)" text-anchor="middle">
+        <text x="368" y="106">x y z</text><text x="432" y="106">hand</text><text x="486" y="106">1</text><text x="548" y="106">thumb-d</text><text x="612" y="106">sharpa</text>
+      </g>
+      <g stroke="var(--accent)" stroke-width="1.4">
+        <line x1="672" y1="102" x2="704" y2="102" marker-end="url(#f1r)"/><line x1="736" y1="102" x2="768" y2="102" marker-end="url(#f1r)"/><line x1="800" y1="102" x2="832" y2="102" marker-end="url(#f1r)"/><line x1="880" y1="102" x2="912" y2="102" marker-end="url(#f1r)"/>
+      </g>
+      <text x="856" y="106" text-anchor="middle" font-size="11" fill="var(--accent)">⋯</text>
+
+      <!-- row 2: hand -->
+      <rect x="324" y="124" width="312" height="28" rx="6" fill="var(--surface-2)"/>
+      <rect x="652" y="124" width="296" height="28" rx="6" fill="var(--accent-weak)"/>
+      <circle cx="340" cy="138" r="3.5" fill="var(--accent)"/>
+      <g font-size="11" fill="var(--ink)" text-anchor="middle">
+        <text x="368" y="142">x y z</text><text x="432" y="142">hand</text><text x="486" y="142">1</text><text x="548" y="142">palm</text><text x="612" y="142">sharpa</text>
+      </g>
+      <g stroke="var(--accent)" stroke-width="1.4">
+        <line x1="672" y1="138" x2="704" y2="138" marker-end="url(#f1r)"/><line x1="736" y1="138" x2="768" y2="138" marker-end="url(#f1r)"/><line x1="800" y1="138" x2="832" y2="138" marker-end="url(#f1r)"/><line x1="880" y1="138" x2="912" y2="138" marker-end="url(#f1r)"/>
+      </g>
+      <text x="856" y="142" text-anchor="middle" font-size="11" fill="var(--accent)">⋯</text>
+
+      <!-- ellipsis row -->
+      <text x="480" y="180" text-anchor="middle" font-size="13" fill="var(--muted)">⋮</text>
+      <text x="800" y="180" text-anchor="middle" font-size="13" fill="var(--muted)">⋮</text>
+
+      <!-- row 4: cup -->
+      <rect x="324" y="196" width="312" height="28" rx="6" fill="var(--surface-2)"/>
+      <rect x="652" y="196" width="296" height="28" rx="6" fill="var(--ok-bg)"/>
+      <circle cx="340" cy="210" r="3.5" fill="var(--ok)"/>
+      <g font-size="11" fill="var(--ink)" text-anchor="middle">
+        <text x="368" y="214">x y z</text><text x="432" y="214">cup</text><text x="486" y="214">2</text><text x="548" y="214">—</text><text x="612" y="214">—</text>
+      </g>
+      <g stroke="var(--ok)" stroke-width="1.4">
+        <line x1="672" y1="210" x2="704" y2="210" marker-end="url(#f1g)"/><line x1="736" y1="210" x2="768" y2="210" marker-end="url(#f1g)"/><line x1="800" y1="210" x2="832" y2="210" marker-end="url(#f1g)"/><line x1="880" y1="210" x2="912" y2="210" marker-end="url(#f1g)"/>
+      </g>
+      <text x="856" y="214" text-anchor="middle" font-size="11" fill="var(--ok)">⋯</text>
+
+      <!-- row 5: cup -->
+      <rect x="324" y="232" width="312" height="28" rx="6" fill="var(--surface-2)"/>
+      <rect x="652" y="232" width="296" height="28" rx="6" fill="var(--ok-bg)"/>
+      <circle cx="340" cy="246" r="3.5" fill="var(--ok)"/>
+      <g font-size="11" fill="var(--ink)" text-anchor="middle">
+        <text x="368" y="250">x y z</text><text x="432" y="250">cup</text><text x="486" y="250">2</text><text x="548" y="250">—</text><text x="612" y="250">—</text>
+      </g>
+      <g stroke="var(--ok)" stroke-width="1.4">
+        <line x1="672" y1="246" x2="704" y2="246" marker-end="url(#f1g)"/><line x1="736" y1="246" x2="768" y2="246" marker-end="url(#f1g)"/><line x1="800" y1="246" x2="832" y2="246" marker-end="url(#f1g)"/><line x1="880" y1="246" x2="912" y2="246" marker-end="url(#f1g)"/>
+      </g>
+      <text x="856" y="250" text-anchor="middle" font-size="11" fill="var(--ok)">⋯</text>
+
+      <!-- annotations -->
+      <text x="948" y="306" text-anchor="end" font-size="11" fill="var(--accent)">embodiment rows → per-link Procrustes + IK → joints (action)</text>
+      <text x="948" y="326" text-anchor="end" font-size="11" fill="var(--ok)">object rows → predicted consequence (world model)</text>
+    </svg>
+    </div>
+    <figcaption><b>Scene data structure.</b> The scene is one array of N point-tracks. The frame-0 columns (xyz₀ and labels) are the observation; the Δx block is what the model generates. Embodiment rows decode to joint commands — the action; object rows are the predicted consequence.</figcaption>
+  </figure>
+
+  <figure class="media reveal" style="margin-top:26px">
+    <div style="background:var(--surface);padding:22px 16px">
+    <svg viewBox="0 0 980 430" role="img" aria-label="Point tokens with language, tag, and flow-step conditioning pass through N factorized DiT blocks alternating spatial and temporal attention; the sampled scene flow's embodiment rows decode via per-link Procrustes and IK to joint commands executed in simulation, and the loop regenerates per chunk." style="width:100%;height:auto;display:block;font-family:var(--font-m)">
+      <defs>
+        <marker id="f2m" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
+      </defs>
+
+      <!-- conditioning -->
+      <g>
+        <rect x="250" y="28" width="160" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+        <text x="330" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">language instruction</text>
+        <rect x="430" y="28" width="125" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+        <text x="492" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">embodiment tag</text>
+        <rect x="575" y="28" width="105" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+        <text x="627" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">flow step τ</text>
+        <line x1="330" y1="58" x2="330" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
+        <line x1="492" y1="58" x2="492" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
+        <line x1="627" y1="58" x2="627" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
+        <text x="618" y="90" text-anchor="end" font-size="10.5" fill="var(--muted)">conditioning</text>
+      </g>
+
+      <!-- input tokens -->
+      <text x="110" y="112" text-anchor="middle" font-size="11.5" fill="var(--muted)">input tokens</text>
+      <rect x="30" y="120" width="160" height="180" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="110" y="142" text-anchor="middle" font-size="10" fill="var(--muted)">one token / point-track</text>
+      <g font-size="9.5" fill="var(--ink)">
+        <rect x="46" y="152" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="162" r="3" fill="var(--accent)"/><text x="68" y="166">hand · xyz+labels</text>
+        <rect x="46" y="178" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="188" r="3" fill="var(--accent)"/><text x="68" y="192">hand · xyz+labels</text>
+        <rect x="46" y="204" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="214" r="3" fill="var(--accent)"/><text x="68" y="218">hand · xyz+labels</text>
+        <rect x="46" y="230" width="128" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="58" cy="240" r="3" fill="var(--ok)"/><text x="68" y="244">cup · xyz+labels</text>
+        <rect x="46" y="256" width="128" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="58" cy="266" r="3" fill="var(--ok)"/><text x="68" y="270">cup · xyz+labels</text>
+      </g>
+      <line x1="190" y1="210" x2="244" y2="210" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
+
+      <!-- DiT -->
+      <rect x="250" y="120" width="430" height="180" rx="12" fill="var(--surface-2)" stroke="var(--line-2)"/>
+      <text x="465" y="146" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">factorized DiT × N — 100–200M</text>
+      <rect x="275" y="168" width="185" height="104" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="367" y="202" text-anchor="middle" font-size="11.5" fill="var(--ink)">spatial attention</text>
+      <text x="367" y="224" text-anchor="middle" font-size="10" fill="var(--muted)">over PTv3-serialized</text>
+      <text x="367" y="240" text-anchor="middle" font-size="10" fill="var(--muted)">point order</text>
+      <rect x="480" y="168" width="185" height="104" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="572" y="202" text-anchor="middle" font-size="11.5" fill="var(--ink)">temporal attention</text>
+      <text x="572" y="224" text-anchor="middle" font-size="10" fill="var(--muted)">along each track</text>
+      <line x1="462" y1="196" x2="476" y2="196" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
+      <line x1="478" y1="244" x2="464" y2="244" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
+
+      <!-- output -->
+      <line x1="680" y1="210" x2="724" y2="210" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
+      <text x="702" y="198" text-anchor="middle" font-size="10" fill="var(--muted)">sample</text>
+      <text x="815" y="96" text-anchor="middle" font-size="11" fill="var(--ok)">object rows = predicted consequence</text>
+      <text x="815" y="114" text-anchor="middle" font-size="11.5" fill="var(--muted)">generated scene flow</text>
+      <rect x="730" y="120" width="170" height="180" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="815" y="142" text-anchor="middle" font-size="10" fill="var(--muted)">all points × T = 16</text>
+      <g font-size="9.5">
+        <rect x="746" y="152" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="162" r="3" fill="var(--accent)"/><text x="768" y="166" fill="var(--ink)">Δx₁ … Δx₁₆</text>
+        <rect x="746" y="178" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="188" r="3" fill="var(--accent)"/><text x="768" y="192" fill="var(--ink)">Δx₁ … Δx₁₆</text>
+        <rect x="746" y="204" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="214" r="3" fill="var(--accent)"/><text x="768" y="218" fill="var(--ink)">Δx₁ … Δx₁₆</text>
+        <rect x="746" y="230" width="138" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="758" cy="240" r="3" fill="var(--ok)"/><text x="768" y="244" fill="var(--ink)">Δx₁ … Δx₁₆</text>
+        <rect x="746" y="256" width="138" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="758" cy="266" r="3" fill="var(--ok)"/><text x="768" y="270" fill="var(--ink)">Δx₁ … Δx₁₆</text>
+      </g>
+
+      <!-- decode chain -->
+      <line x1="815" y1="300" x2="815" y2="336" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#f2m)"/>
+      <text x="805" y="322" text-anchor="end" font-size="10" fill="var(--accent)">embodiment rows</text>
+      <rect x="710" y="340" width="190" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+      <text x="805" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">per-link Procrustes + IK</text>
+      <line x1="710" y1="360" x2="654" y2="360" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
+      <rect x="460" y="340" width="190" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+      <text x="555" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">joint commands q₁…₁₆</text>
+      <line x1="460" y1="360" x2="404" y2="360" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
+      <rect x="230" y="340" width="170" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
+      <text x="315" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">simulation / robot</text>
+      <polyline points="230,360 110,360 110,306" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#f2m)"/>
+      <text x="315" y="406" text-anchor="middle" font-size="10.5" fill="var(--muted)">closed loop — regenerate per chunk with new frame-0 points</text>
+    </svg>
+    </div>
+    <figcaption><b>Base architecture.</b> One token per point-track; N factorized DiT blocks alternate spatial attention (PTv3-serialized order) and temporal attention (along each track), conditioned on the instruction, the embodiment tag, and the flow-matching step. Embodiment rows of the sampled flow decode to joint commands; the loop closes by regenerating each chunk from new frame-0 points.</figcaption>
+  </figure>
+
   <div class="sec-head reveal" style="margin-top:34px">
     <h2>Data</h2>
   </div>
