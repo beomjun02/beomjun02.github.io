@@ -7,10 +7,10 @@
   "projects": {
     "3d-wam": {
       "title": "3D-WAM",
-      "tagline": "Language-conditioned generative model over labeled 4D point flow; generated embodiment flow decodes directly to joint commands, and multi-embodiment training makes transfer a property of the action space. Concept stage.",
+      "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
       "path": "3d-wam/",
       "now": {
-        "text": "Concept v0.2 (2026-08-25): page restructured as a paper (abstract / related work / method / experiments / action items); retargeting demoted to data-engine role + one ablation; pilot minimized. Next: episode schema + GRAB\u2192point-flow converter, then the oracle replay ceiling.",
+        "text": "Concept v0.3 (2026-08-25): reduced to the core \u2014 one conditioning pattern, no masking menu, all deferred machinery removed from the page; headline = zero-shot success vs task-overlap sweep. Next: episode schema + GRAB\u2192point-flow converter, then the oracle replay ceiling.",
         "status": "active",
         "updated": "2026-08-25"
       }
