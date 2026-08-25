@@ -30,7 +30,7 @@
 
 <div class="hero"><div class="wrap"><div class="hero-grid">
   <div class="reveal">
-    <div class="eyebrow">3D-WAM · CONCEPT v0.3 · 2026-08-25 · NO RUNS YET</div>
+    <div class="eyebrow">3D-WAM · CONCEPT v0.4 · 2026-08-25 · NO RUNS YET</div>
     <h1>A language-conditioned generative model over labeled 4D point flow</h1>
     <p class="lede">Observation and action live in the same space: the scene and the embodiment are one
       dense labeled 3D point set, and a single generative model, conditioned on the frame-0 points and a
@@ -339,20 +339,39 @@
   <div class="sec-head reveal">
     <div class="eyebrow">ACTION ITEMS</div>
     <h2>Ordered work list</h2>
+    <p>Three phases — acquire data, then data structure / architecture / training, then inference. Item 1.1 is open.</p>
   </div>
-  <div class="road reveal">
-    <div class="item"><span class="badge wip">1</span><div>
-      <h3>Episode schema and converter</h3><p>One episode format; GRAB→point-flow converter; rerun.io viewer; 20-clip sanity gallery.</p></div></div>
-    <div class="item"><span class="badge plan">2</span><div>
-      <h3>Robot episode supply</h3><p>Check the CHORD release first; else ManipTrans on the same mocap (Sharpa URDF), or DexManipNet (Inspire). Build the task-overlap splits with reserved zero-shot cells.</p></div></div>
-    <div class="item"><span class="badge plan">3</span><div>
-      <h3>Decoder and replay harness</h3><p>Per-link Procrustes + IK; Isaac replay; measure the oracle ceiling.</p></div></div>
-    <div class="item"><span class="badge plan">4</span><div>
-      <h3>Model and training loop</h3><p>Factorized track-DiT (~100M), flow-matching objective.</p></div></div>
-    <div class="item"><span class="badge plan">5</span><div>
-      <h3>Train and check in-distribution</h3><p>Mixed-corpus training; in-distribution replay and the instruction-swap check.</p></div></div>
-    <div class="item"><span class="badge plan">6</span><div>
-      <h3>Zero-shot sweep</h3><p>Task-overlap sweep, the three ablations, factorization analysis.</p></div></div>
+
+  <div class="reveal" style="margin-top:30px"><div class="eyebrow">PHASE 1 · ACQUIRE DATA</div></div>
+  <div class="road reveal" style="margin-top:14px">
+    <div class="item"><span class="badge wip">1.1</span><div>
+      <h3>Datasets</h3><p>Set up three datasets out of GRAB · TACO · OakInk2 · HOT3D · ARCTIC. Embodiments for now: human hand and Sharpa hand. Sharpa-hand episodes: check the CHORD (NVIDIA) release first; else ManipTrans on the same mocap with a Sharpa URDF (DexManipNet is Inspire, not Sharpa).</p></div></div>
+    <div class="item"><span class="badge plan">1.2</span><div>
+      <h3>Point budget</h3><p>Deterministic uniform sampling of N points from the object and from the hand. Gallery of ~10 demos over N<sub>obj</sub> ∈ {128, 256, 512, 1024} × N<sub>hand</sub> ∈ {128, 256, 512, 1024}; the budget is selected by eye from the gallery (user decision).</p></div></div>
+    <div class="item"><span class="badge plan">1.3</span><div>
+      <h3>Preprocessing</h3><p>Convert the selected datasets into the episode format at the chosen point budget.</p></div></div>
+  </div>
+
+  <div class="reveal" style="margin-top:34px"><div class="eyebrow">PHASE 2 · DATA STRUCTURE, ARCHITECTURE, TRAINING</div></div>
+  <div class="road reveal" style="margin-top:14px">
+    <div class="item"><span class="badge plan">2.1</span><div>
+      <h3>Data structure</h3><p>Design how a 3D point is represented — xyz, labels, and the embodiment tag.</p></div></div>
+    <div class="item"><span class="badge plan">2.2</span><div>
+      <h3>Architecture</h3><p>Select the base to build on: PointWorld, or a video-generation model.</p></div></div>
+    <div class="item"><span class="badge plan">2.3</span><div>
+      <h3>Training</h3><p>Loss = main loss + one auxiliary loss (hand constraints, contact, …); training steps and ETA. Experiment cycle for the pilot: 6–12 h.</p></div></div>
+    <div class="item"><span class="badge plan">2.4</span><div>
+      <h3>Main figure</h3><p>Make the main figure of the method.</p></div></div>
+  </div>
+
+  <div class="reveal" style="margin-top:34px"><div class="eyebrow">PHASE 3 · INFERENCE</div></div>
+  <div class="road reveal" style="margin-top:14px">
+    <div class="item"><span class="badge plan">3.1</span><div>
+      <h3>Unseen tasks</h3><p>Generalizability: tasks the robot embodiment never saw.</p></div></div>
+    <div class="item"><span class="badge plan">3.2</span><div>
+      <h3>Open-loop evaluation</h3><p>Generated flow against held-out ground-truth flow.</p></div></div>
+    <div class="item"><span class="badge plan">3.3</span><div>
+      <h3>Closed-loop evaluation</h3><p>openarm-sim — TBD.</p></div></div>
   </div>
 
   <p class="note" style="margin-top:26px">References:
@@ -367,7 +386,7 @@
 <footer><div class="wrap">
   <div>
     <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — concept hub</div>
-    <div style="margin-top:6px">Internal page · concept v0.3 · updated 2026-08-25</div>
+    <div style="margin-top:6px">Internal page · concept v0.4 · updated 2026-08-25</div>
   </div>
   <div class="paths">
     <div>spec <code>Claude project “Point Policy” › claude/3d-wam-concept.md</code></div>

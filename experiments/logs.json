@@ -10,7 +10,7 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Concept v0.3 (2026-08-25): reduced to the core — one conditioning pattern, no masking menu, all deferred machinery removed from the page; headline = zero-shot success vs task-overlap sweep. Next: episode schema + GRAB→point-flow converter, then the oracle replay ceiling.",
+    "text": "Concept v0.4 (2026-08-25): action items reordered into three phases — acquire data (three of GRAB/TACO/OakInk2/HOT3D/ARCTIC; human + Sharpa hand, Sharpa from CHORD; N-point sampling gallery → user picks N_obj/N_hand; preprocessing) → data structure / architecture (PointWorld vs video-gen) / training (main + 1 aux loss, 6–12 h pilot cycle) / main figure → inference (unseen tasks, open-loop, closed-loop openarm-sim TBD). Open: 1.1 datasets.",
     "status": "active",
     "updated": "2026-08-25"
    }
