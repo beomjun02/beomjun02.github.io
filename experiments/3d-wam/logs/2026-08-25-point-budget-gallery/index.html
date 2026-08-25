@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-25 · Point-budget gallery — 3D-WAM</title>
+<meta name="description" content="Experiment log: deterministic tracked N-point sampling on 10 GRAB demos over N_obj × N_hand ∈ {128,256,512,1024}²; the owner picks the budget by eye.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/3d-wam/">3d-wam</a><span class="sep">/</span>
+      <span class="here">2026-08-25 · point-budget-gallery</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · 3D-WAM · action item 1.2</p>
+    <h1>Point-budget gallery: 10 GRAB demos × 16 budgets, sampler deterministic and tracked — awaiting the owner's pick</h1>
+    <p class="lede">A deterministic uniform point sampler (area-weighted dense sample → farthest-point sampling, sampled once on the template mesh and tracked per frame) applied to the object mesh and the MANO right hand of 10 GRAB demonstrations, rendered at every N<sub>obj</sub> × N<sub>hand</sub> ∈ {128, 256, 512, 1024}². The same sampler is exercised on the Sharpa Wave right-hand URDF. No image was judged by the tool author — the budget is chosen by eye by the owner.</p>
+
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running · owner decision pending</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-08-25</dd></div>
+      <div><dt>Outcome</dt><dd>10 demos · 16 budgets each · 80/80 sample specs bit-exact on re-run</dd></div>
+      <div><dt>Env</dt><dd class="mono">alinlab slurm debug · conda maniptrans (py3.8, torch 1.13.1, smplx, trimesh 4.12, yourdfpy) · CPU only</dd></div>
+      <div><dt>Data</dt><dd class="mono">ManipTrans/data/grab_full (GRAB, 120 Hz, right hand) · GeoRT sharpa_right URDF</dd></div>
+      <div><dt>Full report</dt><dd class="mono">~/3d-wam/viz/README.md · out/&lt;seq&gt;/meta.json · logs/full.log</dd></div>
+    </dl>
+
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p>Open. The tool is done and mechanically verified (files, sizes, H.264/yuv420p, bit-exact determinism); which N<sub>obj</sub> / N<sub>hand</sub> to carry into preprocessing (item 1.3) is the owner's call from the galleries below. Two data facts surfaced on the way: GRAB's stored hand pose reproduces only with <code>flat_hand_mean=True</code> (ManipTrans' own GRAB loader uses the default and carries a ~71 mm offset), and the subject-specific MANO templates are not on disk (neutral template used).</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>How to read the galleries</h2>
+      <p class="sub">Every 4×4 grid: <b>rows = N<sub>hand</sub></b> 128 → 1024 top to bottom, <b>cols = N<sub>obj</sub></b> 128 → 1024 left to right. One frame per demo — the frame with the most hand vertices within 1 cm of the object surface (the grasp moment). Same camera and bounding box in all 16 panels; box size in cm in the panel title. Object points blue; hand points coloured by MANO part (16 parts, tab20). Clips: N<sub>obj</sub> = N<sub>hand</sub> = 512, the whole demo subsampled to ≤100 frames at 10 fps, camera fixed to the sequence's union box, every 8th point drags a 4-frame grey trail — this is what "tracked" looks like.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>Per-demo grids and flow clips</h2>
+      <p class="sub">10 demos, 10 objects, 10 intents, 5 subjects. Left: the 16-budget grid at the grasp frame. Right: the 512/512 tracked clip over the demo.</p>
+
+      <div class="grid2">
+        <figure class="card"><h3><span class="tag">gs1</span> mug · drink</h3><img src="assets/gs1_mug_drink_1_grid.jpg" alt="mug drink 4x4 budget grid" loading="lazy"><figcaption>1334 frames · grasp frame 359 · mug 11.6×8.2×10.5 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> mug · drink · 512/512</h3><video class="vid" src="assets/gs1_mug_drink_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>96 frames, stride 14, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs9</span> hammer · pass</h3><img src="assets/gs9_hammer_pass_1_grid.jpg" alt="hammer pass 4x4 budget grid" loading="lazy"><figcaption>600 frames · grasp frame 361 · hammer 20.5×11.7×2.3 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> hammer · pass · 512/512</h3><video class="vid" src="assets/gs9_hammer_pass_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>100 frames, stride 6, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs10</span> sphere (medium) · lift</h3><img src="assets/gs10_spheremedium_lift_grid.jpg" alt="sphere lift 4x4 budget grid" loading="lazy"><figcaption>808 frames · grasp frame 339 · sphere 8.0×8.0×7.3 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> sphere · lift · 512/512</h3><video class="vid" src="assets/gs10_spheremedium_lift_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>90 frames, stride 9, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs3</span> binoculars · offhand</h3><img src="assets/gs3_binoculars_offhand_1_grid.jpg" alt="binoculars offhand 4x4 budget grid" loading="lazy"><figcaption>811 frames · grasp frame 459 · binoculars 14.2×4.8×10.9 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> binoculars · offhand · 512/512</h3><video class="vid" src="assets/gs3_binoculars_offhand_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>91 frames, stride 9, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs9</span> teapot · pour</h3><img src="assets/gs9_teapot_pour_2_grid.jpg" alt="teapot pour 4x4 budget grid" loading="lazy"><figcaption>761 frames · grasp frame 271 · teapot 23.5×14.5×11.2 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> teapot · pour · 512/512</h3><video class="vid" src="assets/gs9_teapot_pour_2_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>96 frames, stride 8, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs4</span> wineglass · toast</h3><img src="assets/gs4_wineglass_toast_1_grid.jpg" alt="wineglass toast 4x4 budget grid" loading="lazy"><figcaption>618 frames · grasp frame 273 · wineglass 7.1×7.1×17.2 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> wineglass · toast · 512/512</h3><video class="vid" src="assets/gs4_wineglass_toast_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>89 frames, stride 7, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs3</span> apple · eat</h3><img src="assets/gs3_apple_eat_1_grid.jpg" alt="apple eat 4x4 budget grid" loading="lazy"><figcaption>644 frames · grasp frame 375 · apple 8.7×8.2×9.8 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> apple · eat · 512/512</h3><video class="vid" src="assets/gs3_apple_eat_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>92 frames, stride 7, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs10</span> camera · take picture</h3><img src="assets/gs10_camera_takepicture_3_grid.jpg" alt="camera takepicture 4x4 budget grid" loading="lazy"><figcaption>720 frames · grasp frame 337 · camera 11.6×4.7×6.8 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> camera · take picture · 512/512</h3><video class="vid" src="assets/gs10_camera_takepicture_3_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>90 frames, stride 8, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs4</span> stapler · staple</h3><img src="assets/gs4_stapler_staple_1_grid.jpg" alt="stapler staple 4x4 budget grid" loading="lazy"><figcaption>680 frames · grasp frame 208 · stapler 12.3×3.0×4.1 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> stapler · staple · 512/512</h3><video class="vid" src="assets/gs4_stapler_staple_1_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>98 frames, stride 7, 10 fps</figcaption></figure>
+
+        <figure class="card"><h3><span class="tag">gs9</span> doorknob · use</h3><img src="assets/gs9_doorknob_use_2_grid.jpg" alt="doorknob use 4x4 budget grid" loading="lazy"><figcaption>651 frames · grasp frame 250 · doorknob 10.0×6.5×7.5 cm</figcaption></figure>
+        <figure class="card"><h3><span class="tag">clip</span> doorknob · use · 512/512</h3><video class="vid" src="assets/gs9_doorknob_use_2_flow.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>93 frames, stride 7, 10 fps</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>Cross-demo overviews, one per budget pairing</h2>
+      <p class="sub">Each image: the 10 demos at their grasp frame for one (N<sub>hand</sub>, N<sub>obj</sub>). Ordered by N<sub>hand</sub> then N<sub>obj</sub>; use these to check that a budget that looks right on one object holds across the others.</p>
+      <div class="grid2">
+        <figure class="card"><h3><span class="tag">hand 128</span> obj 128</h3><img src="assets/overview_hand128_obj128.jpg" alt="overview hand 128 obj 128" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 128</span> obj 256</h3><img src="assets/overview_hand128_obj256.jpg" alt="overview hand 128 obj 256" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 128</span> obj 512</h3><img src="assets/overview_hand128_obj512.jpg" alt="overview hand 128 obj 512" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 128</span> obj 1024</h3><img src="assets/overview_hand128_obj1024.jpg" alt="overview hand 128 obj 1024" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 256</span> obj 128</h3><img src="assets/overview_hand256_obj128.jpg" alt="overview hand 256 obj 128" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 256</span> obj 256</h3><img src="assets/overview_hand256_obj256.jpg" alt="overview hand 256 obj 256" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 256</span> obj 512</h3><img src="assets/overview_hand256_obj512.jpg" alt="overview hand 256 obj 512" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 256</span> obj 1024</h3><img src="assets/overview_hand256_obj1024.jpg" alt="overview hand 256 obj 1024" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 512</span> obj 128</h3><img src="assets/overview_hand512_obj128.jpg" alt="overview hand 512 obj 128" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 512</span> obj 256</h3><img src="assets/overview_hand512_obj256.jpg" alt="overview hand 512 obj 256" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 512</span> obj 512</h3><img src="assets/overview_hand512_obj512.jpg" alt="overview hand 512 obj 512" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 512</span> obj 1024</h3><img src="assets/overview_hand512_obj1024.jpg" alt="overview hand 512 obj 1024" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 1024</span> obj 128</h3><img src="assets/overview_hand1024_obj128.jpg" alt="overview hand 1024 obj 128" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 1024</span> obj 256</h3><img src="assets/overview_hand1024_obj256.jpg" alt="overview hand 1024 obj 256" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 1024</span> obj 512</h3><img src="assets/overview_hand1024_obj512.jpg" alt="overview hand 1024 obj 512" loading="lazy"></figure>
+        <figure class="card"><h3><span class="tag">hand 1024</span> obj 1024</h3><img src="assets/overview_hand1024_obj1024.jpg" alt="overview hand 1024 obj 1024" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Robot hand: the same sampler on the Sharpa Wave right hand</h2>
+      <p class="sub">No Sharpa motion data exists locally yet, so the robot path is exercised on the URDF at the canonical pose plus two synthetic joint configurations. Row 1: N = 128 / 256 / 512 / 1024 at q = 0, coloured by URDF link (33 links). Row 2: the N = 512 tracked set at q = 0, 35 % and 70 % of joint range, and its per-point flow lines.</p>
+      <figure>
+        <img src="assets/sharpa_canonical_grid.jpg" alt="Sharpa Wave right hand sampled at four budgets and tracked across three joint configurations" loading="lazy">
+        <figcaption>GeoRT/assets/sharpa_right/right_sharpa_wave.urdf · 33 links, 22 actuated joints · FK via yourdfpy · merged visual mesh 113,639 verts</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>Setup</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Component</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Data</td><td class="mono">/virtual_lab/sjw_alinlab/beomjun/retargeter/code/ManipTrans/data/grab_full · GRAB re-packed as npz (1306 sequences, 120 Hz, 29 intents) · objects/&lt;name&gt;/mesh.obj in GRAB's canonical frame</td></tr>
+            <tr><td>Hand</td><td class="mono">smplx MANO right, use_pca=True, 24 comps, flat_hand_mean=True (GRAB's own convention; matches stored fullpose to 0.000 mm) · betas = 0 (subject templates not on disk)</td></tr>
+            <tr><td>Object</td><td class="mono">V_t = R(global_orient_t) · V_canonical + transl_t · world frame, z-up, metres</td></tr>
+            <tr><td>Sampler</td><td class="mono">area-weighted 20·N dense sample (rng seed 0, per call) → farthest-point sampling to N (start = farthest from centroid) → (face_id, barycentric) spec, evaluated per frame · FPS order stored so any prefix is a valid smaller budget</td></tr>
+            <tr><td>Labels</td><td class="mono">class_id 0 object / 1 human hand / 2 robot hand · instance_id · part_id = MANO 16-part skinning argmax (hand) / URDF link index (robot) / 0 (object)</td></tr>
+            <tr><td>Grasp frame</td><td class="mono">argmax_t #hand vertices within 1 cm of the object surface (cKDTree)</td></tr>
+            <tr><td>Robot hand</td><td class="mono">/sjw_alinlab2/home/beomjun/omni-pilot-alinlab/GeoRT/assets/sharpa_right/right_sharpa_wave.urdf · yourdfpy FK · fixed link order → vertex→link id kept across configs</td></tr>
+            <tr><td>Render</td><td class="mono">matplotlib Agg 3D scatter · grid.jpg ≤ 327 KB · flow.mp4 h264 yuv420p 720×720 10 fps ≤ 0.16 MB · ~20 s per demo on 4 CPU threads</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">06</span>Data facts surfaced (not judgments of the pictures)</h2>
+      <ul class="clean">
+        <li><span class="mk x">!</span><span><span class="lt">MANO hand-mean convention.</span><span class="ld">GRAB's stored <code>fullpose</code> is reproduced from its PCA-24 params only with <code>flat_hand_mean=True</code>; smplx's default (<code>False</code>) adds the hand mean twice and lands 71 mm off. ManipTrans' <code>main/dataset/grab_full_dataset_dexhand.py:83</code> uses the default — its GRAB hand poses carry that offset. Not touched here; relevant to the retargeter campaign that ran on it.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Subject templates missing.</span><span class="ld"><code>tools/subject_meshes/*_rhand.ply</code> are not on disk, so the neutral MANO shape is used (ManipTrans does the same). Fingers may sit slightly off the mocap subject's.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Left hand, body, table not sampled.</span><span class="ld">Loaded but out of scope for this gallery (right hand only).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">No Sharpa motion.</span><span class="ld">No retargeted GRAB→Sharpa trajectories locally; <code>points_from_mesh_sequence(V_seq, faces, spec)</code> is the ready entry point once per-frame robot vertices exist (any FK).</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">07</span>Next</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Owner picks N<sub>obj</sub>, N<sub>hand</sub> from §02–§03.</span><span class="ld">The FPS prefix property means a larger stored budget can be trimmed later without resampling.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Item 1.1 dataset selection.</span><span class="ld">Inventory of GRAB / TACO / OakInk2 / HOT3D / ARCTIC and CHORD's Sharpa release in progress; the three chosen datasets go through this sampler in item 1.3.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Sharpa motion source.</span><span class="ld">CHORD release, else ManipTrans on the same mocap with the Sharpa URDF above.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">08</span>Artifacts &amp; repro</h2>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Code</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/{pointsample.py, grab_gallery.py, verify_outputs.py} · README.md</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Outputs</span><span class="ld mono">/sjw_alinlab2/home/beomjun/3d-wam/viz/out/&lt;seq&gt;/{grid.jpg, flow.mp4, spec_obj_N.npz, spec_hand_N.npz, meta.json} · out/overview/ · out/sharpa_canonical/</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Verification</span><span class="ld mono">verify_outputs.py: 10/10 demos OK · 80/80 specs bit-exact · all clips h264/yuv420p · logs/full.log</span></span></li>
+      </ul>
+      <pre><code>conda activate maniptrans && cd ~/3d-wam/viz
+python grab_gallery.py --check-mano   # pose-convention self-check
+python grab_gallery.py                # 10 demos + 16 overviews (Slurm node; login node is memory-capped)
+python grab_gallery.py --sharpa       # robot-hand canonical demo
+python verify_outputs.py              # mechanical checks</code></pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">logged 2026-08-25 · beomjun · experiments/3d-wam/logs/2026-08-25-point-budget-gallery</div>
+</footer>
+
+</body>
+</html>
