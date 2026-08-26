@@ -222,23 +222,23 @@
           <li>0 hands outside the 10–35 cm band in any dataset</li></ul></li>
   </ol>
   <div class="band">
-    <div class="tbl" style="flex:0.95 1 0">
+    <div class="tbl" style="flex:1.15 1 0">
       <table class="compact dense">
-        <thead><tr><th>dataset</th><th class="num">hand cm</th><th class="num">object cm</th><th class="num">hand |dx| / step cm</th><th class="num">16-step disp. cm</th></tr></thead>
+        <thead><tr><th>medians, cm</th><th class="num">hand</th><th class="num">object</th><th class="num">|dx| / step</th><th class="num">16 steps</th></tr></thead>
         <tbody>
-          <tr><td>TACO human · Sharpa</td><td class="num">19.1 · 20.3</td><td class="num">24.0 · 21.5</td><td class="num">0.80 · 0.86</td><td class="num">7.1 · 6.9</td></tr>
+          <tr><td>TACO (h · S)</td><td class="num">19.1 · 20.3</td><td class="num">24.0 · 21.5</td><td class="num">0.80 · 0.86</td><td class="num">7.1 · 6.9</td></tr>
           <tr><td>ARCTIC</td><td class="num">19.0</td><td class="num">22.7</td><td class="num">0.84</td><td class="num">8.5</td></tr>
           <tr><td>DexYCB</td><td class="num">17.4</td><td class="num">17.1</td><td class="num">1.47</td><td class="num">8.4</td></tr>
           <tr><td>HOT3D</td><td class="num">17.8</td><td class="num">15.5</td><td class="num">0.90</td><td class="num">2.3</td></tr>
           <tr><td>OakInk2</td><td class="num">18.9</td><td class="num">14.8</td><td class="num">0.23</td><td class="num">0.5</td></tr>
-          <tr><td>GRAB (npz)</td><td class="num">19.0</td><td class="num">12.1</td><td class="num">2.10</td><td class="num">14.6</td></tr>
+          <tr><td>GRAB</td><td class="num">19.0</td><td class="num">12.1</td><td class="num">2.10</td><td class="num">14.6</td></tr>
         </tbody>
       </table>
     </div>
-    <figure style="flex:1.05 1 0"><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/metric_scale.png" alt="Box plots per dataset: hand extent at frame 0, object longest AABB side at frame 0, displacement after 1 and 16 steps">
-      <figcaption>medians per dataset — (a) hand extent at t₀ · (b) object longest side · (c) displacement after 1 and 16 steps at 15 Hz</figcaption></figure>
+    <figure style="flex:0.85 1 0"><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/metric_scale.png" alt="Box plots per dataset: hand extent at frame 0, object longest AABB side at frame 0, displacement after 1 and 16 steps">
+      <figcaption>(a) hand extent at t₀ · (b) object longest side · (c) displacement after 1 / 16 steps at 15 Hz</figcaption></figure>
   </div>
-  <p class="footnote">metric_scale.md 2026-08-26 18:54 (job 132343, metric_scale.py): medians; unit outliers 0 % everywhere; verdict "metres: yes" ×7 · up-axis proxy differs by source (TACO y · DexYCB x · others z) → yaw-aug axis to check · GRAB from npz + smplx MANO</p>
+  <p class="footnote">metric_scale.md 2026-08-26 18:54 (job 132343, metric_scale.py) · h · S = human · Sharpa · |dx| / step = hand points · 16 steps = all points · GRAB from npz · unit outliers 0 % everywhere; verdict "metres: yes" ×7 · up-axis proxy differs by source (TACO y · DexYCB x · others z) → yaw-aug axis to check · GRAB from npz + smplx MANO</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
