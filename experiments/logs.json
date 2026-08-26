@@ -11,9 +11,9 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Fast pilot trained (pilot_fast_N1024, 6k steps, 3.75 h): pipeline verified; object flow embodiment-invariant, but embodiment label ignored and language weak → next: conditioning levers, Sharpa-geometry probe, N 2048 run on 4×A100 (08-27 21:14+), GRAB episodes landing.",
+    "text": "12-h runs finished: pipeline solid, but the model does not beat a zero-flow baseline and its samples track the motion marginal — next is diagnosing why the conditional is not learned (single-batch overfit, xyz0-vs-x_tau ablation, aux-loss rescale, distributional metrics) before any larger run.",
     "status": "active",
-    "updated": "2026-08-26"
+    "updated": "2026-08-27"
    }
   },
   "dpp-bmw": {
@@ -55,8 +55,8 @@
    "slug": "architecture-training",
    "title": "Architecture & training — design C, pilot chain launched (deck #2)",
    "status": "running",
-   "updated": "2026-08-26",
-   "tldr": "Design C (plain set-DiT over frame-0 points, 16-step flow in channels) trained: fast pilot 6k steps in 3.75 h. Open-loop ADE 2.5–10 cm; object flow embodiment-invariant (2 mm); embodiment label ignored (~1 mm); language weak (2–6 mm). Clips + probes in deck.",
+   "updated": "2026-08-27",
+   "tldr": "Design C trained (12k steps, conditioning levers). Honest verdict: the model does not beat a zero-flow baseline (best-of-8 0.0312 vs 0.0319 m; wins 38 % of chunks) and sampling noise (36 mm) dwarfs conditioning effects (1–9 mm), so the transfer probes are uninformative until the conditional is learned.",
    "path": "3d-wam/decks/2026-08-26-architecture-training/",
    "tags": [
     "architecture",

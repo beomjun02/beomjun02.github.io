@@ -355,31 +355,32 @@
       </table>
     </div>
   </div>
-  <p class="footnote">pilot_fast_N1024_20260826 · 119 M · N 1024 · 15 Hz · batch 16 · 6,000 steps · jobs 132385 + 132606 · EMA, 16 Euler steps, CFG 1 · rigidity residual 3–8 mm · flat from 5k → 6k · eval/eval_0006000.json</p>
+  <p class="footnote">⚠ superseded 08-27: see the probes slide — a zero-flow baseline matches these numbers · pilot_fast_N1024_20260826 · 119 M · N 1024 · 15 Hz · batch 16 · 6,000 steps · jobs 132385 + 132606 · EMA, 16 Euler steps, CFG 1 · rigidity residual 3–8 mm · flat from 5k → 6k · eval/eval_0006000.json</p>
 </section>
 
-<!-- SECTION: results (3) · probes · P2 paired embodiment · P3 tag swap · P4 instruction swap -->
+<!-- SECTION: results (3) · fair-metric verdict · zero-flow baseline -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Fast run — 6k steps in 3.75 h, open-loop error</li>
-    <li class="on">Probes — embodiment and language</li>
+    <li class="on">Verdict — the model does not beat a zero-flow baseline</li>
   </ol>
   <div class="band">
     <div class="tbl">
       <table class="compact">
-        <thead><tr><th>probe</th><th class="num">flow change</th><th>reading</th></tr></thead>
+        <thead><tr><th>median ADE (m), 96 val chunks, EMA, CFG 1</th><th class="num">model</th><th class="num">zero flow</th></tr></thead>
         <tbody>
-          <tr><td>P2 · human vs Sharpa sample, same TACO scene → object flow</td><td class="num">2.0 mm</td><td>object flow embodiment-invariant</td></tr>
-          <tr><td>P3 · hand label human → sharpa (ARCTIC, DexYCB)</td><td class="num">1.1–1.6 mm</td><td>embodiment label ignored</td></tr>
-          <tr><td>P4 · instruction swapped (TACO) · CFG 1 / 3</td><td class="num">2.1 / 5.9 mm</td><td>language weak vs 49 mm error</td></tr>
+          <tr class="hero"><td>single sample</td><td class="num">0.0375</td><td class="num">0.0319</td></tr>
+          <tr><td>best of 8 samples</td><td class="num">0.0312</td><td class="num">0.0319</td></tr>
+          <tr><td>mean of 8 samples</td><td class="num">0.0327</td><td class="num">0.0319</td></tr>
+          <tr><td>static chunks (GT &lt; 2 cm)</td><td class="num">0.0148</td><td class="num">0.0134</td></tr>
+          <tr><td>moving chunks (GT 2–5 cm)</td><td class="num">0.0303</td><td class="num">0.0315</td></tr>
+          <tr><td>moving chunks (GT &gt; 5 cm)</td><td class="num">0.0869</td><td class="num">0.0884</td></tr>
         </tbody>
       </table>
     </div>
-    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/4_arctic_tagswap_p3.gif" alt="ARCTIC tag swap: unswapped vs swapped generation">
-      <figcaption>ARCTIC s01 ketchup grab · left unswapped, right hand label → sharpa · Δ 1.5 mm</figcaption></figure>
   </div>
-  <p class="footnote">CFG 3 ≈ CFG 1 on all metrics · next levers: text/tag dropout schedule, entity phrases, Sharpa-geometry probe, N 2048 / 119 M on 4× A100, closed-loop in CHORD Sharpa-V2D-v0</p>
+  <p class="footnote">best-of-4 beats zero flow on 38 % of chunks · seed-to-seed Δ 36 mm ≫ conditioning Δ 1–9 mm (P3 tag swap, P4 text swap, P2 object) → samples ≈ motion marginal, so the P1–P5 transfer readings are uninformative until the conditional is learned · review/train/bestofk.py, jobs 133601/133608 · run A finished 12k steps with unchanged ADE</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
