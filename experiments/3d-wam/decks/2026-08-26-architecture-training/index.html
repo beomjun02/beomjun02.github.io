@@ -353,11 +353,11 @@
       <table class="compact">
         <thead><tr><th>pilot</th><th>setting</th></tr></thead>
         <tbody>
-          <tr><td>model</td><td>110 M · 12 blocks · d = 768</td></tr>
-          <tr><td>batch · steps</td><td>64 (32 if full attention binds) · 12k</td></tr>
+          <tr><td>model</td><td>119 M · 12 blocks · d = 768 · grad checkpointing</td></tr>
+          <tr><td>batch · steps</td><td>16 / GPU · 12k · chained 3-h single-GPU links (resume + resubmit)</td></tr>
           <tr><td>optimiser</td><td>AdamW 3e-4 · warmup 1k · EMA</td></tr>
-          <tr><td>compute</td><td>1× A100 ≈ 7 h (PTv3) / ≈ 11 h (full)</td></tr>
-          <tr><td>data mix</td><td>human 75 % · Sharpa 25 %</td></tr>
+          <tr><td>compute</td><td>measured 4.5 s/step on 1× A100 → ≈ 16 h; 4× A100 ≈ 3.8× when available</td></tr>
+          <tr><td>losses · mix</td><td>FM + rigidity λ 0.1 + contact-pair λ 0.1 · human 75 % · Sharpa 25 %</td></tr>
           <tr><td>schedule τ</td><td>logit-normal · CFG drop 10 % / 10 %</td></tr>
         </tbody>
       </table>
@@ -452,21 +452,21 @@
   <p class="subhead">Discussion — decided:</p>
   <ol>
     <li><b>Token design → C</b> (owner, decided)
-      <ul><li>Decided: C — frame-0 point tokens, the 16-step flow of a point in channels, one plain DiT</li>
+      <ul><li>Decided: C — frame-0 point tokens, 16-step flow in channels, one plain DiT; one <code>group</code> label (object slot / hand side / embodiment), <code>part</code> = metadata only</li>
           <li>Alternative: B — latent set + temporal tokens; kept as the documented upgrade path and an ablation</li></ul></li>
-    <li><b>Auxiliary loss → per-part rigidity</b> (owner, decided)
-      <ul><li>Decided: Procrustes residual per object instance · Sharpa link · MANO part — what the readout relies on</li>
-          <li>Alternative: contact consistency (TACO contact labels) → ablation table</li></ul></li>
+    <li><b>Auxiliary losses → per-part rigidity + contact-pair</b> (owner, decided)
+      <ul><li>Decided: rigidity (Procrustes residual per part) + contact-pair co-motion (GT contact at 1 cm, CHORD threshold)</li>
+          <li>Alternative: explicit contact head (16 BCE logits per hand point) → implemented, OFF → ablation</li></ul></li>
     <li><b>Text encoder → T5-base</b> (owner, decided)
-      <ul><li>Decided: T5-base — verb-level semantics, cross-attention in every DiT block</li>
+      <ul><li>Decided: T5-base for the instruction; entity phrases ("left human hand", "hammer") via the same T5 → chain-link 2</li>
           <li>Alternative: CLIP text → ablation table</li></ul></li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Freeze DESIGN.md v1.0 + this deck after the check (A1 · me · today)</li>
-    <li>Data-structure code against the LOAD parquets + TACO motion_v1, N = 2048 (A2 · me · after A1)</li>
-    <li>1k-step dry run: measure s / step, pick full vs PTv3 blocks (A3 · 1 A100 · ≤ 2 h)</li>
-    <li>Pilot cycle 1 — 110 M · batch 64 · 12k steps · 1 A100 ≈ 10 h; budget as decided (A4 · after A3)</li>
+    <li>DESIGN.md v1.0-rc written; deck final — owner check pending (A1 · today)</li>
+    <li>Done: code from scratch (~5.4k lines) · preprocessed 15 Hz / N 2048 → 4,970 human + 1,148 Sharpa episodes (A2)</li>
+    <li>Done: dry run — 4.5 s/step at batch 16 with grad checkpointing (full attention, P = 8,192) (A3)</li>
+    <li>Launched 18:10 (job 132202): option 1 = 119 M, N 2048, 15 Hz → first checkpoint ≈ 20:00, 12k steps ≈ 16 h; 4× A100 from 08-27 (A4)</li>
   </ol>
 </section>
 
@@ -498,6 +498,7 @@
           <tr><td>TACO</td><td class="num">2,317 / 2,317</td><td>loaded (CHORD LOAD parquets)</td></tr>
           <tr><td>ARCTIC</td><td class="num">277 / 277</td><td>loaded · assess reference: 127 pass / 150 rejected</td></tr>
           <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td><td>loaded</td></tr>
+          <tr><td>Preprocessed (tonight)</td><td class="num">4,970 + 1,148</td><td>episodes at 15 Hz · N = 2048 (human + Sharpa); 67 MANO-less NVIDIA parquets skipped</td></tr>
           <tr><td>HOT3D</td><td class="num">294 / 294</td><td>loaded</td></tr>
           <tr><td>OakInk2</td><td class="num">96 / 492</td><td>running (partial at scan time)</td></tr>
           <tr><td>GRAB</td><td class="num">1,335</td><td>ManipTrans npz copy (no CHORD parquet)</td></tr>
