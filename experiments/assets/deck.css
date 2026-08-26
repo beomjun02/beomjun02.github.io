@@ -77,9 +77,11 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
 .band>figure{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column;margin:0}
 .band>figure>img,.band>figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;
       object-fit:contain;display:block;background:transparent}
+.band>figure>svg{flex:1 1 0;min-height:0;width:100%;height:100%;display:block}   /* inline SVG figure = same box as an img */
 .band figcaption{flex:0 0 auto;font-style:italic;font-size:1.528em;color:var(--cap);text-align:center;
                  margin-top:.3em;line-height:1.3;text-wrap:pretty}
 .hl>img,.hl>video,.hl>.tbl{outline:.14em solid var(--ink);outline-offset:.4em}   /* active-item figure box */
+.slide th.hl,.slide td.hl{background:var(--acc-bg)}                                /* active-item table column (data-show=".c1") */
 
 /* table in the band (booktabs: rules above/below the header and at the foot) */
 .band>.tbl{flex:1 1 0;min-width:0;min-height:0;overflow:hidden}
@@ -129,10 +131,10 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
 
 /* discussion & action items: plain numbered lists — bold lead + "(owner · ETA)", sub-bullets Options / Recommendation */
 .s-discuss .thesis{margin-bottom:.3em}
-.s-discuss .subhead{margin:.3em 0 .1em}
-.s-discuss ol{line-height:1.3}
+.s-discuss .subhead{margin:.25em 0 .05em}
+.s-discuss ol{line-height:1.25}
 .s-discuss ol>li{margin:.05em 0}
-.s-discuss ol>li>ul{margin-top:.05em;line-height:1.25}
+.s-discuss ol>li>ul{margin-top:.05em;line-height:1.2}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:2.4em;align-items:start}
 
 .s-appendix{font-family:var(--mono)}
@@ -183,6 +185,7 @@ body.ov .stepping [data-steps]>li{color:inherit;font-weight:inherit}
 body.ov .stepping [data-steps]>li>ul,body.ov .stepping [data-steps]>li>ol{display:block}
 body.ov .stepping [data-step]{visibility:visible}
 body.ov .hl>img,body.ov .hl>video,body.ov .hl>.tbl{outline:0}
+body.ov .slide th.hl,body.ov .slide td.hl{background:none}
 
 /* ── narrow screens: stacked slides, vertical scroll ─────────── */
 @media (max-width:699px){

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #2 · action items 2.1–2.3 · design proposal (architecture + training scheme).
+     Structure per DECK-STYLE.md §3: Title · Overview · Method (1–3) · Results (1–2) · Discussion & Action items · appendix A1–A3.
+     Purpose: the owner reads the ARCHITECTURE off diagrams — every main slide is carried by one inline SVG (theme-aware via the
+     site tokens); slides 3–5 have a thesis and a figure only. Caps audited in headless Chromium 1440×810 (light):
+     8 main slides · thesis ≤ 20 words on ONE line · ≤ 4 one-line bullets · ≤ 3 media per band · Discussion 3 · actions 4 · cut list last.
+     Colours (deck #1 convention): left hand purple · right hand green · tool orange · target amber · model blocks neutral · flow path = accent. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-26 · Architecture and training scheme — 3D-WAM</title>
+<meta name="description" content="Deck #2: 3D-WAM data structure, architecture (shallow per-point encoder → 128 latents per entity → latent DiT → per-point query decoder) and training scheme (flow matching + per-part rigidity); PointWorld code verdict; compute; four choices.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+/* figure-only colours (the deck #1 GIF convention); lighter in dark theme. Site tokens are untouched. */
+.deck{--hL:#7a3fb8;--hR:#2a9d4f;--tool:#f28e2b;--tgt:#d9a50f;
+      --hLbg:rgba(122,63,184,.14);--hRbg:rgba(42,157,79,.14);--toolbg:rgba(242,142,43,.16);--tgtbg:rgba(217,165,15,.18)}
+:root[data-theme="dark"] .deck{--hL:#b08cf0;--hR:#43d17a;--tool:#f5a45a;--tgt:#e9c65a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .deck{--hL:#b08cf0;--hR:#43d17a;--tool:#f5a45a;--tgt:#e9c65a}}
+.slide svg text{font-family:var(--deck-sans)}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="architecture and training scheme · action items 2.1–2.3" data-date="2026-08-26">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>3D-WAM — architecture and training scheme</h1>
+  <p class="ctx">3D-WAM · action items 2.1–2.3 · design proposal</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 26<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> One generative model on labelled point tracks: shallow per-point in/out, deep latent DiT.</p>
+  <ul>
+    <li>Done: N = 2048 (owner) · human: TACO, ARCTIC, GRAB, OakInk2, HOT3D, DexYCB · Sharpa: NVIDIA TACO</li>
+    <li>Proposed: data structure · architecture · training scheme (slides 3–5)</li>
+    <li>Observed: PointWorld code verdict · compute per token design (slides 6–7)</li>
+    <li>Decide: token design · auxiliary loss · text encoder; then the dry run (slide 8)</li>
+  </ul>
+  <div class="band">
+    <figure>
+      <svg viewBox="0 0 980 150" role="img" aria-label="Pipeline: labelled points at t = 0 plus task text go into 3D-WAM, which generates the scene flow of every point; the hand rows pass through per-link Procrustes and IK to Sharpa joint commands; the loop regenerates per chunk.">
+        <defs>
+          <marker id="pa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker>
+          <marker id="pL" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--hL)"/></marker>
+          <marker id="pR" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--hR)"/></marker>
+          <marker id="pT" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tool)"/></marker>
+          <marker id="pG" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tgt)"/></marker>
+        </defs>
+        <!-- 1 input -->
+        <rect x="10" y="26" width="210" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="115" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">labelled points · t = 0</text>
+        <g><circle cx="40" cy="64" r="3.2" fill="var(--hL)"/><circle cx="50" cy="58" r="3.2" fill="var(--hL)"/><circle cx="58" cy="66" r="3.2" fill="var(--hL)"/><circle cx="46" cy="72" r="3.2" fill="var(--hL)"/>
+           <circle cx="84" cy="64" r="3.2" fill="var(--hR)"/><circle cx="94" cy="58" r="3.2" fill="var(--hR)"/><circle cx="102" cy="66" r="3.2" fill="var(--hR)"/><circle cx="90" cy="72" r="3.2" fill="var(--hR)"/>
+           <circle cx="128" cy="62" r="3.2" fill="var(--tool)"/><circle cx="138" cy="58" r="3.2" fill="var(--tool)"/><circle cx="146" cy="66" r="3.2" fill="var(--tool)"/><circle cx="134" cy="72" r="3.2" fill="var(--tool)"/>
+           <circle cx="172" cy="64" r="3.2" fill="var(--tgt)"/><circle cx="182" cy="60" r="3.2" fill="var(--tgt)"/><circle cx="190" cy="68" r="3.2" fill="var(--tgt)"/><circle cx="178" cy="72" r="3.2" fill="var(--tgt)"/></g>
+        <text x="115" y="94" text-anchor="middle" font-size="11" fill="var(--cap)">+ task text · embodiment tag</text>
+        <text x="115" y="122" text-anchor="middle" font-size="11" fill="var(--cap)">4 entities × N = 2048 · xyz₀ + labels</text>
+        <line x1="220" y1="65" x2="252" y2="65" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#pa)"/>
+        <!-- 2 model -->
+        <rect x="254" y="26" width="180" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="344" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">3D-WAM</text>
+        <text x="344" y="74" text-anchor="middle" font-size="11" fill="var(--cap)">latent DiT · flow matching</text>
+        <text x="344" y="90" text-anchor="middle" font-size="11" fill="var(--cap)">≈ 110 M</text>
+        <line x1="434" y1="65" x2="470" y2="65" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#pa)"/>
+        <!-- 3 flow -->
+        <rect x="472" y="26" width="196" height="78" rx="10" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"/>
+        <text x="570" y="46" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--acc)">scene flow Δx₁ … Δx₁₆</text>
+        <g stroke-width="1.6">
+          <line x1="500" y1="62" x2="540" y2="62" stroke="var(--hL)" marker-end="url(#pL)"/><line x1="556" y1="62" x2="596" y2="62" stroke="var(--hR)" marker-end="url(#pR)"/>
+          <line x1="500" y1="82" x2="540" y2="82" stroke="var(--tool)" marker-end="url(#pT)"/><line x1="556" y1="82" x2="596" y2="82" stroke="var(--tgt)" marker-end="url(#pG)"/>
+        </g>
+        <text x="632" y="66" text-anchor="middle" font-size="11" fill="var(--cap)">hands</text>
+        <text x="632" y="86" text-anchor="middle" font-size="11" fill="var(--cap)">objects</text>
+        <text x="570" y="122" text-anchor="middle" font-size="11" fill="var(--cap)">every point · T = 16 @ 10 Hz = 1.6 s</text>
+        <line x1="668" y1="65" x2="702" y2="65" stroke="var(--acc)" stroke-width="1.4" marker-end="url(#pa)"/>
+        <text x="685" y="18" text-anchor="middle" font-size="11" fill="var(--acc)">hand rows ↓</text>
+        <!-- 4 decode -->
+        <rect x="704" y="26" width="132" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="770" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">per-link Procrustes</text>
+        <text x="770" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">→ IK</text>
+        <line x1="836" y1="65" x2="866" y2="65" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#pa)"/>
+        <!-- 5 joints -->
+        <rect x="868" y="26" width="102" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="919" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Sharpa joints</text>
+        <text x="919" y="80" text-anchor="middle" font-size="12" fill="var(--ink)">q₁ … q₁₆</text>
+        <!-- closed loop -->
+        <polyline points="919,104 919,142 115,142 115,130" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#pa)"/>
+        <text x="790" y="136" text-anchor="middle" font-size="11" fill="var(--cap)">closed loop — regenerate per chunk from new frame-0 points</text>
+      </svg>
+      <figcaption>pipeline — points + labels + text in, scene flow out; hand rows decode to Sharpa joints</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">Sharpa pairs = NVIDIA CHORD TACO release only (855 sequences) · N = 2048 decided in deck #1 (2026-08-26) · text proposal → DESIGN.md (frozen in A1)</p>
+</section>
+
+<!-- SECTION: method (1) · data structure · thesis + figure only -->
+<section class="slide s-method">
+  <h2>Method (1): Data structure</h2>
+  <p class="thesis">A sample is a labelled point set at t₀, its 16-step flow at 10 Hz, and a task string.</p>
+  <div class="band">
+    <figure>
+      <svg viewBox="0 0 980 372" role="img" aria-label="One sample: a scene at t = 0 with four entities of 2048 points each (left hand, right hand, tool, target); per-point columns xyz₀, class, instance, part id, embodiment tag, hand side; the generated target is the 16-step flow at 10 Hz per point, with a task string and a valid mask.">
+        <defs>
+          <marker id="da" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker>
+          <marker id="dL" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--hL)"/></marker>
+          <marker id="dR" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--hR)"/></marker>
+          <marker id="dT" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tool)"/></marker>
+          <marker id="dG" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tgt)"/></marker>
+        </defs>
+
+        <!-- scene panel -->
+        <rect x="16" y="30" width="250" height="330" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="141" y="52" text-anchor="middle" font-size="11.5" fill="var(--cap)">scene at t = 0 · 4 entities × 2048 points</text>
+        <g fill="var(--hL)"><circle cx="58" cy="140" r="3.6"/><circle cx="74" cy="140" r="3.6"/><circle cx="90" cy="140" r="3.6"/><circle cx="60" cy="158" r="3.6"/><circle cx="76" cy="158" r="3.6"/><circle cx="92" cy="158" r="3.6"/>
+          <circle cx="52" cy="120" r="3.6"/><circle cx="50" cy="102" r="3.6"/><circle cx="66" cy="116" r="3.6"/><circle cx="66" cy="98" r="3.6"/><circle cx="64" cy="82" r="3.6"/><circle cx="80" cy="114" r="3.6"/><circle cx="80" cy="96" r="3.6"/><circle cx="80" cy="78" r="3.6"/>
+          <circle cx="94" cy="118" r="3.6"/><circle cx="96" cy="100" r="3.6"/><circle cx="97" cy="84" r="3.6"/><circle cx="108" cy="126" r="3.6"/><circle cx="112" cy="110" r="3.6"/></g>
+        <text x="80" y="180" text-anchor="middle" font-size="11" fill="var(--hL)">left hand · 2048</text>
+        <g fill="var(--hR)"><circle cx="188" cy="140" r="3.6"/><circle cx="204" cy="140" r="3.6"/><circle cx="220" cy="140" r="3.6"/><circle cx="190" cy="158" r="3.6"/><circle cx="206" cy="158" r="3.6"/><circle cx="222" cy="158" r="3.6"/>
+          <circle cx="182" cy="120" r="3.6"/><circle cx="180" cy="102" r="3.6"/><circle cx="196" cy="116" r="3.6"/><circle cx="196" cy="98" r="3.6"/><circle cx="194" cy="82" r="3.6"/><circle cx="210" cy="114" r="3.6"/><circle cx="210" cy="96" r="3.6"/><circle cx="210" cy="78" r="3.6"/>
+          <circle cx="224" cy="118" r="3.6"/><circle cx="226" cy="100" r="3.6"/><circle cx="227" cy="84" r="3.6"/><circle cx="238" cy="126" r="3.6"/><circle cx="242" cy="110" r="3.6"/></g>
+        <text x="208" y="180" text-anchor="middle" font-size="11" fill="var(--hR)">right hand · 2048</text>
+        <g fill="var(--tool)"><circle cx="50" cy="262" r="3.6"/><circle cx="66" cy="256" r="3.6"/><circle cx="82" cy="256" r="3.6"/><circle cx="98" cy="262" r="3.6"/><circle cx="44" cy="278" r="3.6"/><circle cx="104" cy="278" r="3.6"/><circle cx="46" cy="294" r="3.6"/><circle cx="102" cy="294" r="3.6"/>
+          <circle cx="56" cy="308" r="3.6"/><circle cx="72" cy="312" r="3.6"/><circle cx="88" cy="312" r="3.6"/><circle cx="98" cy="306" r="3.6"/><circle cx="112" cy="250" r="3.6"/><circle cx="122" cy="262" r="3.6"/><circle cx="124" cy="276" r="3.6"/><circle cx="34" cy="262" r="3.6"/><circle cx="26" cy="250" r="3.6"/></g>
+        <text x="76" y="336" text-anchor="middle" font-size="11" fill="var(--tool)">tool (kettle) · 2048</text>
+        <g fill="var(--tgt)"><circle cx="160" cy="286" r="3.6"/><circle cx="176" cy="280" r="3.6"/><circle cx="196" cy="278" r="3.6"/><circle cx="216" cy="280" r="3.6"/><circle cx="232" cy="286" r="3.6"/><circle cx="166" cy="300" r="3.6"/><circle cx="184" cy="306" r="3.6"/>
+          <circle cx="204" cy="308" r="3.6"/><circle cx="224" cy="304" r="3.6"/><circle cx="238" cy="298" r="3.6"/><circle cx="186" cy="318" r="3.6"/><circle cx="206" cy="318" r="3.6"/></g>
+        <text x="200" y="340" text-anchor="middle" font-size="11" fill="var(--tgt)">target (bowl) · 2048</text>
+        <line x1="270" y1="150" x2="292" y2="150" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#da)"/>
+
+        <!-- given columns -->
+        <text x="478" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">given at t = 0 — one row per point</text>
+        <g font-size="11" fill="var(--cap)" text-anchor="middle">
+          <text x="322" y="82">entity</text><text x="370" y="82">xyz₀</text><text x="418" y="82">class</text><text x="462" y="82">inst.</text><text x="518" y="82">part</text><text x="580" y="82">tag</text><text x="632" y="82">side</text>
+        </g>
+        <g>
+          <rect x="298" y="92" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="106" r="3.6" fill="var(--hL)"/>
+          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="110" fill="var(--cap)">2048</text><text x="370" y="110">x y z</text><text x="418" y="110">hand</text><text x="462" y="110">1</text><text x="518" y="110">index₂</text><text x="580" y="110">human</text><text x="632" y="110">L</text></g>
+          <rect x="298" y="128" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="142" r="3.6" fill="var(--hR)"/>
+          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="146" fill="var(--cap)">2048</text><text x="370" y="146">x y z</text><text x="418" y="146">hand</text><text x="462" y="146">2</text><text x="518" y="146">thumb₃</text><text x="580" y="146">human</text><text x="632" y="146">R</text></g>
+          <rect x="298" y="164" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="178" r="3.6" fill="var(--tool)"/>
+          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="182" fill="var(--cap)">2048</text><text x="370" y="182">x y z</text><text x="418" y="182">object</text><text x="462" y="182">3</text><text x="518" y="182">handle</text><text x="580" y="182">—</text><text x="632" y="182">—</text></g>
+          <rect x="298" y="200" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="214" r="3.6" fill="var(--tgt)"/>
+          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="218" fill="var(--cap)">2048</text><text x="370" y="218">x y z</text><text x="418" y="218">object</text><text x="462" y="218">4</text><text x="518" y="218">rim</text><text x="580" y="218">—</text><text x="632" y="218">—</text></g>
+        </g>
+        <text x="298" y="246" font-size="11" fill="var(--cap)">part id = MANO 16 parts · Sharpa 33 links · object part</text>
+
+        <line x1="672" y1="52" x2="672" y2="232" stroke="var(--line)" stroke-dasharray="4 4"/>
+
+        <!-- generated -->
+        <text x="826" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">generated — T = 16 @ 10 Hz = 1.6 s</text>
+        <g font-size="11" fill="var(--cap)" text-anchor="middle"><text x="800" y="82">Δx₁   Δx₂   ⋯   Δx₁₆</text><text x="944" y="82">valid</text></g>
+        <g>
+          <rect x="684" y="92" width="240" height="28" rx="6" fill="var(--hLbg)"/>
+          <g stroke="var(--hL)" stroke-width="1.5"><line x1="696" y1="106" x2="726" y2="106" marker-end="url(#dL)"/><line x1="742" y1="106" x2="772" y2="106" marker-end="url(#dL)"/><line x1="830" y1="106" x2="860" y2="106" marker-end="url(#dL)"/><line x1="876" y1="106" x2="906" y2="106" marker-end="url(#dL)"/></g>
+          <text x="800" y="110" text-anchor="middle" font-size="11" fill="var(--hL)">⋯</text><text x="944" y="110" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
+          <rect x="684" y="128" width="240" height="28" rx="6" fill="var(--hRbg)"/>
+          <g stroke="var(--hR)" stroke-width="1.5"><line x1="696" y1="142" x2="726" y2="142" marker-end="url(#dR)"/><line x1="742" y1="142" x2="772" y2="142" marker-end="url(#dR)"/><line x1="830" y1="142" x2="860" y2="142" marker-end="url(#dR)"/><line x1="876" y1="142" x2="906" y2="142" marker-end="url(#dR)"/></g>
+          <text x="800" y="146" text-anchor="middle" font-size="11" fill="var(--hR)">⋯</text><text x="944" y="146" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
+          <rect x="684" y="164" width="240" height="28" rx="6" fill="var(--toolbg)"/>
+          <g stroke="var(--tool)" stroke-width="1.5"><line x1="696" y1="178" x2="726" y2="178" marker-end="url(#dT)"/><line x1="742" y1="178" x2="772" y2="178" marker-end="url(#dT)"/><line x1="830" y1="178" x2="860" y2="178" marker-end="url(#dT)"/><line x1="876" y1="178" x2="906" y2="178" marker-end="url(#dT)"/></g>
+          <text x="800" y="182" text-anchor="middle" font-size="11" fill="var(--tool)">⋯</text><text x="944" y="182" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
+          <rect x="684" y="200" width="240" height="28" rx="6" fill="var(--tgtbg)"/>
+          <g stroke="var(--tgt)" stroke-width="1.5"><line x1="696" y1="214" x2="726" y2="214" marker-end="url(#dG)"/><line x1="742" y1="214" x2="772" y2="214" marker-end="url(#dG)"/><line x1="830" y1="214" x2="860" y2="214" marker-end="url(#dG)"/><line x1="876" y1="214" x2="906" y2="214" marker-end="url(#dG)"/></g>
+          <text x="800" y="218" text-anchor="middle" font-size="11" fill="var(--tgt)">⋯</text><text x="944" y="218" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
+        </g>
+        <text x="684" y="246" font-size="11" fill="var(--cap)">valid = 1 real point · 0 padding (ragged scenes)</text>
+
+        <!-- text + formula -->
+        <rect x="298" y="266" width="360" height="28" rx="14" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="478" y="284" text-anchor="middle" font-size="11.5" fill="var(--ink)">text: “pour water from the kettle into the bowl”</text>
+        <rect x="684" y="266" width="280" height="28" rx="14" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="824" y="284" text-anchor="middle" font-size="11.5" fill="var(--ink)">paired Sharpa sample: same scene, tag = sharpa</text>
+        <text x="298" y="326" font-size="12.5" fill="var(--ink)">one sample = ( P₀ [N×3], labels [N×5], Δx₁…₁₆ [16×N×3], text, mask [N] ),  N = entities × 2048</text>
+        <text x="298" y="350" font-size="11" fill="var(--cap)">chunk = 16 steps @ 10 Hz = 1.6 s · consecutive chunks at stride 4 · same array for human and Sharpa — only the labels differ</text>
+      </svg>
+      <figcaption>data structure — one array of point rows: frame-0 columns are given, the Δx block is generated; TACO scene 20231019_001</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">stride-4 chunks → ≈ 100k human (≈ 5.5k seqs) + ≈ 7k Sharpa (855 TACO seqs), Sharpa oversampled to ~25 % · TACO sequences yield paired human / Sharpa samples of one scene</p>
+</section>
+
+<!-- SECTION: method (2) · architecture · the MAIN figure · thesis + figure only -->
+<section class="slide s-method">
+  <h2>Method (2): Architecture</h2>
+  <p class="thesis">Per-point stages stay shallow; the depth sits on 128 latents per entity.</p>
+  <div class="band">
+    <figure>
+      <svg viewBox="0 0 980 392" role="img" aria-label="Four stages left to right: a shallow per-point encoder (PTv3 windowed attention per frame, 2 blocks, d = 256, 16 × 8,192 tokens), pooling to 128 latents per entity per frame (16 × 512 tokens), a latent DiT (factorized spatial and temporal attention, adaLN-zero on τ, T5-base text cross-attention, RoPE, CFG dropout; 12 blocks, d = 768, about 100 M, 8,192 tokens), and a shallow per-point query decoder (each point queries its frame's latents and outputs a velocity). Below: generated hand flow → per-link Procrustes → IK → Sharpa joint commands, regenerated per chunk.">
+        <defs>
+          <marker id="aa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker>
+          <marker id="ab" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--acc)"/></marker>
+        </defs>
+
+        <!-- conditioning -->
+        <rect x="452" y="12" width="150" height="24" rx="12" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="527" y="28" text-anchor="middle" font-size="11" fill="var(--ink)">text → T5-base encoder</text>
+        <rect x="618" y="12" width="90" height="24" rx="12" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="663" y="28" text-anchor="middle" font-size="11" fill="var(--ink)">flow step τ</text>
+        <line x1="527" y1="36" x2="527" y2="68" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#aa)"/>
+        <line x1="663" y1="36" x2="663" y2="68" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#aa)"/>
+        <text x="722" y="29" font-size="11" fill="var(--cap)">conditioning</text>
+
+        <!-- (a) per-point encoder -->
+        <rect x="14" y="70" width="196" height="180" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="112" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(a) per-point encoder</text>
+        <text x="112" y="112" text-anchor="middle" font-size="11" fill="var(--cap)">PTv3 serialized windowed attention</text>
+        <text x="112" y="126" text-anchor="middle" font-size="11" fill="var(--cap)">per frame, over all points</text>
+        <text x="112" y="150" text-anchor="middle" font-size="11" fill="var(--ink)">in: xyz₀ · noisy Δx at flow step τ</text>
+        <text x="112" y="164" text-anchor="middle" font-size="11" fill="var(--ink)">+ label · part · tag embeddings</text>
+        <g fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"><rect x="62" y="176" width="100" height="9" rx="2"/><rect x="62" y="189" width="100" height="9" rx="2"/></g>
+        <text x="112" y="218" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">2 blocks · d = 256</text>
+        <text x="112" y="236" text-anchor="middle" font-size="11" fill="var(--cap)">shallow</text>
+        <line x1="210" y1="160" x2="236" y2="160" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+
+        <!-- (b) pooling -->
+        <rect x="238" y="70" width="150" height="180" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="313" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(b) pooling</text>
+        <text x="313" y="112" text-anchor="middle" font-size="11" fill="var(--cap)">128 latents per entity</text>
+        <text x="313" y="126" text-anchor="middle" font-size="11" fill="var(--cap)">per frame</text>
+        <g><circle cx="256" cy="150" r="2" fill="var(--hL)"/><circle cx="264" cy="150" r="2" fill="var(--hL)"/><circle cx="272" cy="150" r="2" fill="var(--hL)"/><circle cx="280" cy="150" r="2" fill="var(--hL)"/>
+           <circle cx="256" cy="158" r="2" fill="var(--hR)"/><circle cx="264" cy="158" r="2" fill="var(--hR)"/><circle cx="272" cy="158" r="2" fill="var(--hR)"/><circle cx="280" cy="158" r="2" fill="var(--hR)"/>
+           <circle cx="256" cy="166" r="2" fill="var(--tool)"/><circle cx="264" cy="166" r="2" fill="var(--tool)"/><circle cx="272" cy="166" r="2" fill="var(--tool)"/><circle cx="280" cy="166" r="2" fill="var(--tool)"/>
+           <circle cx="256" cy="174" r="2" fill="var(--tgt)"/><circle cx="264" cy="174" r="2" fill="var(--tgt)"/><circle cx="272" cy="174" r="2" fill="var(--tgt)"/><circle cx="280" cy="174" r="2" fill="var(--tgt)"/></g>
+        <line x1="290" y1="162" x2="314" y2="162" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#aa)"/>
+        <g><rect x="322" y="146" width="12" height="12" rx="2" fill="var(--hL)"/><rect x="338" y="146" width="12" height="12" rx="2" fill="var(--hR)"/><rect x="322" y="162" width="12" height="12" rx="2" fill="var(--tool)"/><rect x="338" y="162" width="12" height="12" rx="2" fill="var(--tgt)"/></g>
+        <text x="313" y="200" text-anchor="middle" font-size="11" fill="var(--cap)">2048 points → 128 latents</text>
+        <text x="313" y="216" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">4 entities → 512 / frame</text>
+        <line x1="388" y1="160" x2="414" y2="160" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+
+        <!-- (c) latent DiT -->
+        <rect x="416" y="70" width="330" height="180" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="581" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(c) latent DiT — factorized</text>
+        <rect x="432" y="104" width="142" height="44" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="503" y="122" text-anchor="middle" font-size="11.5" fill="var(--ink)">spatial attention</text>
+        <text x="503" y="138" text-anchor="middle" font-size="11" fill="var(--cap)">entity × latent, per frame</text>
+        <rect x="588" y="104" width="142" height="44" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="659" y="122" text-anchor="middle" font-size="11.5" fill="var(--ink)">temporal attention</text>
+        <text x="659" y="138" text-anchor="middle" font-size="11" fill="var(--cap)">along t, per latent</text>
+        <line x1="574" y1="118" x2="586" y2="118" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#aa)"/>
+        <line x1="588" y1="134" x2="576" y2="134" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#aa)"/>
+        <text x="581" y="168" text-anchor="middle" font-size="11" fill="var(--ink)">adaLN-zero on τ · T5-base text cross-attention</text>
+        <text x="581" y="184" text-anchor="middle" font-size="11" fill="var(--ink)">RoPE over (entity, latent, t) · CFG dropout on text + tag</text>
+        <g fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"><rect x="541" y="196" width="80" height="5" rx="1.5"/><rect x="541" y="204" width="80" height="5" rx="1.5"/><rect x="541" y="212" width="80" height="5" rx="1.5"/><rect x="541" y="220" width="80" height="5" rx="1.5"/><rect x="541" y="228" width="80" height="5" rx="1.5"/></g>
+        <text x="632" y="216" font-size="11" fill="var(--cap)">× 12</text>
+        <text x="581" y="245" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">12 blocks · d = 768 · ≈ 100 M</text>
+        <line x1="746" y1="160" x2="772" y2="160" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+
+        <!-- (d) per-point query decoder -->
+        <rect x="774" y="70" width="192" height="180" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="870" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(d) per-point query decoder</text>
+        <text x="870" y="112" text-anchor="middle" font-size="11" fill="var(--cap)">each point is a query</text>
+        <text x="870" y="126" text-anchor="middle" font-size="11" fill="var(--ink)">q = xyz₀ + labels + tag + t</text>
+        <text x="870" y="150" text-anchor="middle" font-size="11" fill="var(--cap)">cross-attends to its frame's latents</text>
+        <text x="870" y="164" text-anchor="middle" font-size="11" fill="var(--ink)">→ velocity v̂ per point</text>
+        <g fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"><rect x="820" y="176" width="100" height="9" rx="2"/><rect x="820" y="189" width="100" height="9" rx="2"/></g>
+        <text x="870" y="218" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">2 blocks · d = 256</text>
+        <text x="870" y="236" text-anchor="middle" font-size="11" fill="var(--cap)">shallow</text>
+
+        <!-- token row -->
+        <g font-size="12" font-weight="600" fill="var(--acc)" text-anchor="middle">
+          <text x="112" y="274">16 × 8,192 tokens</text><text x="313" y="274">16 × 512 tokens</text><text x="581" y="274">8,192 tokens total</text><text x="870" y="274">16 × 8,192 tokens</text>
+        </g>
+        <!-- callout -->
+        <rect x="416" y="292" width="330" height="26" rx="13" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"/>
+        <text x="581" y="309" text-anchor="middle" font-size="11.5" fill="var(--acc)">point identity is exact — queries are the points; no VAE</text>
+
+        <!-- decode row -->
+        <line x1="950" y1="250" x2="950" y2="336" stroke="var(--acc)" stroke-width="1.4" marker-end="url(#ab)"/>
+        <text x="942" y="300" text-anchor="end" font-size="11" fill="var(--acc)">hand rows</text>
+        <rect x="774" y="338" width="192" height="34" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="870" y="359" text-anchor="middle" font-size="11.5" fill="var(--ink)">generated hand flow</text>
+        <line x1="774" y1="355" x2="744" y2="355" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+        <rect x="560" y="338" width="182" height="34" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="651" y="359" text-anchor="middle" font-size="11.5" fill="var(--ink)">per-link Procrustes (R, t)</text>
+        <line x1="560" y1="355" x2="530" y2="355" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+        <rect x="458" y="338" width="70" height="34" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="493" y="359" text-anchor="middle" font-size="11.5" fill="var(--ink)">IK</text>
+        <line x1="458" y1="355" x2="428" y2="355" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#aa)"/>
+        <rect x="204" y="338" width="222" height="34" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="315" y="359" text-anchor="middle" font-size="11.5" fill="var(--ink)">Sharpa joint commands q₁ … q₁₆</text>
+        <polyline points="204,355 30,355 30,252" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#aa)"/>
+        <text x="585" y="387" text-anchor="middle" font-size="11" fill="var(--cap)">closed loop — regenerate per chunk from new frame-0 points</text>
+      </svg>
+      <figcaption>architecture — token counts per sample under each stage; only (c) is deep</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">PTv3 blocks + collate + flow normalisation reused from PointWorld (Apache-2.0) · T = 16 frames · 4 entities × 2048 points = 8,192 points per frame</p>
+</section>
+
+<!-- SECTION: method (3) · training scheme · thesis + figure (+ one small table) -->
+<section class="slide s-method">
+  <h2>Method (3): Training scheme</h2>
+  <p class="thesis">Flow matching on the flow, one auxiliary rigidity loss, ~10 hours per pilot.</p>
+  <div class="band">
+    <figure style="flex:1.75 1 0">
+      <svg viewBox="0 0 640 372" role="img" aria-label="Training loop: sample a chunk; noise the flow with a logit-normal τ; the model predicts a velocity conditioned on frame-0 points, labels, tag and text with CFG dropout; main loss = conditional flow matching on the velocity; auxiliary loss = per-part rigidity (Procrustes residual of the predicted flow per object instance, Sharpa link, MANO part); summed loss trains θ with AdamW and EMA.">
+        <defs><marker id="ta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker></defs>
+        <!-- sample -->
+        <rect x="20" y="20" width="250" height="62" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="145" y="42" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">sample a chunk</text>
+        <text x="145" y="60" text-anchor="middle" font-size="11" fill="var(--ink)">x₀ · labels · Δx₁…₁₆ · text · tag</text>
+        <text x="145" y="75" text-anchor="middle" font-size="11" fill="var(--cap)">mix: human 75 % · Sharpa 25 %</text>
+        <line x1="145" y1="82" x2="145" y2="118" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <polyline points="270,50 475,50 475,118" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ta)"/>
+        <text x="372" y="44" text-anchor="middle" font-size="11" fill="var(--cap)">conditioning: x₀ · labels · tag · text</text>
+        <!-- noise -->
+        <rect x="20" y="120" width="250" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="145" y="142" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">noise the flow</text>
+        <text x="145" y="160" text-anchor="middle" font-size="11" fill="var(--ink)">τ ~ logit-normal · ε ~ 𝒩(0, I)</text>
+        <text x="145" y="176" text-anchor="middle" font-size="11" fill="var(--ink)">x(τ) = (1 − τ)·ε + τ·Δx</text>
+        <text x="145" y="192" text-anchor="middle" font-size="11" fill="var(--cap)">target velocity u = Δx − ε</text>
+        <line x1="270" y1="159" x2="348" y2="159" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <text x="309" y="152" text-anchor="middle" font-size="11" fill="var(--cap)">x(τ), τ</text>
+        <!-- model -->
+        <rect x="350" y="120" width="250" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="475" y="142" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">model</text>
+        <text x="475" y="160" text-anchor="middle" font-size="11" fill="var(--ink)">v̂ = f(x(τ), τ ; x₀, labels, tag, text)</text>
+        <text x="475" y="176" text-anchor="middle" font-size="11" fill="var(--ink)">CFG dropout: text 10 % · tag 10 %</text>
+        <text x="475" y="192" text-anchor="middle" font-size="11" fill="var(--cap)">predicted flow x̂₁ = x(τ) + (1 − τ)·v̂</text>
+        <line x1="475" y1="198" x2="475" y2="232" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <text x="484" y="220" font-size="11" fill="var(--cap)">v̂</text>
+        <line x1="400" y1="198" x2="232" y2="232" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <text x="300" y="212" text-anchor="middle" font-size="11" fill="var(--cap)">x̂₁</text>
+        <!-- main loss -->
+        <rect x="350" y="234" width="250" height="70" rx="10" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"/>
+        <text x="475" y="256" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--acc)">main: conditional flow matching</text>
+        <text x="475" y="276" text-anchor="middle" font-size="11.5" fill="var(--ink)">L(flow) = ‖ v̂ − (Δx − ε) ‖²</text>
+        <text x="475" y="294" text-anchor="middle" font-size="11" fill="var(--cap)">valid points only · flow normalised per step</text>
+        <!-- aux loss -->
+        <rect x="20" y="234" width="250" height="76" rx="10" fill="var(--panel2)" stroke="var(--mut)"/>
+        <text x="145" y="256" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">aux: per-part rigidity</text>
+        <text x="145" y="274" text-anchor="middle" font-size="11" fill="var(--ink)">Procrustes residual of x̂₁ per part:</text>
+        <text x="145" y="288" text-anchor="middle" font-size="11" fill="var(--ink)">object instance · Sharpa link · MANO part</text>
+        <text x="145" y="303" text-anchor="middle" font-size="11" fill="var(--cap)">what the Procrustes + IK decoder relies on</text>
+        <!-- sum -->
+        <line x1="145" y1="310" x2="230" y2="332" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <line x1="475" y1="304" x2="392" y2="332" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#ta)"/>
+        <rect x="170" y="332" width="280" height="32" rx="16" fill="var(--panel)" stroke="var(--ink)" stroke-width=".9"/>
+        <text x="310" y="353" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">L = L(flow) + λ · L(rigid)  →  AdamW step on θ, EMA</text>
+        <polyline points="450,348 622,348 622,159 602,159" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ta)"/>
+        <text x="627" y="258" font-size="11" fill="var(--cap)">∇θ</text>
+      </svg>
+      <figcaption>training loop — one chunk per sample; both losses read the predicted flow</figcaption>
+    </figure>
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>pilot</th><th>setting</th></tr></thead>
+        <tbody>
+          <tr><td>model</td><td>110 M</td></tr>
+          <tr><td>batch · steps</td><td>64 · 12k</td></tr>
+          <tr><td>optimiser</td><td>AdamW 3e-4 · warmup 1k · EMA</td></tr>
+          <tr><td>compute</td><td>1× A100 ≈ 8–10 h</td></tr>
+          <tr><td>data mix</td><td>human 75 % · Sharpa 25 %</td></tr>
+          <tr><td>schedule τ</td><td>logit-normal · CFG drop 10 % / 10 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">contact-consistency aux (TACO has contact labels) reserved for the ablation table · flow normalisation = PointWorld's per-timestep statistics</p>
+</section>
+
+<!-- SECTION: results (1) · PointWorld code verdict · cumulative sub-agenda stepped on one slide (data-steps), the table is the evidence -->
+<section class="slide s-results">
+  <h2>Results (1): PointWorld code verdict</h2>
+  <p class="thesis">PointWorld is a backbone donation, not a fork.</p>
+  <ol class="agenda" data-steps>
+    <li class="on" data-show=".c1">Reuse as-is <ul><li>the point backbone and the data plumbing come over unchanged</li></ul></li>
+    <li data-show=".c2">Must add <ul><li>everything that makes it conditional and generative</li></ul></li>
+    <li data-show=".c3">Opposite on 3 axes <ul><li>what is predicted · loss family · time structure — so no fork</li></ul></li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th class="c1" style="width:31%">reuse as-is</th><th class="c2" style="width:27%">must add</th><th class="c3">opposite on 3 axes</th></tr></thead>
+      <tbody>
+        <tr><td class="c1"><code>ptv3/</code> — serialized windowed flash-attn, size ladder, grid pooling</td><td class="c2">adaLN / timestep conditioning</td><td class="c3">predicts the scene only; robot = GT input, never generated</td></tr>
+        <tr><td class="c1">collate · ragged padding</td><td class="c2">T5 text cross-attention</td><td class="c3">deterministic Huber + heteroscedastic NLL (ours: generative)</td></tr>
+        <tr><td class="c1">per-timestep flow normalisation</td><td class="c2">per-point label + embodiment embeddings</td><td class="c3">scene 1-frame vs robot T-frame (ours: one T-frame set)</td></tr>
+        <tr><td class="c1">sincos timestep embedding</td><td class="c2">generative velocity head + FM loss</td><td class="c3">also T = 11 hard-coded · DINOv3 features gated · no text</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">PointWorld: arXiv 2601.03782, Apache-2.0 · verdict from reading the NVlabs release · the highlighted column follows the item (→)</p>
+</section>
+
+<!-- SECTION: results (2) · compute -->
+<section class="slide s-results">
+  <h2>Results (2): Compute per token design</h2>
+  <p class="thesis">Per-point tokens cost ~40 h per pilot; entity latents cost ~10 h.</p>
+  <div class="band">
+    <div class="tbl" style="flex:1.9 1 0">
+      <table class="compact">
+        <thead><tr><th>design</th><th class="num">deep tokens / sample</th><th class="num">s / sample / step (A100)</th><th class="num">12k-step pilot @ batch 64 / 32</th></tr></thead>
+        <tbody>
+          <tr><td>per-point tokens, full attention</td><td class="num">131k</td><td class="num">~1 s</td><td class="num">~4 days</td></tr>
+          <tr><td>per-point tokens, PTv3 windowed</td><td class="num">131k</td><td class="num">~0.3–0.4 s (MLPs dominate)</td><td class="num">~40 h</td></tr>
+          <tr class="hero"><td>entity latents + query decoder</td><td class="num">8,192</td><td class="num">~0.05 s</td><td class="num">~8–10 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>data available now</th><th class="num">sequences</th></tr></thead>
+        <tbody>
+          <tr><td>ARCTIC</td><td class="num">277 / 277 loaded</td></tr>
+          <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td></tr>
+          <tr><td>HOT3D</td><td class="num">235 / 294 · running</td></tr>
+          <tr><td>OakInk2</td><td class="num">70 / 492 · running</td></tr>
+          <tr><td>TACO</td><td class="num">loading</td></tr>
+          <tr><td>GRAB</td><td class="num">awaiting object meshes</td></tr>
+          <tr><td>Sharpa · TACO (NVIDIA)</td><td class="num">855 parquets</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">estimates from FLOP counts at d = 768, 12 layers; to be measured in the dry run (A3) · 131k = 16 × 8,192 · 8,192 = 16 × 512 · counts as of 2026-08-26</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three choices, each with a recommendation; then the dry run.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Token design</b> (owner)
+      <ul><li>Options: per-point tokens (full or PTv3-windowed) · entity latents + per-point query decoder</li>
+          <li>Recommendation: latents — 10× cheaper per pilot, point identity exact through the queries</li></ul></li>
+    <li><b>Auxiliary loss</b> (owner)
+      <ul><li>Options: per-part rigidity · contact consistency (TACO contact labels)</li>
+          <li>Recommendation: rigidity — it is the property the Procrustes + IK decoder relies on</li></ul></li>
+    <li><b>Text encoder</b> (owner)
+      <ul><li>Options: T5-base · CLIP text</li>
+          <li>Recommendation: T5-base — verb-level semantics, cross-attention in the DiT</li></ul></li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Freeze DESIGN.md + this deck with the three decisions (A1 · me · today)</li>
+    <li>Data-structure code against the LOAD parquets + TACO motion_v1 (A2 · me · after decisions)</li>
+    <li>1k-step dry run, measure s / step per design (A3 · 1 A100 · ≤ 2 h)</li>
+    <li>Pilot cycle 1 — 110 M · batch 64 · 12k steps · 1 A100 (A4 · ~10 h · after A3)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix A1 · evaluation plan -->
+<section class="slide s-appendix">
+  <h2>Appendix A1 · evaluation plan</h2>
+  <div class="cols">
+    <dl class="kv">
+      <dt>open-loop</dt><dd>held-out TACO chunks: flow ADE / FDE per class (hand · object) · rigidity residual per part · instruction-swap delta (same scene, swapped text → flow must change) · decoded Sharpa joint error after Procrustes + IK vs the paired Sharpa sample</dd>
+      <dt>zero-shot readout</dt><dd>non-TACO tasks (no Sharpa pairs): the object half of the prediction vs the human demo's object flow · hand rigidity / penetration of the generated Sharpa hand — the "robot-zero-shot on human-only tasks" claim, read open-loop first</dd>
+      <dt>closed-loop</dt><dd>later: CHORD's <code>Sharpa-V2D-v0</code> Isaac Lab envs — regenerate per chunk from the simulator's frame-0 points; success rate vs an oracle replay ceiling</dd>
+    </dl>
+    <dl class="kv">
+      <dt>ablation table</dt><dd>the three discussion choices — token design (per-point vs latents) · aux loss (none · rigidity · contact consistency) · text encoder (T5-base · CLIP) — scored with the open-loop metrics above</dd>
+      <dt>held-out</dt><dd>TACO sequences with Sharpa pairs are the only place the decoded Sharpa joint error has a ground truth; every other dataset is human-only</dd>
+    </dl>
+  </div>
+  <p class="footnote">metrics from the text proposal · CHORD env name from arXiv 2607.00033 · nothing measured yet — no runs</p>
+</section>
+
+<!-- SECTION: appendix A2 · data pipeline state -->
+<section class="slide s-appendix">
+  <h2>Appendix A2 · data pipeline state (2026-08-26)</h2>
+  <div class="cols">
+    <div class="tbl">
+      <table>
+        <thead><tr><th>source</th><th class="num">sequences</th><th>state</th></tr></thead>
+        <tbody>
+          <tr><td>ARCTIC</td><td class="num">277 / 277</td><td>loaded · assess reference: 127 pass / 150 rejected</td></tr>
+          <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td><td>loaded</td></tr>
+          <tr><td>HOT3D</td><td class="num">235 / 294</td><td>running</td></tr>
+          <tr><td>OakInk2</td><td class="num">70 / 492</td><td>running</td></tr>
+          <tr><td>TACO</td><td class="num">—</td><td>loading (motion_v1 parquets)</td></tr>
+          <tr><td>GRAB</td><td class="num">—</td><td>awaiting object meshes</td></tr>
+          <tr><td>Sharpa · TACO</td><td class="num">855</td><td>NVIDIA CHORD release only — no local retarget</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="kv">
+      <dt>chunks</dt><dd>stride 4 → ≈ 100k human chunks (≈ 5.5k sequences) + ≈ 7k Sharpa chunks (855 TACO sequences); Sharpa oversampled to ~25 % of each batch</dd>
+      <dt>pairs</dt><dd>TACO sequences yield paired human / Sharpa samples of the same scene (same objects, same text; hand rows differ in tag and part id)</dd>
+      <dt>labels</dt><dd>class {hand, object} · instance · part id (MANO 16 / Sharpa 33 links / object part) · embodiment tag {human, sharpa} · hand side; points sampled once at N = 2048 per entity from the deck #1 specs (FPS-prefix trim from 4096)</dd>
+      <dt>rate</dt><dd>10 Hz, T = 16 steps = 1.6 s per chunk</dd>
+    </dl>
+  </div>
+  <p class="footnote">LOAD parquets = the loader's per-dataset outputs (A2 codes against them) · counts = loader progress; only ARCTIC assessed</p>
+</section>
+
+<!-- SECTION: appendix A3 · references · cut list -->
+<section class="slide s-appendix">
+  <h2>Appendix A3 · references · cut list</h2>
+  <div class="cols">
+    <dl class="kv">
+      <dt>PointWorld</dt><dd>NVlabs, arXiv 2601.03782 — point flow as action representation; Apache-2.0; we reuse <code>ptv3/</code>, collate, flow normalisation</dd>
+      <dt>PTv3</dt><dd>Point Transformer V3 — serialized windowed attention, the per-point encoder's block</dd>
+      <dt>flow matching</dt><dd>conditional flow matching / rectified flow — velocity target Δx − ε, logit-normal τ; classifier-free guidance by conditioning dropout</dd>
+      <dt>query decoding</dt><dd>Perceiver-IO-style output queries — each point is a query against the latent array (no VAE, identity exact)</dd>
+      <dt>CHORD</dt><dd>NVIDIA, arXiv 2607.00033 — TACO Sharpa Wave release (855 sequences, CC-BY-4.0) and the <code>Sharpa-V2D-v0</code> Isaac Lab envs</dd>
+    </dl>
+    <div>
+      <p class="cut"><b>Cut list</b> (dropped from this deck, kept in the text proposal / DESIGN.md): yaw augmentation details · evaluation cadence · the 4th discussion item "pilot budget 110 M / 1 A100 / ~10 h" (folded into action item A4) · the full dataset list per slide (named once, Overview) · contact-consistency loss definition (ablation table only) · the hub's per-point-token architecture figure (superseded by slide 4) · the FLOP arithmetic behind slide 7 (dry run A3 replaces it with a measurement).</p>
+    </div>
+  </div>
+  <p class="footnote">deck #1 (point budget, N = 2048): /experiments/3d-wam/decks/2026-08-25-point-budget/ · hub: /experiments/3d-wam/</p>
+</section>
+
+</main>
+</body>
+</html>

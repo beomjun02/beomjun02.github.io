@@ -11,7 +11,7 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Phase 1 in progress (2026-08-26): deck #1 (action item 1.2 point budget) LIVE — one sweep N_obj = N_hand = N ∈ {128…4096} on 5 CHORD-TACO tasks, human MANO | Sharpa Wave; awaiting the owner's N pick and the 1.1 dataset decision (recommend TACO + ARCTIC + GRAB) plus sign-off on the TACO parquet pull / CHORD native-run check. Then 1.3 preprocessing.",
+    "text": "Phase 2 design (2026-08-26): deck #2 (architecture + training scheme, action items 2.1–2.3) LIVE — labelled point tracks → shallow per-point encoder → 128 latents per entity → latent DiT (flow matching, T5 text) → per-point query decoder; PointWorld backbone reused, not forked. Awaiting the owner's three decisions (token design, auxiliary loss, text encoder), then the 1k-step dry run (A3) and pilot cycle 1 (~10 h, 1 A100). Phase 1: N = 2048 decided (deck #1); loaders running — ARCTIC, DexYCB done; HOT3D, OakInk2 running; TACO loading; GRAB awaiting object meshes.",
     "status": "active",
     "updated": "2026-08-26"
    }
@@ -49,6 +49,25 @@
   }
  },
  "logs": [
+  {
+   "project": "3d-wam",
+   "date": "2026-08-26",
+   "slug": "architecture-training",
+   "title": "Architecture and training scheme — design proposal",
+   "status": "running",
+   "updated": "2026-08-26",
+   "tldr": "Deck #2 (action items 2.1–2.3). Sample: labelled points at t₀, 16-step flow at 10 Hz, task string. Shallow per-point encoder → 128 latents/entity → 12-block latent DiT (flow matching) → per-point query decoder; PointWorld donates the backbone. Latents ~10 h/pilot vs ~40 h. Decide: token design, aux loss, text encoder.",
+   "path": "3d-wam/decks/2026-08-26-architecture-training/",
+   "tags": [
+    "architecture",
+    "training",
+    "flow-matching",
+    "DiT",
+    "PointWorld",
+    "action-items-2.1-2.3"
+   ],
+   "format": "deck"
+  },
   {
    "project": "3d-wam",
    "date": "2026-08-25",
