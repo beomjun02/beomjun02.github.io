@@ -420,38 +420,29 @@
 
 <!-- SECTION: results (2) · compute per token design · the chosen row is the hero -->
 <section class="slide s-results">
-  <h2>Results (2): Compute per token design</h2>
-  <p class="thesis">Design C: 8,192 tokens, one module type, 7–11 h per pilot — 4D tokens cost 40 h+.</p>
+  <h2>Results (2): Data scale</h2>
+  <p class="thesis">Human 5,319 episodes / 4.0 M frames → 247k chunks at 15 Hz; Sharpa 1,215 episodes.</p>
   <ul>
-    <li>Why not time-as-tokens: chunks are 16 steps / 1.6 s, not 81+ frames — channels are the norm here</li>
+    <li>No sequence shorter than one chunk at 10 or 15 Hz · OakInk2 partial (96 / 492) · GRAB via ManipTrans npz</li>
   </ul>
   <div class="band">
-    <div class="tbl" style="flex:1.9 1 0">
-      <table class="compact">
-        <thead><tr><th style="width:52%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">pilot (12k)</th></tr></thead>
-        <tbody>
-          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+</td></tr>
-          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h</td></tr>
-          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">~7–11 h</td></tr>
-        </tbody>
-      </table>
-    </div>
     <div class="tbl">
       <table class="compact">
-        <thead><tr><th>data available now</th><th class="num">sequences</th></tr></thead>
+        <thead><tr><th>dataset</th><th class="num">episodes</th><th class="num">frames</th><th class="num">fps</th><th class="num">objects (ids / names)</th><th>labels</th><th class="num">chunks @15 Hz</th></tr></thead>
         <tbody>
-          <tr><td>TACO</td><td class="num">2,317 / 2,317 loaded</td></tr>
-          <tr><td>ARCTIC</td><td class="num">277 / 277 loaded</td></tr>
-          <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td></tr>
-          <tr><td>HOT3D</td><td class="num">235 / 294 · running</td></tr>
-          <tr><td>OakInk2</td><td class="num">→ 492 · running</td></tr>
-          <tr><td>GRAB</td><td class="num">pending</td></tr>
-          <tr><td>Sharpa · TACO (NVIDIA)</td><td class="num">1,215 parquets</td></tr>
+          <tr><td>TACO (human)</td><td class="num">2,317</td><td class="num">363,198</td><td class="num">30</td><td class="num">162 / 20</td><td>verb 15</td><td class="num">37,723</td></tr>
+          <tr><td>ARCTIC</td><td class="num">277</td><td class="num">200,730</td><td class="num">30</td><td class="num">10 / 10</td><td>action 2 (grab / use)</td><td class="num">24,176</td></tr>
+          <tr><td>GRAB</td><td class="num">1,335</td><td class="num">1,623,695</td><td class="num">120</td><td class="num">51 / 51</td><td>motion_intent 29</td><td class="num">46,346</td></tr>
+          <tr><td>OakInk2 (partial 96 / 492)</td><td class="num">96</td><td class="num">929,704</td><td class="num">120</td><td class="num">46 / 26</td><td>task 88 · primitive 22</td><td class="num">28,735</td></tr>
+          <tr><td>HOT3D</td><td class="num">294</td><td class="num">841,364</td><td class="num">30</td><td class="num">33 / 33</td><td>none</td><td class="num">104,199</td></tr>
+          <tr><td>DexYCB</td><td class="num">1,000</td><td class="num">72,746</td><td class="num">30</td><td class="num">20 / 20</td><td>grasp object 20</td><td class="num">5,941</td></tr>
+          <tr class="hero"><td>Human total</td><td class="num">5,319</td><td class="num">4,031,437</td><td class="num">—</td><td class="num">—</td><td>—</td><td class="num">247,120</td></tr>
+          <tr class="hero"><td>Sharpa · TACO release</td><td class="num">1,215</td><td class="num">181,299</td><td class="num">30</td><td class="num">146 / 17</td><td>verb 14</td><td class="num">18,637</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">FLOP estimates at d = 768, 12 layers, 1× A100 — measured in the dry run (A3) · C: PTv3 windowed ≈ 7 h, full attention ≈ 11 h · 131k = 16 × 8,192 · counts as of 2026-08-26</p>
+  <p class="footnote">scale.md 2026-08-26 15:33 (stats.py, job 131893) · chunk = 16 target-rate frames, stride 4 · @10 Hz: human 159,088 · Sharpa 11,102 chunks · hours: human 19.6 · Sharpa 1.68 · design alternatives → A4</p>
 </section>
 
 <!-- SECTION: discussion-actions · "Final check": the decisions were taken in discussion — confirm or change, then the dry run -->
@@ -507,15 +498,15 @@
           <tr><td>TACO</td><td class="num">2,317 / 2,317</td><td>loaded (CHORD LOAD parquets)</td></tr>
           <tr><td>ARCTIC</td><td class="num">277 / 277</td><td>loaded · assess reference: 127 pass / 150 rejected</td></tr>
           <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td><td>loaded</td></tr>
-          <tr><td>HOT3D</td><td class="num">235 / 294</td><td>running</td></tr>
-          <tr><td>OakInk2</td><td class="num">→ 492</td><td>running</td></tr>
-          <tr><td>GRAB</td><td class="num">—</td><td>pending (object meshes)</td></tr>
+          <tr><td>HOT3D</td><td class="num">294 / 294</td><td>loaded</td></tr>
+          <tr><td>OakInk2</td><td class="num">96 / 492</td><td>running (partial at scan time)</td></tr>
+          <tr><td>GRAB</td><td class="num">1,335</td><td>ManipTrans npz copy (no CHORD parquet)</td></tr>
           <tr><td>Sharpa · TACO</td><td class="num">1,215</td><td>NVIDIA CHORD release (<code>motion_v1.parquet</code>) — no local retarget</td></tr>
         </tbody>
       </table>
     </div>
     <dl class="kv">
-      <dt>chunks</dt><dd>stride 4 → ≈ 100k human chunks + ≈ 10k Sharpa chunks (1,215 TACO sequences); Sharpa oversampled to ~25 % of each batch</dd>
+      <dt>chunks</dt><dd>stride 4 → 159,088 human + 11,102 Sharpa chunks @10 Hz (247,120 + 18,637 @15 Hz; slide 7); Sharpa oversampled to ~25 % of each batch</dd>
       <dt>pairs</dt><dd>TACO sequences yield paired human / Sharpa samples of the same scene (same objects, same text; hand rows differ in tag and part id)</dd>
       <dt>labels</dt><dd>class {hand, object} · instance · part id (MANO 16 / Sharpa 33 links / object part) · embodiment tag {human, sharpa} · hand side; points sampled once at N = 2048 per entity from the deck #1 specs (FPS-prefix trim from 4096)</dd>
       <dt>target</dt><dd>F [N × 48] = Δx₁ … Δx₁₆ per point, 10 Hz, T = 16 = 1.6 s per chunk; normalised per step with PointWorld's statistics</dd>
@@ -546,6 +537,69 @@
     </div>
   </div>
   <p class="footnote">deck #1: /experiments/3d-wam/decks/2026-08-25-point-budget/ · hub: /experiments/3d-wam/ · DESIGN.md v1.0-rc: ~/3d-wam/DESIGN.md</p>
+</section>
+
+<!-- SECTION: appendix A4 · design alternatives (moved from slide 7 on 2026-08-26) -->
+<section class="slide s-appendix">
+  <h2>Appendix A4 · design alternatives — compute per token design</h2>
+  <ul>
+    <li>Why not time-as-tokens: chunks are 16 steps / 1.6 s, not 81+ frames — channels are the norm here</li>
+  </ul>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th style="width:52%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">pilot (12k)</th></tr></thead>
+        <tbody>
+          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+</td></tr>
+          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h</td></tr>
+          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">~7–11 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">FLOP estimates at d = 768, 12 layers, 1× A100 — measured in the dry run (A3) · C: PTv3 windowed ≈ 7 h, full attention ≈ 11 h · 131k = 16 × 8,192 · counts as of 2026-08-26</p>
+</section>
+
+<!-- SECTION: appendix A5 · task distribution -->
+<section class="slide s-appendix">
+  <h2>Appendix A5 · task distribution</h2>
+  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_taco.png" alt="TACO label counts, verb (15)">
+      <figcaption>TACO · verb (15) · label counts</figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_grab.png" alt="GRAB label counts, motion_intent (29)">
+      <figcaption>GRAB · motion_intent (29) · label counts</figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_oakink2.png" alt="OakInk2 label counts, task (88, partial 96 / 492)">
+      <figcaption>OakInk2 · task (88, partial 96 / 492) · label counts</figcaption></figure>
+  </div>
+  <p class="footnote">label counts per dataset (stats/task_dist_&lt;ds&gt;.png) · ARCTIC grab 56 / use 221 · DexYCB 20 grasp objects · HOT3D no labels · 0 sequences shorter than one chunk at 10 or 15 Hz</p>
+</section>
+
+<!-- SECTION: appendix A6 · raw vs points (1/2) -->
+<section class="slide s-appendix">
+  <h2>Appendix A6 · raw vs points (1/2)</h2>
+  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/taco_raw_vs_points.gif" alt="TACO taco_brush__roller__box_20231104_019: left raw meshes, right 2048 points per entity">
+      <figcaption>TACO · taco_brush__roller__box_20231104_019 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/taco_raw_vs_points.jpg">poster</a></figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/arctic_raw_vs_points.gif" alt="ARCTIC dataset_s02_mixer_use_02: left raw meshes, right 2048 points per entity">
+      <figcaption>ARCTIC · dataset_s02_mixer_use_02 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/arctic_raw_vs_points.jpg">poster</a></figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/grab_raw_vs_points.gif" alt="GRAB s10_bowl_drink_1_Retake: left raw meshes, right 2048 points per entity">
+      <figcaption>GRAB · s10_bowl_drink_1_Retake · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/grab_raw_vs_points.jpg">poster</a></figcaption></figure>
+  </div>
+  <p class="footnote">TACO/HOT3D framed on the episode union box; ARCTIC/GRAB/OakInk2/DexYCB use the same framing — hands appear small; hand-following camera pending.</p>
+</section>
+
+<!-- SECTION: appendix A7 · raw vs points (2/2) -->
+<section class="slide s-appendix">
+  <h2>Appendix A7 · raw vs points (2/2)</h2>
+  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/oakink2_raw_vs_points.gif" alt="OakInk2 scene_01__A001++seq__ceefa2162ca2e9612ecb__2023-04-27-19-11-22: left raw meshes, right 2048 points per entity">
+      <figcaption>OakInk2 · scene_01__A001++seq__ceefa2162ca2e9612ecb__2023-04-27-19-11-22 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/oakink2_raw_vs_points.jpg">poster</a></figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/hot3d_raw_vs_points.gif" alt="HOT3D P0003_c701bd11: left raw meshes, right 2048 points per entity">
+      <figcaption>HOT3D · P0003_c701bd11 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/hot3d_raw_vs_points.jpg">poster</a></figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/dexycb_raw_vs_points.gif" alt="DexYCB dexycb_20200709-subject-01_20200709_141754_932122062010: left raw meshes, right 2048 points per entity">
+      <figcaption>DexYCB · dexycb_20200709-subject-01_20200709_141754_932122062010 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/dexycb_raw_vs_points.jpg">poster</a></figcaption></figure>
+  </div>
+  <p class="footnote">TACO/HOT3D framed on the episode union box; ARCTIC/GRAB/OakInk2/DexYCB use the same framing — hands appear small; hand-following camera pending.</p>
 </section>
 
 </main>
