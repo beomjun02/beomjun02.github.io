@@ -53,10 +53,10 @@
    "project": "3d-wam",
    "date": "2026-08-26",
    "slug": "architecture-training",
-   "title": "Architecture and training scheme — design proposal",
+   "title": "Architecture and training scheme — final design C (pending final check)",
    "status": "running",
    "updated": "2026-08-26",
-   "tldr": "Deck #2 (action items 2.1–2.3). Sample: labelled points at t₀, 16-step flow at 10 Hz, task string. Shallow per-point encoder → 128 latents/entity → 12-block latent DiT (flow matching) → per-point query decoder; PointWorld donates the backbone. Latents ~10 h/pilot vs ~40 h. Decide: token design, aux loss, text encoder.",
+   "tldr": "Deck #2 (action items 2.1–2.3). Design C decided in discussion 2026-08-26, pending the owner's final check. Sample: labelled points at t₀ (N = 2048 per entity), one 48-d flow vector per point (Δx₁…Δx₁₆ in channels, 10 Hz), a task string. Model: one plain DiT over the frame-0 points (≤ 8,192 tokens, 12 blocks, d = 768, ≈ 110 M) — full attention, adaLN-zero(τ), T5-base cross-attention, CFG; 48-d velocity head; no pooling, no temporal tokens, no VAE — input token = output point. Training: conditional flow matching + per-part rigidity aux; 1× A100 ≈ 7–11 h per 12k-step pilot; human 75 % / Sharpa 25 %. Lineage: PointWorld's skeleton (frame-0 tokens, flow-in-channels head, PTv3 family), video-gen's recipe, ours = the embodiment's points are generated. Decided: token design C · rigidity aux · T5-base · 110 M budget. Next: DESIGN.md freeze → data-structure code → 1k-step dry run → pilot cycle 1.",
    "path": "3d-wam/decks/2026-08-26-architecture-training/",
    "tags": [
     "architecture",
@@ -64,6 +64,7 @@
     "flow-matching",
     "DiT",
     "PointWorld",
+    "design-C",
     "action-items-2.1-2.3"
    ],
    "format": "deck"
