@@ -43,7 +43,7 @@
   <ul>
     <li>Design C: frame-0 point tokens, flow in channels</li>
     <li>Training: flow matching + rigidity + contact-pair auxiliaries</li>
-    <li>Status: pipeline verified; chain job running since 18:38</li>
+    <li>Result: fast run done — 6k steps, 3.75 h; open-loop probes on slides 7–8</li>
     <li>Discuss: entity phrases · 10 Hz · 4×A100 move</li>
   </ul>
   <div class="band">
@@ -340,7 +340,8 @@
     <li class="on">Compute — per token design, measured
       <ul><li>dry run at batch 16 with grad checkpointing, full attention over P = 8,192</li>
           <li>single-GPU chain of 3-h links (resume + resubmit); 4×A100 when it opens</li></ul></li>
-    <li>Status — pipeline verified, chain running</li>
+    <li>Fast run — 6k steps in 3.75 h, open-loop error</li>
+    <li>Probes — embodiment and language</li>
   </ol>
   <div class="band">
     <div class="tbl">
@@ -357,31 +358,55 @@
   <p class="footnote">measured: dryrun 4.54 s/step, 15.5 GB, 2,220 steps per 2.8-h link (TRAIN-STATUS.md 17:40) · A/B = FLOP estimates at d 768, 12 layers · 131k = 16 × 8,192 · scripts/train_debug_chain.sbatch · train_4gpu_later.sbatch</p>
 </section>
 
-<!-- SECTION: results (2) · status · pipeline verified + chain job 132202 -->
+<!-- SECTION: results (2) · fast run · open-loop error per dataset (6k steps) -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Compute — per token design, measured</li>
-    <li class="on">Status — pipeline verified, chain running
-      <ul><li>unit tests, smoke preprocessing and the dry run passed; full preprocessing A + B done</li>
-          <li>chain hop 0 running since 18:38 (T5 cache + flow stats, then training); no checkpoint yet</li></ul></li>
+    <li class="on">Fast run — 6k steps in 3.75 h, open-loop error</li>
+    <li>Probes — embodiment and language</li>
   </ol>
   <div class="band">
     <div class="tbl">
       <table class="compact">
-        <thead><tr><th>stage</th><th>result</th><th class="num">when (08-26)</th></tr></thead>
+        <thead><tr><th>val set (human unless noted)</th><th class="num">ADE (m)</th><th class="num">FDE (m)</th><th class="num">contact gen / GT</th></tr></thead>
         <tbody>
-          <tr><td>unit tests</td><td>pytest pass · 1 test artifact open (test_cfg_null_path: zero-init gates)</td><td class="num">17:40</td></tr>
-          <tr><td>smoke preprocessing</td><td>60 episodes (TACO 20 · ARCTIC 10 · DexYCB 10) · 0 errors · 638.6 MB</td><td class="num">17:40</td></tr>
-          <tr><td>dry run</td><td>4.54 s/step · 15.5 GB · 2,220 steps per 2.8-h link</td><td class="num">17:40</td></tr>
-          <tr><td>preprocessing A (TACO)</td><td>2,250 human + 1,148 Sharpa episodes · exit 0 · +67 MANO-less via LOAD (job 132345)</td><td class="num">18:25 · 18:57</td></tr>
-          <tr><td>preprocessing B</td><td>ARCTIC 277 · DexYCB 1,000 · HOT3D 294 · OakInk2 134 episodes</td><td class="num">18:38</td></tr>
-          <tr class="hero"><td>chain hop 0 · job 132202</td><td>RUN pilot110m_15hz_N2048_20260826 · 12k steps · RUNNING (link 1 of the 3-h chain)</td><td class="num">18:38 →</td></tr>
+          <tr><td>TACO</td><td class="num">0.049</td><td class="num">0.091</td><td class="num">0.10 / 0.12</td></tr>
+          <tr><td>TACO · Sharpa</td><td class="num">0.051</td><td class="num">0.094</td><td class="num">0.10 / 0.11</td></tr>
+          <tr><td>ARCTIC</td><td class="num">0.076</td><td class="num">0.105</td><td class="num">0.14 / 0.14</td></tr>
+          <tr><td>DexYCB</td><td class="num">0.105</td><td class="num">0.186</td><td class="num">0.02 / 0.11</td></tr>
+          <tr><td>HOT3D</td><td class="num">0.062</td><td class="num">0.103</td><td class="num">0.01 / 0.01</td></tr>
+          <tr><td>OakInk2</td><td class="num">0.025</td><td class="num">0.053</td><td class="num">0.04 / 0.05</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">TRAIN-STATUS.md (17:40 · 18:10 · 18:25 · 18:55) · squeue 18:57: 132202 RUNNING since 18:38:05 · data completion 132345 running (TACO-67 → GRAB LOAD shards 0–1) · no checkpoint at publish time</p>
+  <p class="footnote">pilot_fast_N1024_20260826 · 119 M · N 1024 · 15 Hz · batch 16 · 6,000 steps · jobs 132385 + 132606 · EMA, 16 Euler steps, CFG 1 · rigidity residual 3–8 mm · flat from 5k → 6k · eval/eval_0006000.json</p>
+</section>
+
+<!-- SECTION: results (3) · probes · P2 paired embodiment · P3 tag swap · P4 instruction swap -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Compute — per token design, measured</li>
+    <li>Fast run — 6k steps in 3.75 h, open-loop error</li>
+    <li class="on">Probes — embodiment and language</li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>probe</th><th class="num">flow change</th><th>reading</th></tr></thead>
+        <tbody>
+          <tr><td>P2 · human vs Sharpa sample, same TACO scene → object flow</td><td class="num">2.0 mm</td><td>object flow embodiment-invariant</td></tr>
+          <tr><td>P3 · hand label human → sharpa (ARCTIC, DexYCB)</td><td class="num">1.1–1.6 mm</td><td>embodiment label ignored</td></tr>
+          <tr><td>P4 · instruction swapped (TACO) · CFG 1 / 3</td><td class="num">2.1 / 5.9 mm</td><td>language weak vs 49 mm error</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/4_arctic_tagswap_p3.gif" alt="ARCTIC tag swap: unswapped vs swapped generation">
+      <figcaption>ARCTIC s01 ketchup grab · left unswapped, right hand label → sharpa · Δ 1.5 mm</figcaption></figure>
+  </div>
+  <p class="footnote">CFG 3 ≈ CFG 1 on all metrics · next levers: text/tag dropout schedule, entity phrases, Sharpa-geometry probe, N 2048 / 119 M on 4× A100, closed-loop in CHORD Sharpa-V2D-v0</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -425,9 +450,41 @@
 </section>
 
 
-<!-- SECTION: appendix A2 · references · cut list -->
+<!-- SECTION: appendix A2 · generated vs ground truth clips (1/3) -->
+<section class="slide s-compare">
+  <h2>Appendix A2 · generated vs ground truth (1/3)</h2>
+  <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/1_taco_human_p1.gif" alt="TACO brush·brush·cup 20231026_007 · human · ADE 0.038"><figcaption>TACO brush·brush·cup 20231026_007 · human · ADE 0.038 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/1_taco_human_p1.jpg">poster</a></figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/2_taco_sharpa_p1.gif" alt="same scene · Sharpa · ADE 0.038 (P2 pair)"><figcaption>same scene · Sharpa · ADE 0.038 (P2 pair) · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/2_taco_sharpa_p1.jpg">poster</a></figcaption></figure>
+  </div>
+  <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
+</section>
+
+<!-- SECTION: appendix A3 · generated vs ground truth clips (2/3) -->
+<section class="slide s-compare">
+  <h2>Appendix A3 · generated vs ground truth (2/3)</h2>
+  <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/3_arctic_human_p1.gif" alt="ARCTIC s01 ketchup grab · human · ADE 0.122"><figcaption>ARCTIC s01 ketchup grab · human · ADE 0.122 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/3_arctic_human_p1.jpg">poster</a></figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/4_arctic_tagswap_p3.gif" alt="ARCTIC · left unswapped, right label → sharpa · Δ 1.5 mm"><figcaption>ARCTIC · left unswapped, right label → sharpa · Δ 1.5 mm · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/4_arctic_tagswap_p3.jpg">poster</a></figcaption></figure>
+  </div>
+  <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
+</section>
+
+<!-- SECTION: appendix A4 · generated vs ground truth clips (3/3) -->
+<section class="slide s-compare">
+  <h2>Appendix A4 · generated vs ground truth (3/3)</h2>
+  <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/5_taco_textswap_p4.gif" alt="TACO · left "brush the cup", right "brush the helmet" · Δ 0.5 mm"><figcaption>TACO · left "brush the cup", right "brush the helmet" · Δ 0.5 mm · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/5_taco_textswap_p4.jpg">poster</a></figcaption></figure>
+  </div>
+  <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
+</section>
+
+<!-- SECTION: appendix A5 · references · cut list -->
 <section class="slide s-appendix">
-  <h2>Appendix A2 · references · cut list</h2>
+  <h2>Appendix A5 · references · cut list</h2>
   <div class="cols">
     <dl class="kv">
       <dt>PointWorld</dt><dd>NVlabs, arXiv 2601.03782 — point flow as action; frame-0 tokens, 3·(T−1) flow head; PTv3 > Transformer > PointNet++ at 1 B; Apache-2.0</dd>
