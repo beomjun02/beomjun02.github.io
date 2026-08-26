@@ -99,7 +99,7 @@
       <figcaption>pipeline — points + labels + text in, scene flow out; hand rows decode to Sharpa joints</figcaption>
     </figure>
   </div>
-  <p class="footnote">Sharpa pairs = NVIDIA CHORD TACO release only (855 sequences) · N = 2048 decided in deck #1 (2026-08-26) · text proposal → DESIGN.md (frozen in A1)</p>
+  <p class="footnote">Sharpa pairs = NVIDIA CHORD TACO release only (1,215 sequences) · N = 2048 decided in deck #1 (2026-08-26) · text proposal → DESIGN.md (frozen in A1)</p>
 </section>
 
 <!-- SECTION: method (1) · data structure · thesis + figure only -->
@@ -185,7 +185,7 @@
       <figcaption>data structure — one array of point rows: frame-0 columns are given, the Δx block is generated; TACO scene 20231019_001</figcaption>
     </figure>
   </div>
-  <p class="footnote">stride-4 chunks → ≈ 100k human (≈ 5.5k seqs) + ≈ 7k Sharpa (855 TACO seqs), Sharpa oversampled to ~25 % · TACO sequences yield paired human / Sharpa samples of one scene</p>
+  <p class="footnote">stride-4 chunks → ≈ 100k human (≈ 5.5k seqs) + ≈ 7k Sharpa (1,215 TACO seqs), Sharpa oversampled to ~25 % · TACO sequences yield paired human / Sharpa samples of one scene</p>
 </section>
 
 <!-- SECTION: method (2) · architecture · the MAIN figure · thesis + figure only -->
@@ -416,7 +416,7 @@
           <tr><td>OakInk2</td><td class="num">70 / 492 · running</td></tr>
           <tr><td>TACO</td><td class="num">loading</td></tr>
           <tr><td>GRAB</td><td class="num">awaiting object meshes</td></tr>
-          <tr><td>Sharpa · TACO (NVIDIA)</td><td class="num">855 parquets</td></tr>
+          <tr><td>Sharpa · TACO (NVIDIA)</td><td class="num">1,215 parquets</td></tr>
         </tbody>
       </table>
     </div>
@@ -503,7 +503,7 @@
       <dt>PTv3</dt><dd>Point Transformer V3 — serialized windowed attention, the per-point encoder's block</dd>
       <dt>flow matching</dt><dd>conditional flow matching / rectified flow — velocity target Δx − ε, logit-normal τ; classifier-free guidance by conditioning dropout</dd>
       <dt>query decoding</dt><dd>Perceiver-IO-style output queries — each point is a query against the latent array (no VAE, identity exact)</dd>
-      <dt>CHORD</dt><dd>NVIDIA, arXiv 2607.00033 — TACO Sharpa Wave release (855 sequences, CC-BY-4.0) and the <code>Sharpa-V2D-v0</code> Isaac Lab envs</dd>
+      <dt>CHORD</dt><dd>NVIDIA, arXiv 2607.00033 — TACO Sharpa Wave release (1,215 sequences, CC-BY-4.0) and the <code>Sharpa-V2D-v0</code> Isaac Lab envs</dd>
     </dl>
     <div>
       <p class="cut"><b>Cut list</b> (dropped from this deck, kept in the text proposal / DESIGN.md): yaw augmentation details · evaluation cadence · the 4th discussion item "pilot budget 110 M / 1 A100 / ~10 h" (folded into action item A4) · the full dataset list per slide (named once, Overview) · contact-consistency loss definition (ablation table only) · the hub's per-point-token architecture figure (superseded by slide 4) · the FLOP arithmetic behind slide 7 (dry run A3 replaces it with a measurement).</p>
