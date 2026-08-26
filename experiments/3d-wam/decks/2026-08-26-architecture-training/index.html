@@ -43,7 +43,7 @@
   <ul>
     <li>Design C: frame-0 point tokens, flow in channels</li>
     <li>Training: flow matching + rigidity + contact-pair auxiliaries</li>
-    <li>Status: pipeline verified; chain job launched 18:10</li>
+    <li>Status: pipeline verified; chain job running since 18:38</li>
     <li>Discuss: entity phrases · 10 Hz · 4×A100 move</li>
   </ul>
   <div class="band">
@@ -340,7 +340,7 @@
     <li class="on">Compute — per token design, measured
       <ul><li>dry run at batch 16 with grad checkpointing, full attention over P = 8,192</li>
           <li>single-GPU chain of 3-h links (resume + resubmit); 4×A100 when it opens</li></ul></li>
-    <li>Status — pipeline verified, chain launched</li>
+    <li>Status — pipeline verified, chain running</li>
   </ol>
   <div class="band">
     <div class="tbl">
@@ -362,9 +362,9 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Compute — per token design, measured</li>
-    <li class="on">Status — pipeline verified, chain launched
-      <ul><li>unit tests, smoke preprocessing and the dry run passed; full preprocessing A done, B running</li>
-          <li>chain hop 0 waits on A + B, then T5 cache + flow stats, then training</li></ul></li>
+    <li class="on">Status — pipeline verified, chain running
+      <ul><li>unit tests, smoke preprocessing and the dry run passed; full preprocessing A + B done</li>
+          <li>chain hop 0 running since 18:38 (T5 cache + flow stats, then training); no checkpoint yet</li></ul></li>
   </ol>
   <div class="band">
     <div class="tbl">
@@ -374,14 +374,14 @@
           <tr><td>unit tests</td><td>pytest pass · 1 test artifact open (test_cfg_null_path: zero-init gates)</td><td class="num">17:40</td></tr>
           <tr><td>smoke preprocessing</td><td>60 episodes (TACO 20 · ARCTIC 10 · DexYCB 10) · 0 errors · 638.6 MB</td><td class="num">17:40</td></tr>
           <tr><td>dry run</td><td>4.54 s/step · 15.5 GB · 2,220 steps per 2.8-h link</td><td class="num">17:40</td></tr>
-          <tr><td>preprocessing A (TACO)</td><td>2,250 human + 1,148 Sharpa episodes · exit 0 · 67 MANO-less skipped</td><td class="num">18:25</td></tr>
-          <tr><td>preprocessing B</td><td>ARCTIC 277 · DexYCB 1,000 · HOT3D 294 done · OakInk2 running</td><td class="num">running</td></tr>
-          <tr class="hero"><td>chain hop 0 · job 132202</td><td>RUN pilot110m_15hz_N2048_20260826 · 12k steps · afterany A, B</td><td class="num">18:10 submitted</td></tr>
+          <tr><td>preprocessing A (TACO)</td><td>2,250 human + 1,148 Sharpa episodes · exit 0 · +67 MANO-less via LOAD (job 132345)</td><td class="num">18:25 · 18:57</td></tr>
+          <tr><td>preprocessing B</td><td>ARCTIC 277 · DexYCB 1,000 · HOT3D 294 · OakInk2 134 episodes</td><td class="num">18:38</td></tr>
+          <tr class="hero"><td>chain hop 0 · job 132202</td><td>RUN pilot110m_15hz_N2048_20260826 · 12k steps · RUNNING (link 1 of the 3-h chain)</td><td class="num">18:38 →</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">TRAIN-STATUS.md (17:40 · 18:10 · 18:25) · checkpoints: /virtual_lab/sjw_alinlab/beomjun/3d-wam/runs/pilot110m_15hz_N2048_20260826/ · no checkpoint at publish time</p>
+  <p class="footnote">TRAIN-STATUS.md (17:40 · 18:10 · 18:25 · 18:55) · squeue 18:57: 132202 RUNNING since 18:38:05 · data completion 132345 running (TACO-67 → GRAB LOAD shards 0–1) · no checkpoint at publish time</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -401,9 +401,9 @@
   <p class="subhead">Action items:</p>
   <ol>
     <li>A1 DESIGN.md v1.0-rc → freeze after this check (owner · today)</li>
-    <li>A2 code + preprocessing → done; OakInk2, GRAB pending (agent)</li>
+    <li>A2 code + preprocessing → done; GRAB loader, OakInk2 rest pending (agent)</li>
     <li>A3 dry run → done, 4.5 s/step (agent)</li>
-    <li>A4 pilot chain 132202 → launched 18:10; first checkpoint after link 1 (agent)</li>
+    <li>A4 pilot chain 132202 → running since 18:38; first checkpoint at end of link 1 (agent)</li>
   </ol>
 </section>
 
