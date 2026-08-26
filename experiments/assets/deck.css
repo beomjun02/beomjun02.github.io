@@ -17,25 +17,37 @@
    title 24 pt = 3.33em · thesis 16 pt = 2.22em · bullets 14 pt =
    1.94em · sub-bullets 12 pt = 1.67em · captions 11 pt = 1.53em ·
    footnote / slide number 8 pt = 1.11em · left margin 22 pt = 3.1em.
+   Palette = the reference's, sampled from its pixels (see the block
+   below); light is the default in every viewer, dark only by `d`.
    ───────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
-/* reference palette (light = the PDF) → dark maps onto the site tokens */
-.deck{--title:#0070C0;--ink:#000;--cap:#595959;--dim:#B3B3B3;
+/* ── palette: the reference deck's colours, SAMPLED from the rendered PDF pixels (PIL, 2026-08-26):
+   title #0070C0 · body text #000000 · dimmed agenda items #B3B3B3 · captions / footnotes #595959 ·
+   links #0097A7 · stage #FFFFFF. LIGHT IS THE DEFAULT in every viewer — the system dark preference is
+   ignored (the reference is a white PDF); dark only on an explicit toggle (`d` key → data-theme="dark"),
+   mapped onto the site tokens. The site tokens used by inline-SVG figures (--txt --mut --mut2 --acc
+   --line --panel --panel2 --acc-bg --acc-line) are PINNED here so figures never inherit the site theme. */
+.deck{--title:#0070C0;--ink:#000000;--cap:#595959;--dim:#B3B3B3;--link:#0097A7;--stage:#FFFFFF;
+      --grid:#D9D9D9;--fill:#F2F2F2;
+      --panel:#FFFFFF;--panel2:#F2F2F2;--line:#D9D9D9;--txt:#000000;--mut:#595959;--mut2:#B3B3B3;
+      --acc:#0070C0;--acc-line:#BCD9EE;--acc-bg:#E6F1F8;
       --deck-sans:Calibri,Carlito,"Source Sans 3","Segoe UI","Helvetica Neue",Arial,sans-serif}
-:root[data-theme="dark"] .deck{--title:var(--acc);--ink:var(--txt);--cap:var(--mut);--dim:var(--mut2)}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .deck{--title:var(--acc);--ink:var(--txt);--cap:var(--mut);--dim:var(--mut2)}}
+:root[data-theme="dark"] .deck{--title:#4CC2FF;--ink:#E6EBF2;--cap:#98A4B6;--dim:#6B788C;--link:#4CC2FF;--stage:#121722;
+      --grid:#232C3B;--fill:#161C28;
+      --panel:#121722;--panel2:#161C28;--line:#232C3B;--txt:#E6EBF2;--mut:#98A4B6;--mut2:#6B788C;
+      --acc:#4CC2FF;--acc-line:#22405A;--acc-bg:#0F1B28}
 
 html,body{height:100%}
-body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
-               font-family:var(--deck-sans);font-size:16px;line-height:1.35}
+body.deck-page{margin:0;overflow:hidden;background:#E9E9E9;color:#000;
+               font-family:var(--deck-sans);font-size:16px;line-height:1.35}   /* letterbox: neutral grey, like a PDF viewer */
+:root[data-theme="dark"] body.deck-page{background:#0B0E14;color:#E6EBF2}
 
 /* ── stage ──────────────────────────────────────────────────── */
 .deck{position:absolute;inset:0;margin:auto;--sw:min(1vw,1.777778vh);
-      width:min(100vw,177.7778vh);height:min(56.25vw,100vh);background:var(--panel)}
+      width:min(100vw,177.7778vh);height:min(56.25vw,100vh);background:var(--stage)}
 .slide{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;
-       background:var(--panel);color:var(--ink);font-family:var(--deck-sans);
+       background:var(--stage);color:var(--ink);font-family:var(--deck-sans);
        font-size:var(--sw);line-height:1.375;padding:3.9em 3.1em 3.4em}
 .slide.active{display:flex}
 .slide>*{flex-shrink:0}          /* text never squeezes; only the band gives way */
@@ -47,7 +59,7 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
   margin:0;padding:0;font-size:inherit;line-height:inherit;letter-spacing:0;max-width:none;
   font-weight:inherit;color:inherit;text-transform:none;border:0;background:none;
   box-shadow:none;border-radius:0;font-family:inherit;list-style:none}
-.slide a{color:var(--title);text-decoration:underline}
+.slide a{color:var(--link);text-decoration:underline}   /* reference p01 link colour */
 .slide code{font-family:var(--mono);font-size:.9em}
 .slide .mono{font-family:var(--mono);font-size:.92em}
 .slide sub{font-size:.7em;line-height:0}
@@ -89,10 +101,11 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
              font-variant-numeric:tabular-nums}
 .slide th{font-weight:700;text-align:left;padding:.35em .6em;
           border-top:.09em solid var(--ink);border-bottom:.06em solid var(--ink)}
-.slide td{padding:.35em .6em;border-bottom:.04em solid var(--line);vertical-align:top}
+.slide td{padding:.35em .6em;border-bottom:.04em solid var(--grid);vertical-align:top}
 .slide tbody tr:last-child td{border-bottom:.09em solid var(--ink)}
 .slide td.mono,.slide th.mono{font-family:var(--mono);font-size:.88em}
-.slide td.num,.slide th.num{text-align:right}
+.slide td.num,.slide th.num{text-align:right;white-space:nowrap}   /* numbers never wrap */
+.slide table.dense th,.slide table.dense td{padding:.2em .5em}            /* 7-row table beside a figure (reference p10 table density) */
 .slide tr.hero td{font-weight:700}
 .slide table.compact{font-size:1.45em}
 
@@ -145,11 +158,11 @@ body.deck-page{margin:0;overflow:hidden;background:var(--bg);color:var(--txt);
 .kv dd{overflow-wrap:anywhere}
 .s-appendix ul,.s-appendix ol{font-size:1.35em;line-height:1.4}
 .s-appendix .band{display:block;margin-top:1.4em}
-.s-appendix pre{font-size:1.3em;line-height:1.45;margin-bottom:1em;background:var(--panel2);border:1px solid var(--line);
+.s-appendix pre{font-size:1.3em;line-height:1.45;margin-bottom:1em;background:var(--fill);border:1px solid var(--grid);
                 border-radius:.5em;padding:.8em 1em;white-space:pre-wrap;overflow-wrap:anywhere;
                 font-family:var(--mono)}
 .s-appendix table{font-size:1.35em}
-.s-appendix .cut{font-size:1.25em;line-height:1.4;color:var(--cap);margin-top:1em;border-top:.06em solid var(--line);padding-top:.6em}
+.s-appendix .cut{font-size:1.25em;line-height:1.4;color:var(--cap);margin-top:1em;border-top:.06em solid var(--grid);padding-top:.6em}
 .s-appendix .cut b{color:var(--ink)}
 .s-appendix .cols{flex:1;min-height:0;overflow:hidden;grid-template-columns:1.1fr 1fr}
 .s-appendix .footnote{font-family:var(--mono)}

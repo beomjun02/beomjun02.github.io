@@ -10,10 +10,12 @@
   NO VISIBLE CHROME — no progress bar, theme button, footer strip or logo;
   the 8 pt grey slide number bottom-right is our ONLY addition to the
   reference. A footnote (8 pt grey, bottom-left) appears only on slides
-  that declare <p class="footnote">. Title #0070C0 bold 24 pt · thesis bold
-  16 pt on ONE line · bullets 14 pt (sub 12 pt) · figures fill the band,
-  one italic grey caption UNDER each (label first), nothing above them ·
-  download links / sources only in the footnote · [TL;DR] plain bold.
+  that declare <p class="footnote">. Colours sampled from the reference
+  pixels: title #0070C0 · text #000 · dimmed #B3B3B3 · captions #595959 ·
+  links #0097A7 · stage #FFF — light is the default in every viewer (dark
+  only by `d`). Title bold 24 pt · thesis bold 16 pt on ONE line · bullets
+  14 pt · figures fill the lower ~60 %, one italic grey caption UNDER each
+  (label first), nothing above them · links / sources only in the footnote.
 
   FIXED STRUCTURE (every deck, this order; main deck ≤ 8 slides):
     1 Title                 reference p01, literally — centred block only
@@ -40,19 +42,26 @@
                           as options + my recommendation (the meeting time);
                  FYI     = available, not spoken → appendix;   DROP.
     3 BUDGET     5–10 min ≈ 6–8 main slides, ~1 min each; DISCUSS gets most.
-  HARD CAPS (overload harms attention — cut text, never shrink the font):
-    main deck ≤ 8 slides · ONE thesis sentence per slide, ≤ 20 words and
-    ONE line at stage width (aim ≤ 14 words) · ≤ 4 bullets per slide, each
-    ≤ 1 line · ≤ 3 media per band · Discussion ≤ 3 items, each options +
-    one recommendation · Action items ≤ 4 · if a slide carries more text
-    than the corresponding reference page, cut text · everything else →
-    appendix or DROPPED; the last appendix slide carries the cut list.
-  PRE-PUBLISH CHECK:
-    · count main slides (≤ 8) and media per band (≤ 3)
-    · every .thesis ≤ 20 words AND one line at 1440 px; ≤ 4 bullets, none wraps
+  HARD CAPS (owner 2026-08-26: "only essentials" — cut text, never shrink the font):
+    main deck ≤ 8 slides · ONE thesis per slide ≤ 14 words, ONE line ·
+    ≤ 4 bullets × ≤ 8 words (noun phrases / clipped clauses, no period) ·
+    NO sub-bullets on main slides except the Results agenda (≤ 2, one line) ·
+    Discussion ≤ 3 and Action items ≤ 4, ONE line each · ≤ 2 media per slide
+    (a table = one) · every measured number on a figure or in a ≤ 6-row
+    table, never in prose · everything else → appendix; the last appendix
+    slide carries the cut list.
+  TEXT STYLE (reference): topic-label titles ("Method (1): …", "Results") ·
+    one bold takeaway sentence · bullets as short noun phrases · cumulative
+    numbered results agenda with dimmed inactive items · tiny grey footnotes
+    for sources and citations · captions italic, label first, never a verdict.
+  PRE-PUBLISH CHECK (programmatic + visual):
+    · count main slides (≤ 8), media per band (≤ 2), table body rows (≤ 6)
+    · every .thesis ≤ 14 words AND one line at 1440 px; every li ≤ 8 words
+    · no li > ul on main slides outside ol.agenda; no numbers in prose
     · title slide has exactly: title · context line · venue · date · presenter
-    · Discussion ≤ 3 with options AND a recommendation each; actions ≤ 4
     · cut list present on the last appendix slide; no image judged in text
+    · screenshot every slide (Playwright 1440×810, light) and compare a
+      title / overview / results slide with reference p01 / p02 / p10
     · over any cap → cut content or move it to the appendix; never resize
 
   To add a deck: mkdir -p <project>/decks/YYYY-MM-DD-<slug>/assets · copy this
@@ -87,10 +96,10 @@
 <!-- SECTION: overview (TL;DR + today's agenda in ONE slide) -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> The verdict in one sentence (≤ 14 words, one line), with the key number.</p>
+  <p class="thesis"><b>[TL;DR]</b> The verdict in one sentence (≤ 14 words, one line).</p>
   <ul>
-    <li>Done: what was run, against what baseline, on what setup</li>
-    <li>Done: the one number that answers the question <span class="aside">n, protocol</span></li>
+    <li>Done: what was run, on what setup (≤ 8 words)</li>
+    <li>Decided: the setting this deck fixes</li>
     <li>Discuss: DECISION-1 · DECISION-2 · DECISION-3</li>
   </ul>
   <div class="band">
@@ -103,10 +112,10 @@
 <!-- SECTION: method (1–3 slides: "Method (1): …", "Method (2): …") -->
 <section class="slide s-method">
   <h2>Method (1): Topic label</h2>
-  <p class="thesis">The mechanism in one sentence.</p>
+  <p class="thesis">The mechanism in one sentence (≤ 14 words).</p>
   <ul>
-    <li>Representation / setup</li>
-    <li>What was varied, what was held fixed</li>
+    <li>Representation / setup — noun phrase</li>
+    <li>What varied, what was fixed</li>
     <li>How it was checked</li>
   </ul>
   <div class="band">
@@ -124,7 +133,7 @@
     <li>Second result</li>
     <li>Third result</li>
   </ol>
-  <div class="band">
+  <div class="band">   <!-- ≤ 2 media; a ≤ 6-row table counts as one -->
     <figure><img src="assets/A.gif" alt="A"><figcaption>label A — what A shows · what varies</figcaption></figure>
     <figure><video src="assets/B.mp4" poster="assets/B.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>label B — condition · duration · view</figcaption></figure>
   </div>
@@ -137,8 +146,7 @@
   <p class="thesis">What the meeting must decide, in one sentence.</p>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>DECISION</b> (owner)
-      <ul><li>Options: A · B · C</li><li>Recommendation: B, because …</li></ul></li>
+    <li><b>DECISION</b> — option A vs B → B (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>

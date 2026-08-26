@@ -7,8 +7,9 @@
   table live here, not in the main flow). Agents: read THIS instead of the
   reference PDF; copy a slide by its "SECTION: …" comment into a copy of
   _template/deck.html. Content is real (3D-WAM concept hub + deck #1); media
-  reused by absolute path. Obeys every hard cap in §4: 7 main slides,
-  one thesis ≤ 20 words on ONE line, ≤ 4 one-line bullets, ≤ 3 media per band.
+  reused by absolute path. Obeys every hard cap in §4 (2026-08-26 evening):
+  7 main slides · thesis ≤ 14 words on ONE line · ≤ 4 bullets × ≤ 8 words ·
+  no sub-bullets outside the Results agenda · ≤ 2 media per band.
   Style (2026-08-26): no visible chrome — the slide number bottom-right is our
   only addition to the reference · title slide = reference p01 (centred block:
   title · one context line · bold venue · date · presenter — nothing else) ·
@@ -46,10 +47,10 @@
   <h2>Overview</h2>
   <p class="thesis"><b>[TL;DR]</b> One labeled point set is observation and action; one model predicts its flow.</p>
   <ul>
-    <li>Done: concept v0.4 — embodiment points predicted too: flow → Procrustes + IK → joints</li>
-    <li>Done: Phase 1 data — point-budget sweeps v3 built and verified on TACO (human | Sharpa)</li>
-    <li>Claim to test: robot-zero-shot on human-only tasks, read against an oracle replay ceiling</li>
-    <li>Discuss: N<sub>hand</sub> / N<sub>obj</sub> pick · datasets for 1.1 · backbone base for 2.2</li>
+    <li>Done: concept v0.4 — embodiment points predicted too</li>
+    <li>Done: point-budget sweeps on TACO, human | Sharpa</li>
+    <li>Claim: robot-zero-shot on human-only tasks</li>
+    <li>Discuss: point budget · datasets · backbone base</li>
   </ul>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.gif" alt="hit hammer toy: one sweep, six panels N = 128 to 4096, human MANO hands">
@@ -64,11 +65,11 @@
      mechanism in one sentence, ≤ 3 bullets, 1–2 figures filling the band; caption says "schematic, not a run" when it is one. -->
 <section class="slide s-method">
   <h2>Method (1): Representation and model</h2>
-  <p class="thesis">One token per point track; a factorized DiT generates Δx over T = 16 by flow matching.</p>
+  <p class="thesis">One token per point; a DiT generates the flow over T = 16.</p>
   <ul>
-    <li>Representation: xyz + class/instance label; embodiment points add link ID + tag</li>
-    <li>Conditioning: frame-0 points + instruction + embodiment tag → full scene flow; one loss</li>
-    <li>Decoding: per-link Procrustes + IK → joint commands; closed loop = regenerate per chunk</li>
+    <li>Representation: xyz + one group label per point</li>
+    <li>Conditioning: frame-0 points + instruction → scene flow</li>
+    <li>Decoding: per-link Procrustes + IK → joints</li>
   </ul>
   <div class="band">
     <figure><img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled points at t=0 and the generated flow chunk: object flow and hand flow">
@@ -80,11 +81,11 @@
 <!-- SECTION: method · second method slide: the data side -->
 <section class="slide s-method">
   <h2>Method (2): Data — the point-budget sampler</h2>
-  <p class="thesis">Each template is sampled once at N ∈ {128 … 4096} and tracked; human and Sharpa share the sweep.</p>
+  <p class="thesis">Each template sampled once at N ∈ {128 … 4096}; human and Sharpa share the sweep.</p>
   <ul>
-    <li>20·N area-weighted dense sample (seed 0) → farthest-point sampling to N → (face_id, bary) spec</li>
-    <li>Sharpa pairs from CHORD's TACO release: MANO both hands + Sharpa Wave + object 6D, 30 fps</li>
-    <li>A larger stored budget trims to a smaller one by FPS-order prefix — the pick is reversible</li>
+    <li>Dense area sample → farthest-point sampling → spec</li>
+    <li>Sharpa pairs from CHORD's TACO release</li>
+    <li>Larger budget trims to smaller by FPS prefix</li>
   </ul>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hit__hammer__toy_20231102_070_human.jpg" alt="first frame, human MANO hands, six panels N = 128 to 4096">
@@ -103,8 +104,8 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li class="on">Point budget sweep (1.2)
-      <ul><li>10 GIFs, 5 TACO tasks, N<sub>obj</sub> = N<sub>hand</sub> = N ∈ {128 … 4096}; specs 180/180 bit-exact</li>
-          <li>no model numbers yet — a data-phase artifact for the owner's pick, by eye</li></ul></li>
+      <ul><li>5 TACO tasks, N<sub>obj</sub> = N<sub>hand</sub> = N ∈ {128 … 4096}, human | Sharpa</li>
+          <li>a data-phase artifact for the owner's pick, by eye</li></ul></li>
     <li>Reference clip: 4-view hand–object points in one BA world frame</li>
   </ol>
   <div class="band">
@@ -122,8 +123,8 @@
   <ol class="agenda">
     <li>Point budget sweep (1.2)</li>
     <li class="on">Reference clip: 4-view hand–object points in one BA world frame
-      <ul><li>bmw_0821 (dpp-bmw): fixed frame, hand nearest the objects; view rotates about the table normal</li>
-          <li>what the 3D-WAM observation looks like on the real rig — no model in the loop</li></ul></li>
+      <ul><li>bmw_0821 (dpp-bmw): fixed frame, view rotates about the table normal</li>
+          <li>the 3D-WAM observation on the real rig — no model in the loop</li></ul></li>
   </ol>
   <div class="band">
     <figure><video src="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.mp4" poster="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
@@ -132,29 +133,23 @@
   <p class="footnote">clip: <a href="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/assets/handobj_turntable.mp4">handobj_turntable.mp4</a> (dpp-bmw log 2026-08-23, 1158×460)</p>
 </section>
 
-<!-- SECTION: discussion-actions · ONE slide (two if unavoidable): bold thesis · "Discussion:" numbered items, each a
-     bold decision + "(who decides)" with sub-bullets "Options: …" and "Recommendation: …" · "Action items:" numbered
-     plain bullets with "(id · owner · ETA)" — ETAs only if real, TBD otherwise. Silence defaults to the recommendation. -->
+<!-- SECTION: discussion-actions · ONE slide: bold thesis · "Discussion:" ≤ 3 numbered ONE-LINE items — bold decision,
+     options → recommendation, "(who decides)" · "Action items:" ≤ 4 numbered one-line items with "(id · owner · ETA)" —
+     ETAs only if real, TBD otherwise. No sub-bullets. Silence defaults to the recommendation. -->
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
   <p class="thesis">Three decisions, each with a recommendation; silence means the recommendation stands.</p>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Point budget N<sub>hand</sub> / N<sub>obj</sub></b> (owner)
-      <ul><li>Options: 512 · 1024 · 2048 · 4096 per entity — specs are stored for every N</li>
-          <li>Recommendation: keep specs at 4096, trim by FPS-order prefix in 1.3 — reversible</li></ul></li>
-    <li><b>Datasets for 1.1</b> (owner)
-      <ul><li>Options: TACO via CHORD (Sharpa pairs released) · GRAB · ARCTIC · OakInk2 · HOT3D (via ManipTrans)</li>
-          <li>Recommendation: TACO first; add two others as the ManipTrans budget allows</li></ul></li>
-    <li><b>Deck replaces Log for new records?</b> (owner)
-      <ul><li>Options: decks only · decks + new logs · logs only</li>
-          <li>Recommendation: decks only for new questions; existing logs untouched</li></ul></li>
+    <li><b>Point budget</b> — 512 · 1024 · 2048 · 4096 → 2048, trim by FPS prefix (owner)</li>
+    <li><b>Datasets for 1.1</b> — TACO only vs TACO + ARCTIC + GRAB → the trio (owner)</li>
+    <li><b>Deck replaces Log?</b> — decks only vs both → decks only for new questions (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Preprocessing — episode format at the chosen budget (1.3 · agent · after 1.1 + 1.2, ETA TBD)</li>
-    <li>Data structure + architecture base, PointWorld vs video model (2.1–2.2 · agent · TBD)</li>
-    <li>Evaluations 3.1–3.3: zero-shot vs overlap, open-loop error, closed-loop vs oracle (planned)</li>
+    <li>Preprocessing at the chosen budget (1.3 · agent · after 1.1 + 1.2)</li>
+    <li>Data structure + architecture base (2.1–2.2 · agent · TBD)</li>
+    <li>Evaluations 3.1–3.3: zero-shot, open-loop, closed-loop (planned)</li>
   </ol>
 </section>
 
@@ -162,8 +157,8 @@
      thesis naming the delta, ≤ 1 bullet, the band holds ONE compact comparison table (neighbor · establishes · lacks). -->
 <section class="slide s-table">
   <h2>Appendix · Related work</h2>
-  <p class="thesis">Each neighbor has one piece; none generates dense-hand embodiment flow from language.</p>
-  <ul><li>CHORD / ManipTrans are data supply: robot-hand episodes minted from human mocap</li></ul>
+  <p class="thesis">Each neighbor has one piece; none generates embodiment flow from language.</p>
+  <ul><li>CHORD / ManipTrans = data supply, not a policy prior</li></ul>
   <div class="band"><div class="tbl">
     <table class="compact">
       <thead><tr><th>neighbor</th><th>establishes</th><th>lacks (= our delta)</th></tr></thead>

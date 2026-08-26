@@ -1,6 +1,7 @@
 /* deck.js — runtime for the DECK format. Vanilla, no dependencies.
-   Theme shares the 'lab-theme' localStorage key with lab.js / present.js so
-   the viewer's choice follows across formats.
+   Theme uses its own 'deck-theme' localStorage key (NOT the site's
+   'lab-theme'): decks open in the reference's light palette regardless of
+   the site theme or the OS preference; `d` toggles dark for decks only.
 
    Markup contract (see _template/deck.html):
      <body class="deck-page">
@@ -16,7 +17,7 @@
    theme is toggled with `d` only — no button, no progress bar. */
 (function () {
   'use strict';
-  var root = document.documentElement, KEY = 'lab-theme';
+  var root = document.documentElement, KEY = 'deck-theme';   // deck-only key: the reference look (light) is the default; `d` toggles dark for decks only
   try {
     var saved = localStorage.getItem(KEY);
     if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);

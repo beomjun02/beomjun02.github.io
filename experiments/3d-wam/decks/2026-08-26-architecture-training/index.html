@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #2 · action items 2.1–2.3 · FINAL design (design C, decided in discussion 2026-08-26; pending the owner's final check).
-     Structure per DECK-STYLE.md §3: Title · Overview · Method (1–3) · Results (1–2) · Final check (= Discussion & Action items) · appendix A1–A3.
-     Design C = PointWorld's skeleton (frame-0 point tokens, the whole 16-step flow of a point as one 48-d channel vector, set transformer)
-     + the video/image-DiT recipe (flow matching, adaLN-zero, T5 cross-attention, CFG, RoPE) + ours (the embodiment's points are generated,
-     labels + tag as features, per-part rigidity aux, Procrustes + IK readout). Every main slide is carried by one inline SVG (theme-aware
-     via the site tokens); slides 3–4 are thesis + figure only. Caps audited in headless Chromium 1440×810 (light):
-     8 main slides · thesis ≤ 20 words on ONE line · ≤ 4 one-line bullets · ≤ 3 media per band · Discussion 3 · actions 4 · cut list last.
-     Colours (deck #1 convention): left hand purple · right hand green · tool orange · target amber · model blocks neutral · flow path = accent. -->
+<!-- 3D-WAM deck #2 · action items 2.1–2.4 · "Architecture & training" · design C (decided 2026-08-26), pilot chain launched 18:10.
+     Rebuilt 2026-08-26 evening to the tightened caps (DECK-STYLE.md §4): ≤ 8 main slides · thesis ≤ 14 words · ≤ 4 bullets × ≤ 8 words ·
+     no sub-bullets on main slides except the Results agenda · ≤ 2 media per slide · numbers only in figures / ≤ 6-row tables.
+     Structure: Title · Overview · Method (1) model · Method (2) lineage · Method (3) training · Results (1) compute · Results (2) status ·
+     Discussion & Action items · appendix A1 evaluation plan + ablations · A2 references + cut list. Dataset material moved to deck #1.
+     Every main slide is carried by one inline SVG (colours pinned to the reference palette by deck.css). Audited in headless Chromium 1440×810. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>2026-08-26 · Architecture and training scheme — 3D-WAM</title>
-<meta name="description" content="Deck #2, final design C: one plain DiT over the frame-0 labelled points (≤ 8,192 tokens); each point emits its whole 16-step flow as a 48-d channel vector; flow matching + per-part rigidity; PointWorld's skeleton, video-gen's recipe, our generated embodiment. 110 M · 1 A100 · 7–11 h per pilot. Pending final check.">
+<title>2026-08-26 · Architecture &amp; training — 3D-WAM</title>
+<meta name="description" content="Deck #2: design C — one plain DiT over the frame-0 labelled points (≤ 8,192 tokens), each point emits its 16-step flow (48-d); flow matching + rigidity + contact-pair auxiliaries; 119 M, batch 16 + grad checkpointing, 4.5 s/step measured; pilot chain job 132202 launched 2026-08-26 18:10.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -28,12 +26,12 @@
 </style>
 </head>
 <body class="deck-page">
-<main class="deck" data-project="3D-WAM" data-deck="architecture and training scheme · action items 2.1–2.3 · final design C" data-date="2026-08-26">
+<main class="deck" data-project="3D-WAM" data-deck="architecture and training · action items 2.1–2.4 · design C" data-date="2026-08-26">
 
 <!-- SECTION: title -->
 <section class="slide s-title">
-  <h1>3D-WAM — architecture and training scheme</h1>
-  <p class="ctx">3D-WAM · action items 2.1–2.3 · final design (C) — for the owner's final check</p>
+  <h1>3D-WAM — architecture and training</h1>
+  <p class="ctx">3D-WAM · action items 2.1–2.4 · design C · pilot chain launched</p>
   <p class="venue"><b>Lab meeting</b></p>
   <p class="when">2026. 08. 26<br>Presented by beomjun</p>
 </section>
@@ -43,10 +41,10 @@
   <h2>Overview</h2>
   <p class="thesis"><b>[TL;DR]</b> PointWorld's skeleton, video-gen's recipe, our generated embodiment: one plain DiT.</p>
   <ul>
-    <li>Decided: N = 2048 · human = all six sources · Sharpa = NVIDIA TACO release (1,215 sequences)</li>
-    <li>Design: frame-0 point tokens · the 16-step flow of a point in channels · flow matching (slides 3–5)</li>
-    <li>Lineage: what is PointWorld's, what is video-gen's, what is ours (slide 6)</li>
-    <li>Final check: token design C · rigidity aux · T5-base · 110 M budget — then the dry run (slide 8)</li>
+    <li>Design C: frame-0 point tokens, flow in channels</li>
+    <li>Training: flow matching + rigidity + contact-pair auxiliaries</li>
+    <li>Status: pipeline verified; chain job launched 18:10</li>
+    <li>Discuss: entity phrases · 10 Hz · 4×A100 move</li>
   </ul>
   <div class="band">
     <figure>
@@ -72,7 +70,7 @@
         <rect x="254" y="26" width="180" height="78" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
         <text x="344" y="50" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">3D-WAM</text>
         <text x="344" y="70" text-anchor="middle" font-size="11" fill="var(--cap)">plain DiT over the frame-0 points</text>
-        <text x="344" y="84" text-anchor="middle" font-size="11" fill="var(--cap)">flow matching · ≈ 110 M</text>
+        <text x="344" y="84" text-anchor="middle" font-size="11" fill="var(--cap)">flow matching · ≈ 119 M</text>
         <text x="344" y="98" text-anchor="middle" font-size="11" fill="var(--cap)">one token per point, in and out</text>
         <line x1="434" y1="65" x2="470" y2="65" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#pa)"/>
         <!-- 3 flow -->
@@ -84,7 +82,7 @@
         </g>
         <text x="632" y="66" text-anchor="middle" font-size="11" fill="var(--cap)">hands</text>
         <text x="632" y="86" text-anchor="middle" font-size="11" fill="var(--cap)">objects</text>
-        <text x="570" y="122" text-anchor="middle" font-size="11" fill="var(--cap)">48-d per point · T = 16 @ 10 Hz = 1.6 s</text>
+        <text x="570" y="122" text-anchor="middle" font-size="11" fill="var(--cap)">48-d per point · T = 16 @ 15 Hz = 1.07 s</text>
         <line x1="668" y1="65" x2="702" y2="65" stroke="var(--acc)" stroke-width="1.4" marker-end="url(#pa)"/>
         <text x="685" y="18" text-anchor="middle" font-size="11" fill="var(--acc)">hand rows ↓</text>
         <!-- 4 decode -->
@@ -103,96 +101,13 @@
       <figcaption>pipeline — points + labels + text in, the 16-step flow of every point out; hand rows decode to Sharpa joints</figcaption>
     </figure>
   </div>
-  <p class="footnote">Sharpa pairs = NVIDIA CHORD TACO release (1,215 sequences) · N = 2048 decided in deck #1 · design C decided in discussion 2026-08-26 · DESIGN.md v1.0-rc pending the final check (A1)</p>
+  <p class="footnote">design C decided in discussion 2026-08-26 · DESIGN.md v1.0-rc · data: deck #1 (datasets &amp; train data structure) · run: pilot110m_15hz_N2048_20260826</p>
 </section>
 
-<!-- SECTION: method (1) · data structure · thesis + figure only -->
+<!-- SECTION: method (1) · model · the MAIN figure · thesis + figure only · design C -->
 <section class="slide s-method">
-  <h2>Method (1): Data structure</h2>
-  <p class="thesis">A sample: labelled points at t₀, one 48-d flow vector per point (16 steps), a task string.</p>
-  <div class="band">
-    <figure>
-      <svg viewBox="0 0 980 372" role="img" aria-label="One sample: a scene at t = 0 with four entities of 2048 points each (left hand, right hand, tool, target); per-point columns xyz₀, class, instance, part id, embodiment tag, hand side; the generated target is one 48-d vector per point, the 16 displacements Δx₁ to Δx₁₆ stacked in channels, at 10 Hz, with a task string and a valid mask.">
-        <defs>
-          <marker id="da" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker>
-        </defs>
-
-        <!-- scene panel -->
-        <rect x="16" y="30" width="250" height="330" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="141" y="52" text-anchor="middle" font-size="11.5" fill="var(--cap)">scene at t = 0 · 4 entities × 2048 points</text>
-        <g fill="var(--hL)"><circle cx="58" cy="140" r="3.6"/><circle cx="74" cy="140" r="3.6"/><circle cx="90" cy="140" r="3.6"/><circle cx="60" cy="158" r="3.6"/><circle cx="76" cy="158" r="3.6"/><circle cx="92" cy="158" r="3.6"/>
-          <circle cx="52" cy="120" r="3.6"/><circle cx="50" cy="102" r="3.6"/><circle cx="66" cy="116" r="3.6"/><circle cx="66" cy="98" r="3.6"/><circle cx="64" cy="82" r="3.6"/><circle cx="80" cy="114" r="3.6"/><circle cx="80" cy="96" r="3.6"/><circle cx="80" cy="78" r="3.6"/>
-          <circle cx="94" cy="118" r="3.6"/><circle cx="96" cy="100" r="3.6"/><circle cx="97" cy="84" r="3.6"/><circle cx="108" cy="126" r="3.6"/><circle cx="112" cy="110" r="3.6"/></g>
-        <text x="80" y="180" text-anchor="middle" font-size="11" fill="var(--hL)">left hand · 2048</text>
-        <g fill="var(--hR)"><circle cx="188" cy="140" r="3.6"/><circle cx="204" cy="140" r="3.6"/><circle cx="220" cy="140" r="3.6"/><circle cx="190" cy="158" r="3.6"/><circle cx="206" cy="158" r="3.6"/><circle cx="222" cy="158" r="3.6"/>
-          <circle cx="182" cy="120" r="3.6"/><circle cx="180" cy="102" r="3.6"/><circle cx="196" cy="116" r="3.6"/><circle cx="196" cy="98" r="3.6"/><circle cx="194" cy="82" r="3.6"/><circle cx="210" cy="114" r="3.6"/><circle cx="210" cy="96" r="3.6"/><circle cx="210" cy="78" r="3.6"/>
-          <circle cx="224" cy="118" r="3.6"/><circle cx="226" cy="100" r="3.6"/><circle cx="227" cy="84" r="3.6"/><circle cx="238" cy="126" r="3.6"/><circle cx="242" cy="110" r="3.6"/></g>
-        <text x="208" y="180" text-anchor="middle" font-size="11" fill="var(--hR)">right hand · 2048</text>
-        <g fill="var(--tool)"><circle cx="50" cy="262" r="3.6"/><circle cx="66" cy="256" r="3.6"/><circle cx="82" cy="256" r="3.6"/><circle cx="98" cy="262" r="3.6"/><circle cx="44" cy="278" r="3.6"/><circle cx="104" cy="278" r="3.6"/><circle cx="46" cy="294" r="3.6"/><circle cx="102" cy="294" r="3.6"/>
-          <circle cx="56" cy="308" r="3.6"/><circle cx="72" cy="312" r="3.6"/><circle cx="88" cy="312" r="3.6"/><circle cx="98" cy="306" r="3.6"/><circle cx="112" cy="250" r="3.6"/><circle cx="122" cy="262" r="3.6"/><circle cx="124" cy="276" r="3.6"/><circle cx="34" cy="262" r="3.6"/><circle cx="26" cy="250" r="3.6"/></g>
-        <text x="76" y="336" text-anchor="middle" font-size="11" fill="var(--tool)">tool (kettle) · 2048</text>
-        <g fill="var(--tgt)"><circle cx="160" cy="286" r="3.6"/><circle cx="176" cy="280" r="3.6"/><circle cx="196" cy="278" r="3.6"/><circle cx="216" cy="280" r="3.6"/><circle cx="232" cy="286" r="3.6"/><circle cx="166" cy="300" r="3.6"/><circle cx="184" cy="306" r="3.6"/>
-          <circle cx="204" cy="308" r="3.6"/><circle cx="224" cy="304" r="3.6"/><circle cx="238" cy="298" r="3.6"/><circle cx="186" cy="318" r="3.6"/><circle cx="206" cy="318" r="3.6"/></g>
-        <text x="200" y="340" text-anchor="middle" font-size="11" fill="var(--tgt)">target (bowl) · 2048</text>
-        <line x1="270" y1="150" x2="292" y2="150" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#da)"/>
-
-        <!-- given columns -->
-        <text x="478" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">given at t = 0 — one row per point</text>
-        <g font-size="11" fill="var(--cap)" text-anchor="middle">
-          <text x="322" y="82">entity</text><text x="370" y="82">xyz₀</text><text x="418" y="82">class</text><text x="462" y="82">inst.</text><text x="518" y="82">part</text><text x="580" y="82">tag</text><text x="632" y="82">side</text>
-        </g>
-        <g>
-          <rect x="298" y="92" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="106" r="3.6" fill="var(--hL)"/>
-          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="110" fill="var(--cap)">2048</text><text x="370" y="110">x y z</text><text x="418" y="110">hand</text><text x="462" y="110">1</text><text x="518" y="110">index₂</text><text x="580" y="110">human</text><text x="632" y="110">L</text></g>
-          <rect x="298" y="128" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="142" r="3.6" fill="var(--hR)"/>
-          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="146" fill="var(--cap)">2048</text><text x="370" y="146">x y z</text><text x="418" y="146">hand</text><text x="462" y="146">2</text><text x="518" y="146">thumb₃</text><text x="580" y="146">human</text><text x="632" y="146">R</text></g>
-          <rect x="298" y="164" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="178" r="3.6" fill="var(--tool)"/>
-          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="182" fill="var(--cap)">2048</text><text x="370" y="182">x y z</text><text x="418" y="182">object</text><text x="462" y="182">3</text><text x="518" y="182">handle</text><text x="580" y="182">—</text><text x="632" y="182">—</text></g>
-          <rect x="298" y="200" width="360" height="28" rx="6" fill="var(--panel2)"/><circle cx="312" cy="214" r="3.6" fill="var(--tgt)"/>
-          <g font-size="11" fill="var(--ink)" text-anchor="middle"><text x="332" y="218" fill="var(--cap)">2048</text><text x="370" y="218">x y z</text><text x="418" y="218">object</text><text x="462" y="218">4</text><text x="518" y="218">rim</text><text x="580" y="218">—</text><text x="632" y="218">—</text></g>
-        </g>
-        <text x="298" y="246" font-size="11" fill="var(--cap)">part id = MANO 16 parts · Sharpa 33 links · object part</text>
-
-        <line x1="672" y1="52" x2="672" y2="232" stroke="var(--line)" stroke-dasharray="4 4"/>
-
-        <!-- generated: one 48-d vector per point (16 cells × 3) -->
-        <text x="816" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">generated — one 48-d vector per point</text>
-        <g font-size="11" fill="var(--cap)" text-anchor="middle"><text x="696" y="82">Δx₁</text><text x="794" y="82">Δx₈</text><text x="906" y="82">Δx₁₆</text><text x="948" y="82">valid</text></g>
-        <g>
-          <rect x="684" y="92" width="240" height="28" rx="6" fill="var(--hLbg)"/>
-          <g fill="var(--hLbg)" stroke="var(--hL)" stroke-width=".9"><rect x="690" y="97" width="12" height="18" rx="2"/><rect x="704" y="97" width="12" height="18" rx="2"/><rect x="718" y="97" width="12" height="18" rx="2"/><rect x="732" y="97" width="12" height="18" rx="2"/><rect x="746" y="97" width="12" height="18" rx="2"/><rect x="760" y="97" width="12" height="18" rx="2"/><rect x="774" y="97" width="12" height="18" rx="2"/><rect x="788" y="97" width="12" height="18" rx="2"/><rect x="802" y="97" width="12" height="18" rx="2"/><rect x="816" y="97" width="12" height="18" rx="2"/><rect x="830" y="97" width="12" height="18" rx="2"/><rect x="844" y="97" width="12" height="18" rx="2"/><rect x="858" y="97" width="12" height="18" rx="2"/><rect x="872" y="97" width="12" height="18" rx="2"/><rect x="886" y="97" width="12" height="18" rx="2"/><rect x="900" y="97" width="12" height="18" rx="2"/></g>
-          <text x="948" y="110" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
-          <rect x="684" y="128" width="240" height="28" rx="6" fill="var(--hRbg)"/>
-          <g fill="var(--hRbg)" stroke="var(--hR)" stroke-width=".9"><rect x="690" y="133" width="12" height="18" rx="2"/><rect x="704" y="133" width="12" height="18" rx="2"/><rect x="718" y="133" width="12" height="18" rx="2"/><rect x="732" y="133" width="12" height="18" rx="2"/><rect x="746" y="133" width="12" height="18" rx="2"/><rect x="760" y="133" width="12" height="18" rx="2"/><rect x="774" y="133" width="12" height="18" rx="2"/><rect x="788" y="133" width="12" height="18" rx="2"/><rect x="802" y="133" width="12" height="18" rx="2"/><rect x="816" y="133" width="12" height="18" rx="2"/><rect x="830" y="133" width="12" height="18" rx="2"/><rect x="844" y="133" width="12" height="18" rx="2"/><rect x="858" y="133" width="12" height="18" rx="2"/><rect x="872" y="133" width="12" height="18" rx="2"/><rect x="886" y="133" width="12" height="18" rx="2"/><rect x="900" y="133" width="12" height="18" rx="2"/></g>
-          <text x="948" y="146" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
-          <rect x="684" y="164" width="240" height="28" rx="6" fill="var(--toolbg)"/>
-          <g fill="var(--toolbg)" stroke="var(--tool)" stroke-width=".9"><rect x="690" y="169" width="12" height="18" rx="2"/><rect x="704" y="169" width="12" height="18" rx="2"/><rect x="718" y="169" width="12" height="18" rx="2"/><rect x="732" y="169" width="12" height="18" rx="2"/><rect x="746" y="169" width="12" height="18" rx="2"/><rect x="760" y="169" width="12" height="18" rx="2"/><rect x="774" y="169" width="12" height="18" rx="2"/><rect x="788" y="169" width="12" height="18" rx="2"/><rect x="802" y="169" width="12" height="18" rx="2"/><rect x="816" y="169" width="12" height="18" rx="2"/><rect x="830" y="169" width="12" height="18" rx="2"/><rect x="844" y="169" width="12" height="18" rx="2"/><rect x="858" y="169" width="12" height="18" rx="2"/><rect x="872" y="169" width="12" height="18" rx="2"/><rect x="886" y="169" width="12" height="18" rx="2"/><rect x="900" y="169" width="12" height="18" rx="2"/></g>
-          <text x="948" y="182" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
-          <rect x="684" y="200" width="240" height="28" rx="6" fill="var(--tgtbg)"/>
-          <g fill="var(--tgtbg)" stroke="var(--tgt)" stroke-width=".9"><rect x="690" y="205" width="12" height="18" rx="2"/><rect x="704" y="205" width="12" height="18" rx="2"/><rect x="718" y="205" width="12" height="18" rx="2"/><rect x="732" y="205" width="12" height="18" rx="2"/><rect x="746" y="205" width="12" height="18" rx="2"/><rect x="760" y="205" width="12" height="18" rx="2"/><rect x="774" y="205" width="12" height="18" rx="2"/><rect x="788" y="205" width="12" height="18" rx="2"/><rect x="802" y="205" width="12" height="18" rx="2"/><rect x="816" y="205" width="12" height="18" rx="2"/><rect x="830" y="205" width="12" height="18" rx="2"/><rect x="844" y="205" width="12" height="18" rx="2"/><rect x="858" y="205" width="12" height="18" rx="2"/><rect x="872" y="205" width="12" height="18" rx="2"/><rect x="886" y="205" width="12" height="18" rx="2"/><rect x="900" y="205" width="12" height="18" rx="2"/></g>
-          <text x="948" y="218" text-anchor="middle" font-size="11" fill="var(--ink)">1</text>
-        </g>
-        <text x="684" y="244" font-size="11" fill="var(--ink)">16 steps × 3 = 48 channels per point row — time in channels, not tokens</text>
-        <text x="684" y="258" font-size="10.5" fill="var(--cap)">valid = 1 real point · 0 padding (ragged scenes)</text>
-
-        <!-- text + formula -->
-        <rect x="298" y="268" width="360" height="26" rx="13" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="478" y="285" text-anchor="middle" font-size="11.5" fill="var(--ink)">text: “pour water from the kettle into the bowl”</text>
-        <rect x="684" y="268" width="280" height="26" rx="13" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="824" y="285" text-anchor="middle" font-size="11.5" fill="var(--ink)">paired Sharpa sample: same scene, tag = sharpa</text>
-        <text x="298" y="326" font-size="12.5" fill="var(--ink)">one sample = ( P₀ [N×3], labels [N×5], F [N×48], text, mask [N] ),  N = entities × 2048</text>
-        <text x="298" y="350" font-size="11" fill="var(--cap)">F = Δx₁ … Δx₁₆ stacked per point · 16 @ 10 Hz = 1.6 s · stride-4 chunks · one array for human and Sharpa — only labels differ</text>
-      </svg>
-      <figcaption>data structure — one array of point rows: frame-0 columns are given, the 48-d F block is generated; TACO scene 20231019_001 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/figure-architecture.html">full implementation figure</a></figcaption>
-    </figure>
-  </div>
-  <p class="footnote">stride-4 chunks → ≈ 100k human + ≈ 10k Sharpa (1,215 TACO sequences), Sharpa oversampled to ~25 % · TACO sequences yield paired human / Sharpa samples of one scene</p>
-</section>
-
-<!-- SECTION: method (2) · architecture · the MAIN figure · thesis + figure only · design C -->
-<section class="slide s-method">
-  <h2>Method (2): Architecture</h2>
-  <p class="thesis">One plain DiT over the frame-0 points; each point emits its whole 16-step flow.</p>
+  <h2>Method (1): Model</h2>
+  <p class="thesis">One plain DiT over the frame-0 points; each point emits its 16-step flow.</p>
   <div class="band">
     <figure>
       <svg viewBox="0 0 980 392" role="img" aria-label="Three boxes left to right. (1) Tokens: the frame-0 points of two hands and up to two objects, 2048 each, at most 8,192 tokens; per-token features xyz₀, class, instance, part or link id, embodiment tag, hand side, and the noisy 48-d flow x_τ, with RoPE on xyz₀. (2) DiT: 12 plain blocks, d = 768, 12 heads, about 110 M; each block has full self-attention over all points, T5-base text cross-attention, an MLP, and adaLN-zero modulation by the flow step τ; classifier-free guidance by dropping text and tag 10 % each; PTv3 windowed blocks from PointWorld are the swap-in for speed. (3) Head: a 48-d velocity per point; after sampling, the 16-step flow of every point. Below: hand points → per-link Procrustes → IK → Sharpa joints, regenerated per chunk. Callout: no pooling, no temporal tokens, no VAE — input token = output point.">
@@ -235,7 +150,7 @@
 
         <!-- (2) DiT -->
         <rect x="332" y="58" width="326" height="212" rx="10" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="495" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(2) DiT × 12 · d = 768 · 12 heads · ≈ 110 M</text>
+        <text x="495" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">(2) DiT × 12 · d = 768 · 12 heads · ≈ 119 M</text>
         <rect x="362" y="88" width="286" height="104" rx="8" fill="var(--panel)" stroke="var(--line)"/>
         <rect x="357" y="92" width="286" height="104" rx="8" fill="var(--panel)" stroke="var(--line)"/>
         <rect x="352" y="96" width="286" height="104" rx="8" fill="var(--panel)" stroke="var(--line)"/>
@@ -288,18 +203,70 @@
         <polyline points="204,356 30,356 30,272" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#aa)"/>
         <text x="585" y="388" text-anchor="middle" font-size="11" fill="var(--cap)">closed loop — regenerate per chunk from new frame-0 points</text>
       </svg>
-      <figcaption>architecture (design C) — one token per frame-0 point, the same P tokens through every block; only the head changes the channel count</figcaption>
+      <figcaption>architecture (design C) — one token per frame-0 point, the same P tokens through every block; only the head changes the channel count · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/figure-architecture.html">full implementation figure</a></figcaption>
     </figure>
   </div>
-  <p class="footnote">flow head = PointWorld's 3·(T−1) = 48 channels · P = 2 hands + ≤ 2 objects × 2048 · PTv3 blocks, collate + flow normalisation reusable from PointWorld (Apache-2.0)</p>
+  <p class="footnote">flow head = PointWorld's 3·(T−1) = 48 channels · P = 2 hands + ≤ 2 objects × 2048 · adaLN-zero(τ) · T5-base cross-attention · CFG · code: wam/model/dit.py</p>
 </section>
 
-<!-- SECTION: method (3) · training scheme · thesis + figure (+ one small table) -->
+<!-- SECTION: method (2) · lineage — what comes from where · thesis + one three-column figure -->
 <section class="slide s-method">
-  <h2>Method (3): Training scheme</h2>
-  <p class="thesis">Flow matching on the 48-d flow, one auxiliary rigidity loss, 7–11 hours per pilot.</p>
+  <h2>Method (2): Lineage</h2>
+  <p class="thesis">Nothing is new alone; together: embodiment points generated from language.</p>
   <div class="band">
-    <figure style="flex:1.75 1 0">
+    <figure>
+      <svg viewBox="0 0 980 312" role="img" aria-label="Three columns. PointWorld — structure: frame-0 point tokens, flow-in-channels head 3·(T−1), PTv3-family set transformer, particle-dynamics view (Interaction Networks → GNS → DPI-Net), collate and normalisation. Video and image DiTs — recipe: flow matching, adaLN-zero, T5 text cross-attention, classifier-free guidance, RoPE. Ours: the embodiment's points are generated (robot branch removed), labels and embodiment tag as features, per-part rigidity auxiliary loss, Procrustes + IK readout. All three merge into 3D-WAM.">
+        <defs><marker id="la" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker></defs>
+        <!-- column heads -->
+        <rect x="14" y="8" width="306" height="30" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="167" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">PointWorld — structure</text>
+        <rect x="337" y="8" width="306" height="30" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
+        <text x="490" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">video / image DiTs — recipe</text>
+        <rect x="660" y="8" width="306" height="30" rx="8" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"/>
+        <text x="813" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--acc)">ours</text>
+        <!-- PointWorld items -->
+        <g font-size="11" fill="var(--ink)" text-anchor="middle">
+          <rect x="14" y="50" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="68">frame-0 point tokens — input token = output point</text>
+          <rect x="14" y="86" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="104">flow head: the whole trajectory in channels, 3·(T−1)</text>
+          <rect x="14" y="122" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="140">PTv3-family set transformer (Wu et al., CVPR 2024)</text>
+          <rect x="14" y="158" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="176">particle dynamics: Interaction Nets → GNS → DPI-Net</text>
+          <rect x="14" y="194" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="212">collate · ragged padding · per-step flow normalisation</text>
+        </g>
+        <!-- video-gen items -->
+        <g font-size="11" fill="var(--ink)" text-anchor="middle">
+          <rect x="337" y="50" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="68">flow matching: velocity target, logit-normal τ</text>
+          <rect x="337" y="86" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="104">adaLN-zero timestep modulation</text>
+          <rect x="337" y="122" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="140">text cross-attention (T5-base)</text>
+          <rect x="337" y="158" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="176">classifier-free guidance by conditioning dropout</text>
+          <rect x="337" y="194" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="212">RoPE / Fourier positional encoding on xyz₀</text>
+        </g>
+        <!-- ours -->
+        <g font-size="11" fill="var(--ink)" text-anchor="middle">
+          <rect x="660" y="50" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="68">embodiment points generated — robot branch removed</text>
+          <rect x="660" y="86" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="104">per-point labels + embodiment tag as token features</text>
+          <rect x="660" y="122" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="140">auxiliary per-part rigidity loss (Procrustes residual)</text>
+          <rect x="660" y="158" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="176">readout: per-link Procrustes + IK → Sharpa joints</text>
+          <text x="813" y="212" font-size="11" fill="var(--cap)">generative, not regression: language → multimodal futures</text>
+        </g>
+        <!-- merge -->
+        <line x1="167" y1="230" x2="167" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
+        <line x1="490" y1="230" x2="490" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
+        <line x1="813" y1="230" x2="813" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
+        <rect x="14" y="260" width="952" height="40" rx="10" fill="var(--panel)" stroke="var(--ink)" stroke-width=".9"/>
+        <text x="490" y="285" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">3D-WAM = frame-0 point tokens (structure) × flow-matching DiT (recipe) × generated embodiment (ours)</text>
+      </svg>
+      <figcaption>lineage — every component with its source; only the right column is new, and it is what makes the model an action generator</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">PointWorld (arXiv 2601.03782, Apache-2.0): PTv3 adopted from Wu et al.; its contribution = the backbone comparison and scaling to 1 B · video DiT recipe: Wan 2.x, CogVideoX, FLUX</p>
+</section>
+
+<!-- SECTION: method (3) · training · loop figure + one ≤ 6-row table -->
+<section class="slide s-method">
+  <h2>Method (3): Training</h2>
+  <p class="thesis">Flow matching on the 48-d flow, plus rigidity and contact-pair auxiliaries.</p>
+  <div class="band">
+    <figure>
       <svg viewBox="0 0 640 372" role="img" aria-label="Training loop: sample a chunk; noise the (P, 48) flow with a logit-normal τ; the model predicts a (P, 48) velocity conditioned on frame-0 points, labels, tag and text with CFG dropout; main loss = conditional flow matching on the velocity; auxiliary loss = per-part rigidity (Procrustes residual of the predicted flow per object instance, Sharpa link, MANO part); summed loss trains θ with AdamW and EMA.">
         <defs><marker id="ta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker></defs>
         <!-- sample -->
@@ -347,132 +314,102 @@
         <polyline points="450,348 622,348 622,159 602,159" fill="none" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ta)"/>
         <text x="627" y="258" font-size="11" fill="var(--cap)">∇θ</text>
       </svg>
-      <figcaption>training loop — one chunk per sample; x(τ), v̂, F̂ are all (P, 48); both losses read F̂</figcaption>
+      <figcaption>training loop — one chunk per sample; x(τ), v̂, F̂ are all (P, 48); rigidity and contact-pair read F̂</figcaption>
     </figure>
     <div class="tbl">
       <table class="compact">
         <thead><tr><th>pilot</th><th>setting</th></tr></thead>
         <tbody>
-          <tr><td>model</td><td>119 M · 12 blocks · d = 768 · grad checkpointing</td></tr>
-          <tr><td>batch · steps</td><td>16 / GPU · 12k · chained 3-h single-GPU links (resume + resubmit)</td></tr>
-          <tr><td>optimiser</td><td>AdamW 3e-4 · warmup 1k · EMA</td></tr>
-          <tr><td>compute</td><td>measured 4.5 s/step on 1× A100 → ≈ 16 h; 4× A100 ≈ 3.8× when available</td></tr>
-          <tr><td>losses · mix</td><td>FM + rigidity λ 0.1 + contact-pair λ 0.1 · human 75 % · Sharpa 25 %</td></tr>
-          <tr><td>schedule τ</td><td>logit-normal · CFG drop 10 % / 10 %</td></tr>
+          <tr><td>model</td><td>119 M · 12 blocks · d = 768 · full attention, P ≤ 8,192</td></tr>
+          <tr><td>batch</td><td>16 / GPU + gradient checkpointing</td></tr>
+          <tr><td>losses</td><td>FM + rigidity λ 0.1 + contact-pair λ 0.1</td></tr>
+          <tr><td>optimiser</td><td>AdamW 3e-4 · warmup 1k · cosine 12k · EMA</td></tr>
+          <tr><td>data</td><td>15 Hz · T = 16 · N = 2048 · stride 4</td></tr>
+          <tr><td>mix</td><td>human 75 % / Sharpa 25 %</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">hours = FLOP estimates, measured in the dry run (A3) · contact-consistency aux reserved for the ablation table · flow normalisation = PointWorld's per-step statistics</p>
+  <p class="footnote">configs/pilot_110m.yaml (option 1, owner 18:00) · τ logit-normal · CFG drop 10 % / 10 % · contact head OFF · entity_text OFF (group table) · flow normalised by one scalar per step</p>
 </section>
 
-<!-- SECTION: results (1) · lineage — what comes from where · thesis + one three-column figure -->
+<!-- SECTION: results (1) · compute per token design · measured in the dry run -->
 <section class="slide s-results">
-  <h2>Results (1): Lineage — what comes from where</h2>
-  <p class="thesis">No piece is new alone; the combination is: embodiment points generated from language.</p>
-  <div class="band">
-    <figure>
-      <svg viewBox="0 0 980 312" role="img" aria-label="Three columns. PointWorld — structure: frame-0 point tokens, flow-in-channels head 3·(T−1), PTv3-family set transformer, particle-dynamics view (Interaction Networks → GNS → DPI-Net), collate and normalisation. Video and image DiTs — recipe: flow matching, adaLN-zero, T5 text cross-attention, classifier-free guidance, RoPE. Ours: the embodiment's points are generated (robot branch removed), labels and embodiment tag as features, per-part rigidity auxiliary loss, Procrustes + IK readout. All three merge into 3D-WAM.">
-        <defs><marker id="la" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker></defs>
-        <!-- column heads -->
-        <rect x="14" y="8" width="306" height="30" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="167" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">PointWorld — structure</text>
-        <rect x="337" y="8" width="306" height="30" rx="8" fill="var(--panel2)" stroke="var(--line)"/>
-        <text x="490" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">video / image DiTs — recipe</text>
-        <rect x="660" y="8" width="306" height="30" rx="8" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".8"/>
-        <text x="813" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--acc)">ours</text>
-        <!-- PointWorld items -->
-        <g font-size="11" fill="var(--ink)" text-anchor="middle">
-          <rect x="14" y="50" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="68">frame-0 point tokens — input token = output point</text>
-          <rect x="14" y="86" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="104">flow head: the whole trajectory in channels, 3·(T−1)</text>
-          <rect x="14" y="122" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="140">PTv3-family set transformer (Wu et al., CVPR 2024)</text>
-          <rect x="14" y="158" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="176">particle dynamics: Interaction Nets → GNS → DPI-Net</text>
-          <rect x="14" y="194" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="167" y="212">collate · ragged padding · per-step flow normalisation</text>
-        </g>
-        <!-- video-gen items -->
-        <g font-size="11" fill="var(--ink)" text-anchor="middle">
-          <rect x="337" y="50" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="68">flow matching: velocity target, logit-normal τ</text>
-          <rect x="337" y="86" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="104">adaLN-zero timestep modulation</text>
-          <rect x="337" y="122" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="140">text cross-attention (T5-base)</text>
-          <rect x="337" y="158" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="176">classifier-free guidance by conditioning dropout</text>
-          <rect x="337" y="194" width="306" height="28" rx="6" fill="var(--panel2)"/><text x="490" y="212">RoPE / Fourier positional encoding on xyz₀</text>
-        </g>
-        <!-- ours -->
-        <g font-size="11" fill="var(--ink)" text-anchor="middle">
-          <rect x="660" y="50" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="68">embodiment points generated — robot branch removed</text>
-          <rect x="660" y="86" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="104">per-point labels + embodiment tag as token features</text>
-          <rect x="660" y="122" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="140">auxiliary per-part rigidity loss (Procrustes residual)</text>
-          <rect x="660" y="158" width="306" height="28" rx="6" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width=".6"/><text x="813" y="176">readout: per-link Procrustes + IK → Sharpa joints</text>
-          <text x="813" y="212" font-size="11" fill="var(--cap)">generative, not regression: language → multimodal futures</text>
-        </g>
-        <!-- merge -->
-        <line x1="167" y1="230" x2="167" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
-        <line x1="490" y1="230" x2="490" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
-        <line x1="813" y1="230" x2="813" y2="256" stroke="var(--mut)" stroke-width="1.3" marker-end="url(#la)"/>
-        <rect x="14" y="260" width="952" height="40" rx="10" fill="var(--panel)" stroke="var(--ink)" stroke-width=".9"/>
-        <text x="490" y="285" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">3D-WAM = frame-0 point tokens (structure) × flow-matching DiT (recipe) × generated embodiment (ours)</text>
-      </svg>
-      <figcaption>lineage — every component with its source; only the right column is new, and it is what makes the model an action generator</figcaption>
-    </figure>
-  </div>
-  <p class="footnote">PointWorld (arXiv 2601.03782, Apache-2.0): PTv3 adopted from Wu et al.; its contribution = the backbone comparison (PTv3 > Transformer > PointNet++ > …) and scaling to 1 B</p>
-</section>
-
-<!-- SECTION: results (2) · compute per token design · the chosen row is the hero -->
-<section class="slide s-results">
-  <h2>Results (2): Data scale</h2>
-  <p class="thesis">Human 5,319 episodes / 4.0 M frames → 247k chunks at 15 Hz; Sharpa 1,215 episodes.</p>
-  <ul>
-    <li>No sequence shorter than one chunk at 10 or 15 Hz · OakInk2 partial (96 / 492) · GRAB via ManipTrans npz</li>
-  </ul>
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Compute — per token design, measured
+      <ul><li>dry run at batch 16 with grad checkpointing, full attention over P = 8,192</li>
+          <li>single-GPU chain of 3-h links (resume + resubmit); 4×A100 when it opens</li></ul></li>
+    <li>Status — pipeline verified, chain launched</li>
+  </ol>
   <div class="band">
     <div class="tbl">
       <table class="compact">
-        <thead><tr><th>dataset</th><th class="num">episodes</th><th class="num">frames</th><th class="num">fps</th><th class="num">objects (ids / names)</th><th>labels</th><th class="num">chunks @15 Hz</th></tr></thead>
+        <thead><tr><th style="width:44%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">12k steps · 1× A100</th><th class="num">4× A100</th></tr></thead>
         <tbody>
-          <tr><td>TACO (human)</td><td class="num">2,317</td><td class="num">363,198</td><td class="num">30</td><td class="num">162 / 20</td><td>verb 15</td><td class="num">37,723</td></tr>
-          <tr><td>ARCTIC</td><td class="num">277</td><td class="num">200,730</td><td class="num">30</td><td class="num">10 / 10</td><td>action 2 (grab / use)</td><td class="num">24,176</td></tr>
-          <tr><td>GRAB</td><td class="num">1,335</td><td class="num">1,623,695</td><td class="num">120</td><td class="num">51 / 51</td><td>motion_intent 29</td><td class="num">46,346</td></tr>
-          <tr><td>OakInk2 (partial 96 / 492)</td><td class="num">96</td><td class="num">929,704</td><td class="num">120</td><td class="num">46 / 26</td><td>task 88 · primitive 22</td><td class="num">28,735</td></tr>
-          <tr><td>HOT3D</td><td class="num">294</td><td class="num">841,364</td><td class="num">30</td><td class="num">33 / 33</td><td>none</td><td class="num">104,199</td></tr>
-          <tr><td>DexYCB</td><td class="num">1,000</td><td class="num">72,746</td><td class="num">30</td><td class="num">20 / 20</td><td>grasp object 20</td><td class="num">5,941</td></tr>
-          <tr class="hero"><td>Human total</td><td class="num">5,319</td><td class="num">4,031,437</td><td class="num">—</td><td class="num">—</td><td>—</td><td class="num">247,120</td></tr>
-          <tr class="hero"><td>Sharpa · TACO release</td><td class="num">1,215</td><td class="num">181,299</td><td class="num">30</td><td class="num">146 / 17</td><td>verb 14</td><td class="num">18,637</td></tr>
+          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+ (estimate)</td><td class="num">—</td></tr>
+          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h (estimate)</td><td class="num">—</td></tr>
+          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">4.5 s/step → 16 h (measured)</td><td class="num">≈ 3.8× → ≈ 4 h</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">scale.md 2026-08-26 15:33 (stats.py, job 131893) · chunk = 16 target-rate frames, stride 4 · @10 Hz: human 159,088 · Sharpa 11,102 chunks · hours: human 19.6 · Sharpa 1.68 · design alternatives → A4</p>
+  <p class="footnote">measured: dryrun 4.54 s/step, 15.5 GB, 2,220 steps per 2.8-h link (TRAIN-STATUS.md 17:40) · A/B = FLOP estimates at d 768, 12 layers · 131k = 16 × 8,192 · scripts/train_debug_chain.sbatch · train_4gpu_later.sbatch</p>
 </section>
 
-<!-- SECTION: discussion-actions · "Final check": the decisions were taken in discussion — confirm or change, then the dry run -->
+<!-- SECTION: results (2) · status · pipeline verified + chain job 132202 -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Compute — per token design, measured</li>
+    <li class="on">Status — pipeline verified, chain launched
+      <ul><li>unit tests, smoke preprocessing and the dry run passed; full preprocessing A done, B running</li>
+          <li>chain hop 0 waits on A + B, then T5 cache + flow stats, then training</li></ul></li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>stage</th><th>result</th><th class="num">when (08-26)</th></tr></thead>
+        <tbody>
+          <tr><td>unit tests</td><td>pytest pass · 1 test artifact open (test_cfg_null_path: zero-init gates)</td><td class="num">17:40</td></tr>
+          <tr><td>smoke preprocessing</td><td>60 episodes (TACO 20 · ARCTIC 10 · DexYCB 10) · 0 errors · 638.6 MB</td><td class="num">17:40</td></tr>
+          <tr><td>dry run</td><td>4.54 s/step · 15.5 GB · 2,220 steps per 2.8-h link</td><td class="num">17:40</td></tr>
+          <tr><td>preprocessing A (TACO)</td><td>2,250 human + 1,148 Sharpa episodes · exit 0 · 67 MANO-less skipped</td><td class="num">18:25</td></tr>
+          <tr><td>preprocessing B</td><td>ARCTIC 277 · DexYCB 1,000 · HOT3D 294 done · OakInk2 running</td><td class="num">running</td></tr>
+          <tr class="hero"><td>chain hop 0 · job 132202</td><td>RUN pilot110m_15hz_N2048_20260826 · 12k steps · afterany A, B</td><td class="num">18:10 submitted</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">TRAIN-STATUS.md (17:40 · 18:10 · 18:25) · checkpoints: /virtual_lab/sjw_alinlab/beomjun/3d-wam/runs/pilot110m_15hz_N2048_20260826/ · no checkpoint at publish time</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
 <section class="slide s-discuss">
-  <h2>Final check</h2>
-  <p class="thesis">Four decisions taken in discussion — confirm or change, then the dry run.</p>
-  <p class="subhead">Discussion — decided:</p>
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Four decisions stand; three items need a ruling; four actions tracked.</p>
+  <p class="subhead">Decided:</p>
+  <ul>
+    <li>Design C · rigidity + contact-pair aux · T5-base · config option 1</li>
+  </ul>
+  <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Token design → C</b> (owner, decided)
-      <ul><li>Decided: C — frame-0 point tokens, 16-step flow in channels, one plain DiT; one <code>group</code> label (object slot / hand side / embodiment), <code>part</code> = metadata only</li>
-          <li>Alternative: B — latent set + temporal tokens; kept as the documented upgrade path and an ablation</li></ul></li>
-    <li><b>Auxiliary losses → per-part rigidity + contact-pair</b> (owner, decided)
-      <ul><li>Decided: rigidity (Procrustes residual per part) + contact-pair co-motion (GT contact at 1 cm, CHORD threshold)</li>
-          <li>Alternative: explicit contact head (16 BCE logits per hand point) → implemented, OFF → ablation</li></ul></li>
-    <li><b>Text encoder → T5-base</b> (owner, decided)
-      <ul><li>Decided: T5-base for the instruction; entity phrases ("left human hand", "hammer") via the same T5 → chain-link 2</li>
-          <li>Alternative: CLIP text → ablation table</li></ul></li>
+    <li><b>Entity phrases (T5)</b> — chain link 2, fresh run → yes (owner)</li>
+    <li><b>10 Hz variant</b> — now vs after the pilot → after (owner)</li>
+    <li><b>4×A100 move</b> — when sjw_alinlab opens 08-27 → move (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>DESIGN.md v1.0-rc written; deck final — owner check pending (A1 · today)</li>
-    <li>Done: code from scratch (~5.4k lines) · preprocessed 15 Hz / N 2048 → 4,970 human + 1,148 Sharpa episodes (A2)</li>
-    <li>Done: dry run — 4.5 s/step at batch 16 with grad checkpointing (full attention, P = 8,192) (A3)</li>
-    <li>Launched 18:10 (job 132202): option 1 = 119 M, N 2048, 15 Hz → first checkpoint ≈ 20:00, 12k steps ≈ 16 h; 4× A100 from 08-27 (A4)</li>
+    <li>A1 DESIGN.md v1.0-rc → freeze after this check (owner · today)</li>
+    <li>A2 code + preprocessing → done; OakInk2, GRAB pending (agent)</li>
+    <li>A3 dry run → done, 4.5 s/step (agent)</li>
+    <li>A4 pilot chain 132202 → launched 18:10; first checkpoint after link 1 (agent)</li>
   </ol>
 </section>
 
 <!-- SECTION: appendix A1 · evaluation plan -->
 <section class="slide s-appendix">
-  <h2>Appendix A1 · evaluation plan</h2>
+  <h2>Appendix A1 · evaluation plan · ablations</h2>
   <div class="cols">
     <dl class="kv">
       <dt>open-loop</dt><dd>held-out TACO chunks: flow ADE / FDE per class (hand · object) · rigidity residual per part · instruction-swap delta (same scene, swapped text → flow must change) · sample diversity across seeds (multimodality) · decoded Sharpa joint error after Procrustes + IK vs the paired Sharpa sample</dd>
@@ -487,38 +424,10 @@
   <p class="footnote">metrics from the text proposal / DESIGN.md §7 · CHORD env name from arXiv 2607.00033 · nothing measured yet — no runs</p>
 </section>
 
-<!-- SECTION: appendix A2 · data pipeline state -->
-<section class="slide s-appendix">
-  <h2>Appendix A2 · data pipeline state (2026-08-26)</h2>
-  <div class="cols">
-    <div class="tbl">
-      <table>
-        <thead><tr><th>source</th><th class="num">sequences</th><th>state</th></tr></thead>
-        <tbody>
-          <tr><td>TACO</td><td class="num">2,317 / 2,317</td><td>loaded (CHORD LOAD parquets)</td></tr>
-          <tr><td>ARCTIC</td><td class="num">277 / 277</td><td>loaded · assess reference: 127 pass / 150 rejected</td></tr>
-          <tr><td>DexYCB</td><td class="num">1,000 / 1,000</td><td>loaded</td></tr>
-          <tr><td>Preprocessed (tonight)</td><td class="num">4,970 + 1,148</td><td>episodes at 15 Hz · N = 2048 (human + Sharpa); 67 MANO-less NVIDIA parquets skipped</td></tr>
-          <tr><td>HOT3D</td><td class="num">294 / 294</td><td>loaded</td></tr>
-          <tr><td>OakInk2</td><td class="num">96 / 492</td><td>running (partial at scan time)</td></tr>
-          <tr><td>GRAB</td><td class="num">1,335</td><td>ManipTrans npz copy (no CHORD parquet)</td></tr>
-          <tr><td>Sharpa · TACO</td><td class="num">1,215</td><td>NVIDIA CHORD release (<code>motion_v1.parquet</code>) — no local retarget</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <dl class="kv">
-      <dt>chunks</dt><dd>stride 4 → 159,088 human + 11,102 Sharpa chunks @10 Hz (247,120 + 18,637 @15 Hz; slide 7); Sharpa oversampled to ~25 % of each batch</dd>
-      <dt>pairs</dt><dd>TACO sequences yield paired human / Sharpa samples of the same scene (same objects, same text; hand rows differ in tag and part id)</dd>
-      <dt>labels</dt><dd>class {hand, object} · instance · part id (MANO 16 / Sharpa 33 links / object part) · embodiment tag {human, sharpa} · hand side; points sampled once at N = 2048 per entity from the deck #1 specs (FPS-prefix trim from 4096)</dd>
-      <dt>target</dt><dd>F [N × 48] = Δx₁ … Δx₁₆ per point, 10 Hz, T = 16 = 1.6 s per chunk; normalised per step with PointWorld's statistics</dd>
-    </dl>
-  </div>
-  <p class="footnote">LOAD parquets = the loader's per-dataset outputs (A2 codes against them) · counts = loader progress; only ARCTIC assessed</p>
-</section>
 
-<!-- SECTION: appendix A3 · references · cut list -->
+<!-- SECTION: appendix A2 · references · cut list -->
 <section class="slide s-appendix">
-  <h2>Appendix A3 · references · cut list</h2>
+  <h2>Appendix A2 · references · cut list</h2>
   <div class="cols">
     <dl class="kv">
       <dt>PointWorld</dt><dd>NVlabs, arXiv 2601.03782 — point flow as action; frame-0 tokens, 3·(T−1) flow head; PTv3 > Transformer > PointNet++ at 1 B; Apache-2.0</dd>
@@ -534,73 +443,10 @@
         <dt>DiT</dt><dd>Peebles &amp; Xie, ICCV 2023 — adaLN-zero; recipe as in Wan 2.1 / 2.2 reports, CogVideoX, FLUX</dd>
         <dt>Diffusion Policy</dt><dd>Chi et al., RSS 2023 — the multimodality argument: regression averages modes, generation samples one</dd>
       </dl>
-      <p class="cut"><b>Cut list</b> (dropped from this deck, kept in DESIGN.md): design B (shallow per-point encoder → 128 latents / entity → factorized latent DiT → per-point query decoder) demoted to upgrade path + ablation 4 · the PointWorld code-verdict table (reuse / add / opposite) folded into the lineage slide · Perceiver-IO query-decoding reference · yaw augmentation details · evaluation cadence · the 4th decision (budget 110 M / 1 A100 / ~10 h) folded into A4 · contact-consistency loss definition (ablation only) · the FLOP arithmetic behind slide 7 (A3 measures it) · the hub's per-point-token figure.</p>
+      <p class="cut"><b>Cut list</b> (dropped from this deck): moved to deck #1 (datasets &amp; train data structure) — the data-structure slide, the data-scale table, task-distribution charts, raw-vs-points clips and the data-pipeline state table · design-alternatives table (A4) folded into Results (1) · the 08-26 afternoon "Final check" wording · kept in DESIGN.md: design B (shallow per-point encoder → 128 latents / entity → factorized latent DiT → per-point query decoder) demoted to upgrade path + ablation 4 · the PointWorld code-verdict table (reuse / add / opposite) folded into the lineage slide · Perceiver-IO query-decoding reference · yaw augmentation details · evaluation cadence · the 4th decision (budget 110 M / 1 A100 / ~10 h) folded into A4 · contact-consistency loss definition (ablation only) · the FLOP arithmetic behind slide 7 (A3 measures it) · the hub's per-point-token figure.</p>
     </div>
   </div>
   <p class="footnote">deck #1: /experiments/3d-wam/decks/2026-08-25-point-budget/ · hub: /experiments/3d-wam/ · DESIGN.md v1.0-rc: ~/3d-wam/DESIGN.md</p>
-</section>
-
-<!-- SECTION: appendix A4 · design alternatives (moved from slide 7 on 2026-08-26) -->
-<section class="slide s-appendix">
-  <h2>Appendix A4 · design alternatives — compute per token design</h2>
-  <ul>
-    <li>Why not time-as-tokens: chunks are 16 steps / 1.6 s, not 81+ frames — channels are the norm here</li>
-  </ul>
-  <div class="band">
-    <div class="tbl">
-      <table class="compact">
-        <thead><tr><th style="width:52%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">pilot (12k)</th></tr></thead>
-        <tbody>
-          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+</td></tr>
-          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h</td></tr>
-          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">~7–11 h</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <p class="footnote">FLOP estimates at d = 768, 12 layers, 1× A100 — measured in the dry run (A3) · C: PTv3 windowed ≈ 7 h, full attention ≈ 11 h · 131k = 16 × 8,192 · counts as of 2026-08-26</p>
-</section>
-
-<!-- SECTION: appendix A5 · task distribution -->
-<section class="slide s-appendix">
-  <h2>Appendix A5 · task distribution</h2>
-  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_taco.png" alt="TACO label counts, verb (15)">
-      <figcaption>TACO · verb (15) · label counts</figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_grab.png" alt="GRAB label counts, motion_intent (29)">
-      <figcaption>GRAB · motion_intent (29) · label counts</figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/task_dist_oakink2.png" alt="OakInk2 label counts, task (88, partial 96 / 492)">
-      <figcaption>OakInk2 · task (88, partial 96 / 492) · label counts</figcaption></figure>
-  </div>
-  <p class="footnote">label counts per dataset (stats/task_dist_&lt;ds&gt;.png) · ARCTIC grab 56 / use 221 · DexYCB 20 grasp objects · HOT3D no labels · 0 sequences shorter than one chunk at 10 or 15 Hz</p>
-</section>
-
-<!-- SECTION: appendix A6 · raw vs points (1/2) -->
-<section class="slide s-appendix">
-  <h2>Appendix A6 · raw vs points (1/2)</h2>
-  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/taco_raw_vs_points.gif" alt="TACO taco_brush__roller__box_20231104_019: left raw meshes, right 2048 points per entity">
-      <figcaption>TACO · taco_brush__roller__box_20231104_019 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/taco_raw_vs_points.jpg">poster</a></figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/arctic_raw_vs_points.gif" alt="ARCTIC dataset_s02_mixer_use_02: left raw meshes, right 2048 points per entity">
-      <figcaption>ARCTIC · dataset_s02_mixer_use_02 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/arctic_raw_vs_points.jpg">poster</a></figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/grab_raw_vs_points.gif" alt="GRAB s10_bowl_drink_1_Retake: left raw meshes, right 2048 points per entity">
-      <figcaption>GRAB · s10_bowl_drink_1_Retake · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/grab_raw_vs_points.jpg">poster</a></figcaption></figure>
-  </div>
-  <p class="footnote">TACO/HOT3D framed on the episode union box; ARCTIC/GRAB/OakInk2/DexYCB use the same framing — hands appear small; hand-following camera pending.</p>
-</section>
-
-<!-- SECTION: appendix A7 · raw vs points (2/2) -->
-<section class="slide s-appendix">
-  <h2>Appendix A7 · raw vs points (2/2)</h2>
-  <div class="band" style="display:flex;gap:1.6em;align-items:flex-start;margin-top:1.4em">
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/oakink2_raw_vs_points.gif" alt="OakInk2 scene_01__A001++seq__ceefa2162ca2e9612ecb__2023-04-27-19-11-22: left raw meshes, right 2048 points per entity">
-      <figcaption>OakInk2 · scene_01__A001++seq__ceefa2162ca2e9612ecb__2023-04-27-19-11-22 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/oakink2_raw_vs_points.jpg">poster</a></figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/hot3d_raw_vs_points.gif" alt="HOT3D P0003_c701bd11: left raw meshes, right 2048 points per entity">
-      <figcaption>HOT3D · P0003_c701bd11 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/hot3d_raw_vs_points.jpg">poster</a></figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0;margin:0;display:flex;flex-direction:column"><img style="width:100%;height:auto;max-height:54vh;object-fit:contain;display:block" src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/dexycb_raw_vs_points.gif" alt="DexYCB dexycb_20200709-subject-01_20200709_141754_932122062010: left raw meshes, right 2048 points per entity">
-      <figcaption>DexYCB · dexycb_20200709-subject-01_20200709_141754_932122062010 · left raw meshes | right 2048 pts/entity · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/dexycb_raw_vs_points.jpg">poster</a></figcaption></figure>
-  </div>
-  <p class="footnote">TACO/HOT3D framed on the episode union box; ARCTIC/GRAB/OakInk2/DexYCB use the same framing — hands appear small; hand-following camera pending.</p>
 </section>
 
 </main>
