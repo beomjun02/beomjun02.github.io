@@ -480,12 +480,12 @@
           <tr><td>OakInk2</td><td class="num">70 / 492</td><td>running</td></tr>
           <tr><td>TACO</td><td class="num">—</td><td>loading (motion_v1 parquets)</td></tr>
           <tr><td>GRAB</td><td class="num">—</td><td>awaiting object meshes</td></tr>
-          <tr><td>Sharpa · TACO</td><td class="num">855</td><td>NVIDIA CHORD release only — no local retarget</td></tr>
+          <tr><td>Sharpa · TACO</td><td class="num">1,215</td><td>NVIDIA CHORD release only — no local retarget</td></tr>
         </tbody>
       </table>
     </div>
     <dl class="kv">
-      <dt>chunks</dt><dd>stride 4 → ≈ 100k human chunks (≈ 5.5k sequences) + ≈ 7k Sharpa chunks (855 TACO sequences); Sharpa oversampled to ~25 % of each batch</dd>
+      <dt>chunks</dt><dd>stride 4 → ≈ 100k human chunks (≈ 5.5k sequences) + ≈ 7k Sharpa chunks (1,215 TACO sequences); Sharpa oversampled to ~25 % of each batch</dd>
       <dt>pairs</dt><dd>TACO sequences yield paired human / Sharpa samples of the same scene (same objects, same text; hand rows differ in tag and part id)</dd>
       <dt>labels</dt><dd>class {hand, object} · instance · part id (MANO 16 / Sharpa 33 links / object part) · embodiment tag {human, sharpa} · hand side; points sampled once at N = 2048 per entity from the deck #1 specs (FPS-prefix trim from 4096)</dd>
       <dt>rate</dt><dd>10 Hz, T = 16 steps = 1.6 s per chunk</dd>
