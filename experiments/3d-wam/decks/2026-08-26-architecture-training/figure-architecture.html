@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<!-- 3D-WAM · full implementation architecture figure · generated from the code at
+     /sjw_alinlab2/home/beomjun/3d-wam/code (read-only) on 2026-08-26; DESIGN.md sections
+     "Labels and masking" / "Label simplification" / "Entity semantics via text" are authoritative.
+     Red text = code differs from DESIGN.md. Companion of deck #2 slide 4. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-26 · 3D-WAM architecture — full implementation figure</title>
+<meta name="description" content="Implementation-level architecture figure of the 3D-WAM SetDiT (design C) read from the code: input construction, token embedding, adaLN-zero conditioning, one exploded DiT block, head, training losses and optimizer, sampling and readout, tensor shapes and a 119.3 M parameter breakdown. Red = code differs from DESIGN.md.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+<style>
+.wide{max-width:1860px;margin:0 auto;padding:0 20px}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;margin:18px 0 10px;
+      --obj0:#f28e2b;--obj1:#d9a50f;--hL:#7a3fb8;--hR:#2a9d4f}
+:root[data-theme="dark"] .fig{--obj0:#f5a45a;--obj1:#e9c65a;--hL:#b08cf0;--hR:#43d17a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fig{--obj0:#f5a45a;--obj1:#e9c65a;--hL:#b08cf0;--hR:#43d17a}}
+.fig svg{width:100%;height:auto;display:block;font-family:var(--sans)}
+.fig svg text{white-space:pre}
+.fig figcaption{padding:8px 10px 4px}
+.deltas{overflow-x:auto}
+.deltas table{font-size:13.5px;min-width:900px}
+.deltas td.mono{font-family:var(--mono);font-size:12px}
+.deltas td:nth-child(2){color:var(--mut)}
+.deltas td:nth-child(3){color:var(--bad)}
+main section{padding:26px 0}
+h2{font-size:18px;margin:0 0 10px}
+ul.src{font-family:var(--mono);font-size:12.5px;color:var(--mut);columns:2;column-gap:40px;padding-left:18px;margin:0}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="wide">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/3d-wam/">3d-wam</a><span class="sep">/</span>
+      <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/">2026-08-26 · deck #2</a><span class="sep">/</span>
+      <span class="here">figure · full implementation</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wide">
+    <p class="eyebrow">Figure · 3D-WAM · companion of deck #2 slide 4</p>
+    <h1>Architecture — full implementation figure</h1>
+    <p class="lede">Read from <code>~/3d-wam/code</code> (wam/model, wam/train, wam/data, wam/eval, configs) on 2026-08-26, not from the design summary. Panels A–H left→right, top→bottom; every label is a name, a shape or a formula. Red = where the code differs from DESIGN.md (table below). PNG: <code>~/3d-wam/ref/architecture_full.png</code>.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wide">
+    <figure class="fig">
+<svg viewBox="0 0 1800 1190" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="figtitle figdesc">
+<title id="figtitle">3D-WAM full implementation architecture figure</title>
+<desc id="figdesc">Eight panels A to H: input construction, token embedding, conditioning, one exploded DiT block of twelve, head, training losses and optimizer, sampling and readout, and a tensor-shape and parameter table. Red text marks where the code differs from DESIGN.md.</desc>
+<defs>
+<marker id="am" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker>
+<marker id="aa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--acc)"/></marker>
+<marker id="ab" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--bad)"/></marker>
+<marker id="ao" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--ok)"/></marker>
+</defs>
+<rect x="0" y="0" width="1800" height="1190" fill="var(--panel)"/>
+<g data-rect="14,14,590,372" data-panel-rect="A">
+<rect x="14.0" y="14.0" width="590.0" height="372.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="24.0" y="23.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="35.0" y="39.0" font-size="13" fill="#fff" data-panel="A" text-anchor="middle" font-weight="700">A</text>
+<text x="54.0" y="39.0" font-size="15" fill="var(--txt)" data-panel="A" font-weight="700">Input construction — Episode → training chunk</text>
+<text x="54.0" y="55.0" font-size="11" fill="var(--mut)" data-panel="A" font-family="var(--mono)">wam/data/build.py · schema.py · chunks.py · dataset.py (ChunkDataset, collate) · train/loaders.py (ContractCollate)</text>
+<circle cx="85.7" cy="83.6" r="2.6" fill="var(--obj0)"/>
+<circle cx="66.3" cy="103.3" r="2.6" fill="var(--obj0)"/>
+<circle cx="62.9" cy="97.1" r="2.6" fill="var(--obj0)"/>
+<circle cx="78.5" cy="86.6" r="2.6" fill="var(--obj0)"/>
+<circle cx="60.8" cy="100.3" r="2.6" fill="var(--obj0)"/>
+<circle cx="88.1" cy="90.1" r="2.6" fill="var(--obj0)"/>
+<circle cx="72.5" cy="115.0" r="2.6" fill="var(--obj0)"/>
+<circle cx="68.0" cy="90.6" r="2.6" fill="var(--obj0)"/>
+<circle cx="92.7" cy="87.3" r="2.6" fill="var(--obj0)"/>
+<circle cx="83.0" cy="80.4" r="2.6" fill="var(--obj0)"/>
+<circle cx="69.7" cy="113.9" r="2.6" fill="var(--obj0)"/>
+<circle cx="89.3" cy="88.2" r="2.6" fill="var(--obj0)"/>
+<circle cx="67.7" cy="99.5" r="2.6" fill="var(--obj0)"/>
+<text x="76.0" y="136.0" font-size="11.5" fill="var(--obj0)" data-panel="A" text-anchor="middle" font-weight="600">obj-0</text>
+<text x="76.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 0</text>
+<circle cx="182.2" cy="111.8" r="2.6" fill="var(--obj1)"/>
+<circle cx="170.9" cy="87.1" r="2.6" fill="var(--obj1)"/>
+<circle cx="156.3" cy="98.4" r="2.6" fill="var(--obj1)"/>
+<circle cx="159.7" cy="83.5" r="2.6" fill="var(--obj1)"/>
+<circle cx="175.8" cy="101.9" r="2.6" fill="var(--obj1)"/>
+<circle cx="176.9" cy="86.4" r="2.6" fill="var(--obj1)"/>
+<circle cx="170.5" cy="91.6" r="2.6" fill="var(--obj1)"/>
+<circle cx="154.0" cy="103.7" r="2.6" fill="var(--obj1)"/>
+<circle cx="172.6" cy="117.3" r="2.6" fill="var(--obj1)"/>
+<circle cx="175.7" cy="93.9" r="2.6" fill="var(--obj1)"/>
+<circle cx="184.7" cy="100.4" r="2.6" fill="var(--obj1)"/>
+<circle cx="181.9" cy="93.2" r="2.6" fill="var(--obj1)"/>
+<circle cx="172.8" cy="111.0" r="2.6" fill="var(--obj1)"/>
+<text x="170.0" y="136.0" font-size="11.5" fill="var(--obj1)" data-panel="A" text-anchor="middle" font-weight="600">obj-1</text>
+<text x="170.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 1</text>
+<circle cx="282.7" cy="92.7" r="2.6" fill="var(--hL)"/>
+<circle cx="271.6" cy="100.8" r="2.6" fill="var(--hL)"/>
+<circle cx="272.8" cy="83.2" r="2.6" fill="var(--hL)"/>
+<circle cx="258.3" cy="87.7" r="2.6" fill="var(--hL)"/>
+<circle cx="251.7" cy="88.3" r="2.6" fill="var(--hL)"/>
+<circle cx="255.8" cy="93.4" r="2.6" fill="var(--hL)"/>
+<circle cx="252.3" cy="103.5" r="2.6" fill="var(--hL)"/>
+<circle cx="260.6" cy="78.3" r="2.6" fill="var(--hL)"/>
+<circle cx="278.2" cy="93.3" r="2.6" fill="var(--hL)"/>
+<circle cx="253.5" cy="101.8" r="2.6" fill="var(--hL)"/>
+<circle cx="270.8" cy="99.6" r="2.6" fill="var(--hL)"/>
+<circle cx="252.4" cy="100.6" r="2.6" fill="var(--hL)"/>
+<circle cx="250.2" cy="110.9" r="2.6" fill="var(--hL)"/>
+<text x="264.0" y="136.0" font-size="11.5" fill="var(--hL)" data-panel="A" text-anchor="middle" font-weight="600">human-L</text>
+<text x="264.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 2</text>
+<circle cx="359.1" cy="112.9" r="2.6" fill="var(--hR)"/>
+<circle cx="347.3" cy="109.4" r="2.6" fill="var(--hR)"/>
+<circle cx="352.5" cy="92.5" r="2.6" fill="var(--hR)"/>
+<circle cx="376.2" cy="99.5" r="2.6" fill="var(--hR)"/>
+<circle cx="357.4" cy="108.6" r="2.6" fill="var(--hR)"/>
+<circle cx="372.0" cy="97.6" r="2.6" fill="var(--hR)"/>
+<circle cx="365.3" cy="86.0" r="2.6" fill="var(--hR)"/>
+<circle cx="352.0" cy="90.9" r="2.6" fill="var(--hR)"/>
+<circle cx="345.7" cy="84.0" r="2.6" fill="var(--hR)"/>
+<circle cx="341.0" cy="95.5" r="2.6" fill="var(--hR)"/>
+<circle cx="354.3" cy="91.2" r="2.6" fill="var(--hR)"/>
+<circle cx="358.8" cy="82.5" r="2.6" fill="var(--hR)"/>
+<circle cx="355.8" cy="104.7" r="2.6" fill="var(--hR)"/>
+<text x="358.0" y="136.0" font-size="11.5" fill="var(--hR)" data-panel="A" text-anchor="middle" font-weight="600">human-R</text>
+<text x="358.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 3</text>
+<circle cx="452" cy="98" r="26" fill="none" stroke="var(--hL)" stroke-width="1.2" stroke-dasharray="4 3"/>
+<circle cx="452.7" cy="106.4" r="2.6" fill="var(--hL)"/>
+<circle cx="444.6" cy="103.7" r="2.6" fill="var(--hL)"/>
+<circle cx="463.9" cy="103.3" r="2.6" fill="var(--hL)"/>
+<circle cx="467.6" cy="89.2" r="2.6" fill="var(--hL)"/>
+<circle cx="453.0" cy="87.6" r="2.6" fill="var(--hL)"/>
+<circle cx="441.0" cy="95.4" r="2.6" fill="var(--hL)"/>
+<circle cx="456.0" cy="105.5" r="2.6" fill="var(--hL)"/>
+<circle cx="456.3" cy="116.8" r="2.6" fill="var(--hL)"/>
+<circle cx="460.5" cy="82.2" r="2.6" fill="var(--hL)"/>
+<circle cx="455.1" cy="88.5" r="2.6" fill="var(--hL)"/>
+<circle cx="446.2" cy="112.8" r="2.6" fill="var(--hL)"/>
+<circle cx="449.9" cy="79.6" r="2.6" fill="var(--hL)"/>
+<circle cx="457.9" cy="92.4" r="2.6" fill="var(--hL)"/>
+<text x="452.0" y="136.0" font-size="11.5" fill="var(--hL)" data-panel="A" text-anchor="middle" font-weight="600">sharpa-L</text>
+<text x="452.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 4</text>
+<circle cx="546" cy="98" r="26" fill="none" stroke="var(--hR)" stroke-width="1.2" stroke-dasharray="4 3"/>
+<circle cx="533.7" cy="86.0" r="2.6" fill="var(--hR)"/>
+<circle cx="551.4" cy="79.4" r="2.6" fill="var(--hR)"/>
+<circle cx="544.8" cy="78.8" r="2.6" fill="var(--hR)"/>
+<circle cx="559.7" cy="100.5" r="2.6" fill="var(--hR)"/>
+<circle cx="561.2" cy="92.4" r="2.6" fill="var(--hR)"/>
+<circle cx="553.0" cy="93.0" r="2.6" fill="var(--hR)"/>
+<circle cx="535.4" cy="100.1" r="2.6" fill="var(--hR)"/>
+<circle cx="531.3" cy="93.9" r="2.6" fill="var(--hR)"/>
+<circle cx="556.3" cy="98.9" r="2.6" fill="var(--hR)"/>
+<circle cx="542.5" cy="116.8" r="2.6" fill="var(--hR)"/>
+<circle cx="546.9" cy="88.6" r="2.6" fill="var(--hR)"/>
+<circle cx="548.6" cy="89.3" r="2.6" fill="var(--hR)"/>
+<circle cx="539.4" cy="92.0" r="2.6" fill="var(--hR)"/>
+<text x="546.0" y="136.0" font-size="11.5" fill="var(--hR)" data-panel="A" text-anchor="middle" font-weight="600">sharpa-R</text>
+<text x="546.0" y="149.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">group 5</text>
+<text x="28.0" y="170.0" font-size="11" fill="var(--mut)" data-panel="A">N = 2048 tracked points per entity · spec = (face_id, bary) sampled ONCE on the template (20·N area-weighted → FPS,</text>
+<text x="28.0" y="183.5" font-size="11" fill="var(--mut)" data-panel="A">prefix = FPS subset), re-evaluated from each frame's vertices · part = argmax skinning weight (MANO 16) / URDF link (Sharpa 33) / obj part</text>
+<text x="28.0" y="197.0" font-size="11" fill="var(--mut)" data-panel="A">absent entity → no tokens (P varies) · ≤ 2 objects, ranked by motion then hand proximity · Sharpa episode = same scene, hand rows swapped</text>
+<text x="28.0" y="211.5" font-size="11" fill="var(--bad)" data-panel="A">DESIGN §2 “specs stored to 4096, FPS-prefix trim” → code stores n_points = 2048 (data/config.py:25, dir 15hz_N2048); prefix(2048) is a no-op</text>
+<rect x="28.0" y="232.0" width="300.0" height="14.0" rx="3" fill="var(--track)" stroke="var(--line)" stroke-width="1"/>
+<line x1="28" y1="232" x2="28" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="40" y1="232" x2="40" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="52" y1="232" x2="52" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="64" y1="232" x2="64" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="76" y1="232" x2="76" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="88" y1="232" x2="88" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="100" y1="232" x2="100" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="112" y1="232" x2="112" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="124" y1="232" x2="124" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="136" y1="232" x2="136" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="148" y1="232" x2="148" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="160" y1="232" x2="160" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="172" y1="232" x2="172" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="184" y1="232" x2="184" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="196" y1="232" x2="196" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="208" y1="232" x2="208" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="220" y1="232" x2="220" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="232" y1="232" x2="232" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="244" y1="232" x2="244" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="256" y1="232" x2="256" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="268" y1="232" x2="268" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="280" y1="232" x2="280" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="292" y1="232" x2="292" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="304" y1="232" x2="304" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="316" y1="232" x2="316" y2="246" stroke="var(--line)" stroke-width="1"/>
+<line x1="328" y1="232" x2="328" y2="246" stroke="var(--line)" stroke-width="1"/>
+<rect x="124.0" y="229.0" width="204.0" height="20.0" rx="3" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1.2"/>
+<text x="124.0" y="225.0" font-size="11" fill="var(--acc)" data-panel="A" text-anchor="middle">s</text>
+<text x="316.0" y="225.0" font-size="11" fill="var(--acc)" data-panel="A" text-anchor="middle">s+16</text>
+<text x="178.0" y="262.0" font-size="11" fill="var(--mut)" data-panel="A" text-anchor="middle">tracks (F, P, 3) f16 @ 15 Hz · window s … s+16 · chunk stride 4</text>
+<text x="340.0" y="230.0" font-size="11" fill="var(--txt)" data-panel="A">keep = valid[s] → points invalid at frame 0 dropped</text>
+<text x="340.0" y="243.5" font-size="11" fill="var(--txt)" data-panel="A">x₀ = R_z·(tracks[s] − c) (P,3) f32 · c = mean of hand centroids at s</text>
+<text x="340.0" y="257.0" font-size="11" fill="var(--txt)" data-panel="A">flow[t] = R_z·(tracks[s+1+t] − tracks[s]) (16,P,3) cumulative, t = 0…15</text>
+<text x="340.0" y="270.5" font-size="11" fill="var(--txt)" data-panel="A">yaw R_z ~ U(0, 2π) train only · T = 16 @ 15 Hz = 1.07 s · stride 4 = 0.27 s</text>
+<text x="340.0" y="285.0" font-size="11" fill="var(--bad)" data-panel="A">DESIGN §1 still says 10 Hz / 1.6 s (code: target_fps 15, data/config.py:24)</text>
+<text x="28.0" y="284.0" font-size="11" fill="var(--ok)" data-panel="A">masks  valid (16,P) later frames · contact (16,P) = other class within 1 cm (cKDTree on points) · contact_nn (16,P) hand → nearest obj pt, −1 else</text>
+<text x="28.0" y="297.6" font-size="11" fill="var(--txt)" data-panel="A">labels cls · inst · tag · side → group = obj ordinal 0/1 | 2 + 2·(tag−1) + (side−1)  (embed.labels_to_group) · part = metadata only (never input)</text>
+<text x="28.0" y="311.2" font-size="11" fill="var(--txt)" data-panel="A">contract cls: 1 = hand, 0 = object (schema stores CLASS_HAND = 0 → loaders.py:63 remaps 1 − cls) · padding labels −1 → 0, masked by exists</text>
+<text x="28.0" y="324.8" font-size="11" fill="var(--txt)" data-panel="A">text “verb the target with the tool” → frozen T5-base encoder, offline npz keyed sha1(text), max_len 32 → text_emb (L ≤ 32, 768) f16 + text_mask</text>
+<text x="28.0" y="338.4" font-size="11" fill="var(--mut)" data-panel="A">collate: pad to Pmax ≤ 8,192 → exists (B, Pmax) · batch 32 · Sharpa 25 % of TACO chunks (WeightedRandomSampler) · val = every 20th episode</text>
+<g data-rect="618,14,440,372" data-panel-rect="B">
+<rect x="618.0" y="14.0" width="440.0" height="372.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="628.0" y="23.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="639.0" y="39.0" font-size="13" fill="#fff" data-panel="B" text-anchor="middle" font-weight="700">B</text>
+<text x="658.0" y="39.0" font-size="15" fill="var(--txt)" data-panel="B" font-weight="700">Token embedding — TokenEmbedder</text>
+<text x="658.0" y="55.0" font-size="11" fill="var(--mut)" data-panel="B" font-family="var(--mono)">wam/model/embed.py · h₀ = Linear(Fourier(xyz₀)) + E_group[group] + Linear(x_τ)</text>
+<rect x="632.0" y="76.0" width="78.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="671.0" y="90.1" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">xyz₀</text>
+<text x="671.0" y="103.9" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">(B, P, 3)</text>
+<line x1="710.0" y1="93.0" x2="722.0" y2="93.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="724.0" y="76.0" width="166.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="807.0" y="90.5" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">Fourier · 64 freqs 2⁰…2⁸·π rad/m</text>
+<text x="807.0" y="103.0" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">[xyz ⊕ sin ⊕ cos] → 387</text>
+<line x1="890.0" y1="93.0" x2="902.0" y2="93.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="904.0" y="76.0" width="96.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="952.0" y="90.1" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">Linear</text>
+<text x="952.0" y="103.9" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">387 → 768</text>
+<line x1="1000.0" y1="93.0" x2="1020.0" y2="93.0" stroke="var(--acc)" stroke-width="1.3" fill="none" marker-end="url(#aa)"/>
+<rect x="632.0" y="142.0" width="78.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="671.0" y="156.1" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">group</text>
+<text x="671.0" y="169.9" font-size="11" fill="var(--txt)" data-panel="B" text-anchor="middle">(B, P) int64</text>
+<line x1="710.0" y1="159.0" x2="722.0" y2="159.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="724.0" y="142.0" width="166.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="807.0" y="156.5" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">E_group  8 × 768</text>
+<text x="807.0" y="169.0" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">init 𝒩(0, 0.02) · no wd</text>
+<line x1="890.0" y1="159.0" x2="1020.0" y2="159.0" stroke="var(--acc)" stroke-width="1.3" fill="none" marker-end="url(#aa)"/>
+<text x="902.0" y="150.0" font-size="10.5" fill="var(--mut)" data-panel="B">rows 0 obj-0 · 1 obj-1 · 2 human-L</text>
+<text x="902.0" y="162.0" font-size="10.5" fill="var(--mut)" data-panel="B">3 human-R · 4 sharpa-L · 5 sharpa-R</text>
+<text x="902.0" y="174.0" font-size="10.5" fill="var(--mut)" data-panel="B">6 null-L · 7 null-R (CFG only)</text>
+<text x="632.0" y="192.0" font-size="10.5" fill="var(--mut)" data-panel="B">CFG tag dropout  drop_tag ~ Bernoulli(0.1) per sample → hand rows 2–5 ↦ 6 +</text>
+<text x="632.0" y="204.5" font-size="10.5" fill="var(--mut)" data-panel="B">side (null-L / null-R); object rows unchanged  (embed.null_embodiment)</text>
+<rect x="632.0" y="219.0" width="412.0" height="46.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="638.0" y="233.0" font-size="10.5" fill="var(--acc)" data-panel="B">DESIGN “Entity semantics via text” (16:10): per-entity phrase → frozen</text>
+<text x="638.0" y="245.5" font-size="10.5" fill="var(--acc)" data-panel="B">T5-base, mean-pool 768 → Linear → d, summed in place of the E_group row</text>
+<text x="638.0" y="258.0" font-size="10.5" fill="var(--acc)" data-panel="B">when entity_text: true;</text>
+<text x="638.0" y="258.0" font-size="10.5" fill="var(--acc)" data-panel="B">hand phrases → learned null (p 0.1); objects keep their phrase. E_group = fallback / ablation.</text>
+<text x="632.0" y="279.0" font-size="11" fill="var(--bad)" data-panel="B">code currently: not implemented — embed.py has only E_group (8 × d); no</text>
+<text x="632.0" y="293.5" font-size="11" fill="var(--bad)" data-panel="B">entity_text option in SetDiTConfig</text>
+<rect x="632.0" y="309.0" width="78.0" height="34.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="671.0" y="323.1" font-size="11" fill="var(--acc)" data-panel="B" text-anchor="middle">x_τ</text>
+<text x="671.0" y="336.9" font-size="11" fill="var(--acc)" data-panel="B" text-anchor="middle">(B, P, 48)</text>
+<line x1="710.0" y1="326.0" x2="722.0" y2="326.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="724.0" y="309.0" width="166.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="807.0" y="323.5" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">Linear  48 → 768</text>
+<text x="807.0" y="336.0" font-size="10.5" fill="var(--txt)" data-panel="B" text-anchor="middle">(noisy normalised flow, 16 × 3)</text>
+<line x1="890.0" y1="326.0" x2="1020.0" y2="326.0" stroke="var(--acc)" stroke-width="1.3" fill="none" marker-end="url(#aa)"/>
+<circle cx="1029.0" cy="159.0" r="9" fill="var(--panel)" stroke="var(--acc)" stroke-width="1.3"/>
+<line x1="1024.0" y1="159.0" x2="1034.0" y2="159.0" stroke="var(--acc)" stroke-width="1.4"/>
+<line x1="1029.0" y1="154.1" x2="1029.0" y2="163.9" stroke="var(--acc)" stroke-width="1.4"/>
+<line x1="1029.0" y1="93.0" x2="1029.0" y2="148.0" stroke="var(--acc)" stroke-width="1.3" fill="none"/>
+<line x1="1029.0" y1="326.0" x2="1029.0" y2="170.0" stroke="var(--acc)" stroke-width="1.3" fill="none"/>
+<line x1="1038.0" y1="159.0" x2="1050.0" y2="159.0" stroke="var(--acc)" stroke-width="1.3" fill="none"/>
+<text x="1044.0" y="140.0" font-size="12" fill="var(--acc)" data-panel="B" text-anchor="middle" font-weight="700">h₀</text>
+<text x="1044.0" y="186.0" font-size="10.5" fill="var(--acc)" data-panel="B" text-anchor="middle">(B,P,768)</text>
+<text x="632.0" y="356.0" font-size="10.5" fill="var(--mut)" data-panel="B">no RoPE (DESIGN §3 “RoPE / Fourier”): Fourier only · no positional tokens,</text>
+<text x="632.0" y="368.5" font-size="10.5" fill="var(--mut)" data-panel="B">permutation-equivariant set · groups clamped to 0…7</text>
+<g data-rect="1072,14,714,372" data-panel-rect="C">
+<rect x="1072.0" y="14.0" width="714.0" height="372.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="1082.0" y="23.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1093.0" y="39.0" font-size="13" fill="#fff" data-panel="C" text-anchor="middle" font-weight="700">C</text>
+<text x="1112.0" y="39.0" font-size="15" fill="var(--txt)" data-panel="C" font-weight="700">Conditioning — flow step τ (adaLN-zero, mode “single”) and text (cross-attention K,V)</text>
+<text x="1112.0" y="55.0" font-size="11" fill="var(--mut)" data-panel="C" font-family="var(--mono)">wam/model/embed.py TimestepEmbedder · dit.py SetDiT.shared_ada, DiTBlock.ada_table, FinalLayer.ada, apply_text_dropout</text>
+<rect x="1086.0" y="78.0" width="70.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1121.0" y="92.1" font-size="11" fill="var(--txt)" data-panel="C" text-anchor="middle">τ (B,)</text>
+<text x="1121.0" y="105.9" font-size="11" fill="var(--txt)" data-panel="C" text-anchor="middle">∈ [0, 1]</text>
+<line x1="1156.0" y1="95.0" x2="1168.0" y2="95.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1170.0" y="78.0" width="150.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1245.0" y="92.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">×1000 → sinusoidal 256</text>
+<text x="1245.0" y="105.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">128 cos ⊕ 128 sin · max_period 10⁴</text>
+<line x1="1320.0" y1="95.0" x2="1332.0" y2="95.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1334.0" y="78.0" width="150.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1409.0" y="92.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">Linear 256→768 → SiLU</text>
+<text x="1409.0" y="105.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">→ Linear 768→768</text>
+<line x1="1484.0" y1="95.0" x2="1496.0" y2="95.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1498.0" y="78.0" width="74.0" height="34.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1535.0" y="92.1" font-size="11" fill="var(--acc)" data-panel="C" text-anchor="middle">c</text>
+<text x="1535.0" y="105.9" font-size="11" fill="var(--acc)" data-panel="C" text-anchor="middle">(B, 768)</text>
+<line x1="1535.0" y1="112.0" x2="1535.0" y2="132.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1372.0" y="134.0" width="326.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1535.0" y="148.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">SiLU → Linear 768 → 6·768 = 4608   zero-init, SHARED by the 12 blocks (1×)</text>
+<text x="1535.0" y="161.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">+ ada_table_ℓ (6 × 768, zero-init, one per block ℓ)  →  chunk(6)</text>
+<line x1="1535.0" y1="168.0" x2="1535.0" y2="182.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1372.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1396.0" y="199.1" font-size="11.5" fill="var(--txt)" data-panel="C" text-anchor="middle">β₁</text>
+<rect x="1428.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1452.0" y="199.1" font-size="11.5" fill="var(--txt)" data-panel="C" text-anchor="middle">γ₁</text>
+<rect x="1484.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1508.0" y="199.1" font-size="11.5" fill="var(--acc)" data-panel="C" text-anchor="middle">α₁</text>
+<rect x="1540.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1564.0" y="199.1" font-size="11.5" fill="var(--txt)" data-panel="C" text-anchor="middle">β₂</text>
+<rect x="1596.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1620.0" y="199.1" font-size="11.5" fill="var(--txt)" data-panel="C" text-anchor="middle">γ₂</text>
+<rect x="1652.0" y="184.0" width="48.0" height="22.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1676.0" y="199.1" font-size="11.5" fill="var(--acc)" data-panel="C" text-anchor="middle">α₂</text>
+<text x="1718.0" y="199.0" font-size="10.5" fill="var(--mut)" data-panel="C">each (B, 768)</text>
+<text x="1372.0" y="224.0" font-size="10.5" fill="var(--mut)" data-panel="C">modulate(x; β, γ) = x · (1 + γ) + β     gate: x ← x + α ⊙ f(·)     code order: (shift₁, scale₁, gate₁, shift₂, scale₂, gate₂)</text>
+<rect x="1086.0" y="134.0" width="270.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1221.0" y="148.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">head: c → SiLU → Linear 768 → 1536 (zero-init)</text>
+<text x="1221.0" y="161.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">→ (β_h, γ_h) for the final LayerNorm (panel E)</text>
+<polyline points="1498.0,104.0 1362.0,104.0 1362.0,151.0 1356.0,151.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<text x="1086.0" y="186.0" font-size="11" fill="var(--bad)" data-panel="C">DESIGN §3 “scale/shift/gate per sub-layer”:</text>
+<text x="1086.0" y="200.5" font-size="11" fill="var(--bad)" data-panel="C">code modulates self-attn + MLP only —</text>
+<text x="1086.0" y="215.0" font-size="11" fill="var(--bad)" data-panel="C">cross-attention gets a plain affine LayerNorm</text>
+<text x="1086.0" y="229.5" font-size="11" fill="var(--bad)" data-panel="C">and a zero-init out-proj, no (β, γ, α).</text>
+<text x="1086.0" y="244.0" font-size="11" fill="var(--bad)" data-panel="C">adaln_mode = per_block (own Linear 768→4608 per</text>
+<text x="1086.0" y="258.5" font-size="11" fill="var(--bad)" data-panel="C">block, +38.9 M) exists but the pilot uses</text>
+<text x="1086.0" y="273.0" font-size="11" fill="var(--bad)" data-panel="C">“single” (PixArt-α).</text>
+<rect x="1086.0" y="250.0" width="150.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1161.0" y="264.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">text_emb (B, L ≤ 32, 768) f16</text>
+<text x="1161.0" y="277.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">text_mask (B, L) bool</text>
+<line x1="1236.0" y1="267.0" x2="1248.0" y2="267.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1250.0" y="250.0" width="228.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1364.0" y="264.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">CFG text dropout  drop_text ~ Bernoulli(0.1) / sample →</text>
+<text x="1364.0" y="277.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">all L rows := null_text (1,1,768) learned · mask = [1, 0, …]</text>
+<line x1="1478.0" y1="267.0" x2="1490.0" y2="267.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1492.0" y="250.0" width="130.0" height="34.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1557.0" y="264.5" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">cast to activation dtype</text>
+<text x="1557.0" y="277.0" font-size="10.5" fill="var(--txt)" data-panel="C" text-anchor="middle">(bf16 under autocast)</text>
+<line x1="1622.0" y1="267.0" x2="1634.0" y2="267.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1636.0" y="250.0" width="136.0" height="34.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1704.0" y="264.5" font-size="10.5" fill="var(--acc)" data-panel="C" text-anchor="middle">per block: kv Linear 768→1536</text>
+<text x="1704.0" y="277.0" font-size="10.5" fill="var(--acc)" data-panel="C" text-anchor="middle">→ K, V (B, 12, L, 64) · RMSNorm(K)</text>
+<text x="1086.0" y="304.0" font-size="10.5" fill="var(--mut)" data-panel="C">ctx_mask (B,1,1,L) True = attend · text and tag dropout are INDEPENDENT Bernoulli masks (SetDiT.sample_dropout) · at sampling</text>
+<text x="1086.0" y="316.5" font-size="10.5" fill="var(--mut)" data-panel="C">only text is nulled for guidance (forward_cfg); tag is never guided</text>
+<text x="1086.0" y="329.0" font-size="10.5" fill="var(--mut)" data-panel="C">T5-base encoder (~110 M) is frozen and offline: scripts/cache_text_embeddings.py → last_hidden_state, un-padded, f16 per unique</text>
+<text x="1086.0" y="341.5" font-size="10.5" fill="var(--mut)" data-panel="C">task string · training raises if text_dim ≠ 768</text>
+<g data-rect="14,400,994,360" data-panel-rect="D">
+<rect x="14.0" y="400.0" width="994.0" height="360.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="24.0" y="409.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="35.0" y="425.0" font-size="13" fill="#fff" data-panel="D" text-anchor="middle" font-weight="700">D</text>
+<text x="54.0" y="425.0" font-size="15" fill="var(--txt)" data-panel="D" font-weight="700">DiT block × 12 (exploded) — x (B, P, 768) → x · bf16 autocast, fp32 master weights</text>
+<text x="54.0" y="441.0" font-size="11" fill="var(--mut)" data-panel="D" font-family="var(--mono)">wam/model/dit.py DiTBlock · SelfAttention · CrossAttention · SwiGLU · RMSNorm (QK-norm) · modulate</text>
+<text x="28.0" y="450.0" font-size="11.5" fill="var(--mut)" data-panel="D" font-weight="600">① self-attention (gated)</text>
+<rect x="68.0" y="458.0" width="74.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="105.0" y="475.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">LN₁</text>
+<text x="105.0" y="488.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">no affine · ε 1e-6</text>
+<line x1="142.0" y1="478.0" x2="153.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="154.0" y="458.0" width="112.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="210.0" y="475.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">modulate(β₁, γ₁)</text>
+<text x="210.0" y="488.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">x·(1+γ₁) + β₁</text>
+<line x1="266.0" y1="478.0" x2="277.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="278.0" y="458.0" width="134.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="345.0" y="475.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">qkv Linear 768 → 2304</text>
+<text x="345.0" y="488.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">→ q, k, v (B, 12, P, 64)</text>
+<line x1="412.0" y1="478.0" x2="423.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="424.0" y="458.0" width="104.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="476.0" y="475.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">RMSNorm q, k</text>
+<text x="476.0" y="488.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">per head (64), fp32</text>
+<line x1="528.0" y1="478.0" x2="539.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="540.0" y="458.0" width="166.0" height="40.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="623.0" y="475.5" font-size="10.5" fill="var(--acc)" data-panel="D" text-anchor="middle">SDPA over the P points</text>
+<text x="623.0" y="488.0" font-size="10.5" fill="var(--acc)" data-panel="D" text-anchor="middle">attn_mask = exists (B,1,1,P), True = attend</text>
+<line x1="706.0" y1="478.0" x2="717.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="718.0" y="458.0" width="100.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="768.0" y="475.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">proj Linear</text>
+<text x="768.0" y="488.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">768 → 768</text>
+<line x1="818.0" y1="478.0" x2="829.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="830.0" y="458.0" width="58.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="859.0" y="482.1" font-size="11.5" fill="var(--txt)" data-panel="D" text-anchor="middle">× α₁</text>
+<circle cx="918.0" cy="478.0" r="9" fill="var(--panel)" stroke="var(--mut)" stroke-width="1.3"/>
+<line x1="913.0" y1="478.0" x2="923.0" y2="478.0" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="918.0" y1="473.1" x2="918.0" y2="482.9" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="888.0" y1="478.0" x2="908.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<polyline points="46.0,478.0 46.0,452.0 918.0,452.0 918.0,468.0" stroke="var(--mut)" stroke-width="1.3" fill="none" stroke-dasharray="3 3"/>
+<line x1="46.0" y1="478.0" x2="67.0" y2="478.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<text x="46.0" y="492.0" font-size="11" fill="var(--mut)" data-panel="D" text-anchor="middle">x</text>
+<text x="932.0" y="482.0" font-size="11" fill="var(--mut)" data-panel="D">→ x</text>
+<text x="28.0" y="550.0" font-size="11.5" fill="var(--mut)" data-panel="D" font-weight="600">② cross-attention to text (no gate)</text>
+<rect x="68.0" y="558.0" width="74.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="105.0" y="575.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">LN_x</text>
+<text x="105.0" y="588.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">affine · ε 1e-6</text>
+<line x1="142.0" y1="578.0" x2="153.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="154.0" y="558.0" width="134.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="221.0" y="575.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">q Linear 768 → 768</text>
+<text x="221.0" y="588.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">kv Linear 768 → 1536 (text)</text>
+<line x1="288.0" y1="578.0" x2="299.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="300.0" y="558.0" width="104.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="352.0" y="575.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">RMSNorm q, k</text>
+<text x="352.0" y="588.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">per head (64), fp32</text>
+<line x1="404.0" y1="578.0" x2="415.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="416.0" y="558.0" width="166.0" height="40.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="499.0" y="575.5" font-size="10.5" fill="var(--acc)" data-panel="D" text-anchor="middle">SDPA over L text tokens</text>
+<text x="499.0" y="588.0" font-size="10.5" fill="var(--acc)" data-panel="D" text-anchor="middle">attn_mask = text_mask (B,1,1,L)</text>
+<line x1="582.0" y1="578.0" x2="593.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="594.0" y="558.0" width="100.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="644.0" y="575.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">proj Linear 768 → 768</text>
+<text x="644.0" y="588.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">zero-init</text>
+<line x1="694.0" y1="578.0" x2="705.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="706.0" y="558.0" width="58.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="735.0" y="582.1" font-size="11.5" fill="var(--mut)" data-panel="D" text-anchor="middle">× 1</text>
+<circle cx="794.0" cy="578.0" r="9" fill="var(--panel)" stroke="var(--mut)" stroke-width="1.3"/>
+<line x1="789.0" y1="578.0" x2="799.0" y2="578.0" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="794.0" y1="573.0" x2="794.0" y2="583.0" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="764.0" y1="578.0" x2="784.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<polyline points="46.0,578.0 46.0,552.0 794.0,552.0 794.0,568.0" stroke="var(--mut)" stroke-width="1.3" fill="none" stroke-dasharray="3 3"/>
+<line x1="46.0" y1="578.0" x2="67.0" y2="578.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<text x="46.0" y="592.0" font-size="11" fill="var(--mut)" data-panel="D" text-anchor="middle">x</text>
+<text x="808.0" y="582.0" font-size="11" fill="var(--mut)" data-panel="D">→ x</text>
+<text x="28.0" y="650.0" font-size="11.5" fill="var(--mut)" data-panel="D" font-weight="600">③ SwiGLU MLP (gated)</text>
+<rect x="68.0" y="658.0" width="74.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="105.0" y="675.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">LN₂</text>
+<text x="105.0" y="688.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">no affine · ε 1e-6</text>
+<line x1="142.0" y1="678.0" x2="153.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="154.0" y="658.0" width="112.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="210.0" y="675.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">modulate(β₂, γ₂)</text>
+<text x="210.0" y="688.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">x·(1+γ₂) + β₂</text>
+<line x1="266.0" y1="678.0" x2="277.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="278.0" y="658.0" width="134.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="345.0" y="675.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">w12 Linear 768 → 4096</text>
+<text x="345.0" y="688.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">= [a | b], 2 × 2048</text>
+<line x1="412.0" y1="678.0" x2="423.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="424.0" y="658.0" width="104.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="476.0" y="675.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">silu(a) ⊙ b</text>
+<text x="476.0" y="688.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">hidden 2048</text>
+<line x1="528.0" y1="678.0" x2="539.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="540.0" y="658.0" width="166.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="623.0" y="675.5" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">w3 Linear 2048 → 768</text>
+<text x="623.0" y="688.0" font-size="10.5" fill="var(--txt)" data-panel="D" text-anchor="middle">hidden = ⌈⅔·4·768⌉₆₄ = 2048</text>
+<line x1="706.0" y1="678.0" x2="717.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="718.0" y="658.0" width="58.0" height="40.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="747.0" y="682.1" font-size="11.5" fill="var(--txt)" data-panel="D" text-anchor="middle">× α₂</text>
+<circle cx="806.0" cy="678.0" r="9" fill="var(--panel)" stroke="var(--mut)" stroke-width="1.3"/>
+<line x1="801.0" y1="678.0" x2="811.0" y2="678.0" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="806.0" y1="673.0" x2="806.0" y2="683.0" stroke="var(--mut)" stroke-width="1.4"/>
+<line x1="776.0" y1="678.0" x2="796.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<polyline points="46.0,678.0 46.0,652.0 806.0,652.0 806.0,668.0" stroke="var(--mut)" stroke-width="1.3" fill="none" stroke-dasharray="3 3"/>
+<line x1="46.0" y1="678.0" x2="67.0" y2="678.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<text x="46.0" y="692.0" font-size="11" fill="var(--mut)" data-panel="D" text-anchor="middle">x</text>
+<text x="820.0" y="682.0" font-size="11" fill="var(--mut)" data-panel="D">→ x</text>
+<text x="210.0" y="510.0" font-size="10" fill="var(--acc)" data-panel="D" text-anchor="middle">β₁ γ₁ α₁ from panel C</text>
+<text x="210.0" y="710.0" font-size="10" fill="var(--acc)" data-panel="D" text-anchor="middle">β₂ γ₂ α₂ from panel C</text>
+<text x="28.0" y="720.0" font-size="10.5" fill="var(--mut)" data-panel="D">init: Xavier-uniform for every non-zero Linear; zero-init = shared_ada, cross.proj, head.ada, head.linear (each block starts near</text>
+<text x="28.0" y="732.5" font-size="10.5" fill="var(--mut)" data-panel="D">identity) · fully-padded sample guard key_mask[empty, 0] = True · grad_checkpoint off · QK-RMSNorm is a code addition (not in</text>
+<text x="28.0" y="745.0" font-size="10.5" fill="var(--mut)" data-panel="D">DESIGN)</text>
+<text x="28.0" y="760.5" font-size="10.5" fill="var(--txt)" data-panel="D" font-weight="600">params / block 9,454,592 = attn 2,362,496 · cross 2,362,496 · SwiGLU 4,723,456 · LN_x 1,536 · ada_table 4,608  → × 12 = 113,455,104</text>
+<text x="744.0" y="722.0" font-size="11" fill="var(--bad)" data-panel="D">DESIGN §3 “MLP ratio 4”: code MLP = SwiGLU,</text>
+<text x="744.0" y="736.5" font-size="11" fill="var(--bad)" data-panel="D">hidden 2048 (param-matched to GELU 4·768 =</text>
+<text x="744.0" y="751.0" font-size="11" fill="var(--bad)" data-panel="D">3072; cfg.mlp = “gelu” is the alternative).</text>
+<text x="744.0" y="765.5" font-size="11" fill="var(--bad)" data-panel="D">PTv3 backend raises NotImplementedError.</text>
+<g data-rect="1022,400,364,360" data-panel-rect="E">
+<rect x="1022.0" y="400.0" width="364.0" height="360.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="1032.0" y="409.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1043.0" y="425.0" font-size="13" fill="#fff" data-panel="E" text-anchor="middle" font-weight="700">E</text>
+<text x="1062.0" y="425.0" font-size="15" fill="var(--txt)" data-panel="E" font-weight="700">Head — FinalLayer</text>
+<text x="1062.0" y="441.0" font-size="11" fill="var(--mut)" data-panel="E" font-family="var(--mono)">wam/model/dit.py FinalLayer · flow_matching.channels_to_flow</text>
+<rect x="1114.0" y="462.0" width="180.0" height="30.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1204.0" y="481.1" font-size="11.5" fill="var(--txt)" data-panel="E" text-anchor="middle">x_L (B, P, 768)</text>
+<line x1="1204.0" y1="492.0" x2="1204.0" y2="506.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1114.0" y="508.0" width="180.0" height="30.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1204.0" y="527.0" font-size="11" fill="var(--txt)" data-panel="E" text-anchor="middle">LayerNorm · no affine · ε 1e-6</text>
+<line x1="1204.0" y1="538.0" x2="1204.0" y2="552.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1114.0" y="554.0" width="180.0" height="30.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1204.0" y="573.0" font-size="11" fill="var(--txt)" data-panel="E" text-anchor="middle">modulate(β_h, γ_h) ← c (panel C)</text>
+<line x1="1204.0" y1="584.0" x2="1204.0" y2="598.0" stroke="var(--mut)" stroke-width="1.3" fill="none" marker-end="url(#am)"/>
+<rect x="1114.0" y="600.0" width="180.0" height="30.0" rx="5" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="1204.0" y="619.0" font-size="11" fill="var(--txt)" data-panel="E" text-anchor="middle">Linear 768 → 48 · zero-init</text>
+<line x1="1204.0" y1="630.0" x2="1204.0" y2="644.0" stroke="var(--acc)" stroke-width="1.3" fill="none" marker-end="url(#aa)"/>
+<rect x="1114.0" y="646.0" width="180.0" height="30.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1204.0" y="665.0" font-size="11" fill="var(--acc)" data-panel="E" text-anchor="middle">v̂ (B, P, 48) · .float() → fp32</text>
+<line x1="1204.0" y1="676.0" x2="1204.0" y2="690.0" stroke="var(--acc)" stroke-width="1.3" fill="none" marker-end="url(#aa)"/>
+<rect x="1114.0" y="692.0" width="180.0" height="30.0" rx="5" fill="var(--acc-bg)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1204.0" y="710.8" font-size="10.5" fill="var(--acc)" data-panel="E" text-anchor="middle">view (B,P,16,3) → permute → (B,16,P,3)</text>
+<rect x="1304.0" y="600.0" width="84.0" height="30.0" rx="5" fill="var(--panel)" stroke="var(--mut)" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="1346.0" y="613.0" font-size="10.5" fill="var(--mut)" data-panel="E" text-anchor="middle">+16 logits</text>
+<text x="1346.0" y="625.0" font-size="10.5" fill="var(--mut)" data-panel="E" text-anchor="middle">contact (OFF)</text>
+<line x1="1294.0" y1="615.0" x2="1303.0" y2="615.0" stroke="var(--mut)" stroke-width="1.3" fill="none" stroke-dasharray="3 3" marker-end="url(#am)"/>
+<text x="1036.0" y="738.0" font-size="10.5" fill="var(--mut)" data-panel="E">head_contact = false in pilot_110m.yaml / dryrun.yaml →</text>
+<text x="1036.0" y="750.5" font-size="10.5" fill="var(--mut)" data-panel="E">head_channels 48; pilot_110m_contact.yaml: 48 + 16 → logits</text>
+<text x="1036.0" y="763.0" font-size="10.5" fill="var(--mut)" data-panel="E">(B,P,16) → σ → contact map (B,16,P), BCE λ 0.05 on hand</text>
+<text x="1036.0" y="775.5" font-size="10.5" fill="var(--mut)" data-panel="E">points, pos_weight ≤ 20</text>
+<text x="1036.0" y="746.0" font-size="10.5" fill="var(--txt)" data-panel="E" font-weight="600">params 1,218,096 = ada 1,181,184 + linear 36,912 (+12,304 with</text>
+<text x="1036.0" y="759.9" font-size="10.5" fill="var(--txt)" data-panel="E" font-weight="600">contact)</text>
+<g data-rect="14,774,854,402" data-panel-rect="F">
+<rect x="14.0" y="774.0" width="854.0" height="402.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="24.0" y="783.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="35.0" y="799.0" font-size="13" fill="#fff" data-panel="F" text-anchor="middle" font-weight="700">F</text>
+<text x="54.0" y="799.0" font-size="15" fill="var(--txt)" data-panel="F" font-weight="700">Training step — L = L_FM + 0.1 · L_rigidity + 0.1 · L_contact-pair</text>
+<text x="54.0" y="815.0" font-size="11" fill="var(--mut)" data-panel="F" font-family="var(--mono)">wam/train/train.py training_losses · flow_matching.py (FlowStats, sample_tau, make_path, masked_mse) · losses.py (rigidity_loss, contact_pair_loss)</text>
+<rect x="28.0" y="832.0" width="296.0" height="190.0" rx="6" fill="var(--panel)" stroke="var(--acc)" stroke-width="1"/>
+<text x="38.0" y="849.0" font-size="11.5" fill="var(--acc)" data-panel="F" font-weight="700">flow-matching path (velocity prediction)</text>
+<text x="38.0" y="866.0" font-size="10.5" fill="var(--txt)" data-panel="F">flow (B,16,P,3) m ÷ std[t, axis]  →</text>
+<text x="38.0" y="879.2" font-size="10.5" fill="var(--txt)" data-panel="F">flow_to_channels → flow_n (B,P,48)</text>
+<text x="38.0" y="892.4" font-size="10.5" fill="var(--txt)" data-panel="F">FlowStats.std (16,3): masked RMS over ≤ 10k chunks</text>
+<text x="38.0" y="905.6" font-size="10.5" fill="var(--txt)" data-panel="F">(per step, per axis)</text>
+<text x="38.0" y="918.8" font-size="10.5" fill="var(--txt)" data-panel="F">τ ~ σ(𝒩(0,1))  logit-normal(μ 0, σ 1) · ε ~ 𝒩(0, I)</text>
+<text x="38.0" y="932.0" font-size="10.5" fill="var(--txt)" data-panel="F">on (B,P,48)</text>
+<text x="38.0" y="945.2" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">x_τ = (1 − τ)·ε + τ·flow_n        u = flow_n − ε</text>
+<text x="38.0" y="958.4" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">(target)</text>
+<text x="38.0" y="971.6" font-size="10.5" fill="var(--txt)" data-panel="F">v̂ = SetDiT(x_τ, xyz₀, group, exists, τ, text,</text>
+<text x="38.0" y="984.8" font-size="10.5" fill="var(--txt)" data-panel="F">drop_text, drop_tag)</text>
+<text x="38.0" y="998.0" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">L_FM = mean_B [ Σ_{p,t} m·‖v̂ − u‖²/3  ÷  Σ m ],  m</text>
+<text x="38.0" y="1011.2" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">= valid ∧ exists (B,P,16)</text>
+<text x="38.0" y="1024.4" font-size="10.5" fill="var(--txt)" data-panel="F">per-point mean over xyz → per-sample masked mean →</text>
+<text x="38.0" y="1037.6" font-size="10.5" fill="var(--txt)" data-panel="F">batch mean · fp32</text>
+<text x="38.0" y="1050.8" font-size="10.5" fill="var(--acc)" data-panel="F" font-weight="600">x̂₁ = x_τ + (1 − τ)·v̂  → × std → F̂ (B,16,P,3) m</text>
+<text x="38.0" y="1064.0" font-size="10.5" fill="var(--acc)" data-panel="F" font-weight="600">(feeds both auxiliaries)</text>
+<rect x="334.0" y="832.0" width="268.0" height="190.0" rx="6" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="344.0" y="849.0" font-size="11.5" fill="var(--txt)" data-panel="F" font-weight="700">per-part rigidity  λ = 0.1</text>
+<text x="344.0" y="866.0" font-size="10.5" fill="var(--txt)" data-panel="F">group key (tag, side, part, inst) per sample ≡</text>
+<text x="344.0" y="879.2" font-size="10.5" fill="var(--txt)" data-panel="F">(sample, group, part)</text>
+<text x="344.0" y="892.4" font-size="10.5" fill="var(--txt)" data-panel="F">steps: randperm(16)[:3] fresh per iteration ·</text>
+<text x="344.0" y="905.6" font-size="10.5" fill="var(--txt)" data-panel="F">groups ≥ 4 points</text>
+<text x="344.0" y="918.8" font-size="10.5" fill="var(--txt)" data-panel="F">y = x₀ + F̂_t · weights w = exists ∧ valid_t ·</text>
+<text x="344.0" y="932.0" font-size="10.5" fill="var(--txt)" data-panel="F">μ_x, μ_y per group</text>
+<text x="344.0" y="945.2" font-size="10.5" fill="var(--txt)" data-panel="F">weighted Kabsch: H = Σ w (x−μ_x)(y−μ_y)ᵀ · SVD</text>
+<text x="344.0" y="958.4" font-size="10.5" fill="var(--txt)" data-panel="F">H = UΣVᵀ</text>
+<text x="344.0" y="971.6" font-size="10.5" fill="var(--txt)" data-panel="F">R = V diag(1, 1, det(VUᵀ)) Uᵀ · R, μ detached</text>
+<text x="344.0" y="984.8" font-size="10.5" fill="var(--txt)" data-panel="F">(envelope theorem)</text>
+<text x="344.0" y="998.0" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">res = ‖R(x₀ − μ_x) + μ_y − y‖²  → mean over</text>
+<text x="344.0" y="1011.2" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">scored points/steps</text>
+<text x="344.0" y="950.0" font-size="10.5" fill="var(--bad)" data-panel="F">DESIGN §4 “each of the 16 steps” → code: 3</text>
+<text x="344.0" y="963.9" font-size="10.5" fill="var(--bad)" data-panel="F">sampled steps (config.py:47 rigidity_steps)</text>
+<text x="344.0" y="982.0" font-size="10.5" fill="var(--mut)" data-panel="F">same rigidity_residuals() gives eval rigid_rms</text>
+<text x="344.0" y="995.9" font-size="10.5" fill="var(--mut)" data-panel="F">over all 16 steps</text>
+<rect x="612.0" y="832.0" width="242.0" height="190.0" rx="6" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="622.0" y="849.0" font-size="11.5" fill="var(--txt)" data-panel="F" font-weight="700">contact-pair co-motion  λ = 0.1</text>
+<text x="622.0" y="866.0" font-size="10.5" fill="var(--txt)" data-panel="F">pairs (i, j = contact_nn[t, i]) where</text>
+<text x="622.0" y="879.2" font-size="10.5" fill="var(--txt)" data-panel="F">contact[t,i] ∧ j ≥ 0 ∧ exists_i,j ∧</text>
+<text x="622.0" y="892.4" font-size="10.5" fill="var(--txt)" data-panel="F">valid_i,j</text>
+<text x="622.0" y="905.6" font-size="10.5" fill="var(--txt)" data-panel="F">x̂ = x₀ + F̂_t (pred) · x = x₀ + flow_t</text>
+<text x="622.0" y="918.8" font-size="10.5" fill="var(--txt)" data-panel="F">(GT)</text>
+<text x="622.0" y="932.0" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">L_cp = mean ‖(x̂_i − x̂_j) − (x_i −</text>
+<text x="622.0" y="945.2" font-size="10.5" fill="var(--txt)" data-panel="F" font-weight="600">x_j)‖² / 3</text>
+<text x="622.0" y="958.4" font-size="10.5" fill="var(--txt)" data-panel="F">0 if no pair in the batch · λ 0.1</text>
+<text x="622.0" y="971.6" font-size="10.5" fill="var(--txt)" data-panel="F">pilot_110m.yaml, 0 dryrun.yaml</text>
+<text x="622.0" y="984.8" font-size="10.5" fill="var(--mut)" data-panel="F">contact BCE (OFF): λ 0.05, needs</text>
+<text x="622.0" y="998.0" font-size="10.5" fill="var(--mut)" data-panel="F">head_contact; hand points, pos_weight ≤</text>
+<text x="622.0" y="1011.2" font-size="10.5" fill="var(--mut)" data-panel="F">20</text>
+<text x="622.0" y="1024.4" font-size="10.5" fill="var(--mut)" data-panel="F">has_contact(batch) warns and no-ops if</text>
+<text x="622.0" y="1037.6" font-size="10.5" fill="var(--mut)" data-panel="F">contact keys are missing</text>
+<rect x="28.0" y="1034.0" width="826.0" height="96.0" rx="6" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="38.0" y="1051.0" font-size="11.5" fill="var(--txt)" data-panel="F" font-weight="700">optimizer · schedule · run</text>
+<text x="38.0" y="1068.0" font-size="10.5" fill="var(--txt)" data-panel="F">AdamW (fused) · lr 3e-4 · betas (0.9, 0.95) · wd 0.05, none on biases / norms / embed / null_text / ada_table · warmup 1k linear → cosine to 0.1·lr</text>
+<text x="38.0" y="1081.2" font-size="10.5" fill="var(--txt)" data-panel="F">at 12k · grad-clip 1.0 · EMA 0.999 fp32 (eval and sampling use EMA weights)</text>
+<text x="38.0" y="1094.4" font-size="10.5" fill="var(--txt)" data-panel="F">bf16 autocast (forward) · TF32 matmul · batch 32 / GPU · 12k steps · ckpt every 1k (atomic + rsync mirror, auto-resume latest) · eval every 2k on 4</text>
+<text x="38.0" y="1107.6" font-size="10.5" fill="var(--txt)" data-panel="F">val batches · 1× A100 in ≤ 2.8 h chained jobs (max_hours, DONE marker) · DDP-ready (torchrun)</text>
+<text x="38.0" y="1110.0" font-size="10.5" fill="var(--bad)" data-panel="F">DESIGN §4: wd 0.01 (code 0.05, config.py:20) · cosine to 12k (code floors at 0.1·lr, min_lr_ratio) · batch 64 (pilot 32) · “point subsampling jitter</text>
+<text x="38.0" y="1123.9" font-size="10.5" fill="var(--bad)" data-panel="F">within the stored specs” (code: deterministic FPS prefix, no jitter; only yaw)</text>
+<text x="28.0" y="1164.0" font-size="10.5" fill="var(--mut)" data-panel="F">data: chunk index over manifest.json files · stride 4 · horizon 16 · yaw aug train only · Sharpa fraction 0.25 within datasets that have both</text>
+<text x="28.0" y="1177.9" font-size="10.5" fill="var(--mut)" data-panel="F">embodiments (TACO) · val = episodes with index % 20 == 0</text>
+<g data-rect="882,774,504,402" data-panel-rect="G">
+<rect x="882.0" y="774.0" width="504.0" height="402.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="892.0" y="783.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="903.0" y="799.0" font-size="13" fill="#fff" data-panel="G" text-anchor="middle" font-weight="700">G</text>
+<text x="922.0" y="799.0" font-size="15" fill="var(--txt)" data-panel="G" font-weight="700">Sampling &amp; readout</text>
+<text x="922.0" y="815.0" font-size="11" fill="var(--mut)" data-panel="G" font-family="var(--mono)">wam/train/flow_matching.py sample_flow, euler_sample · dit.py forward_cfg · eval/metrics.py</text>
+<rect x="896.0" y="832.0" width="476.0" height="118.0" rx="6" fill="var(--panel)" stroke="var(--acc)" stroke-width="1"/>
+<text x="906.0" y="849.0" font-size="11.5" fill="var(--acc)" data-panel="G" font-weight="700">Euler ODE with classifier-free guidance (text)</text>
+<text x="906.0" y="866.0" font-size="10.5" fill="var(--txt)" data-panel="G">x ~ 𝒩(0, I) (B,P,48) · τ_i = linspace(0, 1, N+1), N = 16 (eval_sample_steps;</text>
+<text x="906.0" y="879.2" font-size="10.5" fill="var(--txt)" data-panel="G">sample.py --steps 16)</text>
+<text x="906.0" y="892.4" font-size="10.5" fill="var(--txt)" data-panel="G" font-weight="600">for i &lt; N:  v = v_u + s · (v_c − v_u)        x ← x + (τ_{i+1} − τ_i) · v</text>
+<text x="906.0" y="905.6" font-size="10.5" fill="var(--txt)" data-panel="G">v_c = SetDiT(x, τ_i | text) · v_u = SetDiT(x, τ_i | null_text, tag kept) · s ∈ {1, 3}</text>
+<text x="906.0" y="918.8" font-size="10.5" fill="var(--txt)" data-panel="G">(eval_cfg_scales); s = 1 → one pass</text>
+<text x="906.0" y="932.0" font-size="10.5" fill="var(--txt)" data-panel="G">bf16 autocast · fixed generator seed 1234 at eval · EMA weights</text>
+<text x="906.0" y="932.0" font-size="10.5" fill="var(--bad)" data-panel="G">DESIGN §3 “~20 steps” → 16 · guidance is on text only: the null-tag rows 6/7 are</text>
+<text x="906.0" y="945.9" font-size="10.5" fill="var(--bad)" data-panel="G">trained (drop_tag) but never guided at sampling</text>
+<rect x="896.0" y="962.0" width="476.0" height="96.0" rx="6" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="906.0" y="979.0" font-size="11.5" fill="var(--txt)" data-panel="G" font-weight="700">readout</text>
+<text x="906.0" y="996.0" font-size="10.5" fill="var(--txt)" data-panel="G">x̂₁ (B,P,48) → view (B,P,16,3) → permute → × std → flow (B,16,P,3) m → positions x₀ +</text>
+<text x="906.0" y="1009.2" font-size="10.5" fill="var(--txt)" data-panel="G">Δx_t, t = 1…16</text>
+<text x="906.0" y="1022.4" font-size="10.5" fill="var(--txt)" data-panel="G">hand rows, grouped by part (metadata; MANO 16 / Sharpa 33) → per-link Procrustes (R,</text>
+<text x="906.0" y="1035.6" font-size="10.5" fill="var(--txt)" data-panel="G">t) → IK → Sharpa q₁ … q₁₆ → regenerate per chunk from the new frame-0 points</text>
+<text x="906.0" y="1048.0" font-size="10.5" fill="var(--bad)" data-panel="G">Procrustes + IK readout is NOT in the code (design only; no module, only docstring</text>
+<text x="906.0" y="1061.9" font-size="10.5" fill="var(--bad)" data-panel="G">mentions)</text>
+<rect x="896.0" y="1070.0" width="476.0" height="88.0" rx="6" fill="var(--panel)" stroke="var(--line)" stroke-width="1"/>
+<text x="906.0" y="1087.0" font-size="11.5" fill="var(--txt)" data-panel="G" font-weight="700">open-loop metrics (evaluate(), every 2k steps, per CFG scale)</text>
+<text x="906.0" y="1104.0" font-size="10.5" fill="var(--txt)" data-panel="G">ade · fde (last valid step) · final (t = 16) × {all, obj, hand, hand_human,</text>
+<text x="906.0" y="1117.2" font-size="10.5" fill="var(--txt)" data-panel="G">hand_sharpa}, metres, masked by valid ∧ exists</text>
+<text x="906.0" y="1130.4" font-size="10.5" fill="var(--txt)" data-panel="G">rigid_rms_{subset} over all 16 steps (same Kabsch) · swap_delta = mean ‖flow −</text>
+<text x="906.0" y="1143.6" font-size="10.5" fill="var(--txt)" data-panel="G">flow(text rolled within batch)‖, same seed</text>
+<text x="906.0" y="1156.8" font-size="10.5" fill="var(--txt)" data-panel="G">contact precision / recall / F1 / pos_rate on hand points if the contact head is on ·</text>
+<text x="906.0" y="1170.0" font-size="10.5" fill="var(--txt)" data-panel="G">optional: sample.py writes npz per seed</text>
+<g data-rect="1400,400,386,776" data-panel-rect="H">
+<rect x="1400.0" y="400.0" width="386.0" height="776.0" rx="10" fill="var(--panel2)" stroke="var(--line)" stroke-width="1"/>
+</g>
+<rect x="1410.0" y="409.0" width="22.0" height="22.0" rx="5" fill="var(--acc)" stroke="var(--acc)" stroke-width="1"/>
+<text x="1421.0" y="425.0" font-size="13" fill="#fff" data-panel="H" text-anchor="middle" font-weight="700">H</text>
+<text x="1440.0" y="425.0" font-size="15" fill="var(--txt)" data-panel="H" font-weight="700">Legend · tensor shapes · parameters</text>
+<text x="1440.0" y="441.0" font-size="11" fill="var(--mut)" data-panel="H" font-family="var(--mono)">shapes = model contract (train/loaders.py ContractCollate) · params = count_parameters(SetDiT(SetDiTConfig()))</text>
+<circle cx="1422" cy="462" r="5" fill="var(--obj0)"/>
+<text x="1431.0" y="466.0" font-size="11" fill="var(--obj0)" data-panel="H" font-weight="600">obj-0</text>
+<circle cx="1510" cy="462" r="5" fill="var(--obj1)"/>
+<text x="1519.0" y="466.0" font-size="11" fill="var(--obj1)" data-panel="H" font-weight="600">obj-1</text>
+<circle cx="1598" cy="462" r="5" fill="var(--hL)"/>
+<text x="1607.0" y="466.0" font-size="11" fill="var(--hL)" data-panel="H" font-weight="600">human-L</text>
+<circle cx="1686" cy="462" r="5" fill="var(--hR)"/>
+<text x="1695.0" y="466.0" font-size="11" fill="var(--hR)" data-panel="H" font-weight="600">human-R</text>
+<circle cx="1422" cy="482" r="7" fill="none" stroke="var(--hR)" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="1434.0" y="486.0" font-size="11" fill="var(--mut)" data-panel="H">dashed ring = Sharpa (same hue)</text>
+<rect x="1614" y="476" width="12" height="12" rx="2" fill="var(--bad)"/>
+<text x="1631.0" y="486.0" font-size="11" fill="var(--bad)" data-panel="H">red = code ≠ DESIGN.md</text>
+<rect x="1416" y="496" width="12" height="12" rx="2" fill="var(--acc-bg)" stroke="var(--acc)"/>
+<text x="1434.0" y="506.0" font-size="11" fill="var(--acc)" data-panel="H">accent = generated flow / attention path</text>
+<rect x="1614" y="496" width="12" height="12" rx="2" fill="none" stroke="var(--mut)" stroke-dasharray="3 2"/>
+<text x="1631.0" y="506.0" font-size="11" fill="var(--mut)" data-panel="H">dashed box = optional / OFF</text>
+<text x="1414.0" y="528.0" font-size="10.5" fill="var(--mut2)" data-panel="H" font-weight="700">tensor</text>
+<text x="1550.0" y="528.0" font-size="10.5" fill="var(--mut2)" data-panel="H" font-weight="700">shape · dtype · note</text>
+<line x1="1414" y1="533" x2="1772" y2="533" stroke="var(--line)"/>
+<text x="1414.0" y="548.0" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">Episode .npz</text>
+<text x="1550.0" y="548.0" font-size="10.5" fill="var(--txt)" data-panel="H">x0 (P,3) f32 · tracks (F,P,3) f16 · labels (P,) i16</text>
+<text x="1414.0" y="563.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)"></text>
+<text x="1550.0" y="563.2" font-size="10.5" fill="var(--txt)" data-panel="H">valid, contact (F,P) bool · contact_nn (F,P) i32 · text · meta</text>
+<text x="1414.0" y="578.4" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">x0</text>
+<text x="1550.0" y="578.4" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P,3) f32 · metres · re-centred + yaw</text>
+<text x="1414.0" y="593.6" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">flow</text>
+<text x="1550.0" y="593.6" font-size="10.5" fill="var(--txt)" data-panel="H">(B,16,P,3) f32 · metres · cumulative</text>
+<text x="1414.0" y="608.8" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">flow_n ε x_τ u v̂ x̂₁</text>
+<text x="1550.0" y="608.8" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P,48) f32 · normalised · time in channels</text>
+<text x="1414.0" y="624.0" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">valid</text>
+<text x="1550.0" y="624.0" font-size="10.5" fill="var(--txt)" data-panel="H">(B,16,P) bool · frame validity after frame 0</text>
+<text x="1414.0" y="639.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">exists</text>
+<text x="1550.0" y="639.2" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P) bool · False = padding</text>
+<text x="1414.0" y="654.4" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">labels.cls inst part tag side</text>
+<text x="1550.0" y="654.4" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P) i64 · cls 1 = hand · part never enters the model</text>
+<text x="1414.0" y="669.6" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">group</text>
+<text x="1550.0" y="669.6" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P) i64 ∈ 0…7 · 6/7 only after drop_tag</text>
+<text x="1414.0" y="684.8" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">contact</text>
+<text x="1550.0" y="684.8" font-size="10.5" fill="var(--txt)" data-panel="H">(B,16,P) bool · other class within 1 cm</text>
+<text x="1414.0" y="700.0" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">contact_nn</text>
+<text x="1550.0" y="700.0" font-size="10.5" fill="var(--txt)" data-panel="H">(B,16,P) i64 · hand → object index, −1 = none</text>
+<text x="1414.0" y="715.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">text_emb</text>
+<text x="1550.0" y="715.2" font-size="10.5" fill="var(--txt)" data-panel="H">(B, L ≤ 32, 768) f16 · T5-base last_hidden_state</text>
+<text x="1414.0" y="730.4" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">text_mask</text>
+<text x="1550.0" y="730.4" font-size="10.5" fill="var(--txt)" data-panel="H">(B,L) bool · null sample = [1, 0, …]</text>
+<text x="1414.0" y="745.6" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">τ</text>
+<text x="1550.0" y="745.6" font-size="10.5" fill="var(--txt)" data-panel="H">(B,) f32 ∈ (0,1) · logit-normal</text>
+<text x="1414.0" y="760.8" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">c</text>
+<text x="1550.0" y="760.8" font-size="10.5" fill="var(--txt)" data-panel="H">(B,768) · timestep embedding</text>
+<text x="1414.0" y="776.0" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">shared mod</text>
+<text x="1550.0" y="776.0" font-size="10.5" fill="var(--txt)" data-panel="H">(B,4608) → 6 × (B,768) per block (+ ada_table)</text>
+<text x="1414.0" y="791.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">h_ℓ</text>
+<text x="1550.0" y="791.2" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P,768) bf16 under autocast, ℓ = 0…12</text>
+<text x="1414.0" y="806.4" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">q k v</text>
+<text x="1550.0" y="806.4" font-size="10.5" fill="var(--txt)" data-panel="H">(B,12,P,64) · text K,V (B,12,L,64)</text>
+<text x="1414.0" y="821.6" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">attn_mask</text>
+<text x="1550.0" y="821.6" font-size="10.5" fill="var(--txt)" data-panel="H">(B,1,1,P) bool · text (B,1,1,L)</text>
+<text x="1414.0" y="836.8" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">head out</text>
+<text x="1550.0" y="836.8" font-size="10.5" fill="var(--txt)" data-panel="H">(B,P,48) fp32 (+16 contact logits)</text>
+<text x="1414.0" y="852.0" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">flow out</text>
+<text x="1550.0" y="852.0" font-size="10.5" fill="var(--txt)" data-panel="H">(B,16,P,3) metres = × FlowStats.std (16,3)</text>
+<line x1="1414" y1="859.200000000001" x2="1772" y2="859.200000000001" stroke="var(--line)"/>
+<text x="1414.0" y="879.2" font-size="11" fill="var(--txt)" data-panel="H" font-weight="700">parameters — pilot config (adaln single · SwiGLU · no contact head)</text>
+<text x="1414.0" y="897.2" font-size="12.5" fill="var(--acc)" data-panel="H" font-weight="700">total 119,347,248  (119.3 M)</text>
+<text x="1600.0" y="897.2" font-size="11" fill="var(--bad)" data-panel="H">DESIGN §3 says ≈ 110 M</text>
+<text x="1414.0" y="915.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">embed</text>
+<text x="1518.0" y="915.2" font-size="10.5" fill="var(--txt)" data-panel="H">341,760 = pos_proj 297,984 · E_group 6,144 · flow_proj 37,632</text>
+<text x="1414.0" y="930.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">t_embed</text>
+<text x="1518.0" y="930.2" font-size="10.5" fill="var(--txt)" data-panel="H">787,968 (256→768→768)</text>
+<text x="1414.0" y="945.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">shared_ada</text>
+<text x="1518.0" y="945.2" font-size="10.5" fill="var(--txt)" data-panel="H">3,543,552 (768→4608) · null_text 768</text>
+<text x="1414.0" y="960.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">block ×12</text>
+<text x="1518.0" y="960.2" font-size="10.5" fill="var(--txt)" data-panel="H">113,455,104 = 12 × 9,454,592</text>
+<text x="1414.0" y="975.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">  per block</text>
+<text x="1518.0" y="975.2" font-size="10.5" fill="var(--txt)" data-panel="H">attn 2,362,496 · cross 2,362,496 · MLP 4,723,456</text>
+<text x="1414.0" y="990.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)"></text>
+<text x="1518.0" y="990.2" font-size="10.5" fill="var(--txt)" data-panel="H">LN_x 1,536 · ada_table 4,608 · QK-norm 4 × 64</text>
+<text x="1414.0" y="1005.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">head</text>
+<text x="1518.0" y="1005.2" font-size="10.5" fill="var(--txt)" data-panel="H">1,218,096 = ada 1,181,184 + linear 36,912</text>
+<text x="1414.0" y="1020.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)">variants</text>
+<text x="1518.0" y="1020.2" font-size="10.5" fill="var(--txt)" data-panel="H">per_block adaLN 158,271,024 · gelu 119,334,960</text>
+<text x="1414.0" y="1035.2" font-size="10.5" fill="var(--txt)" data-panel="H" font-family="var(--mono)"></text>
+<text x="1518.0" y="1035.2" font-size="10.5" fill="var(--txt)" data-panel="H">+ contact head 119,359,552 · T5-base (frozen, offline) not counted</text>
+<line x1="604.0" y1="200.0" x2="616.0" y2="200.0" stroke="var(--acc)" stroke-width="1.6" fill="none" marker-end="url(#aa)"/>
+<text x="611.0" y="194.0" font-size="10.5" fill="var(--acc)" data-panel="root" text-anchor="middle">xyz₀ · group · x_τ</text>
+<line x1="1058.0" y1="200.0" x2="1070.0" y2="200.0" stroke="var(--mut)" stroke-width="1.2" fill="none" stroke-dasharray="4 3"/>
+<line x1="658.0" y1="386.0" x2="658.0" y2="398.0" stroke="var(--acc)" stroke-width="1.6" fill="none" marker-end="url(#aa)"/>
+<text x="666.0" y="396.0" font-size="10.5" fill="var(--acc)" data-panel="root">h₀ (B,P,768)</text>
+<line x1="1172.0" y1="386.0" x2="1172.0" y2="398.0" stroke="var(--acc)" stroke-width="1.2" fill="none" marker-end="url(#aa)"/>
+<text x="1180.0" y="396.0" font-size="10.5" fill="var(--acc)" data-panel="root">β γ α · text K,V → every block</text>
+<line x1="1008.0" y1="492.0" x2="1020.0" y2="492.0" stroke="var(--acc)" stroke-width="1.6" fill="none" marker-end="url(#aa)"/>
+<text x="1015.0" y="486.0" font-size="10.5" fill="var(--acc)" data-panel="root" text-anchor="middle">x_L</text>
+<polyline points="1082.0,760.0 1082.0,766.0 808.0,766.0 808.0,772.0" stroke="var(--acc)" stroke-width="1.6" fill="none" marker-end="url(#aa)"/>
+<text x="1090.0" y="769.0" font-size="10.5" fill="var(--acc)" data-panel="root">v̂ → train (F) · sample (G)</text>
+<line x1="1222.0" y1="760.0" x2="1222.0" y2="772.0" stroke="var(--acc)" stroke-width="1.6" fill="none" marker-end="url(#aa)"/>
+</svg>
+      <figcaption>3D-WAM SetDiT (design C) as implemented — A input construction · B token embedding · C conditioning · D one of 12 DiT blocks · E head · F training step · G sampling and readout · H shapes and parameters (119,347,248 total). Pilot config = configs/pilot_110m.yaml.</figcaption>
+    </figure>
+
+    <section>
+      <h2>Code ≠ DESIGN.md — every delta found while reading</h2>
+      <div class="deltas">
+        <table>
+          <thead><tr><th>item</th><th>DESIGN.md</th><th>code (2026-08-26)</th><th>where</th></tr></thead>
+          <tbody>
+<tr><td class='mono'>Rate / horizon</td><td>DESIGN §1: T = 16 @ 10 Hz = 1.6 s</td><td>target_fps = 15 → 1.07 s per chunk, stride 4 = 0.27 s</td><td class='mono'>wam/data/config.py:24, configs/default.yaml</td></tr>
+<tr><td class='mono'>Stored points</td><td>DESIGN §2: specs stored to 4096, FPS-prefix trim to 2048</td><td>n_points = 2048 stored (episodes dir 15hz_N2048); Episode.prefix(2048) is a no-op; no subsampling jitter</td><td class='mono'>wam/data/config.py:25, wam/train/config.py:41 (points_per_entity), wam/data/schema.py:200</td></tr>
+<tr><td class='mono'>Entity semantics via text</td><td>DESIGN (16:10): per-entity phrase → T5 mean-pool → Linear → d replaces E_group when entity_text: true</td><td>not implemented — TokenEmbedder has only E_group (8 × d); no entity_text in SetDiTConfig</td><td class='mono'>wam/model/embed.py:97-118, wam/model/dit.py:25-45</td></tr>
+<tr><td class='mono'>Positional encoding</td><td>DESIGN §3: RoPE / Fourier</td><td>Fourier only (64 log-spaced freqs 2⁰…2⁸·π, include_input → 387-d) → Linear; no RoPE</td><td class='mono'>wam/model/embed.py:75-95</td></tr>
+<tr><td class='mono'>adaLN per sub-layer</td><td>DESIGN §3: scale/shift/gate per sub-layer</td><td>6·d modulation covers self-attn + MLP only; cross-attention has an affine LayerNorm and a zero-init proj, no gate. Shared trunk Linear (adaln_mode single) + per-block (6, d) table; per_block mode optional</td><td class='mono'>wam/model/dit.py:169-215, 258-267</td></tr>
+<tr><td class='mono'>MLP</td><td>DESIGN §3: MLP ratio 4</td><td>SwiGLU with hidden 2048 (⌈⅔·4·768⌉₆₄), param-matched to a GELU 4·d MLP; cfg.mlp = gelu is the alternative</td><td class='mono'>wam/model/dit.py:139-152</td></tr>
+<tr><td class='mono'>QK-norm</td><td>not in DESIGN</td><td>RMSNorm on q and k (per head, fp32) in both attention types, qk_norm = True</td><td class='mono'>wam/model/dit.py:76-118</td></tr>
+<tr><td class='mono'>Parameter count</td><td>DESIGN §3: ≈ 110 M</td><td>119,347,248 (pilot config); per_block adaLN 158.3 M</td><td class='mono'>count_parameters(SetDiT(SetDiTConfig())) · tests/test_model.py:70 asserts 100 M &lt; n &lt; 130 M</td></tr>
+<tr><td class='mono'>Weight decay</td><td>DESIGN §4: wd 0.01</td><td>0.05 (none on biases / norms / embeddings / null_text / ada_table)</td><td class='mono'>wam/train/config.py:20, configs/pilot_110m.yaml:24, wam/train/train.py:113-129</td></tr>
+<tr><td class='mono'>LR schedule</td><td>DESIGN §4: cosine to 12k</td><td>cosine to a floor of 0.1 · lr (min_lr_ratio = 0.1)</td><td class='mono'>wam/train/config.py:22, wam/train/train.py:104-110</td></tr>
+<tr><td class='mono'>Batch</td><td>DESIGN §4: 64 (32 if memory binds)</td><td>pilot_110m.yaml batch_size 32; dryrun 16</td><td class='mono'>configs/pilot_110m.yaml:3</td></tr>
+<tr><td class='mono'>Rigidity steps</td><td>DESIGN §4: each of the 16 steps</td><td>3 random steps per iteration (rigidity_steps = 3); eval rigid_rms uses all 16</td><td class='mono'>wam/train/config.py:47, wam/train/losses.py:122-149</td></tr>
+<tr><td class='mono'>Sampling steps</td><td>DESIGN §3: ~20 Euler steps</td><td>16 (eval_sample_steps; sample.py --steps default 16)</td><td class='mono'>wam/train/config.py:76, wam/eval/sample.py:40</td></tr>
+<tr><td class='mono'>CFG at sampling</td><td>DESIGN §3: drop text 10 %, drop tag 10 % (independent); guidance scale ~3</td><td>training matches; sampling guides on TEXT only (v_u = null text, tag kept) — null-tag rows 6/7 are never used for guidance</td><td class='mono'>wam/model/dit.py:325-349</td></tr>
+<tr><td class='mono'>Readout</td><td>DESIGN §1: hand points → per-link Procrustes → IK → Sharpa joints</td><td>not in the code (no module; mentioned only in docstrings)</td><td class='mono'>grep procrustes|ik|readout → embed.py:8, dit.py:244 only</td></tr>
+<tr><td class='mono'>Augmentation</td><td>DESIGN §4: yaw + point subsampling jitter within the stored specs</td><td>yaw U(0, 2π) about z, train split only; no point jitter (deterministic FPS prefix)</td><td class='mono'>wam/data/dataset.py:79-84, wam/train/loaders.py:158</td></tr>
+<tr><td class='mono'>Object selection</td><td>DESIGN: ≤ 2 objects chosen by motion/contact</td><td>ranked by path length (motion), then mean min wrist-to-part distance (proximity); static extras dropped</td><td class='mono'>wam/data/sources/chord_parquet.py:65-72, 299</td></tr>
+<tr><td class='mono'>Fourier wavelength note</td><td>embed.py docstring: finest wavelength ~2.5 cm at max_log2_freq = 8</td><td>2⁸·π rad/m → wavelength 2π/ω = 7.8 mm (docstring arithmetic, not a behaviour difference)</td><td class='mono'>wam/model/embed.py:78-80</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sources read</h2>
+      <ul class="src">
+        <li>DESIGN.md (all sections; “Labels and masking”, “Label simplification”, “Entity semantics via text” authoritative)</li>
+        <li>wam/model/embed.py · wam/model/dit.py</li>
+        <li>wam/train/flow_matching.py · losses.py · train.py · config.py · loaders.py</li>
+        <li>wam/data/schema.py · dataset.py · sampling.py · chunks.py · build.py · config.py · text.py</li>
+        <li>wam/eval/metrics.py · wam/eval/sample.py · scripts/cache_text_embeddings.py</li>
+        <li>configs/pilot_110m.yaml · pilot_110m_contact.yaml · dryrun.yaml · default.yaml · tests/test_model.py</li>
+      </ul>
+    </section>
+  </div>
+</main>
+</body>
+</html>

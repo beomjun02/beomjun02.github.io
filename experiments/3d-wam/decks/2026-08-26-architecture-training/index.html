@@ -183,7 +183,7 @@
         <text x="298" y="326" font-size="12.5" fill="var(--ink)">one sample = ( P₀ [N×3], labels [N×5], F [N×48], text, mask [N] ),  N = entities × 2048</text>
         <text x="298" y="350" font-size="11" fill="var(--cap)">F = Δx₁ … Δx₁₆ stacked per point · 16 @ 10 Hz = 1.6 s · stride-4 chunks · one array for human and Sharpa — only labels differ</text>
       </svg>
-      <figcaption>data structure — one array of point rows: frame-0 columns are given, the 48-d F block is generated; TACO scene 20231019_001</figcaption>
+      <figcaption>data structure — one array of point rows: frame-0 columns are given, the 48-d F block is generated; TACO scene 20231019_001 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/figure-architecture.html">full implementation figure</a></figcaption>
     </figure>
   </div>
   <p class="footnote">stride-4 chunks → ≈ 100k human + ≈ 10k Sharpa (1,215 TACO sequences), Sharpa oversampled to ~25 % · TACO sequences yield paired human / Sharpa samples of one scene</p>
