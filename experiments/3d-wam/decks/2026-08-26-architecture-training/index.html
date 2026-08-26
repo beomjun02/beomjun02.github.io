@@ -333,36 +333,10 @@
   <p class="footnote">configs/pilot_110m.yaml (option 1, owner 18:00) · τ logit-normal · CFG drop 10 % / 10 % · contact head OFF · entity_text OFF (group table) · flow normalised by one scalar per step</p>
 </section>
 
-<!-- SECTION: results (1) · compute per token design · measured in the dry run -->
-<section class="slide s-results">
-  <h2>Results</h2>
-  <ol class="agenda">
-    <li class="on">Compute — per token design, measured
-      <ul><li>dry run at batch 16 with grad checkpointing, full attention over P = 8,192</li>
-          <li>single-GPU chain of 3-h links (resume + resubmit); 4×A100 when it opens</li></ul></li>
-    <li>Fast run — 6k steps in 3.75 h, open-loop error</li>
-    <li>Probes — embodiment and language</li>
-  </ol>
-  <div class="band">
-    <div class="tbl">
-      <table class="compact">
-        <thead><tr><th style="width:44%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">12k steps · 1× A100</th><th class="num">4× A100</th></tr></thead>
-        <tbody>
-          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+ (estimate)</td><td class="num">—</td></tr>
-          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h (estimate)</td><td class="num">—</td></tr>
-          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">4.5 s/step → 16 h (measured)</td><td class="num">≈ 3.8× → ≈ 4 h</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <p class="footnote">measured: dryrun 4.54 s/step, 15.5 GB, 2,220 steps per 2.8-h link (TRAIN-STATUS.md 17:40) · A/B = FLOP estimates at d 768, 12 layers · 131k = 16 × 8,192 · scripts/train_debug_chain.sbatch · train_4gpu_later.sbatch</p>
-</section>
-
 <!-- SECTION: results (2) · fast run · open-loop error per dataset (6k steps) -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li>Compute — per token design, measured</li>
     <li class="on">Fast run — 6k steps in 3.75 h, open-loop error</li>
     <li>Probes — embodiment and language</li>
   </ol>
@@ -388,7 +362,6 @@
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li>Compute — per token design, measured</li>
     <li>Fast run — 6k steps in 3.75 h, open-loop error</li>
     <li class="on">Probes — embodiment and language</li>
   </ol>
@@ -432,9 +405,27 @@
   </ol>
 </section>
 
-<!-- SECTION: appendix A1 · evaluation plan -->
+<!-- SECTION: appendix A1 · compute per token design · measured in the dry run -->
 <section class="slide s-appendix">
-  <h2>Appendix A1 · evaluation plan · ablations</h2>
+  <h2>Appendix A1 · compute per token design</h2>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th style="width:44%">design</th><th class="num">tokens</th><th class="num">modules</th><th class="num">12k steps · 1× A100</th><th class="num">4× A100</th></tr></thead>
+        <tbody>
+          <tr><td>A · per-point 4D tokens (PTv3 windowed)</td><td class="num">131k</td><td class="num">1</td><td class="num">~40 h+ (estimate)</td><td class="num">—</td></tr>
+          <tr><td>B · latent set + temporal tokens (video-gen style)</td><td class="num">8,192 latents</td><td class="num">3</td><td class="num">~8–10 h (estimate)</td><td class="num">—</td></tr>
+          <tr class="hero"><td>C · frame-0 tokens, flow in channels ← chosen</td><td class="num">8,192</td><td class="num">1</td><td class="num">4.5 s/step → 16 h (measured)</td><td class="num">≈ 3.8× → ≈ 4 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">measured: dryrun 4.54 s/step, 15.5 GB, 2,220 steps per 2.8-h link (TRAIN-STATUS.md 17:40) · A/B = FLOP estimates at d 768, 12 layers · 131k = 16 × 8,192 · scripts/train_debug_chain.sbatch · train_4gpu_later.sbatch</p>
+</section>
+
+<!-- SECTION: appendix A2 · evaluation plan -->
+<section class="slide s-appendix">
+  <h2>Appendix A2 · evaluation plan · ablations</h2>
   <div class="cols">
     <dl class="kv">
       <dt>open-loop</dt><dd>held-out TACO chunks: flow ADE / FDE per class (hand · object) · rigidity residual per part · instruction-swap delta (same scene, swapped text → flow must change) · sample diversity across seeds (multimodality) · decoded Sharpa joint error after Procrustes + IK vs the paired Sharpa sample</dd>
@@ -450,9 +441,9 @@
 </section>
 
 
-<!-- SECTION: appendix A2 · generated vs ground truth clips (1/3) -->
+<!-- SECTION: appendix A3 · clips (1/3) -->
 <section class="slide s-compare">
-  <h2>Appendix A2 · generated vs ground truth (1/3)</h2>
+  <h2>Appendix A3 · generated vs ground truth (1/3)</h2>
   <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/1_taco_human_p1.gif" alt="TACO brush·brush·cup 20231026_007 · human · ADE 0.038"><figcaption>TACO brush·brush·cup 20231026_007 · human · ADE 0.038 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/1_taco_human_p1.jpg">poster</a></figcaption></figure>
@@ -461,9 +452,9 @@
   <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
 </section>
 
-<!-- SECTION: appendix A3 · generated vs ground truth clips (2/3) -->
+<!-- SECTION: appendix A4 · clips (2/3) -->
 <section class="slide s-compare">
-  <h2>Appendix A3 · generated vs ground truth (2/3)</h2>
+  <h2>Appendix A4 · generated vs ground truth (2/3)</h2>
   <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/3_arctic_human_p1.gif" alt="ARCTIC s01 ketchup grab · human · ADE 0.122"><figcaption>ARCTIC s01 ketchup grab · human · ADE 0.122 · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/3_arctic_human_p1.jpg">poster</a></figcaption></figure>
@@ -472,9 +463,9 @@
   <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
 </section>
 
-<!-- SECTION: appendix A4 · generated vs ground truth clips (3/3) -->
+<!-- SECTION: appendix A5 · clips (3/3) -->
 <section class="slide s-compare">
-  <h2>Appendix A4 · generated vs ground truth (3/3)</h2>
+  <h2>Appendix A5 · generated vs ground truth (3/3)</h2>
   <p class="thesis ctx">Left panel ground truth (or unswapped), right panel generated (or swapped); 16 steps at 15 Hz, looped.</p>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/5_taco_textswap_p4.gif" alt="TACO · left "brush the cup", right "brush the helmet" · Δ 0.5 mm"><figcaption>TACO · left "brush the cup", right "brush the helmet" · Δ 0.5 mm · <a href="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results/5_taco_textswap_p4.jpg">poster</a></figcaption></figure>
@@ -482,9 +473,9 @@
   <p class="footnote">ckpt_0006000 · EMA · 16 Euler steps · CFG 1 · shared noise seed across generations of a chunk · results/pilot_fast_N1024_20260826/clips/</p>
 </section>
 
-<!-- SECTION: appendix A5 · references · cut list -->
+<!-- SECTION: appendix A6 · references · cut list -->
 <section class="slide s-appendix">
-  <h2>Appendix A5 · references · cut list</h2>
+  <h2>Appendix A6 · references · cut list</h2>
   <div class="cols">
     <dl class="kv">
       <dt>PointWorld</dt><dd>NVlabs, arXiv 2601.03782 — point flow as action; frame-0 tokens, 3·(T−1) flow head; PTv3 > Transformer > PointNet++ at 1 B; Apache-2.0</dd>
