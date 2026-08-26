@@ -56,7 +56,7 @@
       "title": "Architecture & training — design C, pilot chain launched (deck #2)",
       "status": "running",
       "updated": "2026-08-26",
-      "tldr": "Deck #2: design C — one DiT over frame-0 labelled points (≤ 8,192 tokens); each point emits its 16-step flow (48-d); flow matching + rigidity + contact-pair auxiliaries; 119 M, batch 16, 4.5 s/step measured; pipeline verified, chain job 132202 launched 18:10.",
+      "tldr": "Deck #2: design C — one DiT over frame-0 labelled points (≤ 8,192 tokens); each point emits its 16-step flow (48-d); flow matching + rigidity + contact-pair auxiliaries; 119 M, batch 16, 4.5 s/step measured; pipeline verified, chain job 132202 running since 18:38.",
       "path": "3d-wam/decks/2026-08-26-architecture-training/",
       "tags": [
         "architecture",
@@ -76,7 +76,7 @@
       "title": "Datasets & train data structure — six human sources + CHORD Sharpa, 15 Hz · N = 2048 (deck #1)",
       "status": "running",
       "updated": "2026-08-26",
-      "tldr": "Deck #1: six human datasets (5,319 episodes, 19.6 h) + CHORD Sharpa TACO release (1,215), one LOAD schema; preprocessed at 15 Hz, N = 2048 → 4,970 human + 1,148 Sharpa episodes; sample = metric points · group label · 48-d flow · masks · contact · T5 text.",
+      "tldr": "Deck #1: six human datasets (5,319 episodes, 19.6 h) + CHORD Sharpa TACO release (1,215); preprocessed at 15 Hz, N = 2048 → 4,022 human + 1,148 Sharpa episodes; units consistent (metres); sample = metric points · group label · 48-d flow · masks · contact · T5 text.",
       "path": "3d-wam/decks/2026-08-25-point-budget/",
       "tags": [
         "datasets",
