@@ -30,13 +30,13 @@
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
       <div><dt>Checked</dt><dd>2026-08-27 16:26 KST</dd></div>
-      <div><dt>Encoder data</dt><dd>205,525 EgoDex episodes with per-point semantics (63% of EgoDex; growing)</dd></div>
+      <div><dt>Encoder data</dt><dd>205,525 EgoDex episodes (63.4% of EgoDex; ~2,000/h, EgoDex-complete ≈ 08-30)</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
-      <div><dt>Sanity</dt><dd>32/32 sidecars · 31/31 flow H5s — schema, id↔caption range, SigLIP2 non-zero</dd></div>
+      <div><dt>Sanity</dt><dd>32/32 sidecars · 31/31 flow H5s (random samples) · 800/800 sidecar↔flow name matches</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Bottom line</p>
-      <p>PointWAM can train on the <b>full</b> EgoDex + VITRA flow corpus today (~4.0 TB / 1.15 M episodes, all sampled files valid). The 3D-encoder corpus is <b>205,525 EgoDex episodes</b> (~23.6 GB of sidecars) and grows ~2,000 episodes/hour; parts 1–2 are complete, part 3 at 95%, part 4 at 45%. Caption style is mixed by design — parts 1–2 are Qwen v3, part 4 onward is the SpaceFormer-A.7 Gemma-3 pass; the <code>caption_style</code> attribute tells you which, so you can filter or weight.</p>
+      <p>PointWAM can train on the <b>full</b> EgoDex + VITRA flow corpus today (~4.0 TB / 1.15 M episodes, all sampled files valid). The 3D-encoder corpus is <b>205,525 EgoDex episodes</b> (~23.6 GB of sidecars) and grows ~2,000 episodes/hour; parts 1–2 are complete, part 3 at 95%, part 4 at 45%. Caption style is <b>not uniform</b>: of the 205,525 sidecars, <b>63,066 (31%) come from the v0/v2 captioner era</b> (part1 in full + 18.6k of part2), <b>92,037 (45%) from v3</b> (masked-crop Qwen) and <b>51,106 (25%) from the current SpaceFormer-A.7 Gemma-3 pass</b>. The v0 era carries a known defect — a large background instance could inherit a nearby object&#39;s description (the bbox-hijack bug, fixed on 08-19) — so treat that slice as noisier, filter it, or re-caption it. Files written by the current pass carry <code>caption_style=sf_gemma3_pass2_v1</code>; older ones have no such attribute and split by mtime at 2026-08-19 12:00.</p>
     </div>
   </div>
 </header>
@@ -52,9 +52,9 @@
           <thead><tr><th>Part</th><th>Path</th><th>Episodes</th><th>Coverage</th><th>Size</th><th>caption_style</th></tr></thead>
           <tbody>
             <tr><td>part1</td><td class="mono">maskcap_pilot/egodex/</td><td class="mono">44,507</td><td class="mono">100%</td><td class="mono">~5.6 GB</td><td class="mono">v3 (Qwen)</td></tr>
-            <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">~8.2 GB</td><td class="mono">v3 (Qwen)</td></tr>
-            <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">48,527</td><td class="mono">95.5%</td><td class="mono">~6.4 GB</td><td class="mono">mixed v3 / A.7 Gemma</td></tr>
-            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">18,439</td><td class="mono">45.0%</td><td class="mono">~3.4 GB</td><td class="mono">A.7 Gemma-3</td></tr>
+            <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">~8.2 GB</td><td class="mono">18.6k v0-era · 75.5k v3</td></tr>
+            <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">48,527</td><td class="mono">95.5%</td><td class="mono">~6.4 GB</td><td class="mono">16.5k v3 · 32.0k A.7 Gemma</td></tr>
+            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">18,439</td><td class="mono">45.0%</td><td class="mono">~3.4 GB</td><td class="mono">19.1k A.7 Gemma</td></tr>
             <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>205,525</b></td><td class="mono">63.4% of 324,167</td><td class="mono"><b>~23.6 GB</b></td><td class="mono">—</td></tr>
             <tr><td class="muted">part5 · extra · test</td><td class="mono muted">egodex_part5 / _extra / _test</td><td class="mono muted">0 / 93,824 queued</td><td class="mono muted">—</td><td class="mono muted">—</td><td class="mono muted">A.7 Gemma-3 (planned)</td></tr>
           </tbody>
@@ -162,6 +162,9 @@ with h5py.File(flow) as f, h5py.File(side) as s:
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Sidecars 32/32 valid.</span><span class="ld">Clip groups present, <code>global_siglip2</code> present, max instance id ≤ SigLIP2 rows, embeddings non-zero for every captioned instance, 90–94% of points labeled.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Flow H5 31/31 valid.</span><span class="ld">All 7 EgoDex parts + VITRA: <code>scene_flows</code>, <code>extrinsic</code>, <code>initial_rgb</code>, <code>embodiment_joints</code> present with the expected shapes.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Caption era is heterogeneous (the one real caveat).</span><span class="ld">31% of the encoder corpus (63,066 episodes: part1 + 18.6k of part2) predates the 08-19 caption fix, so some large background instances there are described as a nearby object. Decide per use: filter by <code>caption_style</code>/mtime, down-weight, or re-caption (re-captioning that slice costs a full SAM2 re-run — no crop cache exists for it).</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Coverage is partial, not almost-done.</span><span class="ld">205,525 / 324,167 = 63.4%. Remaining: part4 21.8k, part5 70.7k, extra 20.1k, test 3.1k. At the measured 2,000 episodes/hour that is ~2.5 days (EgoDex complete ≈ 08-30); VITRA sidecars have not started.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Validation is sampled, not exhaustive.</span><span class="ld">63 files opened out of 1.15 M; every sample passed. A full integrity sweep has not been run.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Known, by design.</span><span class="ld">Caption style is mixed across parts (v3 Qwen vs A.7 Gemma-3) — the per-file attribute records which. Instances beyond the per-episode caption budget carry an empty caption and a zero embedding row; skip them by <code>caps[id] != ""</code>.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Growing.</span><span class="ld">Encoder sidecars land at ~2,000 episodes/hour (two-pass fleet). EgoDex 100% is the near-term milestone; VITRA sidecars start after it.</span></span></li>
       </ul>
