@@ -11,7 +11,7 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "12-h runs finished: pipeline solid, but the model does not beat a zero-flow baseline and its samples track the motion marginal — next is diagnosing why the conditional is not learned (single-batch overfit, xyz0-vs-x_tau ablation, aux-loss rescale, distributional metrics) before any larger run.",
+    "text": "Pilot diagnosed (deck #3, 08-27): trains cleanly but does not beat a zero-flow baseline; cause = velocity target lets the model denoise instead of conditioning, so samples collapse to no motion. Next: flow-target run + PointWorld-style regression baseline + aux rescale before any scale-up.",
     "status": "active",
     "updated": "2026-08-27"
    }
@@ -49,6 +49,23 @@
   }
  },
  "logs": [
+  {
+   "project": "3d-wam",
+   "date": "2026-08-27",
+   "slug": "diagnosis",
+   "title": "Why it does not work yet — the pilot predicts no motion, and why",
+   "status": "running",
+   "format": "deck",
+   "updated": "2026-08-27",
+   "tldr": "The 12-h pilot trains cleanly but does not beat a zero-flow baseline (best-of-8 0.0312 vs 0.0319 m; sampled motion 8x too small). Oracle-velocity and foreign-target tests exclude sampler bugs, leakage, capacity and normalisation: the velocity target lets the model denoise instead of using the scene, so sampling collapses to the conditional mean. Fix: predict the flow, add a regression baseline, rescale the auxiliaries.",
+   "path": "3d-wam/decks/2026-08-27-diagnosis/",
+   "tags": [
+    "diagnosis",
+    "flow-matching",
+    "zero-flow-baseline",
+    "conditioning-collapse"
+   ]
+  },
   {
    "project": "3d-wam",
    "date": "2026-08-26",

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #3 · "Why it does not work yet" · diagnosis of the 12-h pilot (runs A/B, 2026-08-26/27).
+     Caps (DECK-STYLE.md §4): ≤ 8 main slides · thesis ≤ 14 words · ≤ 4 bullets × ≤ 8 words · ≤ 2 media ·
+     numbers only in figures / ≤ 6-row tables. Structure: Title · Overview · Method (1) how we tested ·
+     Results (1) the model is no better than zero · Results (2) what the two probes prove · Results (3) root cause ·
+     Discussion & Action items · appendix references. Evidence: review/train/{bestofk,oracle_sampler,leak_test}.json. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-27 · Why it does not work yet — 3D-WAM</title>
+<meta name="description" content="Deck #3: the 12-h pilot trained cleanly but does not beat a zero-flow baseline. Oracle-velocity and foreign-target tests locate the cause: the model became an excellent denoiser and never had to use the conditioning, so sampling from noise collapses to no motion.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body>
+<div class="deck">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>3D-WAM — why it does not work yet</h1>
+  <p class="ctx">3D-WAM · diagnosis of the 12-hour pilot · runs A and B</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 27<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> The pilot trains cleanly but predicts no motion; the cause is located.</p>
+  <ul>
+    <li>Ran: 12,000 steps (A) and 6,448 (B), no failures</li>
+    <li>Result: no better than a zero-flow baseline</li>
+    <li>Cause: a perfect denoiser that ignores conditioning</li>
+    <li>Fix: predict the flow, not the velocity</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-26-architecture-training/assets/results12k/3_arctic_human_p1.gif" alt="ARCTIC ground truth left, generated right">
+      <figcaption>ARCTIC · ground truth left, generated right · hand error 0.18 m</figcaption></figure>
+  </div>
+  <p class="footnote">runs cond_N1024_20260827 (done, 12k) and cond_N2048_20260827 (6,448 steps) · evidence in review/train/</p>
+</section>
+
+<!-- SECTION: method · the three tests -->
+<section class="slide s-claim">
+  <h2>Method: three tests, each with a control</h2>
+  <p class="thesis">Every claim below is a controlled measurement, not a look at the clips.</p>
+  <ul>
+    <li>Fair metric: best-of-k vs a zero-flow baseline</li>
+    <li>Oracle test: sampler fed the analytic velocity</li>
+    <li>Leak test: noisy input built from a foreign target</li>
+  </ul>
+  <p class="footnote">96 val chunks, EMA weights, 16 Euler steps, CFG 1 · bestofk.py, oracle_sampler.py, leak_test.py (jobs 133601, 133608, 134208, 134235)</p>
+</section>
+
+<!-- SECTION: results (1) · the model does not beat zero flow -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Fair metric — no better than predicting no motion</li>
+    <li>Probes — sampler correct, no leakage</li>
+    <li>Root cause — denoising without conditioning</li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>median ADE (m)</th><th class="num">model</th><th class="num">zero flow</th></tr></thead>
+        <tbody>
+          <tr class="hero"><td>single sample</td><td class="num">0.0375</td><td class="num">0.0319</td></tr>
+          <tr><td>best of 8 samples</td><td class="num">0.0312</td><td class="num">0.0319</td></tr>
+          <tr><td>static chunks (GT &lt; 2 cm)</td><td class="num">0.0148</td><td class="num">0.0134</td></tr>
+          <tr><td>moving chunks (GT 2–5 cm)</td><td class="num">0.0303</td><td class="num">0.0315</td></tr>
+          <tr><td>moving chunks (GT &gt; 5 cm)</td><td class="num">0.0869</td><td class="num">0.0884</td></tr>
+          <tr><td>sampled motion magnitude</td><td class="num">0.0107</td><td class="num">0.0903 (GT)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">best-of-4 beats zero flow on 38 % of chunks · the samples carry 8× too little motion, which is why they look like hands and objects standing still</p>
+</section>
+
+<!-- SECTION: results (2) · what the probes exclude -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Fair metric — no better than predicting no motion</li>
+    <li class="on">Probes — sampler correct, no leakage</li>
+    <li>Root cause — denoising without conditioning</li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>test</th><th class="num">number</th><th>excludes</th></tr></thead>
+        <tbody>
+          <tr><td>sampler fed the analytic velocity</td><td class="num">1.4e-8 m</td><td>sampler / ODE bug</td></tr>
+          <tr><td>velocity error on data-manifold inputs</td><td class="num">0.009 / var 4.6</td><td>capacity, optimisation</td></tr>
+          <tr><td>noisy input from a foreign target</td><td class="num">0.014 vs 1.91</td><td>target leakage</td></tr>
+          <tr><td>data alignment (x₀ vs tracks[0])</td><td class="num">1e-4 m</td><td>row-permutation bug</td></tr>
+          <tr><td>per-step flow std</td><td class="num">1.0 → 10.0 cm</td><td>bad normalisation</td></tr>
+          <tr class="hero"><td>label swap / text swap at 12k</td><td class="num">0.000 / 0.001 m</td><td>nothing — this is the symptom</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">the model reconstructs the velocity of whichever target its noisy input was built from — it reads that input, and only that input</p>
+</section>
+
+<!-- SECTION: results (3) · root cause -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Fair metric — no better than predicting no motion</li>
+    <li>Probes — sampler correct, no leakage</li>
+    <li class="on">Root cause — denoising without conditioning</li>
+  </ol>
+  <div class="band">
+    <figure>
+      <svg viewBox="0 0 980 300" role="img" aria-label="Training gives the model a noisy version of the true flow, which it can denoise almost perfectly because the flow is smooth and the noise is white; at sampling time there is no true flow in the input, so the model falls back on the conditional mean, which is almost no motion.">
+        <defs><marker id="d3a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--mut)"/></marker></defs>
+        <text x="20" y="26" font-size="15" font-weight="600" fill="var(--txt)">training</text>
+        <rect x="20" y="40" width="200" height="54" rx="8" fill="var(--panel)" stroke="var(--line)"/><text x="120" y="62" text-anchor="middle" font-size="12.5" fill="var(--txt)">noisy input x(τ)</text><text x="120" y="82" text-anchor="middle" font-size="11.5" fill="var(--mut)">= noise + true flow</text>
+        <line x1="228" y1="67" x2="286" y2="67" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#d3a)"/>
+        <rect x="294" y="40" width="210" height="54" rx="8" fill="var(--panel)" stroke="var(--line)"/><text x="399" y="62" text-anchor="middle" font-size="12.5" fill="var(--txt)">separate smooth from white</text><text x="399" y="82" text-anchor="middle" font-size="11.5" fill="var(--mut)">easy: 4,096 points × 16 steps</text>
+        <line x1="512" y1="67" x2="570" y2="67" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#d3a)"/>
+        <rect x="578" y="40" width="190" height="54" rx="8" fill="var(--ok-bg)" stroke="var(--ok)"/><text x="673" y="62" text-anchor="middle" font-size="12.5" fill="var(--ok)">loss ≈ 0.01</text><text x="673" y="82" text-anchor="middle" font-size="11.5" fill="var(--mut)">looks like success</text>
+        <text x="790" y="70" font-size="11.5" fill="var(--mut)">conditioning never needed</text>
+        <text x="20" y="150" font-size="15" font-weight="600" fill="var(--txt)">sampling</text>
+        <rect x="20" y="164" width="200" height="54" rx="8" fill="var(--panel)" stroke="var(--line)"/><text x="120" y="186" text-anchor="middle" font-size="12.5" fill="var(--txt)">input = pure noise</text><text x="120" y="206" text-anchor="middle" font-size="11.5" fill="var(--mut)">no true flow inside</text>
+        <line x1="228" y1="191" x2="286" y2="191" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#d3a)"/>
+        <rect x="294" y="164" width="210" height="54" rx="8" fill="var(--panel)" stroke="var(--line)"/><text x="399" y="186" text-anchor="middle" font-size="12.5" fill="var(--txt)">nothing to denoise</text><text x="399" y="206" text-anchor="middle" font-size="11.5" fill="var(--mut)">scene + text unused</text>
+        <line x1="512" y1="191" x2="570" y2="191" stroke="var(--mut)" stroke-width="1.4" marker-end="url(#d3a)"/>
+        <rect x="578" y="164" width="190" height="54" rx="8" fill="var(--acc-weak)" stroke="var(--acc)"/><text x="673" y="186" text-anchor="middle" font-size="12.5" fill="var(--acc)">conditional mean</text><text x="673" y="206" text-anchor="middle" font-size="11.5" fill="var(--mut)">≈ no motion</text>
+        <text x="790" y="194" font-size="11.5" fill="var(--mut)">= what the clips show</text>
+        <text x="20" y="270" font-size="12" fill="var(--mut)">Known in video diffusion: many tokens make denoising easy, so the timestep schedule must be shifted toward high noise (SD3 / Wan) or the target changed.</text>
+      </svg>
+      <figcaption>the velocity target contains the noise, so the easy path is denoising; the conditioning is never forced to carry information</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">consistent with all six measurements above and with PointWorld's choice: it regresses the flow directly from the scene and never sees a noisy target</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three cheap changes, then re-run; the scale-up waits.</p>
+  <ol>
+    <li><b>Change the target</b> — predict the flow, not the velocity
+      <ul><li>the target then excludes the noise, so the scene is the only route to it</li>
+          <li>alternative: keep velocity, shift the noise schedule (SD3 / Wan style) and weight low-noise steps less</li></ul></li>
+    <li><b>Add the regression baseline</b> — PointWorld-style, no noise at all
+      <ul><li>tells us whether the task is learnable from our data before we defend the generative choice</li></ul></li>
+    <li><b>Re-scale the auxiliaries</b> — rigidity and contact are 1e-5 against 1e-2
+      <ul><li>they are numerically inert today; normalise each by its own initial value</li></ul></li>
+  </ol>
+  <p class="footnote">Actions: A1 regression baseline + flow-target run (2 × 3 h, one GPU) · A2 re-measure with the fair metric and moving-chunk subsets · A3 re-run the transfer probes only after a run beats zero flow · A4 4× A100 design run deferred</p>
+</section>
+
+<!-- SECTION: appendix A1 · references -->
+<section class="slide s-appendix">
+  <h2>Appendix A1 · evidence and references</h2>
+  <ul>
+    <li>Numbers: <code>review/train/bestofk_condA_12k{,_perchunk}.json</code>, <code>oracle_sampler.json</code>, <code>leak_test.json</code>, <code>probe_deltas_condA_2000.json</code></li>
+    <li>Report: <code>~/3d-wam/TRAIN-STATUS.md</code> → “FINAL 12-H REPORT”</li>
+    <li>Clips: <code>results/condA_12k/clips/</code>, <code>results/pilot_fast_N1024_20260826/clips_p5/</code></li>
+    <li>Prior art for the fix: rectified flow / SD3 timestep shift; Wan 2.x; min-SNR weighting; PointWorld (deterministic flow regression, PTv3)</li>
+  </ul>
+  <p class="footnote">what was cut from this deck: the P1–P5 transfer tables (uninformative until a run beats the zero-flow baseline) and the per-dataset ADE table (deck #2 slide 6)</p>
+</section>
+
+</div>
+</body>
+</html>
