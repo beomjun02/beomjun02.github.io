@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-27 · Dataset usage guide — dex-pointwam</title>
+<meta name="description" content="Usage guide: paths, statistics and validated schemas for the human data feeding the 3D encoder (EgoDex maskcap) and PointWAM (EgoDex + VITRA flows).">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/dex-pointwam/">dex-pointwam</a><span class="sep">/</span>
+      <span class="here">2026-08-27 · dataset-usage-guide</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Usage guide · dex-pointwam</p>
+    <h1>Human data, ready to consume — paths, statistics, schemas</h1>
+    <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
+      <div><dt>Checked</dt><dd>2026-08-27 16:26 KST</dd></div>
+      <div><dt>Encoder data</dt><dd>205,525 EgoDex episodes with per-point semantics (63% of EgoDex; growing)</dd></div>
+      <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
+      <div><dt>Sanity</dt><dd>32/32 sidecars · 31/31 flow H5s — schema, id↔caption range, SigLIP2 non-zero</dd></div>
+    </dl>
+    <div class="verdict">
+      <p class="k">Bottom line</p>
+      <p>PointWAM can train on the <b>full</b> EgoDex + VITRA flow corpus today (~4.0 TB / 1.15 M episodes, all sampled files valid). The 3D-encoder corpus is <b>205,525 EgoDex episodes</b> (~23.6 GB of sidecars) and grows ~2,000 episodes/hour; parts 1–2 are complete, part 3 at 95%, part 4 at 45%. Caption style is mixed by design — parts 1–2 are Qwen v3, part 4 onward is the SpaceFormer-A.7 Gemma-3 pass; the <code>caption_style</code> attribute tells you which, so you can filter or weight.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">01</span>3D encoder — EgoDex maskcap sidecars</h2>
+      <p class="sub">One sidecar per episode, non-destructive (keyed to the flow H5 of the same name). Every 3D point carries an instance id; every instance carries a caption and its SigLIP2 embedding — the Mosaic3D/SpaceFormer training-pair format.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Part</th><th>Path</th><th>Episodes</th><th>Coverage</th><th>Size</th><th>caption_style</th></tr></thead>
+          <tbody>
+            <tr><td>part1</td><td class="mono">maskcap_pilot/egodex/</td><td class="mono">44,507</td><td class="mono">100%</td><td class="mono">~5.6 GB</td><td class="mono">v3 (Qwen)</td></tr>
+            <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">~8.2 GB</td><td class="mono">v3 (Qwen)</td></tr>
+            <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">48,527</td><td class="mono">95.5%</td><td class="mono">~6.4 GB</td><td class="mono">mixed v3 / A.7 Gemma</td></tr>
+            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">18,439</td><td class="mono">45.0%</td><td class="mono">~3.4 GB</td><td class="mono">A.7 Gemma-3</td></tr>
+            <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>205,525</b></td><td class="mono">63.4% of 324,167</td><td class="mono"><b>~23.6 GB</b></td><td class="mono">—</td></tr>
+            <tr><td class="muted">part5 · extra · test</td><td class="mono muted">egodex_part5 / _extra / _test</td><td class="mono muted">0 / 93,824 queued</td><td class="mono muted">—</td><td class="mono muted">—</td><td class="mono muted">A.7 Gemma-3 (planned)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:18px">Prefix all paths with <code>/virtual_lab/sjw_alinlab/beomjun/</code>. Sampled content statistics: <b>18.1 / 6.5 / 11.9 / 12.5 clips per episode</b> (parts 1–4), <b>26–42 global instances</b> per episode, <b>26–35 captioned</b>, <b>90–94% of points labeled</b>, SigLIP2 rows non-zero for every captioned instance.</p>
+      <h3>Schema</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Key</th><th>Shape / type</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">&lt;clip&gt;/camera_0_instance_id</td><td class="mono">(N,) uint16</td><td>per-point episode-global instance id; 0 = unlabeled. N matches <code>camera_0_scene_flows</code> of the same clip in the flow H5.</td></tr>
+            <tr><td class="mono">global_siglip2</td><td class="mono">(G, 1152) f16</td><td>row <code>g-1</code> = SigLIP2 text embedding of instance <code>g</code>'s caption — the encoder target</td></tr>
+            <tr><td class="mono">attr global_captions</td><td class="mono">JSON {id: str}</td><td>one caption per instance ("" if beyond the caption budget)</td></tr>
+            <tr><td class="mono">attr global_is_agent</td><td class="mono">JSON {id: bool}</td><td>true = human hand / forearm (template caption, VLM bypassed)</td></tr>
+            <tr><td class="mono">attr global_view_clips</td><td class="mono">JSON {id: [clip]}</td><td>clips the instance appears in (cross-clip merged)</td></tr>
+            <tr><td class="mono">attr caption_style</td><td class="mono">str</td><td><code>sf_gemma3_pass2_v1</code> = SpaceFormer-A.7 Gemma-3; absent = Qwen v3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:26px">Samples</h3>
+      <p class="sub">Per-instance grids: each tile isolates one instance's 3D points over a dimmed anchor frame, with its caption. Tiles sorted by #points.</p>
+      <figure><img src="assets/enc_paint_clean_brush.jpg" alt="paint_clean_brush per-instance grid" loading="lazy"><figcaption>paint_clean_brush — A.7 Gemma-3 captions</figcaption></figure>
+      <figure><img src="assets/enc_peel_place_sticker.jpg" alt="peel_place_sticker per-instance grid" loading="lazy"><figcaption>peel_place_sticker</figcaption></figure>
+      <figure><img src="assets/enc_open_close_insert_remove_tupperware.jpg" alt="tupperware per-instance grid" loading="lazy"><figcaption>open_close_insert_remove_tupperware</figcaption></figure>
+      <figure><img src="assets/enc_pick_up_and_put_down_case_or_bag.jpg" alt="case or bag per-instance grid" loading="lazy"><figcaption>pick_up_and_put_down_case_or_bag</figcaption></figure>
+      <p class="sub">More samples, the pipeline description and its known failure modes: <a href="../2026-08-13-spaceformer-data-engine/">SpaceFormer data engine log</a>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">02</span>PointWAM — EgoDex + VITRA flow H5s</h2>
+      <p class="sub">The action-side corpus: metric 3D scene points tracked through time plus the hand skeleton, per 11-step clip. Fully available — nothing pending.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Source</th><th>Path</th><th>Episodes</th><th>Size</th><th>clips/ep</th><th>Hand joints</th><th>Sanity</th></tr></thead>
+          <tbody>
+            <tr><td>EgoDex part1</td><td class="mono">flows/flow_part1_pw/</td><td class="mono">44,507</td><td class="mono">~523 GB</td><td class="mono">~19</td><td class="mono">(11,50,3) ARKit GT</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex part2</td><td class="mono">flows/flow_part2_pw/</td><td class="mono">94,052</td><td class="mono">~623 GB</td><td class="mono">3.5</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex part3</td><td class="mono">flows/flow_part3_pw/</td><td class="mono">50,799</td><td class="mono">~667 GB</td><td class="mono">6.5</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex part4</td><td class="mono">flows/flow_part4_pw/</td><td class="mono">40,985</td><td class="mono">~511 GB</td><td class="mono">8.0</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex part5</td><td class="mono">flows/flow_part5_pw/</td><td class="mono">70,655</td><td class="mono">~330 GB</td><td class="mono">8.2</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex extra</td><td class="mono">flows/flow_extra_pw/</td><td class="mono">20,065</td><td class="mono">~464 GB</td><td class="mono">22.2</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td>EgoDex test</td><td class="mono">flows/flow_test_pw/</td><td class="mono">3,104</td><td class="mono">~53 GB</td><td class="mono">7.8</td><td class="mono">(11,50,3)</td><td>4/4 ok</td></tr>
+            <tr><td><b>EgoDex total</b></td><td class="mono">—</td><td class="mono"><b>324,167</b></td><td class="mono"><b>~3.1 TB</b></td><td class="mono">—</td><td class="mono">GT (ARKit)</td><td><b>28/28</b></td></tr>
+            <tr><td><b>VITRA</b></td><td class="mono">vitra_1m/flows/ (2,712 files)</td><td class="mono"><b>~822,640</b></td><td class="mono"><b>~2.8 TB</b></td><td class="mono">3.3</td><td class="mono">(11,2,21,3) MANO recon</td><td><b>3/3</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:18px">Sizes are estimated from a 40-file random sample per directory (no <code>du</code> — it hammers the NFS). Prefix: <code>/virtual_lab/sjw_alinlab/beomjun/</code>.</p>
+      <h3>Schema (per clip group, keys named <code>start:end</code>)</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Key</th><th>Shape</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">camera_0_scene_flows</td><td class="mono">(11, N, 3) f32</td><td>N tracked 3D points in <b>world</b> metres, one row per timestep — index <code>i</code> is the same physical point at every t (CoTracker3 correspondence). N ≈ 2.3k (VITRA 240p) to 10k (EgoDex).</td></tr>
+            <tr><td class="mono">camera_0_scene_colors</td><td class="mono">(N, 3) uint8</td><td>RGB per point</td></tr>
+            <tr><td class="mono">camera_0_extrinsic</td><td class="mono">(4,4) f32</td><td>cam→world for the clip anchor</td></tr>
+            <tr><td class="mono">camera_0_initial_rgb</td><td class="mono">JPEG bytes</td><td>anchor frame</td></tr>
+            <tr><td class="mono">embodiment_joints</td><td class="mono">EgoDex (11,50,3) · VITRA (11,2,21,3)</td><td>hand joints in world metres per timestep. EgoDex = ARKit GT (wrist+finger chain; the 12-kp dex view is indices <code>[0,24,5,15,20,10]</code> ×2 hands). VITRA = reconstructed MANO, 21 joints × 2 hands.</td></tr>
+            <tr><td class="mono">camera_0_robot_valid</td><td class="mono">(11,12) uint8</td><td>EgoDex only — idle-hand mask; select keypoints by this, never by magnitude</td></tr>
+            <tr><td class="mono">intrinsic</td><td class="mono">(3,3)</td><td>VITRA: per-episode group. EgoDex: use the full-res ARKit K <code>[[736.63,0,960],[0,736.63,540],[0,0,1]]</code> — the file-level <code>intrinsic</code> is tracking-resolution and will squash your projection.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:26px">Samples</h3>
+      <figure><img src="assets/pw_egodex.jpg" alt="EgoDex flow H5: 3D points and hand skeleton" loading="lazy"><figcaption>EgoDex — left: <code>scene_flows[0]</code> projected with its own colours; right: <code>embodiment_joints[0]</code> (wrist + 5 fingertips per hand, ARKit GT). Metric scale comes from fitting VGGT-Omega depth to the GT hand depths per chunk.</figcaption></figure>
+      <figure><img src="assets/pw_vitra.jpg" alt="VITRA flow H5: 3D points and hand skeleton" loading="lazy"><figcaption>VITRA — same contract at 240p; hands are reconstructed MANO (2×21) and the metric anchor is the HaWoR hand rather than GT.</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">03</span>How to load</h2>
+      <p class="sub">Sidecar and flow H5 share the filename and the clip keys, so the join is by name.</p>
+      <pre><code>import h5py, json, numpy as np
+
+ep   = "gather_roll_dice__1234"
+flow = f"/virtual_lab/sjw_alinlab/beomjun/flows/flow_part3_pw/{ep}.h5"
+side = f"/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/egodex_part3/{ep}.h5"
+
+with h5py.File(flow) as f, h5py.File(side) as s:
+    caps  = json.loads(s.attrs["global_captions"])      # {instance_id: caption}
+    agent = json.loads(s.attrs["global_is_agent"])
+    emb   = s["global_siglip2"][:]                      # (G, 1152) encoder target
+    for ck in [k for k in f.keys() if ":" in k]:
+        pts  = f[ck]["camera_0_scene_flows"][:]         # (11, N, 3) world metres
+        hand = f[ck]["embodiment_joints"][:]            # (11, 50, 3) ARKit GT
+        ids  = s[ck]["camera_0_instance_id"][:]         # (N,) uint16 -> caps / emb
+        # encoder pair: pts[0][ids == g]  <->  emb[g-1]
+        # action  pair: pts (scene) + hand (label), 11 steps @ ~10 Hz</code></pre>
+      <ul class="clean">
+        <li><span class="mk i">·</span><span><span class="lt">Encoder training.</span><span class="ld">Use <code>ids &gt; 0</code> points; target = <code>emb[id-1]</code>. Drop or down-weight <code>global_is_agent</code> instances if you want an object-only encoder. Filter on <code>caption_style</code> for a single-captioner subset.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Action training.</span><span class="ld">Clips are 11 steps at ~10 Hz (stride 2 of the 20 Hz source). Select hand keypoints via <code>camera_0_robot_valid</code>; 6 of the 12 dex slots are placeholders in single-hand tasks.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Mixing EgoDex + VITRA.</span><span class="ld">Same contract, different hand representation (50 ARKit vs 2×21 MANO) and resolution (1080p vs 240p). VITRA hand poses are reconstructed, so treat them as weaker labels for regression.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span class="n">04</span>Sanity check — what was verified</h2>
+      <p class="sub">Random samples per directory, today. Report: <code>maskcap_pilot/sanity_report.json</code> · script <code>maskcap_pilot/sanity_check.py</code>.</p>
+      <ul class="clean">
+        <li><span class="mk ok">✓</span><span><span class="lt">Sidecars 32/32 valid.</span><span class="ld">Clip groups present, <code>global_siglip2</code> present, max instance id ≤ SigLIP2 rows, embeddings non-zero for every captioned instance, 90–94% of points labeled.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Flow H5 31/31 valid.</span><span class="ld">All 7 EgoDex parts + VITRA: <code>scene_flows</code>, <code>extrinsic</code>, <code>initial_rgb</code>, <code>embodiment_joints</code> present with the expected shapes.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Known, by design.</span><span class="ld">Caption style is mixed across parts (v3 Qwen vs A.7 Gemma-3) — the per-file attribute records which. Instances beyond the per-episode caption budget carry an empty caption and a zero embedding row; skip them by <code>caps[id] != ""</code>.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Growing.</span><span class="ld">Encoder sidecars land at ~2,000 episodes/hour (two-pass fleet). EgoDex 100% is the near-term milestone; VITRA sidecars start after it.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · dataset usage guide · 2026-08-27</p></div></footer>
+
+</body>
+</html>

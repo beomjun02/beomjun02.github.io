@@ -31,9 +31,9 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "Two-pass maskcap fleet (pass1 SAM2 hiera_small, pass2 Gemma-3 dynamic claiming) across background/sjw/h100; EgoDex ~55%, part4 in progress; VITRA next. New-dataset demos: DexYCB/AEA/EPIC done.",
+    "text": "Dataset usage guide published (paths/stats/schemas for encoder + PointWAM). Two-pass maskcap fleet continues: EgoDex 63% of sidecars, pass2 scaled to 8 running (2,000 ep/h); VITRA sidecars after EgoDex.",
     "status": "active",
-    "updated": "2026-08-25"
+    "updated": "2026-08-27"
    }
   },
   "dex-point-policy": {
@@ -294,6 +294,15 @@
    "status": "running",
    "updated": "2026-08-25",
    "tldr": "Human-data engine for the PointWAM 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA ego video. A faithful SpaCeFormer-3M re-implementation (A.6/A.7 prompts verbatim, MaskClustering params, Gemma-3, 5 captions/instance) run head-to-head on 10 episodes: captions are adopted-worthy (earlier Gemma failure was protocol mismatch), but static MaskClustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep — quantitatively justifying our scene-flow merge. Recommended default: hybrid. EgoDex campaign ~178k/324k (55%); two-pass fleet (SAM2 pass + Gemma pass) with A/B-validated fast masker; 15 new-dataset demos (DexYCB/AEA/EPIC)."
+  },
+  {
+   "project": "dex-pointwam",
+   "date": "2026-08-27",
+   "slug": "dataset-usage-guide",
+   "title": "Human data, ready to consume — paths, statistics, schemas",
+   "status": "done",
+   "updated": "2026-08-27",
+   "tldr": "Usage guide for the two consumers. 3D encoder: 205,525 EgoDex maskcap sidecars (~23.6 GB, per-point instance ids + captions + SigLIP2 targets, 63% of EgoDex and growing ~2k/h). PointWAM: the full flow corpus — 324,167 EgoDex (~3.1 TB, ARKit GT hands) + ~822,640 VITRA (~2.8 TB, reconstructed MANO), all sampled files valid. Schemas, load snippet, per-part paths/sizes and sanity results (63/63 samples passed); sizes measured by sampling, never du."
   }
  ]
 }
