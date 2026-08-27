@@ -60,6 +60,11 @@
   </div>
   <div class="road reveal">
     <div class="item"><span class="badge wip">running</span><div>
+      <h3><a href="decks/2026-08-28-iteration/">Collapse defeated, direction missing — motion-weighted loss and an autoregressive head</a></h3>
+      <p><code>2026-08-28 · running</code> — Motion weighting lifts generated motion from 12 % to 73 % of ground truth (hand 17 % → 48 %), monotone in both runs, so the mean-collapse is beaten. Accuracy does not follow: no checkpoint beats both baselines. The autoregressive head is the best trade (ADE 0.078 at 50 % motion) and drifts on long sequences. Next: drift control, contact-gated object motion, a direction-only metric.</p>
+    </div></div>
+
+    <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-08-27-diagnosis/">Why it does not work yet — the pilot predicts no motion, and why</a></h3>
       <p><code>2026-08-27 · running</code> — 12,000 steps train cleanly, but the model does not beat a zero-flow baseline and its samples carry 8× too little motion. Oracle-velocity and foreign-target tests exclude sampler bugs, leakage, capacity and normalisation; the velocity target lets the model denoise instead of using the scene, so sampling collapses to the conditional mean. Fix: predict the flow, add a regression baseline, rescale the auxiliaries.</p>
     </div></div>

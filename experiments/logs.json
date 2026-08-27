@@ -11,9 +11,9 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Pilot diagnosed (deck #3, 08-27): trains cleanly but does not beat a zero-flow baseline; cause = velocity target lets the model denoise instead of conditioning, so samples collapse to no motion. Next: flow-target run + PointWorld-style regression baseline + aux rescale before any scale-up.",
+    "text": "Mean-collapse beaten (motion 12%->73% of GT) but direction unlearned: no run beats both baselines. Autoregressive head is the best trade. Next: rollout drift control, contact-gated object motion, direction-only metric, then scale.",
     "status": "active",
-    "updated": "2026-08-27"
+    "updated": "2026-08-28"
    }
   },
   "dpp-bmw": {
@@ -49,6 +49,23 @@
   }
  },
  "logs": [
+  {
+   "project": "3d-wam",
+   "date": "2026-08-28",
+   "slug": "iteration",
+   "title": "Collapse defeated, direction missing — motion-weighted loss and an autoregressive head",
+   "status": "running",
+   "format": "deck",
+   "updated": "2026-08-28",
+   "tldr": "A motion-weighted loss raises generated motion from 12% to 73% of ground truth (hand 17%->48%), monotone in both runs, so mean-collapse is beaten. Accuracy does not follow: no checkpoint beats both the zero-flow and velocity-extrapolation baselines. The autoregressive head gives the best trade (ADE 0.078 at 50% motion) and drifts on long sequences. Next: drift control, contact-gated object motion, a direction-only metric.",
+   "path": "3d-wam/decks/2026-08-28-iteration/",
+   "tags": [
+    "motion-weighted-loss",
+    "autoregressive",
+    "mean-collapse",
+    "honest-metric"
+   ]
+  },
   {
    "project": "3d-wam",
    "date": "2026-08-27",

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #4 · 8-hour autonomous block (2026-08-28 03:00-07:00): motion-weighted loss + autoregressive.
+     Caps: <=8 main slides, thesis <=14 words, <=4 bullets x <=8 words, <=2 media, <=6-row tables. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-28 · Collapse defeated, direction missing — 3D-WAM</title>
+<meta name="description" content="Deck #4: a motion-weighted loss raises generated motion from 12% to 73% of ground truth and an autoregressive head gives the best accuracy/motion trade, but no run beats both baselines: the model's motion direction is still unlearned.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide s-title">
+  <h1>3D-WAM — collapse defeated, direction missing</h1>
+  <p class="ctx">3D-WAM · 8-hour autonomous block · two runs, one honest metric</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 28<br>Presented by beomjun</p>
+</section>
+
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> The model now moves; it still moves the wrong way.</p>
+  <ul>
+    <li>Motion weighting: 12 % → 73 % of true motion</li>
+    <li>Autoregressive head: best accuracy-per-motion</li>
+    <li>No run beats both baselines yet</li>
+    <li>Next: drift control, contact gating, direction metric</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-iteration/assets/e2_taco.gif" alt="autoregressive run, TACO, ground truth left and generated right">
+      <figcaption>autoregressive run · TACO · ground truth left, generated right · ADE 0.030 m</figcaption></figure>
+  </div>
+  <p class="footnote">runs e1_mw_N1024_20260828 and e2_ar_N1024_20260828 · 6,000 steps each · one A100 each · TRAIN-STATUS.md "8-H BLOCK RESULTS"</p>
+</section>
+
+<section class="slide s-claim">
+  <h2>Method: four items, one rejected in smoke</h2>
+  <p class="thesis">Selection followed the evidence: the objective was the bottleneck, not scale.</p>
+  <ul>
+    <li>Honest metric: motion ratio + two baselines</li>
+    <li>Motion-weighted loss (PointWorld point-weight precedent)</li>
+    <li>Autoregressive per-step head, same I/O</li>
+    <li>Rejected: value-matched auxiliary rescale</li>
+  </ul>
+  <p class="footnote">the rejected item amplified auxiliary gradients ~1e7x (grad-norm 326 in smoke) — a value match is not a gradient match</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Motion returns — and accuracy does not follow</li>
+    <li>Autoregressive is the better trade</li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>run · step</th><th class="num">ADE best</th><th class="num">motion ratio</th><th class="num">hand ratio</th></tr></thead>
+        <tbody>
+          <tr><td>08-27 best-ADE model</td><td class="num">—</td><td class="num">11.8 %</td><td class="num">16.6 %</td></tr>
+          <tr><td>E1 single-shot · 1,000</td><td class="num">0.0659</td><td class="num">36.8 %</td><td class="num">22.3 %</td></tr>
+          <tr class="hero"><td>E1 single-shot · 6,000</td><td class="num">0.0908</td><td class="num">73.1 %</td><td class="num">48.2 %</td></tr>
+          <tr><td>E2 autoregressive · 1,000</td><td class="num">0.0642</td><td class="num">21.8 %</td><td class="num">14.6 %</td></tr>
+          <tr class="hero"><td>E2 autoregressive · 6,000</td><td class="num">0.0777</td><td class="num">49.7 %</td><td class="num">36.5 %</td></tr>
+          <tr><td>baselines: zero-flow / velocity extrapolation</td><td class="num">0.0606 / 0.0840</td><td class="num">0 % / 100 %</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">48 val chunks, EMA, k = 4, CFG 1, per-step norms · monotone in both runs · yesterday's accuracy was borrowed from silence</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Motion returns — and accuracy does not follow</li>
+    <li class="on">Autoregressive is the better trade</li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-iteration/assets/e1_taco.gif" alt="single-shot run on TACO">
+      <figcaption>single-shot · TACO · ADE 0.049 m · most motion, least accuracy</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-iteration/assets/e2_arctic.gif" alt="autoregressive run on ARCTIC">
+      <figcaption>autoregressive · ARCTIC · ADE 0.214 m · rollout drift on a long sequence</figcaption></figure>
+  </div>
+  <p class="footnote">E2 has 2/3 of E1's motion at 15 % lower error and is the only run beating velocity extrapolation while emitting ≥ 50 % motion</p>
+</section>
+
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Magnitude is fixed; direction is the next target.</p>
+  <ol>
+    <li><b>Drift control for the rollout</b>
+      <ul><li>scheduled sampling or rollout-in-training; ARCTIC object error 0.209 vs 0.082 zero is compounding, not modelling</li></ul></li>
+    <li><b>Contact-gated object motion</b>
+      <ul><li>objects moved untouched in every run; gate object motion on predicted contact</li></ul></li>
+    <li><b>Direction-only metric</b>
+      <ul><li>cosine on moving points, beside the ratio; ADE conflates magnitude and direction and hid the collapse for two days</li></ul></li>
+  </ol>
+  <p class="footnote">Then, and only then, scale: 4x A100, N = 2048, ≥ 24k steps. Artifacts: review/train/block_curve.json · results/{e1,e2}_6k/clips/</p>
+</section>
+
+</div>
+</body>
+</html>
