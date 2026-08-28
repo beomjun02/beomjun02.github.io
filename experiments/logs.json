@@ -342,19 +342,20 @@
    "title": "Rebuilt as a video generation model — 10 Hz data, time as a token axis, three designs (deck #6)",
    "status": "running",
    "updated": "2026-08-28",
-   "tldr": "Deck #6: the pilot rebuilt to the video-generation contract. Data re-preprocessed at 10 Hz, human only, chunk stride 1, 512 points per entity (5,645 episodes, 848,622 chunks). Time becomes a token axis instead of 48 channels; tokens are Hilbert-serialized patches of 8 points (PTv3 construction used as Wan's patch embed, unpatchify verified exact); RoPE on the frame index. The loss is stripped to plain masked MSE — no rigidity, no contact, no motion reweighting, no adaptive batch-RMS normalisation, no autoregressive arm. Three parameter-matched arms at ~120 M: D1 patches + full attention, D2 one token per point-frame + PTv3 windowed attention, D3 = D1 + Stable-Video-Diffusion motion-bucket and conditioning-noise micro-conditioning.",
+   "tldr": "Deck #6: the pilot rebuilt to the video-generation contract. Data re-preprocessed at 10 Hz, human only, chunk stride 1, 512 points per entity (5,645 episodes, 848,622 chunks). Time becomes a token axis instead of 48 channels; tokens are Hilbert-serialized patches of 8 points (PTv3 construction used as Wan's patch embed, unpatchify verified exact); RoPE on the frame index. The loss is stripped to plain masked MSE — no rigidity, no contact, no motion reweighting, no adaptive batch-RMS normalisation, no autoregressive arm. Three parameter-matched arms at ~120 M: D1 patches + full attention, D2 one token per point-frame + PTv3 windowed attention, D3 = D1 + block-causal temporal attention, taken from MolmoMotion's finding that its autoregressive head beats its own flow-matching head because each step conditions on what came before (verified exactly: perturbing later frames changes frame 0's output by 0.0).",
    "path": "3d-wam/decks/2026-08-28-videodit/",
    "tags": [
     "video-diffusion",
     "Wan",
     "PTv3",
-    "SVD",
     "flow-matching",
     "tokenisation",
     "10Hz",
     "data",
     "architecture",
-    "training"
+    "training",
+    "MolmoMotion",
+    "causal-attention"
    ],
    "format": "deck"
   }
