@@ -26,7 +26,7 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Four arms, one trade-off curve; direction is the wall, not magnitude</p>
+  <p class="thesis"><b>[TL;DR]</b> Direction cosine decides everything; threshold 0.5, we are at 0.266</p>
   <ul>
     <li>Done: 10 Hz human-only data, re-preprocessed</li>
     <li>Done: four arms plus a MolmoMotion finetune</li>
@@ -88,42 +88,44 @@
 <!-- SECTION: results -->
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">No arm beats a zero predictor; ADE gains are bought with motion</p>
+  <p class="thesis">Longer training moved D1 off the curve: same error, 78 % motion</p>
   <ol class="agenda">
-    <li class="on">Every arm slides toward predicting nothing
-      <ul><li>lower ADE means less motion, monotonically</li>
-          <li>D3 causal time is the only arm holding 63 %</li></ul>
+    <li class="on">Duration was the untested variable
+      <ul><li>D1 motion 44 % at step 3.4k, 78 % at 10k, error flat</li>
+          <li>cosine 0.145 to 0.266, magnitude self-calibrated to 94 %</li></ul>
     </li>
-    <li class="">Direction is wrong, not magnitude
-      <ul><li>cosine 0.145 · perfect magnitude buys 8 %, perfect direction 36 %</li>
-          <li>worst at t=1, so a shorter horizon would be worse</li></ul>
+    <li class="">Direction is the binding constraint
+      <ul><li>err = sqrt(m² + g² − 2mgc) → beating zero needs cosine &gt; 0.5</li>
+          <li>at 0.266 now; hands 0.361, objects 0.076</li></ul>
     </li>
     <li class="">MolmoMotion zero-shot — hands beat the baseline, objects do not</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/tradeoff.svg" alt="ADE against generated motion for all four arms, converging on the zero predictor"><figcaption>trade-off — ADE vs generated motion, one line per arm, points are checkpoints · labels are training steps</figcaption></figure>
+    <figure><img src="assets/tradeoff.svg" alt="ADE against generated motion for all four arms"><figcaption>trade-off — error vs generated motion, one line per arm, points are checkpoints · labels are training steps</figcaption></figure>
+    <figure><img src="assets/d1_taco_5s.gif" alt="Five-second chained rollout, ground truth left, generation right"><figcaption>D1 chained rollout — 5 × 1 s, re-predicted from each endpoint · left ground truth, right generated</figcaption></figure>
   </div>
   <p class="footnote">baselines on this configuration: zero-flow 14.66 cm · oracle velocity extrapolation 16.40 cm — not comparable to the earlier E-series numbers (different rate, horizon and split)</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">Perfect magnitude buys 8 %; perfect direction buys 36 %</p>
+  <p class="thesis">One number decides it: direction cosine, threshold exactly 0.5</p>
   <ol class="agenda">
-    <li class="">Every arm slides toward predicting nothing
-      <ul><li>lower ADE means less motion, monotonically</li>
-          <li>D3 causal time is the only arm holding 63 %</li></ul>
+    <li class="">Duration was the untested variable
+      <ul><li>D1 motion 44 % at step 3.4k, 78 % at 10k, error flat</li>
+          <li>cosine 0.145 to 0.266, magnitude self-calibrated to 94 %</li></ul>
     </li>
-    <li class="on">Direction is wrong, not magnitude
-      <ul><li>cosine 0.145 · perfect magnitude buys 8 %, perfect direction 36 %</li>
-          <li>worst at t=1, so a shorter horizon would be worse</li></ul>
+    <li class="on">Direction is the binding constraint
+      <ul><li>err = sqrt(m² + g² − 2mgc) → beating zero needs cosine &gt; 0.5</li>
+          <li>at 0.266 now; hands 0.361, objects 0.076</li></ul>
     </li>
     <li class="">MolmoMotion zero-shot — hands beat the baseline, objects do not</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/diagnosis.svg" alt="Oracle magnitude and oracle direction bars, and per-horizon-step cosine and motion ratio"><figcaption>decomposition — D1 at step 1700 · upper: ADE under oracle substitutions · lower: per horizon step</figcaption></figure>
+    <figure><img src="assets/threshold.svg" alt="Error relative to predicting nothing as a function of direction cosine, with the 0.5 threshold"><figcaption>threshold — error ÷ zero-predictor error against direction cosine · measured points on the solid curve</figcaption></figure>
+    <figure><img src="assets/d3_taco_5s.gif" alt="Five-second chained rollout of the causal-time arm"><figcaption>D3 chained rollout — same chunk and horizon as D1, causal temporal attention</figcaption></figure>
   </div>
-  <p class="footnote">two of our own hypotheses died here: the 852 % object overshoot was a mean-of-ratios artefact (true 111 %), and per-step normalisation deepened collapse instead of fixing it</p>
+  <p class="footnote">below cosine 0.5 the error-minimising magnitude equals the cosine, which is the whole trade-off curve · two of our hypotheses died here: the 852 % object overshoot was a mean-of-ratios artefact (true 111 %), and per-step normalisation deepened collapse instead of fixing it</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -148,6 +150,16 @@
 </section>
 
 <!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix: rollout clips</h2>
+  <p class="thesis ctx">Every arm, every probe dataset — 20 one-second and 8 five-second clips</p>
+  <div class="band">
+    <figure><img src="assets/d1_dexycb_1s.gif" alt="D1 one-second rollout on DexYCB"><figcaption>D1 · DexYCB · 1 s · 80 % motion — the highest-motion single chunk</figcaption></figure>
+    <figure><img src="assets/d5_dexycb_1s.gif" alt="D5 one-second rollout on DexYCB"><figcaption>D5 · same chunk · 21 % motion — per-step normalisation collapsed</figcaption></figure>
+  </div>
+  <p class="footnote">all clips: results/vdit/clips (20 × 1 s) and results/vdit/clips5s (8 × 5 s chained) · object orange · right hand green · left hand purple · owner verifies</p>
+</section>
+
 <section class="slide s-appendix">
   <h2>Appendix: per-arm settings</h2>
   <p class="thesis ctx">Measured on one A100 before launch; steps chosen to fill 3 hours</p>
