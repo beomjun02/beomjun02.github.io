@@ -26,7 +26,7 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Direction cosine decides everything; threshold 0.5, we are at 0.266</p>
+  <p class="thesis"><b>[TL;DR]</b> Objects follow hands at 0.890; the blocker is hand direction at contact</p>
   <ul>
     <li>Done: 10 Hz human-only data, re-preprocessed</li>
     <li>Done: four arms complete, plainest one wins</li>
@@ -101,7 +101,7 @@
     <li class="">MolmoMotion zero-shot — hands beat the baseline, objects do not</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/tradeoff.svg" alt="ADE against generated motion for all four arms"><figcaption>trade-off — error vs generated motion, one line per arm, points are checkpoints · labels are training steps</figcaption></figure>
+    <figure><img src="assets/threshold.svg" alt="Error relative to predicting nothing as a function of direction cosine, with the 0.5 threshold"><figcaption>threshold — error ÷ zero-predictor error against direction cosine · beating zero needs cosine above 0.5</figcaption></figure>
     <figure><img src="assets/d1_taco_5s.gif" alt="Five-second chained rollout, ground truth left, generation right"><figcaption>D1 chained rollout — 5 × 1 s, re-predicted from each endpoint · left ground truth, right generated</figcaption></figure>
   </div>
   <p class="footnote">baselines on this configuration: zero-flow 14.66 cm · oracle velocity extrapolation 16.40 cm — not comparable to the earlier E-series numbers (different rate, horizon and split)</p>
@@ -109,23 +109,22 @@
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">One number decides it: direction cosine, threshold exactly 0.5</p>
+  <p class="thesis">A held object moves with its hand at 0.890 — the coupling is exploitable</p>
   <ol class="agenda">
     <li class="">Duration was the untested variable
       <ul><li>D1 motion 44 % at step 3.4k, 78 % at 10k, error flat</li>
           <li>cosine 0.145 to 0.266, magnitude self-calibrated to 94 %</li></ul>
     </li>
-    <li class="on">Direction is the binding constraint
-      <ul><li>err = sqrt(m² + g² − 2mgc) → beating zero needs cosine &gt; 0.5</li>
-          <li>at 0.266 now; hands 0.361, objects 0.076</li></ul>
+    <li class="on">The coupling, and what blocks it
+      <ul><li>true hand flow lifts object cosine 0.152 → 0.857, ADE 14.30 → 3.25 cm</li>
+          <li>our hand flow buys 0.010 — hand cosine at contact is only 0.224</li></ul>
     </li>
     <li class="">MolmoMotion zero-shot — hands beat the baseline, objects do not</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/threshold.svg" alt="Error relative to predicting nothing as a function of direction cosine, with the 0.5 threshold"><figcaption>threshold — error ÷ zero-predictor error against direction cosine · measured points on the solid curve</figcaption></figure>
-    <figure><img src="assets/d3_taco_5s.gif" alt="Five-second chained rollout of the causal-time arm"><figcaption>D3 chained rollout — same chunk and horizon as D1, causal temporal attention</figcaption></figure>
+    <figure><img src="assets/coupling.svg" alt="Per-dataset hand-object flow coupling, and object cosine before and after propagation"><figcaption>coupling — left: ground-truth hand↔object agreement per dataset · right: what propagation buys, and its ceiling</figcaption></figure>
   </div>
-  <p class="footnote">below cosine 0.5 the error-minimising magnitude equals the cosine, which is the whole trade-off curve · two of our hypotheses died here: the 852 % object overshoot was a mean-of-ratios artefact (true 111 %), and per-step normalisation deepened collapse instead of fixing it</p>
+  <p class="footnote">propagation needs no training — frame-0 nearest hand point within 2 cm, fixed gate, 8.5 % of object points · this is the mechanism that separates a joint hand+object model from General Flow (object only) and MolmoMotion (object query points)</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -150,6 +149,16 @@
 </section>
 
 <!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix: what was ruled out</h2>
+  <p class="thesis ctx">Seven interventions tested; the ones killed by measurement cost minutes</p>
+  <div class="band">
+    <figure><img src="assets/ruled_out.svg" alt="Table of interventions tested and their measured outcomes"><figcaption>interventions — green is the only lever that moved the cosine · "measured" means killed by a diagnostic, not a training run</figcaption></figure>
+    <figure><img src="assets/tradeoff.svg" alt="ADE against generated motion for all four arms"><figcaption>trade-off — error vs motion per checkpoint · D1 leaves the curve after step 6,800</figcaption></figure>
+  </div>
+  <p class="footnote">diagnostics: review/train/{dir_mag_split, identifiability, contact_pair_alignment, propagation_bound, cosine_by_part}.py</p>
+</section>
+
 <section class="slide s-appendix">
   <h2>Appendix: final scoreboard</h2>
   <p class="thesis ctx">Ranked on cosine, the quantity the threshold arithmetic says decides it</p>
