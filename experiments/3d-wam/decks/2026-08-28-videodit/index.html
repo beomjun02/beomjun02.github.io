@@ -29,7 +29,7 @@
   <p class="thesis"><b>[TL;DR]</b> Direction cosine decides everything; threshold 0.5, we are at 0.266</p>
   <ul>
     <li>Done: 10 Hz human-only data, re-preprocessed</li>
-    <li>Done: four arms plus a MolmoMotion finetune</li>
+    <li>Done: four arms complete, plainest one wins</li>
     <li>Decided: no auxiliary losses, no motion reweighting</li>
     <li>Discuss: identifiability ceiling · history · duration</li>
   </ul>
@@ -150,6 +150,25 @@
 </section>
 
 <!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix: final scoreboard</h2>
+  <p class="thesis ctx">Ranked on cosine, the quantity the threshold arithmetic says decides it</p>
+  <div class="band">
+    <figure><table>
+      <thead><tr><th>arm</th><th>steps</th><th>cosine</th><th>hand</th><th>object</th><th>magnitude</th><th>ADE</th></tr></thead>
+      <tbody>
+        <tr><td><b>D1 patch + full attention</b></td><td>10,000</td><td><b>0.266</b></td><td><b>0.361</b></td><td>0.076</td><td>94 %</td><td>15.83</td></tr>
+        <tr><td>D3 + block-causal time</td><td>8,217</td><td>0.206</td><td>0.256</td><td><b>0.106</b></td><td>86 %</td><td>16.60</td></tr>
+        <tr><td>D2 PTv3 windows</td><td>2,188</td><td>0.193</td><td>0.248</td><td>0.083</td><td>88 %</td><td>16.11</td></tr>
+        <tr><td>D5 per-step displacement</td><td>8,500</td><td>0.066</td><td>0.109</td><td>−0.020</td><td>19 %</td><td>13.86</td></tr>
+        <tr><td>threshold to beat a zero predictor</td><td>—</td><td><b>0.500</b></td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      </tbody></table>
+      <figcaption>scoreboard — the plainest architecture wins; both additions to it lost · D2 saw 9× fewer samples</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">D5's low ADE is not a win — at 19 % motion it has become the zero predictor · D3 leads on objects only, where every arm is near zero</p>
+</section>
+
 <section class="slide s-appendix">
   <h2>Appendix: rollout clips</h2>
   <p class="thesis ctx">Every arm, every probe dataset — 20 one-second and 8 five-second clips</p>
