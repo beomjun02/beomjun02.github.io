@@ -29,14 +29,19 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-27 16:26 KST</dd></div>
-      <div><dt>Encoder data</dt><dd>205,525 EgoDex episodes (63.4% of EgoDex; ~2,000/h, EgoDex-complete ≈ 08-30)</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-29 02:30 KST (campaign still running)</dd></div>
+      <div><dt>Encoder data</dt><dd>274,526 EgoDex episodes (84.7%) · quality 100% on a 1,250-file audit · ~5,000/hour</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
-      <div><dt>Sanity</dt><dd>32/32 sidecars · 31/31 flow H5s (random samples) · 800/800 sidecar↔flow name matches</dd></div>
+      <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Bottom line</p>
-      <p>PointWAM can train on the <b>full</b> EgoDex + VITRA flow corpus today (~4.0 TB / 1.15 M episodes, all sampled files valid). The 3D-encoder corpus is <b>205,525 EgoDex episodes</b> (~23.6 GB of sidecars) and grows ~2,000 episodes/hour; parts 1–2 are complete, part 3 at 95%, part 4 at 45%. Caption style is <b>not uniform</b>: of the 205,525 sidecars, <b>63,066 (31%) come from the v0/v2 captioner era</b> (part1 in full + 18.6k of part2), <b>92,037 (45%) from v3</b> (masked-crop Qwen) and <b>51,106 (25%) from the current SpaceFormer-A.7 Gemma-3 pass</b>. The v0 era carries a known defect — a large background instance could inherit a nearby object&#39;s description (the bbox-hijack bug, fixed on 08-19) — so treat that slice as noisier, filter it, or re-caption it. Files written by the current pass carry <code>caption_style=sf_gemma3_pass2_v1</code>; older ones have no such attribute and split by mtime at 2026-08-19 12:00.</p>
+      <p><b>PointWAM</b> can train on the full flow corpus today — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB), every sampled file valid.
+      <b>3D encoder</b> data is at <b>274,526 / 324,167 EgoDex episodes (84.7%)</b> and lands at ~5,000/hour on 24 GPUs;
+      coverage completes <b>2026-08-29 midday</b>. A quality audit after the latest fix found <b>object captions present in 1,250/1,250 sampled sidecars</b>.
+      One thing to know before you train: <b>captions come from three generations</b> of the captioner (table in §01). If you want a single homogeneous
+      corpus today, filter to <code>caption_style == "sf_gemma3_pass2_v1"</code> (109,729 episodes and growing); the whole set becomes that
+      generation by <b>08-30 evening</b>, when the older episodes finish reprocessing.</p>
     </div>
   </div>
 </header>
@@ -49,14 +54,15 @@
       <p class="sub">One sidecar per episode, non-destructive (keyed to the flow H5 of the same name). Every 3D point carries an instance id; every instance carries a caption and its SigLIP2 embedding — the Mosaic3D/SpaceFormer training-pair format.</p>
       <div class="tbl">
         <table>
-          <thead><tr><th>Part</th><th>Path</th><th>Episodes</th><th>Coverage</th><th>Size</th><th>caption_style</th></tr></thead>
+          <thead><tr><th>Part</th><th>Path <span class="muted">(under /virtual_lab/sjw_alinlab/beomjun/)</span></th><th>Episodes</th><th>Coverage</th><th>Caption generation</th></tr></thead>
           <tbody>
-            <tr><td>part1</td><td class="mono">maskcap_pilot/egodex/</td><td class="mono">44,507</td><td class="mono">100%</td><td class="mono">~5.6 GB</td><td class="mono">v3 (Qwen)</td></tr>
-            <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">~8.2 GB</td><td class="mono">18.6k v0-era · 75.5k v3</td></tr>
-            <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">48,527</td><td class="mono">95.5%</td><td class="mono">~6.4 GB</td><td class="mono">16.5k v3 · 32.0k A.7 Gemma</td></tr>
-            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">18,439</td><td class="mono">45.0%</td><td class="mono">~3.4 GB</td><td class="mono">19.1k A.7 Gemma</td></tr>
-            <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>205,525</b></td><td class="mono">63.4% of 324,167</td><td class="mono"><b>~23.6 GB</b></td><td class="mono">—</td></tr>
-            <tr><td class="muted">part5 · extra · test</td><td class="mono muted">egodex_part5 / _extra / _test</td><td class="mono muted">0 / 93,824 queued</td><td class="mono muted">—</td><td class="mono muted">—</td><td class="mono muted">A.7 Gemma-3 (planned)</td></tr>
+            <tr><td>part1</td><td class="mono">maskcap_pilot/egodex/</td><td class="mono">44,507</td><td class="mono">100%</td><td class="mono">v0/v2 — 44,507</td></tr>
+            <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">v0/v2 18,559 · v3 75,493</td></tr>
+            <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">50,554</td><td class="mono">99.5%</td><td class="mono">v3 26,238 · <b>A.7 24,316</b></td></tr>
+            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">34,569</td><td class="mono">84.3%</td><td class="mono"><b>A.7 34,569</b></td></tr>
+            <tr><td>part5</td><td class="mono">maskcap_pilot/egodex_part5/</td><td class="mono">50,885</td><td class="mono">72.0%</td><td class="mono"><b>A.7 50,844</b></td></tr>
+            <tr><td class="muted">extra · test</td><td class="mono muted">maskcap_pilot/egodex_extra · _test/</td><td class="mono muted">0 / 23,169</td><td class="mono muted">queued</td><td class="mono muted">A.7 (planned)</td></tr>
+            <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>274,526</b></td><td class="mono"><b>84.7%</b></td><td class="mono">v0/v2 63,066 · v3 101,731 · <b>A.7 109,729</b></td></tr>
           </tbody>
         </table>
       </div>
@@ -75,6 +81,20 @@
           </tbody>
         </table>
       </div>
+      <h3 style="margin-top:26px">Which subset should I train on?</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Goal</th><th>Filter</th><th>Episodes now</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">attrs["caption_style"] == "sf_gemma3_pass2_v1"</td><td class="mono">109,729</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows to the full set by 08-30 evening.</td></tr>
+            <tr><td><b>Maximum scale today</b></td><td class="mono">all sidecars</td><td class="mono">274,526</td><td>Mixed caption generations; fine if you treat caption text as noisy supervision.</td></tr>
+            <tr><td>Scale minus the known-bad generation</td><td class="mono">mtime &gt; 2026-08-19 12:00 KST</td><td class="mono">211,460</td><td>Drops the 63,066 v0/v2 episodes, whose large background instances can carry a neighbouring object&#39;s description.</td></tr>
+            <tr><td>Object-only encoder</td><td class="mono">+ drop global_is_agent == true</td><td class="mono">—</td><td>Removes the human hand/forearm instances (template captions).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub"><b>Caption generations, in one line each.</b> <code>v0/v2</code>: caption crop was the mask&#39;s bounding box, so a large surface could inherit a nearby object&#39;s description (fixed 08-19). <code>v3</code>: masked crop only, Qwen3-VL, short fragment captions. <code>sf_gemma3_pass2_v1</code>: SpaceFormer A.7 protocol verbatim (red-outline crop + masked cutout per view, up to 2 views), Gemma-3-12b, paragraph captions with a spatial-relation sentence. Only the last one sets the <code>caption_style</code> attribute; the older two have no such attribute and split by file mtime.</p>
+      <p class="sub"><b>Empty captions.</b> Instances past the per-episode caption budget carry <code>""</code> and a zero row in <code>global_siglip2</code> — always skip with <code>if caps[gid].strip()</code>. A load bug that left whole episodes uncaptioned was found and fixed on 08-28 (client-side VLM timeout under 42-way concurrency); the 6,661 affected episodes were deleted and are being reprocessed, and the writer now refuses to save a sidecar when more than 10% of its captions fail.</p>
       <h3 style="margin-top:26px">Samples</h3>
       <p class="sub">Per-instance grids: each tile isolates one instance's 3D points over a dimmed anchor frame, with its caption. Tiles sorted by #points.</p>
       <figure><img src="assets/enc_paint_clean_brush.jpg" alt="paint_clean_brush per-instance grid" loading="lazy"><figcaption>paint_clean_brush — A.7 Gemma-3 captions</figcaption></figure>
