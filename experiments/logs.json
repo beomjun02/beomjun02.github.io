@@ -10,11 +10,7 @@
    "title": "3D-WAM",
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
-   "now": {
-    "text": "Multi-stream joint attention tested and rejected (objects far from hands still move 10-47x too much; hand motion unchanged). Five architectures now show the same magnitude/accuracy trade. Next candidate: contact as a prediction target rather than a loss term - to be thought through before running.",
-    "status": "active",
-    "updated": "2026-08-28"
-   }
+   "now": "Rebuilt to the video-generation contract: 10 Hz human-only data, time as a token axis, Hilbert patches, plain masked-MSE loss; D1/D2/D3 running."
   },
   "dpp-bmw": {
    "title": "DPP-BMW",
@@ -338,6 +334,29 @@
    "status": "done",
    "updated": "2026-08-27",
    "tldr": "Usage guide for the two consumers. 3D encoder: 205,525 EgoDex maskcap sidecars (~23.6 GB, per-point instance ids + captions + SigLIP2 targets, 63% of EgoDex and growing ~2k/h). PointWAM: the full flow corpus — 324,167 EgoDex (~3.1 TB, ARKit GT hands) + ~822,640 VITRA (~2.8 TB, reconstructed MANO), all sampled files valid. Schemas, load snippet, per-part paths/sizes and sanity results (63/63 samples passed); sizes measured by sampling, never du."
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-08-28",
+   "slug": "videodit-rebuild",
+   "title": "Rebuilt as a video generation model — 10 Hz data, time as a token axis, three designs (deck #6)",
+   "status": "running",
+   "updated": "2026-08-28",
+   "tldr": "Deck #6: the pilot rebuilt to the video-generation contract. Data re-preprocessed at 10 Hz, human only, chunk stride 1, 512 points per entity (5,645 episodes, 848,622 chunks). Time becomes a token axis instead of 48 channels; tokens are Hilbert-serialized patches of 8 points (PTv3 construction used as Wan's patch embed, unpatchify verified exact); RoPE on the frame index. The loss is stripped to plain masked MSE — no rigidity, no contact, no motion reweighting, no adaptive batch-RMS normalisation, no autoregressive arm. Three parameter-matched arms at ~120 M: D1 patches + full attention, D2 one token per point-frame + PTv3 windowed attention, D3 = D1 + Stable-Video-Diffusion motion-bucket and conditioning-noise micro-conditioning.",
+   "path": "3d-wam/decks/2026-08-28-videodit/",
+   "tags": [
+    "video-diffusion",
+    "Wan",
+    "PTv3",
+    "SVD",
+    "flow-matching",
+    "tokenisation",
+    "10Hz",
+    "data",
+    "architecture",
+    "training"
+   ],
+   "format": "deck"
   }
  ]
 }
