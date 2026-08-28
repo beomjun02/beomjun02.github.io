@@ -1,0 +1,104 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.h{font-weight:700;font-size:14.5px;fill:var(--title)}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="17" class="h">D1 · the faithful baseline</text>
+<text x="405" y="17" class="h">D2 · finer tokens, local talking</text>
+<text x="792" y="17" class="h">D3 · tell it how much to move</text>
+<text x="18" y="42" class="b t">how the points become cards</text>
+<circle cx="24" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="33" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="42" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="51" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="60" cy="59" r="3" fill="#d0842f"/>
+<circle cx="69" cy="59" r="3" fill="#d0842f"/>
+<circle cx="78" cy="59" r="3" fill="#d0842f"/>
+<circle cx="87" cy="59" r="3" fill="#d0842f"/>
+<path d="M96 59 L116 59" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="122" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="143" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="164" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="185" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="206" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="227" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="248" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="269" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="290" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="311" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<text x="18" y="83" class="lb">8 points → 1 card · 256 × 10 frames = 2,560</text>
+<circle cx="411" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="420" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="429" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="438" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="447" cy="59" r="3" fill="#d0842f"/>
+<circle cx="456" cy="59" r="3" fill="#d0842f"/>
+<circle cx="465" cy="59" r="3" fill="#d0842f"/>
+<circle cx="474" cy="59" r="3" fill="#d0842f"/>
+<path d="M483 59 L503 59" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="509" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="521" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="533" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="545" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="557" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="569" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="581" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="593" y="51" width="9" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<text x="609" y="63" class="lb">…</text>
+<text x="405" y="83" class="lb">1 point → 1 card · 2,048 × 10 frames = 20,480</text>
+<circle cx="798" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="807" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="816" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="825" cy="59" r="3" fill="#8e7cc3"/>
+<circle cx="834" cy="59" r="3" fill="#d0842f"/>
+<circle cx="843" cy="59" r="3" fill="#d0842f"/>
+<circle cx="852" cy="59" r="3" fill="#d0842f"/>
+<circle cx="861" cy="59" r="3" fill="#d0842f"/>
+<path d="M870 59 L890 59" stroke="var(--mut)" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="896" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="917" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="938" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="959" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="980" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="1001" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="1022" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="1043" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="1064" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<rect x="1085" y="51" width="17" height="16" rx="2.5" fill="var(--acc)" opacity="0.85"/>
+<text x="792" y="83" class="lb">8 points → 1 card · 256 × 10 frames = 2,560</text>
+<text x="18" y="112" class="b t">who can talk to whom</text>
+<rect x="18" y="120" width="81" height="81" rx="1" fill="var(--acc)" opacity="0.32"/>
+<text x="113" y="158" class="lb">every card sees</text>
+<text x="113" y="173" class="lb">every other card</text>
+<rect x="18" y="120" width="81" height="81" fill="none" stroke="var(--line)"/>
+<rect x="405" y="120" width="27" height="27" rx="1" fill="var(--acc)" opacity="0.32"/>
+<rect x="432" y="147" width="27" height="27" rx="1" fill="var(--acc)" opacity="0.32"/>
+<rect x="459" y="174" width="27" height="27" rx="1" fill="var(--acc)" opacity="0.32"/>
+<text x="500" y="158" class="lb">only nearby cards</text>
+<text x="500" y="173" class="lb">(windows on the diagonal)</text>
+<rect x="405" y="120" width="81" height="81" fill="none" stroke="var(--line)"/>
+<rect x="792" y="120" width="81" height="81" rx="1" fill="var(--acc)" opacity="0.32"/>
+<text x="887" y="158" class="lb">every card sees</text>
+<text x="887" y="173" class="lb">every other card</text>
+<rect x="792" y="120" width="81" height="81" fill="none" stroke="var(--line)"/>
+<text x="18" y="222" class="b t">extra dial</text>
+<text x="18" y="238" class="m">none</text>
+<text x="405" y="238" class="m">none</text>
+<text x="792" y="238" class="t">“move this much” + “trust frame 0 this much”</text>
+<rect x="792" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.25"/>
+<rect x="816" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.33999999999999997"/>
+<rect x="840" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.43"/>
+<rect x="864" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.52"/>
+<rect x="888" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.61"/>
+<rect x="912" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.7"/>
+<rect x="936" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.79"/>
+<rect x="960" y="246" width="20" height="11" rx="2" fill="var(--acc)" opacity="0.88"/>
+<text x="992" y="256" class="lb">8 buckets · 0.9 → 13.5 cm</text>
+<line x1="18" y1="272" x2="1162" y2="272" stroke="var(--line)"/>
+<text x="18" y="286" class="b t">if it works we should see</text>
+<text x="18" y="304" class="t">motion near 100 %, ADE under both baselines</text>
+<text x="18" y="321" class="m">→ meaning: structure alone was the problem</text>
+<text x="405" y="304" class="t">objects far from hands stop drifting</text>
+<text x="405" y="321" class="m">→ meaning: the model lacked access to proximity</text>
+<text x="792" y="304" class="t">output motion tracks the requested bucket</text>
+<text x="792" y="321" class="m">→ meaning: magnitude is controllable, not fixed</text>
+<text x="18" y="347" class="lb">all three: same data, same loss (masked MSE only), ~120 M parameters, 3 h each · purple = hand points, orange = object points</text>
+<defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--mut)"/></marker></defs>
+</svg>
