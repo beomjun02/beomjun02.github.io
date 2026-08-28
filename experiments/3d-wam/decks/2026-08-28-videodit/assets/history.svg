@@ -1,0 +1,66 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="22" class="t b">Three frames of history: cosine 0.080 → 0.453 at the first step</text>
+<line x1="66" y1="298.0" x2="912" y2="298.0" stroke="var(--line)"/>
+<line x1="66" y1="44" x2="66" y2="298.0" stroke="var(--line)"/>
+<text x="58" y="239" class="lb" text-anchor="end">0.2</text>
+<line x1="66" y1="234.5" x2="912" y2="234.5" stroke="var(--line)" opacity="0.25"/>
+<text x="58" y="175" class="lb" text-anchor="end">0.4</text>
+<line x1="66" y1="171.0" x2="912" y2="171.0" stroke="var(--line)" opacity="0.25"/>
+<text x="58" y="112" class="lb" text-anchor="end">0.6</text>
+<line x1="66" y1="107.5" x2="912" y2="107.5" stroke="var(--line)" opacity="0.25"/>
+<text x="58" y="48" class="lb" text-anchor="end">0.8</text>
+<line x1="66" y1="44.0" x2="912" y2="44.0" stroke="var(--line)" opacity="0.25"/>
+<text x="108" y="314" class="lb" text-anchor="middle">t1</text>
+<text x="193" y="314" class="lb" text-anchor="middle">t2</text>
+<text x="278" y="314" class="lb" text-anchor="middle">t3</text>
+<text x="362" y="314" class="lb" text-anchor="middle">t4</text>
+<text x="447" y="314" class="lb" text-anchor="middle">t5</text>
+<text x="531" y="314" class="lb" text-anchor="middle">t6</text>
+<text x="616" y="314" class="lb" text-anchor="middle">t7</text>
+<text x="700" y="314" class="lb" text-anchor="middle">t8</text>
+<text x="785" y="314" class="lb" text-anchor="middle">t9</text>
+<text x="870" y="314" class="lb" text-anchor="middle">t10</text>
+<line x1="66" y1="139.2" x2="912" y2="139.2" stroke="#c2452d" stroke-dasharray="5 4"/>
+<text x="918" y="143" class="lb" fill="#c2452d">threshold 0.5</text>
+<polyline points="108.3,65.0 192.9,99.6 277.5,123.4 446.7,157.3 869.7,210.4" fill="none" stroke="#9aa4b2" stroke-width="2.4" stroke-dasharray="4 3"/>
+<circle cx="108.3" cy="65.0" r="3.4" fill="#9aa4b2"/>
+<circle cx="192.9" cy="99.6" r="3.4" fill="#9aa4b2"/>
+<circle cx="277.5" cy="123.4" r="3.4" fill="#9aa4b2"/>
+<circle cx="446.7" cy="157.3" r="3.4" fill="#9aa4b2"/>
+<circle cx="869.7" cy="210.4" r="3.4" fill="#9aa4b2"/>
+<polyline points="108.3,272.6 192.9,245.3 277.5,235.5 362.1,212.0 446.7,199.3 531.3,186.9 615.9,193.2 700.5,199.3 785.1,198.3 869.7,191.6" fill="none" stroke="var(--acc)" stroke-width="2.4"/>
+<circle cx="108.3" cy="272.6" r="3.4" fill="var(--acc)"/>
+<circle cx="192.9" cy="245.3" r="3.4" fill="var(--acc)"/>
+<circle cx="277.5" cy="235.5" r="3.4" fill="var(--acc)"/>
+<circle cx="362.1" cy="212.0" r="3.4" fill="var(--acc)"/>
+<circle cx="446.7" cy="199.3" r="3.4" fill="var(--acc)"/>
+<circle cx="531.3" cy="186.9" r="3.4" fill="var(--acc)"/>
+<circle cx="615.9" cy="193.2" r="3.4" fill="var(--acc)"/>
+<circle cx="700.5" cy="199.3" r="3.4" fill="var(--acc)"/>
+<circle cx="785.1" cy="198.3" r="3.4" fill="var(--acc)"/>
+<circle cx="869.7" cy="191.6" r="3.4" fill="var(--acc)"/>
+<polyline points="108.3,154.2 192.9,150.7 277.5,159.6 362.1,163.1 446.7,169.4 531.3,183.7 615.9,194.2 700.5,207.5 785.1,214.5 869.7,209.1" fill="none" stroke="#2a9d4f" stroke-width="2.4"/>
+<circle cx="108.3" cy="154.2" r="3.4" fill="#2a9d4f"/>
+<circle cx="192.9" cy="150.7" r="3.4" fill="#2a9d4f"/>
+<circle cx="277.5" cy="159.6" r="3.4" fill="#2a9d4f"/>
+<circle cx="362.1" cy="163.1" r="3.4" fill="#2a9d4f"/>
+<circle cx="446.7" cy="169.4" r="3.4" fill="#2a9d4f"/>
+<circle cx="531.3" cy="183.7" r="3.4" fill="#2a9d4f"/>
+<circle cx="615.9" cy="194.2" r="3.4" fill="#2a9d4f"/>
+<circle cx="700.5" cy="207.5" r="3.4" fill="#2a9d4f"/>
+<circle cx="785.1" cy="214.5" r="3.4" fill="#2a9d4f"/>
+<circle cx="869.7" cy="209.1" r="3.4" fill="#2a9d4f"/>
+<rect x="918" y="42" width="10" height="10" fill="#9aa4b2"/>
+<text x="933" y="51" class="t">velocity ceiling (no model)</text>
+<rect x="918" y="62" width="10" height="10" fill="var(--acc)"/>
+<text x="933" y="71" class="t">D1 — frame 0 only</text>
+<rect x="918" y="82" width="10" height="10" fill="#2a9d4f"/>
+<text x="933" y="91" class="t">C1 — plus 3-frame history</text>
+<text x="918" y="126" class="lb">C1 saturates the ceiling</text>
+<text x="918" y="140" class="lb">by t=10 (0.280 vs 0.276)</text>
+<text x="918" y="160" class="lb">object cosine 0.076 → 0.220</text>
+<text x="918" y="174" class="lb">ADE 15.83 → 13.71, beating</text>
+<text x="918" y="188" class="lb">a zero predictor at 13.60</text>
+<text x="18" y="346" class="lb">direction cosine against ground truth, per horizon step · both models 120 M parameters, 10,000 steps, identical data and loss</text>
+</svg>

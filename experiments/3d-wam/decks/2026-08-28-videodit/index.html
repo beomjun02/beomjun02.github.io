@@ -26,10 +26,10 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Objects follow hands at 0.890; the blocker is hand direction at contact</p>
+  <p class="thesis"><b>[TL;DR]</b> Motion history beats a zero predictor; direction was missing from the input</p>
   <ul>
     <li>Done: 10 Hz human-only data, re-preprocessed</li>
-    <li>Done: four arms complete, plainest one wins</li>
+    <li>Done: history conditioning crosses the baseline</li>
     <li>Decided: no auxiliary losses, no motion reweighting</li>
     <li>Discuss: identifiability ceiling · history · duration</li>
   </ul>
@@ -88,11 +88,11 @@
 <!-- SECTION: results -->
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">Longer training moved D1 off the curve: same error, 78 % motion</p>
+  <p class="thesis">Three frames of history beat a zero predictor — a project first</p>
   <ol class="agenda">
-    <li class="on">Duration was the untested variable
-      <ul><li>D1 motion 44 % at step 3.4k, 78 % at 10k, error flat</li>
-          <li>cosine 0.145 to 0.266, magnitude self-calibrated to 94 %</li></ul>
+    <li class="on">Velocity conditioning crosses the baseline
+      <ul><li>ADE 13.82 vs zero 14.66, crossing at step 3,400 and staying</li>
+          <li>cosine 0.266 → 0.370; objects 0.076 → 0.220, a 2.9× gain</li></ul>
     </li>
     <li class="">Direction is the binding constraint
       <ul><li>err = sqrt(m² + g² − 2mgc) → beating zero needs cosine &gt; 0.5</li>
@@ -101,19 +101,19 @@
     <li class="">MolmoMotion zero-shot — hands beat the baseline, objects do not</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/threshold.svg" alt="Error relative to predicting nothing as a function of direction cosine, with the 0.5 threshold"><figcaption>threshold — error ÷ zero-predictor error against direction cosine · beating zero needs cosine above 0.5</figcaption></figure>
-    <figure><img src="assets/d1_taco_5s.gif" alt="Five-second chained rollout, ground truth left, generation right"><figcaption>D1 chained rollout — 5 × 1 s, re-predicted from each endpoint · left ground truth, right generated</figcaption></figure>
+    <figure><img src="assets/history.svg" alt="Per-horizon-step direction cosine for D1, C1 and the velocity ceiling"><figcaption>history — per-step cosine · D1 frame-0 only, C1 plus three frames, and the model-free velocity ceiling</figcaption></figure>
+    <figure><img src="assets/threshold.svg" alt="Error relative to predicting nothing against direction cosine"><figcaption>threshold — error ÷ zero-predictor error against cosine · beating zero needs cosine above 0.5</figcaption></figure>
   </div>
-  <p class="footnote">baselines on this configuration: zero-flow 14.66 cm · oracle velocity extrapolation 16.40 cm — not comparable to the earlier E-series numbers (different rate, horizon and split)</p>
+  <p class="footnote">C1 = D1 plus positions at t = −2, −1, 0, parameter-matched at 119.95 M, same data and loss · baselines: zero-flow 14.66 cm, oracle velocity extrapolation 16.40 cm · a two-frame difference alone reaches cosine 0.734 at t=1 but is a poor predictor (17.27 cm), so the model supplies the magnitude</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
   <p class="thesis">A held object moves with its hand at 0.890 — the coupling is exploitable</p>
   <ol class="agenda">
-    <li class="">Duration was the untested variable
-      <ul><li>D1 motion 44 % at step 3.4k, 78 % at 10k, error flat</li>
-          <li>cosine 0.145 to 0.266, magnitude self-calibrated to 94 %</li></ul>
+    <li class="">Velocity conditioning crosses the baseline
+      <ul><li>ADE 13.82 vs zero 14.66, crossing at step 3,400 and staying</li>
+          <li>cosine 0.266 → 0.370; objects 0.076 → 0.220, a 2.9× gain</li></ul>
     </li>
     <li class="on">The coupling, and what blocks it
       <ul><li>true hand flow lifts object cosine 0.152 → 0.857, ADE 14.30 → 3.25 cm</li>
@@ -182,10 +182,10 @@
   <h2>Appendix: rollout clips</h2>
   <p class="thesis ctx">Every arm, every probe dataset — 20 one-second and 8 five-second clips</p>
   <div class="band">
-    <figure><img src="assets/d1_dexycb_1s.gif" alt="D1 one-second rollout on DexYCB"><figcaption>D1 · DexYCB · 1 s · 80 % motion — the highest-motion single chunk</figcaption></figure>
-    <figure><img src="assets/d5_dexycb_1s.gif" alt="D5 one-second rollout on DexYCB"><figcaption>D5 · same chunk · 21 % motion — per-step normalisation collapsed</figcaption></figure>
+    <figure><img src="assets/d1_oakink2_1s.gif" alt="D1 one-second rollout on OakInk2"><figcaption>D1 · OakInk2 · frame 0 only · ADE 4.0 cm</figcaption></figure>
+    <figure><img src="assets/c1_oakink2_1s.gif" alt="C1 one-second rollout on OakInk2"><figcaption>C1 · same chunk · plus three frames of history · ADE 3.1 cm</figcaption></figure>
   </div>
-  <p class="footnote">all clips: results/vdit/clips (20 × 1 s) and results/vdit/clips5s (8 × 5 s chained) · object orange · right hand green · left hand purple · owner verifies</p>
+  <p class="footnote">all clips: results/vdit/clips (25 × 1 s, five arms) and results/vdit/clips5s (8 × 5 s chained) · object orange · right hand green · left hand purple · owner verifies</p>
 </section>
 
 <section class="slide s-appendix">
