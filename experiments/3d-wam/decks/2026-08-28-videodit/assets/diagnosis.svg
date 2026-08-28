@@ -1,0 +1,56 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="20" class="t b">Fixing magnitude perfectly buys 8 %. Fixing direction buys 36 %.</text>
+<text x="240" y="59" class="t" text-anchor="end">ADE as measured</text>
+<rect x="250" y="44" width="595" height="21" rx="3" fill="var(--acc)" opacity="0.85"/>
+<text x="853" y="59" class="t b">15.83 cm</text>
+<text x="240" y="99" class="t" text-anchor="end">with perfect magnitude</text>
+<rect x="250" y="84" width="548" height="21" rx="3" fill="#6a9fd8" opacity="0.85"/>
+<text x="806" y="99" class="t b">14.59 cm</text>
+<text x="240" y="139" class="t" text-anchor="end">predict nothing</text>
+<rect x="250" y="124" width="511" height="21" rx="3" fill="#c2452d" opacity="0.85"/>
+<text x="769" y="139" class="t b">13.60 cm</text>
+<text x="240" y="179" class="t" text-anchor="end">with perfect direction</text>
+<rect x="250" y="164" width="381" height="21" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="639" y="179" class="t b">10.14 cm</text>
+<text x="250" y="218" class="lb">D1 at step 1700 · 6 validation batches · lengths in cm</text>
+<text x="18" y="208" class="t b">and it is worst in the NEAR future</text>
+<line x1="250" y1="312" x2="870" y2="312" stroke="var(--line)"/>
+<text x="281" y="327" class="lb" text-anchor="middle">t1</text>
+<text x="343" y="327" class="lb" text-anchor="middle">t2</text>
+<text x="405" y="327" class="lb" text-anchor="middle">t3</text>
+<text x="467" y="327" class="lb" text-anchor="middle">t4</text>
+<text x="529" y="327" class="lb" text-anchor="middle">t5</text>
+<text x="591" y="327" class="lb" text-anchor="middle">t6</text>
+<text x="653" y="327" class="lb" text-anchor="middle">t7</text>
+<text x="715" y="327" class="lb" text-anchor="middle">t8</text>
+<text x="777" y="327" class="lb" text-anchor="middle">t9</text>
+<text x="839" y="327" class="lb" text-anchor="middle">t10</text>
+<polyline points="281.0,297.0 343.0,286.7 405.0,275.5 467.0,262.4 529.0,258.2 591.0,258.2 653.0,257.3 715.0,255.0 777.0,254.4 839.0,251.8" fill="none" stroke="#2a9d4f" stroke-width="2.2"/>
+<circle cx="281.0" cy="297.0" r="3" fill="#2a9d4f"/>
+<circle cx="343.0" cy="286.7" r="3" fill="#2a9d4f"/>
+<circle cx="405.0" cy="275.5" r="3" fill="#2a9d4f"/>
+<circle cx="467.0" cy="262.4" r="3" fill="#2a9d4f"/>
+<circle cx="529.0" cy="258.2" r="3" fill="#2a9d4f"/>
+<circle cx="591.0" cy="258.2" r="3" fill="#2a9d4f"/>
+<circle cx="653.0" cy="257.3" r="3" fill="#2a9d4f"/>
+<circle cx="715.0" cy="255.0" r="3" fill="#2a9d4f"/>
+<circle cx="777.0" cy="254.4" r="3" fill="#2a9d4f"/>
+<circle cx="839.0" cy="251.8" r="3" fill="#2a9d4f"/>
+<polyline points="281.0,230.1 343.0,271.0 405.0,283.5 467.0,289.0 529.0,292.2 591.0,294.4 653.0,295.7 715.0,296.0 777.0,296.3 839.0,296.3" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-dasharray="5 3"/>
+<circle cx="281.0" cy="230.1" r="3" fill="var(--acc)"/>
+<circle cx="343.0" cy="271.0" r="3" fill="var(--acc)"/>
+<circle cx="405.0" cy="283.5" r="3" fill="var(--acc)"/>
+<circle cx="467.0" cy="289.0" r="3" fill="var(--acc)"/>
+<circle cx="529.0" cy="292.2" r="3" fill="var(--acc)"/>
+<circle cx="591.0" cy="294.4" r="3" fill="var(--acc)"/>
+<circle cx="653.0" cy="295.7" r="3" fill="var(--acc)"/>
+<circle cx="715.0" cy="296.0" r="3" fill="var(--acc)"/>
+<circle cx="777.0" cy="296.3" r="3" fill="var(--acc)"/>
+<circle cx="839.0" cy="296.3" r="3" fill="var(--acc)"/>
+<text x="240" y="228" class="lb" text-anchor="end" fill="#2a9d4f">cosine 0.30</text>
+<text x="240" y="312" class="lb" text-anchor="end" fill="#2a9d4f">0</text>
+<text x="878" y="230" class="lb" fill="var(--acc)">motion ratio 300 %</text>
+<text x="878" y="312" class="lb" fill="var(--acc)">0 %</text>
+<text x="250" y="344" class="lb">direction agreement RISES with the horizon (0.047 → 0.188) while magnitude falls (256 % → 49 %) — so a shorter horizon or a closed loop would be worse</text>
+</svg>
