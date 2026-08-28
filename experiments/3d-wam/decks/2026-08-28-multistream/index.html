@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #5 · multi-stream joint attention (MMDiT / RLDX-1 MSAT style) — negative result with a falsified prediction. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-28 · Multi-stream did not fix it — 3D-WAM</title>
+<meta name="description" content="Deck #5: per-entity-class MLP parameters with joint attention (MMDiT / RLDX-1 MSAT style), parameters matched at 119.94 M. The prediction that objects far from hands would stop moving is falsified: they move 10-47x more than they should, and object motion overshoots ground truth.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide s-title">
+  <h1>3D-WAM — multi-stream did not fix it</h1>
+  <p class="ctx">3D-WAM · three parallel runs · a falsified prediction</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 28<br>Presented by beomjun</p>
+</section>
+
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Separate parameters per class gave objects their own motion prior, not interaction.</p>
+  <ul>
+    <li>Three cells, 2,200 steps, parameters matched</li>
+    <li>Prediction: far objects stay still — falsified</li>
+    <li>Objects now move 10–47× too much</li>
+    <li>Hand motion, the hard part, unchanged</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-multistream/assets/e3_taco.gif" alt="multi-stream autoregressive run on TACO, ground truth left and generated right">
+      <figcaption>E3 multi-stream + autoregressive · TACO · ground truth left, generated right</figcaption></figure>
+  </div>
+  <p class="footnote">runs e3_ms_ar / e4_ms_ss / e5_ms_ar_nomw · 119.94 M params each (mlp_ratio halved so two streams match one) · TRAIN-STATUS.md "MULTI-STREAM BLOCK"</p>
+</section>
+
+<section class="slide s-claim">
+  <h2>Method: MMDiT-style streams, joint attention</h2>
+  <p class="thesis">Per-class MLP weights, one joint attention, everything else held fixed.</p>
+  <ul>
+    <li>Streams by entity class: object / hand</li>
+    <li>Joint self-attention over the union of tokens</li>
+    <li>Same I/O, same data, same losses</li>
+    <li>Rejected first: policy → world-model factorisation</li>
+  </ul>
+  <p class="footnote">precedents: SD3 MMDiT, FLUX double-stream, RLDX-1 MSAT (arXiv 2605.03269) · the factorisation was rejected because staged inference breaks the one-space claim</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">The prediction is falsified</li>
+    <li>Magnitude comes only from the loss</li>
+  </ol>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>run</th><th class="num">ADE best</th><th class="num">motion ratio</th><th class="num">object ratio</th><th class="num">far-object motion (true 0.06 cm)</th></tr></thead>
+        <tbody>
+          <tr><td>E2 no streams (AR + weighted)</td><td class="num">0.0645</td><td class="num">23.7 %</td><td class="num">—</td><td class="num">—</td></tr>
+          <tr class="hero"><td>E3 streams + autoregressive</td><td class="num">0.0665</td><td class="num">29.9 %</td><td class="num">125 %</td><td class="num">1.97 cm</td></tr>
+          <tr class="hero"><td>E4 streams + single-shot</td><td class="num">0.0664</td><td class="num">33.5 %</td><td class="num">156 %</td><td class="num">2.64 cm</td></tr>
+          <tr><td>E5 streams, no weighted loss</td><td class="num">0.0630</td><td class="num">14.8 %</td><td class="num">52 %</td><td class="num">0.56 cm</td></tr>
+          <tr><td>baselines: zero-flow / velocity extrapolation</td><td class="num">0.0606 / 0.0840</td><td class="num">0 / 100 %</td><td class="num">—</td><td class="num">0.06 cm</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">48 val chunks, EMA, k = 4, CFG 1 · objects &gt; 10 cm from any hand at t₀ move 10–47× more than they truly do · no cell beats both baselines</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>The prediction is falsified</li>
+    <li class="on">Magnitude comes only from the loss</li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-multistream/assets/e5_arctic.gif" alt="E5 without the weighted loss on ARCTIC">
+      <figcaption>E5 · no weighted loss · ARCTIC · quietest, best ADE (0.0630), object error 0.007</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-multistream/assets/e3_arctic.gif" alt="E3 with the weighted loss on ARCTIC">
+      <figcaption>E3 · weighted loss · ARCTIC · more motion, object error 0.088</figcaption></figure>
+  </div>
+  <p class="footnote">the weighted loss is the only lever on magnitude (14.8 % → 30–34 %) and is also what makes objects overshoot: it rewards moving any point that moved, cause or consequence</p>
+</section>
+
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Objects need to know which hand point touches them.</p>
+  <ol>
+    <li><b>Diagnosis</b>
+      <ul><li>separate parameters ≠ interaction; neither an embedding nor stream weights say "this point is being pushed"</li></ul></li>
+    <li><b>Candidate method change — contact as a target, not a loss term</b>
+      <ul><li>predict contact jointly with flow so object motion is conditioned on it; think it through before running</li></ul></li>
+    <li><b>Do not scale yet</b>
+      <ul><li>five architectures have now produced the same trade; adding compute would buy a more confident wrong answer</li></ul></li>
+  </ol>
+  <p class="footnote">clips: results/{e3ms,e4ms,e5ms}/clips/ · curve and numbers: TRAIN-STATUS.md · code flags model.multi_stream, model.autoregressive, loss.motion_weight_alpha</p>
+</section>
+
+<section class="slide s-compare">
+  <h2>Appendix A1 · all four models, TACO, same chunk</h2>
+  <p class="thesis ctx">Left ground truth, right generated; same sequence and chunk in every clip.</p>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-multistream/assets/e2_taco.gif" alt="E2 no streams"><figcaption>E2 no streams · ADE 0.030</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-28-multistream/assets/e4_taco.gif" alt="E4 streams single-shot"><figcaption>E4 streams + single-shot · ADE 0.035</figcaption></figure>
+  </div>
+  <p class="footnote">E3 (0.031) and E5 (0.029) on the same chunk are in results/{e3ms,e5ms}/clips/1_taco_human_p1.gif</p>
+</section>
+
+</div>
+</body>
+</html>

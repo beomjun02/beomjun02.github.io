@@ -11,7 +11,7 @@
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
    "now": {
-    "text": "Mean-collapse beaten (motion 12%->73% of GT) but direction unlearned: no run beats both baselines. Autoregressive head is the best trade. Next: rollout drift control, contact-gated object motion, direction-only metric, then scale.",
+    "text": "Multi-stream joint attention tested and rejected (objects far from hands still move 10-47x too much; hand motion unchanged). Five architectures now show the same magnitude/accuracy trade. Next candidate: contact as a prediction target rather than a loss term - to be thought through before running.",
     "status": "active",
     "updated": "2026-08-28"
    }
@@ -49,6 +49,24 @@
   }
  },
  "logs": [
+  {
+   "project": "3d-wam",
+   "date": "2026-08-28",
+   "slug": "multistream",
+   "title": "Multi-stream joint attention did not fix it — a falsified prediction",
+   "status": "done",
+   "format": "deck",
+   "updated": "2026-08-28",
+   "tldr": "MMDiT/MSAT-style per-entity-class MLP parameters with joint attention, parameters matched at 119.94 M, three cells at 2,200 steps. The prediction that objects far from hands would stop moving is falsified: they move 0.56-2.64 cm against 0.06 cm true, and object motion overshoots ground truth (52-156%). Hand motion unchanged. The motion-weighted loss remains the only lever on magnitude and is what drives the overshoot.",
+   "path": "3d-wam/decks/2026-08-28-multistream/",
+   "tags": [
+    "multi-stream",
+    "MMDiT",
+    "MSAT",
+    "negative-result",
+    "contact"
+   ]
+  },
   {
    "project": "3d-wam",
    "date": "2026-08-28",

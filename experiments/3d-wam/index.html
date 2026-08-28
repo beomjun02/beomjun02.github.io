@@ -59,6 +59,11 @@
     <p>Newest first. Each log is one question, ended by a verdict.</p>
   </div>
   <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="decks/2026-08-28-multistream/">Multi-stream joint attention did not fix it — a falsified prediction</a></h3>
+      <p><code>2026-08-28 · done</code> — Per-entity-class MLP parameters with joint attention (MMDiT / RLDX-1 MSAT style), parameters matched at 119.94 M, three cells at 2,200 steps. Objects more than 10 cm from any hand move 0.56–2.64 cm against 0.06 cm true, and object motion overshoots ground truth. Hand motion unchanged. Separate parameters gave objects their own motion prior, not interaction reasoning.</p>
+    </div></div>
+
     <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-08-28-iteration/">Collapse defeated, direction missing — motion-weighted loss and an autoregressive head</a></h3>
       <p><code>2026-08-28 · running</code> — Motion weighting lifts generated motion from 12 % to 73 % of ground truth (hand 17 % → 48 %), monotone in both runs, so the mean-collapse is beaten. Accuracy does not follow: no checkpoint beats both baselines. The autoregressive head is the best trade (ADE 0.078 at 50 % motion) and drifts on long sequences. Next: drift control, contact-gated object motion, a direction-only metric.</p>
