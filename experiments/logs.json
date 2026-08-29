@@ -27,7 +27,7 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "maskcap: EgoDex coverage 96.5%, closing 08-30. Upgrade fleet rewriting the two legacy caption generations in place (v0/v2 by 08-31, all A.7 by ~09-01), then VITRA.",
+    "text": "maskcap: EgoDex coverage CLOSED at 100% (08-30 08:57). Upgrade fleet now rewriting the v0/v2 caption generation (76,813 left), then v3, then VITRA.",
     "status": "active",
     "updated": "2026-08-30"
    }
@@ -333,7 +333,7 @@
    "title": "Human data, ready to consume — paths, statistics, schemas",
    "status": "done",
    "updated": "2026-08-30",
-   "tldr": "Usage guide for the two consumers. PointWAM: full flow corpus ready — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB), every sampled file valid. 3D encoder: 312,697 EgoDex sidecars (96.5%), coverage closing 08-30. The sidecars span three caption generations (A.7 136,714 / v3 97,162 / pre-fix v0-v2 78,821) — a shipped generation index says which is which per episode, and an upgrade fleet is re-running the two older ones, worst-first, to a homogeneous corpus by ~09-01."
+   "tldr": "Usage guide for the two consumers. PointWAM: full flow corpus ready — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB). 3D encoder: maskcap coverage CLOSED — all 324,167 EgoDex episodes have a sidecar. What remains is homogeneity: A.7 150,192 / v3 97,162 / pre-fix v0-v2 76,813, with an upgrade fleet rewriting the two older generations in place, worst-first. Shipped generation index + backfilled caption_style attribute say which is which per episode."
   },
   {
    "project": "3d-wam",

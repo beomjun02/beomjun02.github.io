@@ -29,21 +29,20 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-30 03:35 KST · generation split re-derived from every sidecar, throughput re-measured on disk</dd></div>
-      <div><dt>Encoder data</dt><dd>315,110 EgoDex episodes (97.2%) · 139,132 of them on the final A.7 captioner</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-30 09:00 KST · coverage closed; generation split re-derived from every sidecar</dd></div>
+      <div><dt>Encoder data</dt><dd><b>324,167 / 324,167 EgoDex episodes (100%)</b> · 150,192 of them on the final A.7 captioner</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
       <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Bottom line</p>
       <p><b>PointWAM</b> can train on the full flow corpus today &mdash; 324,167 EgoDex + ~822,640 VITRA episodes (~4.0&nbsp;TB), every sampled file valid.
-      <b>3D encoder:</b> <b>312,697 / 324,167 EgoDex episodes (96.5%)</b> have a maskcap sidecar; the last ~11.5k are refilling now and coverage
-      closes <b>today (08-30)</b>. The sidecars are <i>not</i> one generation: <b>136,714 (42%)</b> carry the SpaceFormer-A.7 Gemma-3 captions,
-      <b>97,162 (30%)</b> the v3 masked-crop Qwen3-VL captions, and <b>78,821 (24%)</b> the pre-fix v0/v2 captions whose crop was the mask&#39;s bounding
-      box &mdash; those last ones can name a large background surface after a nearby object and should not be trained on as caption supervision as-is.
-      A re-processing fleet now upgrades the two older generations in place, worst-first: <b>v0/v2 clears ~08-31, the whole corpus is homogeneous A.7
-      by ~09-01</b>. Pick your subset from the shipped generation index (&sect;01) rather than from the <code>caption_style</code> attribute alone &mdash;
-      that attribute is only present on part of the corpus.</p>
+      <b>3D encoder: coverage is closed &mdash; all 324,167 EgoDex episodes now have a maskcap sidecar</b> (verified filename-by-filename against the flow
+      directories, zero missing). What remains is homogeneity, not coverage: <b>150,192 (46%)</b> carry the SpaceFormer-A.7 Gemma-3 captions,
+      <b>97,162 (30%)</b> the v3 masked-crop Qwen3-VL captions, and <b>76,813 (24%)</b> the pre-fix v0/v2 captions whose crop was the mask&#39;s bounding
+      box &mdash; those last ones can name a large background surface after a nearby object. An upgrade fleet is rewriting the two older generations in
+      place, worst-first, and it is currently working through v0/v2. Pick your subset from the shipped generation index (&sect;01) or from the
+      <code>caption_style</code> attribute, which has now been backfilled onto every A.7 sidecar.</p>
     </div>
   </div>
 </header>
@@ -79,32 +78,32 @@
             <tr><td class="mono">attr global_captions</td><td class="mono">JSON {id: str}</td><td>one caption per instance ("" if beyond the caption budget)</td></tr>
             <tr><td class="mono">attr global_is_agent</td><td class="mono">JSON {id: bool}</td><td>true = human hand / forearm (template caption, VLM bypassed)</td></tr>
             <tr><td class="mono">attr global_view_clips</td><td class="mono">JSON {id: [clip]}</td><td>clips the instance appears in (cross-clip merged)</td></tr>
-            <tr><td class="mono">attr caption_style</td><td class="mono">str</td><td><code>sf_gemma3_pass2_v1</code> = SpaceFormer-A.7 Gemma-3, <code>v3_maskedcrop_qwen3vl</code> = v3. <b>Only written on files produced from 2026-08-25 on</b> &mdash; for the rest, use the generation index below.</td></tr>
+            <tr><td class="mono">attr caption_style</td><td class="mono">str</td><td><code>sf_gemma3_pass2_v1</code> = SpaceFormer-A.7 Gemma-3, <code>v3_maskedcrop_qwen3vl</code> = v3. Backfilled onto every A.7 sidecar on 08-30, so it is now a valid selector for the homogeneous subset; the generation index below additionally distinguishes v3 from v0/v2.</td></tr>
           </tbody>
         </table>
       </div>
       <h3 style="margin-top:26px">Which subset should I train on?</h3>
       <p class="sub">Every sidecar is tagged in a shipped index &mdash; one TSV with <code>part / stem / caption_generation</code> &mdash; so you never have
       to infer a generation from file mtimes:<br>
-      <code class="mono">/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/manifests/generation_index.tsv</code> (312,697 rows) and
+      <code class="mono">/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/manifests/generation_index.tsv</code> (324,167 rows) and
       <code class="mono">.../manifests/a7_stems.txt</code>, the ready-made <code>part/stem</code> list for the homogeneous subset.
       Both are regenerated as the upgrade fleet advances, so re-read them instead of caching these counts.</p>
       <div class="tw"><table>
           <thead><tr><th>Goal</th><th>Selector</th><th>Episodes now</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">a7_stems.txt<br>(= generation <code>sf_gemma3_pass2_v1</code>)</td><td class="mono">136,714</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows toward the whole corpus as the upgrade fleet runs; all 324,167 by ~09-01.</td></tr>
-            <tr><td><b>Scale minus the known-bad generation</b></td><td class="mono">generation != <code>v02_bbox_legacy</code></td><td class="mono">233,876</td><td>Adds the v3 masked-crop captions. The crop bug is already gone in v3; only the captioner and prompt differ from A.7.</td></tr>
-            <tr><td>Maximum scale today</td><td class="mono">all sidecars</td><td class="mono">312,697</td><td>Includes the 78,821 v0/v2 episodes. Reasonable only if caption text is treated as noisy supervision.</td></tr>
+            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">a7_stems.txt<br>(= generation <code>sf_gemma3_pass2_v1</code>, or <code>attrs["caption_style"]</code>)</td><td class="mono">150,192</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows toward the whole corpus as the upgrade fleet runs; all 324,167 by ~09-01.</td></tr>
+            <tr><td><b>Scale minus the known-bad generation</b></td><td class="mono">generation != <code>v02_bbox_legacy</code></td><td class="mono">247,354</td><td>Adds the v3 masked-crop captions. The crop bug is already gone in v3; only the captioner and prompt differ from A.7.</td></tr>
+            <tr><td>Maximum scale today</td><td class="mono">all sidecars</td><td class="mono">324,167</td><td>Includes the 76,813 v0/v2 episodes still queued for upgrade. Reasonable only if caption text is treated as noisy supervision.</td></tr>
           </tbody>
       </table></div>
       <p class="sub" style="margin-top:14px"><b>The generation split affects captions, not geometry.</b> The three generations differ in how each instance was
       <i>captioned</i> (which crop, which captioner), not in how points were grouped into instances. If your loss is contrastive against the SigLIP2
-      embedding of the caption, the split matters; if you only need instance grouping, take all 312,697.</p>
+      embedding of the caption, the split matters; if you only need instance grouping, take all 324,167.</p>
 
-      <p class="sub"><b>Caption generations, in one line each.</b> <code>v0/v2</code> (78,821 episodes, written 08-15&rarr;08-19): the caption crop was the
+      <p class="sub"><b>Caption generations, in one line each.</b> <code>v0/v2</code> (76,813 episodes remaining, originally written 08-15&rarr;08-19): the caption crop was the
       mask&#39;s bounding box, so a large surface could inherit a nearby object&#39;s description &mdash; the bug that motivated the rewrite.
       <code>v3</code> (97,162, 08-20&rarr;08-24): masked crop only, Qwen3-VL, short fragment captions; the crop bug is fixed here.
-      <code>sf_gemma3_pass2_v1</code> (136,714, 08-25 onward): SpaceFormer A.7 protocol verbatim &mdash; red-outline context crop plus masked cutout per
+      <code>sf_gemma3_pass2_v1</code> (150,192, 08-25 onward): SpaceFormer A.7 protocol verbatim &mdash; red-outline context crop plus masked cutout per
       view, up to two views &mdash; on Gemma-3-12b, paragraph captions ending in a spatial-relation sentence. The upgrade fleet re-runs the first two
       generations in place, worst-first, so these counts move; the generation index is the source of truth.</p>
 
@@ -195,8 +194,8 @@ with h5py.File(flow) as f, h5py.File(side) as s:
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Sidecars 32/32 valid.</span><span class="ld">Clip groups present, <code>global_siglip2</code> present, max instance id ≤ SigLIP2 rows, embeddings non-zero for every captioned instance, 90–94% of points labeled.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Flow H5 31/31 valid.</span><span class="ld">All 7 EgoDex parts + VITRA: <code>scene_flows</code>, <code>extrinsic</code>, <code>initial_rgb</code>, <code>embodiment_joints</code> present with the expected shapes.</span></span></li>
-        <li><span class="mk x">→</span><span><span class="lt">Caption generation is the one real caveat, and it is now measured exactly.</span><span class="ld">Not a sample: every one of the 312,697 sidecars was classified. <b>78,821 (24%)</b> are v0/v2, written before the 08-19 crop fix — in those, a large background instance can carry a neighbouring object&#39;s description. <b>97,162 (30%)</b> are v3 (crop fixed, Qwen3-VL). <b>136,714 (42%)</b> are the final A.7 Gemma-3 captions. The shipped <code>manifests/generation_index.tsv</code> tells you which is which per episode; an upgrade fleet is re-running the two older generations in place, v0/v2 first.</span></span></li>
-        <li><span class="mk ok">✓</span><span><span class="lt">Coverage is nearly closed.</span><span class="ld">312,697 / 324,167 = 96.5%. The 11,470 missing episodes are gaps left by a purge of caption-damaged files (08-28 timeout bug) and are being refilled by the running fleet; they are spread over part4 (6.1k), part5 (3.9k), extra (1.6k) and test (40).</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Caption generation is the one real caveat, and it is now measured exactly.</span><span class="ld">Not a sample: every one of the 312,697 sidecars was classified. <b>76,813 (24%)</b> are v0/v2, written before the 08-19 crop fix — in those, a large background instance can carry a neighbouring object&#39;s description. <b>97,162 (30%)</b> are v3 (crop fixed, Qwen3-VL). <b>150,192 (46%)</b> are the final A.7 Gemma-3 captions. The shipped <code>manifests/generation_index.tsv</code> tells you which is which per episode; an upgrade fleet is re-running the two older generations in place, v0/v2 first.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Coverage is closed.</span><span class="ld">Closed at 08:57 on 2026-08-30: 324,167 / 324,167. Checked filename-by-filename against all seven flow directories — zero missing, zero stray <code>.tmp</code>. The last 11,470 were gaps left by the purge of caption-damaged files (08-28 timeout bug).</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Validation is sampled, not exhaustive.</span><span class="ld">63 files opened out of 1.15 M; every sample passed. A full integrity sweep has not been run.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Known, by design.</span><span class="ld">Instances beyond the per-episode caption budget (60) carry an empty caption and a zero embedding row; skip them with <code>caps[id] != ""</code>. Agent instances (hand, forearm) are captioned but flagged in <code>global_is_agent</code> — drop them for an object-only encoder.</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Still moving.</span><span class="ld">A fused fleet (SAM2 + vLLM Gemma-3 on the same GPU, 16-24 GPUs when the cluster allows) writes and rewrites sidecars continuously. Order of work: close coverage &rarr; upgrade v0/v2 &rarr; upgrade v3 &rarr; start VITRA sidecars. Re-read the generation index rather than caching counts from this page.</span></span></li>
@@ -214,8 +213,8 @@ with h5py.File(flow) as f, h5py.File(side) as s:
       <div class="tw"><table>
           <thead><tr><th>Milestone</th><th>Episodes</th><th>at 14 GPUs (now)</th><th>at 16</th><th>at 24</th></tr></thead>
           <tbody>
-            <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">9,057</td><td class="mono"><b>08-30 08:00</b></td><td class="mono">08-30 08:00</td><td class="mono">08-30 06:00</td></tr>
-            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">+78,821</td><td class="mono"><b>09-01 06:00</b></td><td class="mono">08-31 23:00</td><td class="mono">08-31 09:00</td></tr>
+            <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">0</td><td class="mono" colspan="3"><b>done 2026-08-30 08:57</b></td></tr>
+            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">76,813 left</td><td class="mono"><b>09-01 06:00</b></td><td class="mono">08-31 23:00</td><td class="mono">08-31 09:00</td></tr>
             <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono"><b>09-03 14:00</b></td><td class="mono">09-03 00:00</td><td class="mono">09-01 17:00</td></tr>
             <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-03</td><td class="mono muted">09-03</td><td class="mono muted">09-01</td></tr>
           </tbody>
