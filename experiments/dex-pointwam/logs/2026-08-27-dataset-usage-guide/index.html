@@ -29,8 +29,8 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-30 02:30 KST · generation split re-derived from every sidecar, not sampled</dd></div>
-      <div><dt>Encoder data</dt><dd>312,697 EgoDex episodes (96.5%) · 136,714 of them on the final A.7 captioner</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-30 03:35 KST · generation split re-derived from every sidecar, throughput re-measured on disk</dd></div>
+      <div><dt>Encoder data</dt><dd>315,110 EgoDex episodes (97.2%) · 139,132 of them on the final A.7 captioner</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
       <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
@@ -207,24 +207,26 @@ with h5py.File(flow) as f, h5py.File(side) as s:
   <section>
     <div class="wrap">
       <h2><span class="n">05</span>What is still running, and when it lands</h2>
-      <p class="sub">Measured on the live fleet at 2026-08-30 02:30 KST: <b>34–44 GPU-seconds per episode</b> per driver, two drivers per GPU, so
-      <b>~200 episodes/hour/GPU</b>. The fleet holds 14–16 GPUs (24 shards queued; the rest wait for free cards). Premium and high-priority QoS are
-      not used, so the completion dates below move with cluster contention — they are the honest estimate, not a floor.</p>
+      <p class="sub">Rate measured on the live fleet over a clean 30-minute window at 2026-08-30 03:35 KST:
+      <b>1,736 episodes/hour across 14 GPUs = 124 episodes/h/GPU</b>. (An earlier version of this page said 200/h/GPU — that came from per-episode
+      timings and ignored that the two driver processes on a card contend for it. The number below is the throughput actually observed on disk.)
+      Premium and high-priority QoS are not used, so these dates track cluster contention.</p>
       <div class="tw"><table>
-          <thead><tr><th>Milestone</th><th>Episodes to process</th><th>At 16 GPUs</th><th>At 24 GPUs</th></tr></thead>
+          <thead><tr><th>Milestone</th><th>Episodes</th><th>at 14 GPUs (now)</th><th>at 16</th><th>at 24</th></tr></thead>
           <tbody>
-            <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">11,470</td><td class="mono"><b>08-30 ~07:00</b></td><td class="mono">08-30 ~05:00</td></tr>
-            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">+78,821</td><td class="mono"><b>08-31 ~09:00</b></td><td class="mono">08-30 ~22:00</td></tr>
-            <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono"><b>09-01 ~18:00</b></td><td class="mono">09-01 ~00:00</td></tr>
-            <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-01</td><td class="mono muted">08-31</td></tr>
+            <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">9,057</td><td class="mono"><b>08-30 08:00</b></td><td class="mono">08-30 08:00</td><td class="mono">08-30 06:00</td></tr>
+            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">+78,821</td><td class="mono"><b>09-01 06:00</b></td><td class="mono">08-31 23:00</td><td class="mono">08-31 09:00</td></tr>
+            <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono"><b>09-03 14:00</b></td><td class="mono">09-03 00:00</td><td class="mono">09-01 17:00</td></tr>
+            <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-03</td><td class="mono muted">09-03</td><td class="mono muted">09-01</td></tr>
           </tbody>
       </table></div>
       <p class="sub" style="margin-top:14px"><b>Nothing above blocks you.</b> The upgrade rewrites sidecars in place, atomically (<code>tmp</code> +
       <code>rename</code>), so a file is always either the old generation or the new one, never half-written — you can read the corpus while it runs.
       The flow H5s that PointWAM consumes are untouched by all of this and have been complete for both datasets since 08-27.</p>
-      <p class="sub"><b>Why not faster.</b> The cost is per-episode SAM2 AMG plus one Gemma-3 caption per instance, and the cluster gives us 14–24 GPUs.
-      The v3&rarr;A.7 upgrade in principle only needs new captions — the instance grouping is unchanged — but the 2D mask crops the captioner needs were
-      never cached, so it costs a full re-run. Caching crops is the obvious next optimisation and would roughly halve the v3 leg.</p>
+      <p class="sub"><b>Why not faster.</b> The cost is per-episode SAM2 AMG plus one Gemma-3 caption per instance, and the cluster gives us 14–24 GPUs
+      with no priority QoS. The v3&rarr;A.7 upgrade in principle only needs new captions — the instance grouping is unchanged — but the 2D mask crops
+      the captioner needs were never cached, so it costs a full re-run. Caching crops is the obvious next optimisation and would roughly halve the
+      v3 leg (the last and longest row above).</p>
     </div>
   </section>
 

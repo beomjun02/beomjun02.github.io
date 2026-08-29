@@ -213,18 +213,18 @@
       still older caption generations. Both are now measured separately.</p>
       <div class="tbl">
         <table>
-          <thead><tr><th>Milestone</th><th>Episodes</th><th>at 16 GPUs (now)</th><th>at 24</th></tr></thead>
+          <thead><tr><th>Milestone</th><th>Episodes</th><th>at 16 GPUs</th><th>at 24</th></tr></thead>
           <tbody>
-            <tr><td>EgoDex sidecar coverage today</td><td class="mono" colspan="3">312,697 / 324,167 (96.5%) — of which <b>A.7 136,714 · v3 97,162 · v0/v2 78,821</b></td></tr>
-            <tr><td>Coverage 100%</td><td class="mono">11,470</td><td class="mono">08-30 ~07:00</td><td class="mono">08-30 ~05:00</td></tr>
-            <tr><td>v0/v2 upgraded away (the wrong-caption generation)</td><td class="mono">78,821</td><td class="mono">08-31 ~09:00</td><td class="mono">08-30 ~22:00</td></tr>
-            <tr><td>Whole EgoDex corpus on A.7</td><td class="mono">97,162</td><td class="mono">09-01 ~18:00</td><td class="mono">09-01 ~00:00</td></tr>
-            <tr><td>VITRA 20% (166k)</td><td class="mono">166,000</td><td class="mono">+2.6 d → 09-04</td><td class="mono">+1.7 d → 09-02</td></tr>
-            <tr><td>VITRA 100% (823k)</td><td class="mono">823,000</td><td class="mono">+13 d → 09-14</td><td class="mono">+8.6 d → 09-09</td></tr>
+            <tr><td>EgoDex sidecar coverage today</td><td class="mono" colspan="3">315,110 / 324,167 (97.2%) — of which <b>A.7 139,132 · v3 97,162 · v0/v2 78,821</b></td></tr>
+            <tr><td>Coverage 100%</td><td class="mono">9,057</td><td class="mono">08-30 08:00</td><td class="mono">08-30 06:00</td></tr>
+            <tr><td>v0/v2 upgraded away (the wrong-caption generation)</td><td class="mono">78,821</td><td class="mono">08-31 23:00</td><td class="mono">08-31 09:00</td></tr>
+            <tr><td>Whole EgoDex corpus on A.7</td><td class="mono">97,162</td><td class="mono">09-03 00:00</td><td class="mono">09-01 17:00</td></tr>
+            <tr><td>VITRA 20% (166k)</td><td class="mono">166,000</td><td class="mono">+3.5 d → 09-06</td><td class="mono">+2.3 d → 09-04</td></tr>
+            <tr><td>VITRA 100% (823k)</td><td class="mono">823,000</td><td class="mono">+17 d → 09-20</td><td class="mono">+12 d → 09-13</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="muted" style="font-size:13px">Measured rate: 34–44 GPU-s per EgoDex episode per driver, 2 drivers per GPU &rArr; ~200 episodes/h/GPU.
+      <p class="muted" style="font-size:13px">Measured rate: <b>124 episodes/h/GPU</b> — 1,736 episodes/hour observed on disk across 14 GPUs over a clean 30-minute window (03:05–03:35 KST). Per-episode driver timings suggested ~200/h/GPU; they ignore the two drivers on a card contending for it, so the on-disk figure is the one to plan with.
       VITRA per-episode cost is still an estimate (~15 GPU-s: 240p frames, caption budget 15/episode). Premium / high-priority QoS is not used, so
       these dates track cluster contention. The single biggest remaining lever is caching the 2D mask crops so a caption-only re-run does not have to
       redo SAM2 AMG — that would roughly halve every future upgrade pass.</p>
