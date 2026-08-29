@@ -205,19 +205,29 @@
           </tbody>
         </table>
       </div>
-      <h3 style="margin-top:26px">Progress &amp; ETA (EgoDex → VITRA, full datasets)</h3>
+      <h3 style="margin-top:26px">Progress &amp; ETA — re-measured 2026-08-30 02:30 KST</h3>
+      <p class="sub">The earlier table on this page predicted EgoDex done 08-28. It was wrong for two reasons worth recording. First, a client-side
+      HTTP timeout under 42-way caption concurrency silently wrote empty captions into ~6.7k sidecars on 08-28; those were purged and re-queued
+      (fixed: 300 s timeout, retry ×3, and a fail-loud <code>SKIP-WRITE</code> guard that refuses to write an episode when &gt;10% of its captions came
+      back empty). Second, coverage was being reported as if it meant &ldquo;processed with the current pipeline&rdquo;, when 54% of the sidecars were
+      still older caption generations. Both are now measured separately.</p>
       <div class="tbl">
         <table>
-          <thead><tr><th>Milestone</th><th>at 15 effective GPUs (now)</th><th>at ~30 (if the queue drains)</th></tr></thead>
+          <thead><tr><th>Milestone</th><th>Episodes</th><th>at 16 GPUs (now)</th><th>at 24</th></tr></thead>
           <tbody>
-            <tr><td>EgoDex done so far</td><td class="mono" colspan="2">182,232 / 324,167 episodes (56.2%) — parts 1–2 complete, part 3 84%, part 4 started</td></tr>
-            <tr><td>EgoDex 100%</td><td class="mono">3.0 d → 2026-08-28</td><td class="mono">1.5 d → 08-27</td></tr>
-            <tr><td>VITRA 20% (166k)</td><td class="mono">+1.9 d → 08-30</td><td class="mono">+1.0 d → 08-28</td></tr>
-            <tr><td>VITRA 100% (830k)</td><td class="mono">+9.6 d → 09-07</td><td class="mono">+4.8 d → 09-02</td></tr>
+            <tr><td>EgoDex sidecar coverage today</td><td class="mono" colspan="3">312,697 / 324,167 (96.5%) — of which <b>A.7 136,714 · v3 97,162 · v0/v2 78,821</b></td></tr>
+            <tr><td>Coverage 100%</td><td class="mono">11,470</td><td class="mono">08-30 ~07:00</td><td class="mono">08-30 ~05:00</td></tr>
+            <tr><td>v0/v2 upgraded away (the wrong-caption generation)</td><td class="mono">78,821</td><td class="mono">08-31 ~09:00</td><td class="mono">08-30 ~22:00</td></tr>
+            <tr><td>Whole EgoDex corpus on A.7</td><td class="mono">97,162</td><td class="mono">09-01 ~18:00</td><td class="mono">09-01 ~00:00</td></tr>
+            <tr><td>VITRA 20% (166k)</td><td class="mono">166,000</td><td class="mono">+2.6 d → 09-04</td><td class="mono">+1.7 d → 09-02</td></tr>
+            <tr><td>VITRA 100% (823k)</td><td class="mono">823,000</td><td class="mono">+13 d → 09-14</td><td class="mono">+8.6 d → 09-09</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="muted" style="font-size:13px">VITRA per-episode cost is an estimate (~15 GPU-s: 240p frames, caption budget 15/episode); EgoDex numbers are measured. The 09-02 freeze needs ~30 effective GPUs for VITRA 100%; EgoDex alone lands 5 days before the freeze at today's fleet.</p>
+      <p class="muted" style="font-size:13px">Measured rate: 34–44 GPU-s per EgoDex episode per driver, 2 drivers per GPU &rArr; ~200 episodes/h/GPU.
+      VITRA per-episode cost is still an estimate (~15 GPU-s: 240p frames, caption budget 15/episode). Premium / high-priority QoS is not used, so
+      these dates track cluster contention. The single biggest remaining lever is caching the 2D mask crops so a caption-only re-run does not have to
+      redo SAM2 AMG — that would roughly halve every future upgrade pass.</p>
       <h3 style="margin-top:26px">Production samples (two-pass hybrid output, sorted by #points)</h3>
       <p class="sub">Straight from the campaign sidecars written today — not the demo set. Read with §03: e.g. in <em>play_piano</em>, id 4 (the keyboard) is right, while the largest surface instance (id 1, bedsheet under the keyboard) inherits the keyboard&#39;s description — the known context-bleed mode of the A.7 outline crop (§06).</p>
       <figure><img src="assets/prod_pick_up_and_put_down_case_or_bag.jpg" alt="prod_pick_up_and_put_down_case_or_bag.jpg" loading="lazy"><figcaption>pick_up_and_put_down_case_or_bag — campaign sidecar (two-pass: SAM2-small masks · A.7 Gemma-3 captions), tiles sorted by #points</figcaption></figure>

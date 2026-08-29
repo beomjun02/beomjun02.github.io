@@ -29,19 +29,21 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-30 03:10 KST (campaign in its final stretch)</dd></div>
-      <div><dt>Encoder data</dt><dd>312,232 EgoDex episodes (96.3%) · captions verified on every audited sidecar</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-30 02:30 KST · generation split re-derived from every sidecar, not sampled</dd></div>
+      <div><dt>Encoder data</dt><dd>312,697 EgoDex episodes (96.5%) · 136,714 of them on the final A.7 captioner</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
       <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Bottom line</p>
-      <p><b>PointWAM</b> can train on the full flow corpus today — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB), every sampled file valid.
-      <b>3D encoder</b> data covers <b>312,232 / 324,167 EgoDex episodes (96.3%)</b>; the remaining ~12k are episodes that were re-queued after a
-      caption fix and are being refilled now — <b>coverage completes 2026-08-30</b>. Captions come from three generations of the captioner (table in §01):
-      filter to <code>caption_style == "sf_gemma3_pass2_v1"</code> for the homogeneous SpaceFormer-A.7 set (<b>147,435 episodes, 45%</b>, growing to the
-      whole corpus by <b>2026-08-31</b>), or take everything and treat caption text as noisy supervision. Quality audits after the 08-28 fix found object
-      captions present in every sampled sidecar.</p>
+      <p><b>PointWAM</b> can train on the full flow corpus today &mdash; 324,167 EgoDex + ~822,640 VITRA episodes (~4.0&nbsp;TB), every sampled file valid.
+      <b>3D encoder:</b> <b>312,697 / 324,167 EgoDex episodes (96.5%)</b> have a maskcap sidecar; the last ~11.5k are refilling now and coverage
+      closes <b>today (08-30)</b>. The sidecars are <i>not</i> one generation: <b>136,714 (42%)</b> carry the SpaceFormer-A.7 Gemma-3 captions,
+      <b>97,162 (30%)</b> the v3 masked-crop Qwen3-VL captions, and <b>78,821 (24%)</b> the pre-fix v0/v2 captions whose crop was the mask&#39;s bounding
+      box &mdash; those last ones can name a large background surface after a nearby object and should not be trained on as caption supervision as-is.
+      A re-processing fleet now upgrades the two older generations in place, worst-first: <b>v0/v2 clears ~08-31, the whole corpus is homogeneous A.7
+      by ~09-01</b>. Pick your subset from the shipped generation index (&sect;01) rather than from the <code>caption_style</code> attribute alone &mdash;
+      that attribute is only present on part of the corpus.</p>
     </div>
   </div>
 </header>
@@ -77,24 +79,35 @@
             <tr><td class="mono">attr global_captions</td><td class="mono">JSON {id: str}</td><td>one caption per instance ("" if beyond the caption budget)</td></tr>
             <tr><td class="mono">attr global_is_agent</td><td class="mono">JSON {id: bool}</td><td>true = human hand / forearm (template caption, VLM bypassed)</td></tr>
             <tr><td class="mono">attr global_view_clips</td><td class="mono">JSON {id: [clip]}</td><td>clips the instance appears in (cross-clip merged)</td></tr>
-            <tr><td class="mono">attr caption_style</td><td class="mono">str</td><td><code>sf_gemma3_pass2_v1</code> = SpaceFormer-A.7 Gemma-3; absent = Qwen v3</td></tr>
+            <tr><td class="mono">attr caption_style</td><td class="mono">str</td><td><code>sf_gemma3_pass2_v1</code> = SpaceFormer-A.7 Gemma-3, <code>v3_maskedcrop_qwen3vl</code> = v3. <b>Only written on files produced from 2026-08-25 on</b> &mdash; for the rest, use the generation index below.</td></tr>
           </tbody>
         </table>
       </div>
       <h3 style="margin-top:26px">Which subset should I train on?</h3>
-      <div class="tbl">
-        <table>
-          <thead><tr><th>Goal</th><th>Filter</th><th>Episodes now</th><th>Note</th></tr></thead>
+      <p class="sub">Every sidecar is tagged in a shipped index &mdash; one TSV with <code>part / stem / caption_generation</code> &mdash; so you never have
+      to infer a generation from file mtimes:<br>
+      <code class="mono">/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/manifests/generation_index.tsv</code> (312,697 rows) and
+      <code class="mono">.../manifests/a7_stems.txt</code>, the ready-made <code>part/stem</code> list for the homogeneous subset.
+      Both are regenerated as the upgrade fleet advances, so re-read them instead of caching these counts.</p>
+      <div class="tw"><table>
+          <thead><tr><th>Goal</th><th>Selector</th><th>Episodes now</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">attrs["caption_style"] == "sf_gemma3_pass2_v1"</td><td class="mono">147,435</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows to the whole corpus by 08-31.</td></tr>
-            <tr><td><b>Maximum scale today</b></td><td class="mono">all sidecars</td><td class="mono">312,232</td><td>Mixed caption generations; fine if you treat caption text as noisy supervision.</td></tr>
-            <tr><td>Scale minus the known-bad generation</td><td class="mono">mtime &gt; 2026-08-19 12:00 KST</td><td class="mono">249,166</td><td>Drops the 63,066 v0/v2 episodes, whose large background instances can carry a neighbouring object&#39;s description.</td></tr>
-            <tr><td>Object-only encoder</td><td class="mono">+ drop global_is_agent == true</td><td class="mono">—</td><td>Removes the human hand/forearm instances (template captions).</td></tr>
+            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">a7_stems.txt<br>(= generation <code>sf_gemma3_pass2_v1</code>)</td><td class="mono">136,714</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows toward the whole corpus as the upgrade fleet runs; all 324,167 by ~09-01.</td></tr>
+            <tr><td><b>Scale minus the known-bad generation</b></td><td class="mono">generation != <code>v02_bbox_legacy</code></td><td class="mono">233,876</td><td>Adds the v3 masked-crop captions. The crop bug is already gone in v3; only the captioner and prompt differ from A.7.</td></tr>
+            <tr><td>Maximum scale today</td><td class="mono">all sidecars</td><td class="mono">312,697</td><td>Includes the 78,821 v0/v2 episodes. Reasonable only if caption text is treated as noisy supervision.</td></tr>
           </tbody>
-        </table>
-      </div>
-      <p class="sub"><b>Caption generations, in one line each.</b> <code>v0/v2</code>: caption crop was the mask&#39;s bounding box, so a large surface could inherit a nearby object&#39;s description (fixed 08-19). <code>v3</code>: masked crop only, Qwen3-VL, short fragment captions. <code>sf_gemma3_pass2_v1</code>: SpaceFormer A.7 protocol verbatim (red-outline crop + masked cutout per view, up to 2 views), Gemma-3-12b, paragraph captions with a spatial-relation sentence. Only the last one sets the <code>caption_style</code> attribute; the older two have no such attribute and split by file mtime.</p>
-      <p class="sub"><b>Empty captions.</b> Instances past the per-episode caption budget carry <code>""</code> and a zero row in <code>global_siglip2</code> — always skip with <code>if caps[gid].strip()</code>. A load bug that left whole episodes uncaptioned was found and fixed on 08-28 (client-side VLM timeout under 42-way concurrency); the 6,661 affected episodes were deleted and are being reprocessed, and the writer now refuses to save a sidecar when more than 10% of its captions fail.</p>
+      </table></div>
+      <p class="sub" style="margin-top:14px"><b>The generation split affects captions, not geometry.</b> The three generations differ in how each instance was
+      <i>captioned</i> (which crop, which captioner), not in how points were grouped into instances. If your loss is contrastive against the SigLIP2
+      embedding of the caption, the split matters; if you only need instance grouping, take all 312,697.</p>
+
+      <p class="sub"><b>Caption generations, in one line each.</b> <code>v0/v2</code> (78,821 episodes, written 08-15&rarr;08-19): the caption crop was the
+      mask&#39;s bounding box, so a large surface could inherit a nearby object&#39;s description &mdash; the bug that motivated the rewrite.
+      <code>v3</code> (97,162, 08-20&rarr;08-24): masked crop only, Qwen3-VL, short fragment captions; the crop bug is fixed here.
+      <code>sf_gemma3_pass2_v1</code> (136,714, 08-25 onward): SpaceFormer A.7 protocol verbatim &mdash; red-outline context crop plus masked cutout per
+      view, up to two views &mdash; on Gemma-3-12b, paragraph captions ending in a spatial-relation sentence. The upgrade fleet re-runs the first two
+      generations in place, worst-first, so these counts move; the generation index is the source of truth.</p>
+
       <h3 style="margin-top:26px">Samples</h3>
       <p class="sub">Per-instance grids: each tile isolates one instance's 3D points over a dimmed anchor frame, with its caption. Tiles sorted by #points.</p>
       <figure><img src="assets/enc_paint_clean_brush.jpg" alt="paint_clean_brush per-instance grid" loading="lazy"><figcaption>paint_clean_brush — A.7 Gemma-3 captions</figcaption></figure>
@@ -182,18 +195,43 @@ with h5py.File(flow) as f, h5py.File(side) as s:
       <ul class="clean">
         <li><span class="mk ok">✓</span><span><span class="lt">Sidecars 32/32 valid.</span><span class="ld">Clip groups present, <code>global_siglip2</code> present, max instance id ≤ SigLIP2 rows, embeddings non-zero for every captioned instance, 90–94% of points labeled.</span></span></li>
         <li><span class="mk ok">✓</span><span><span class="lt">Flow H5 31/31 valid.</span><span class="ld">All 7 EgoDex parts + VITRA: <code>scene_flows</code>, <code>extrinsic</code>, <code>initial_rgb</code>, <code>embodiment_joints</code> present with the expected shapes.</span></span></li>
-        <li><span class="mk x">→</span><span><span class="lt">Caption era is heterogeneous (the one real caveat).</span><span class="ld">31% of the encoder corpus (63,066 episodes: part1 + 18.6k of part2) predates the 08-19 caption fix, so some large background instances there are described as a nearby object. Decide per use: filter by <code>caption_style</code>/mtime, down-weight, or re-caption (re-captioning that slice costs a full SAM2 re-run — no crop cache exists for it).</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Coverage is partial, not almost-done.</span><span class="ld">205,525 / 324,167 = 63.4%. Remaining: part4 21.8k, part5 70.7k, extra 20.1k, test 3.1k. At the measured 2,000 episodes/hour that is ~2.5 days (EgoDex complete ≈ 08-30); VITRA sidecars have not started.</span></span></li>
+        <li><span class="mk x">→</span><span><span class="lt">Caption generation is the one real caveat, and it is now measured exactly.</span><span class="ld">Not a sample: every one of the 312,697 sidecars was classified. <b>78,821 (24%)</b> are v0/v2, written before the 08-19 crop fix — in those, a large background instance can carry a neighbouring object&#39;s description. <b>97,162 (30%)</b> are v3 (crop fixed, Qwen3-VL). <b>136,714 (42%)</b> are the final A.7 Gemma-3 captions. The shipped <code>manifests/generation_index.tsv</code> tells you which is which per episode; an upgrade fleet is re-running the two older generations in place, v0/v2 first.</span></span></li>
+        <li><span class="mk ok">✓</span><span><span class="lt">Coverage is nearly closed.</span><span class="ld">312,697 / 324,167 = 96.5%. The 11,470 missing episodes are gaps left by a purge of caption-damaged files (08-28 timeout bug) and are being refilled by the running fleet; they are spread over part4 (6.1k), part5 (3.9k), extra (1.6k) and test (40).</span></span></li>
         <li><span class="mk i">·</span><span><span class="lt">Validation is sampled, not exhaustive.</span><span class="ld">63 files opened out of 1.15 M; every sample passed. A full integrity sweep has not been run.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Known, by design.</span><span class="ld">Caption style is mixed across parts (v3 Qwen vs A.7 Gemma-3) — the per-file attribute records which. Instances beyond the per-episode caption budget carry an empty caption and a zero embedding row; skip them by <code>caps[id] != ""</code>.</span></span></li>
-        <li><span class="mk i">·</span><span><span class="lt">Growing.</span><span class="ld">Encoder sidecars land at ~2,000 episodes/hour (two-pass fleet). EgoDex 100% is the near-term milestone; VITRA sidecars start after it.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Known, by design.</span><span class="ld">Instances beyond the per-episode caption budget (60) carry an empty caption and a zero embedding row; skip them with <code>caps[id] != ""</code>. Agent instances (hand, forearm) are captioned but flagged in <code>global_is_agent</code> — drop them for an object-only encoder.</span></span></li>
+        <li><span class="mk i">·</span><span><span class="lt">Still moving.</span><span class="ld">A fused fleet (SAM2 + vLLM Gemma-3 on the same GPU, 16-24 GPUs when the cluster allows) writes and rewrites sidecars continuously. Order of work: close coverage &rarr; upgrade v0/v2 &rarr; upgrade v3 &rarr; start VITRA sidecars. Re-read the generation index rather than caching counts from this page.</span></span></li>
       </ul>
     </div>
   </section>
 
+  <section>
+    <div class="wrap">
+      <h2><span class="n">05</span>What is still running, and when it lands</h2>
+      <p class="sub">Measured on the live fleet at 2026-08-30 02:30 KST: <b>34–44 GPU-seconds per episode</b> per driver, two drivers per GPU, so
+      <b>~200 episodes/hour/GPU</b>. The fleet holds 14–16 GPUs (24 shards queued; the rest wait for free cards). Premium and high-priority QoS are
+      not used, so the completion dates below move with cluster contention — they are the honest estimate, not a floor.</p>
+      <div class="tw"><table>
+          <thead><tr><th>Milestone</th><th>Episodes to process</th><th>At 16 GPUs</th><th>At 24 GPUs</th></tr></thead>
+          <tbody>
+            <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">11,470</td><td class="mono"><b>08-30 ~07:00</b></td><td class="mono">08-30 ~05:00</td></tr>
+            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">+78,821</td><td class="mono"><b>08-31 ~09:00</b></td><td class="mono">08-30 ~22:00</td></tr>
+            <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono"><b>09-01 ~18:00</b></td><td class="mono">09-01 ~00:00</td></tr>
+            <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-01</td><td class="mono muted">08-31</td></tr>
+          </tbody>
+      </table></div>
+      <p class="sub" style="margin-top:14px"><b>Nothing above blocks you.</b> The upgrade rewrites sidecars in place, atomically (<code>tmp</code> +
+      <code>rename</code>), so a file is always either the old generation or the new one, never half-written — you can read the corpus while it runs.
+      The flow H5s that PointWAM consumes are untouched by all of this and have been complete for both datasets since 08-27.</p>
+      <p class="sub"><b>Why not faster.</b> The cost is per-episode SAM2 AMG plus one Gemma-3 caption per instance, and the cluster gives us 14–24 GPUs.
+      The v3&rarr;A.7 upgrade in principle only needs new captions — the instance grouping is unchanged — but the 2D mask crops the captioner needs were
+      never cached, so it costs a full re-run. Caching crops is the obvious next optimisation and would roughly halve the v3 leg.</p>
+    </div>
+  </section>
+
+
 </main>
 
-<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · dataset usage guide · 2026-08-27</p></div></footer>
+<footer class="page-end"><div class="wrap"><p class="muted">dex-pointwam · dataset usage guide · updated 2026-08-30</p></div></footer>
 
 </body>
 </html>

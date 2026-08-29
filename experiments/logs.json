@@ -27,7 +27,7 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "maskcap: EgoDex coverage 96.3% (completing 08-30); all-latest-config by 08-31, then VITRA. Usage guide published for consumers.",
+    "text": "maskcap: EgoDex coverage 96.5%, closing 08-30. Upgrade fleet rewriting the two legacy caption generations in place (v0/v2 by 08-31, all A.7 by ~09-01), then VITRA.",
     "status": "active",
     "updated": "2026-08-30"
    }
@@ -323,7 +323,7 @@
    "slug": "spaceformer-data-engine",
    "title": "SpaceFormer's caption protocol transfers to ego video; its static clustering does not",
    "status": "running",
-   "updated": "2026-08-25",
+   "updated": "2026-08-30",
    "tldr": "Human-data engine for the PointWAM 3D encoder: SAM2 masks + VLM captions + SigLIP2 targets from EgoDex/VITRA ego video. A faithful SpaCeFormer-3M re-implementation (A.6/A.7 prompts verbatim, MaskClustering params, Gemma-3, 5 captions/instance) run head-to-head on 10 episodes: captions are adopted-worthy (earlier Gemma failure was protocol mismatch), but static MaskClustering collapses on ego motion — coverage 94.3%→57.9%, instances 12→6.2/ep — quantitatively justifying our scene-flow merge. Recommended default: hybrid. EgoDex campaign ~178k/324k (55%); two-pass fleet (SAM2 pass + Gemma pass) with A/B-validated fast masker; 15 new-dataset demos (DexYCB/AEA/EPIC)."
   },
   {
@@ -333,7 +333,7 @@
    "title": "Human data, ready to consume — paths, statistics, schemas",
    "status": "done",
    "updated": "2026-08-30",
-   "tldr": "Usage guide for the two consumers. PointWAM: full flow corpus ready — 324,167 EgoDex (~3.1 TB, ARKit GT hands) + ~822,640 VITRA (~2.8 TB, reconstructed MANO). 3D encoder: 312,232 EgoDex episodes (96.3%), completing 08-30; the homogeneous SpaceFormer-A.7 subset (caption_style=sf_gemma3_pass2_v1) is 147,435 and reaches the whole corpus by 08-31. Both H5 schemas, a load snippet, a subset-selection table and the caption-generation history."
+   "tldr": "Usage guide for the two consumers. PointWAM: full flow corpus ready — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB), every sampled file valid. 3D encoder: 312,697 EgoDex sidecars (96.5%), coverage closing 08-30. The sidecars span three caption generations (A.7 136,714 / v3 97,162 / pre-fix v0-v2 78,821) — a shipped generation index says which is which per episode, and an upgrade fleet is re-running the two older ones, worst-first, to a homogeneous corpus by ~09-01."
   },
   {
    "project": "3d-wam",
