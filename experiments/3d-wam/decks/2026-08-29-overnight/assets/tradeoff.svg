@@ -1,0 +1,60 @@
+<svg viewBox="0 0 1180 400" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<line x1="62" y1="34.0" x2="880" y2="34.0" stroke="var(--line)"/>
+<line x1="62" y1="34" x2="62" y2="34.0" stroke="var(--line)"/>
+<text x="62" y="50" class="lb" text-anchor="middle">0%</text>
+<text x="190" y="50" class="lb" text-anchor="middle">50%</text>
+<text x="318" y="50" class="lb" text-anchor="middle">100%</text>
+<text x="445" y="50" class="lb" text-anchor="middle">150%</text>
+<text x="573" y="50" class="lb" text-anchor="middle">200%</text>
+<text x="701" y="50" class="lb" text-anchor="middle">250%</text>
+<text x="829" y="50" class="lb" text-anchor="middle">300%</text>
+<text x="54" y="77" class="lb" text-anchor="end">16</text>
+<line x1="62" y1="73.2" x2="880" y2="73.2" stroke="var(--line)" opacity="0.28"/>
+<text x="54" y="156" class="lb" text-anchor="end">20</text>
+<line x1="62" y1="151.8" x2="880" y2="151.8" stroke="var(--line)" opacity="0.28"/>
+<text x="54" y="234" class="lb" text-anchor="end">24</text>
+<line x1="62" y1="230.2" x2="880" y2="230.2" stroke="var(--line)" opacity="0.28"/>
+<text x="54" y="313" class="lb" text-anchor="end">28</text>
+<line x1="62" y1="308.8" x2="880" y2="308.8" stroke="var(--line)" opacity="0.28"/>
+<text x="471" y="384" class="t b" text-anchor="middle">generated motion as % of ground truth</text>
+<text x="16" y="20" class="t b">ADE (cm)</text>
+<line x1="62" y1="81.1" x2="880" y2="81.1" stroke="var(--mut)" stroke-dasharray="5 4"/>
+<text x="886" y="85" class="lb">velocity extrapolation 16.40</text>
+<line x1="62" y1="47.0" x2="880" y2="47.0" stroke="#c2452d" stroke-dasharray="5 4"/>
+<text x="886" y="51" class="lb" fill="#c2452d">predict nothing 14.66</text>
+<circle cx="62.0" cy="47.0" r="6" fill="none" stroke="#c2452d" stroke-width="2"/>
+<text x="74" y="37" class="lb" fill="#c2452d">the attractor</text>
+<polyline points="215.4,84.6 174.5,59.7 171.9,58.5 177.0,54.8" fill="none" stroke="var(--acc)" stroke-width="2" opacity="0.9"/>
+<circle cx="215.4" cy="84.6" r="4.6" fill="var(--acc)"/>
+<circle cx="174.5" cy="59.7" r="3.2" fill="var(--acc)"/>
+<circle cx="171.9" cy="58.5" r="3.2" fill="var(--acc)"/>
+<circle cx="177.0" cy="54.8" r="3.2" fill="var(--acc)"/>
+<text x="177" y="46" class="lb" fill="var(--acc)">6800</text>
+<rect x="886" y="34" width="10" height="10" fill="var(--acc)"/>
+<text x="901" y="43" class="t">D1 patch</text>
+<polyline points="841.7,591.7 698.5,451.6 514.5,270.5 404.5,174.7" fill="none" stroke="#6a9fd8" stroke-width="2" opacity="0.9"/>
+<circle cx="841.7" cy="591.7" r="4.6" fill="#6a9fd8"/>
+<circle cx="698.5" cy="451.6" r="3.2" fill="#6a9fd8"/>
+<circle cx="514.5" cy="270.5" r="3.2" fill="#6a9fd8"/>
+<circle cx="404.5" cy="174.7" r="3.2" fill="#6a9fd8"/>
+<text x="405" y="166" class="lb" fill="#6a9fd8">1480</text>
+<rect x="886" y="54" width="10" height="10" fill="#6a9fd8"/>
+<text x="901" y="63" class="t">D2 PTv3</text>
+<polyline points="396.9,244.2 223.0,72.3 217.9,71.9 223.0,65.2" fill="none" stroke="#c2452d" stroke-width="2" opacity="0.9"/>
+<circle cx="396.9" cy="244.2" r="4.6" fill="#c2452d"/>
+<circle cx="223.0" cy="72.3" r="3.2" fill="#c2452d"/>
+<circle cx="217.9" cy="71.9" r="3.2" fill="#c2452d"/>
+<circle cx="223.0" cy="65.2" r="3.2" fill="#c2452d"/>
+<text x="223" y="56" class="lb" fill="#c2452d">4000</text>
+<rect x="886" y="74" width="10" height="10" fill="#c2452d"/>
+<text x="901" y="83" class="t">D3 causal</text>
+<polyline points="141.2,66.8 102.9,54.2" fill="none" stroke="#8e7cc3" stroke-width="2" opacity="0.9"/>
+<circle cx="141.2" cy="66.8" r="4.6" fill="#8e7cc3"/>
+<circle cx="102.9" cy="54.2" r="3.2" fill="#8e7cc3"/>
+<text x="103" y="45" class="lb" fill="#8e7cc3">3400</text>
+<rect x="886" y="94" width="10" height="10" fill="#8e7cc3"/>
+<text x="901" y="103" class="t">D5 per-step</text>
+<text x="886" y="136" class="lb">arrow of training = right to left</text>
+<text x="886" y="152" class="lb">every arm slides toward 0 % motion</text>
+</svg>

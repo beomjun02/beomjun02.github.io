@@ -1,0 +1,49 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="20" class="t b">A held object moves with the hand that holds it — cosine 0.890</text>
+<text x="120" y="52" class="t" text-anchor="end">dexycb</text>
+<rect x="128" y="38" width="325" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="460" y="52" class="t">0.986</text>
+<text x="520" y="52" class="lb">8,090 point-steps</text>
+<text x="120" y="80" class="t" text-anchor="end">oakink2</text>
+<rect x="128" y="66" width="320" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="455" y="80" class="t">0.969</text>
+<text x="520" y="80" class="lb">470,346 point-steps</text>
+<text x="120" y="108" class="t" text-anchor="end">hot3d</text>
+<rect x="128" y="94" width="304" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="439" y="108" class="t">0.922</text>
+<text x="520" y="108" class="lb">621,763 point-steps</text>
+<text x="120" y="136" class="t" text-anchor="end">taco</text>
+<rect x="128" y="122" width="283" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="418" y="136" class="t">0.859</text>
+<text x="520" y="136" class="lb">85,103 point-steps</text>
+<text x="120" y="164" class="t" text-anchor="end">grab</text>
+<rect x="128" y="150" width="266" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="401" y="164" class="t">0.805</text>
+<text x="520" y="164" class="lb">81,581 point-steps</text>
+<text x="120" y="192" class="t" text-anchor="end">arctic</text>
+<rect x="128" y="178" width="264" height="18" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="399" y="192" class="t">0.799</text>
+<text x="520" y="192" class="lb">526,334 point-steps</text>
+<line x1="128" y1="208" x2="458" y2="208" stroke="var(--line)"/>
+<text x="120" y="226" class="t b" text-anchor="end">all</text>
+<rect x="128" y="212" width="294" height="18" rx="3" fill="#2a9d4f"/>
+<text x="429" y="226" class="t b">0.890</text>
+<text x="520" y="226" class="lb">1,793,217 point-steps</text>
+<text x="18" y="344" class="lb">ground-truth flow of each contacting hand point vs its contact_nn-paired object point</text>
+<text x="660" y="20" class="t b">So object flow could be read off the hand — if the hand were right</text>
+<text x="660" y="56" class="t">object cosine, as predicted</text>
+<rect x="660" y="62" width="36" height="14" rx="3" fill="var(--acc)" opacity="0.85"/>
+<text x="703" y="74" class="t b">0.076</text>
+<text x="660" y="94" class="t">+ propagate the MODEL's hand flow</text>
+<rect x="660" y="100" width="78" height="14" rx="3" fill="var(--acc)" opacity="0.85"/>
+<text x="745" y="112" class="t b">0.162</text>
+<text x="660" y="132" class="t">+ propagate the TRUE hand flow</text>
+<rect x="660" y="138" width="411" height="14" rx="3" fill="#2a9d4f" opacity="0.85"/>
+<text x="1078" y="150" class="t b">0.857</text>
+<text x="660" y="170" class="t">model hand cosine at contact</text>
+<rect x="660" y="176" width="108" height="14" rx="3" fill="#c2452d" opacity="0.85"/>
+<text x="775" y="188" class="t b">0.224</text>
+<text x="660" y="328" class="lb">object ADE falls 14.30 → 3.25 cm with the true hand flow, and only to 13.80 with ours</text>
+<text x="660" y="344" class="lb">propagation needs NO training: frame-0 nearest hand point, fixed gate, 8.5 % of object points</text>
+</svg>

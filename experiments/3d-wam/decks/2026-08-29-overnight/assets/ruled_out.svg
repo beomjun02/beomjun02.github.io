@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1180 330" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="20" class="t b">Five interventions tested. One lever works.</text>
+<rect x="18" y="44" width="1144" height="26" rx="3" fill="#c2452d" opacity="0.07"/>
+<rect x="18" y="44" width="4" height="26" fill="#c2452d"/>
+<text x="32" y="62" class="t b">per-step normalised targets</text>
+<text x="330" y="62" class="m">trained</text>
+<text x="410" y="62" class="t">deepened collapse — 16 % motion, object cosine −0.020</text>
+<rect x="18" y="77" width="1144" height="26" rx="3" fill="#c2452d" opacity="0.07"/>
+<rect x="18" y="77" width="4" height="26" fill="#c2452d"/>
+<text x="32" y="95" class="t b">block-causal time (MolmoMotion)</text>
+<text x="330" y="95" class="m">trained</text>
+<text x="410" y="95" class="t">finished below the plain arm — 0.206 vs 0.266</text>
+<rect x="18" y="110" width="1144" height="26" rx="3" fill="var(--acc)" opacity="0.07"/>
+<rect x="18" y="110" width="4" height="26" fill="var(--acc)"/>
+<text x="32" y="128" class="t b">PTv3 windowed attention</text>
+<text x="330" y="128" class="m">trained</text>
+<text x="410" y="128" class="t">0.193 at 9× fewer samples — unresolved</text>
+<rect x="18" y="143" width="1144" height="26" rx="3" fill="#c2452d" opacity="0.07"/>
+<rect x="18" y="143" width="4" height="26" fill="#c2452d"/>
+<text x="32" y="161" class="t b">MolmoMotion-4B finetune</text>
+<text x="330" y="161" class="m">measured</text>
+<text x="410" y="161" class="t">blocked — the imagery it needs does not exist here</text>
+<rect x="18" y="176" width="1144" height="26" rx="3" fill="#c2452d" opacity="0.07"/>
+<rect x="18" y="176" width="4" height="26" fill="#c2452d"/>
+<text x="32" y="194" class="t b">contact as conditioning</text>
+<text x="330" y="194" class="m">measured</text>
+<text x="410" y="194" class="t">≤ 0.08 — contact is a gate, not a direction</text>
+<rect x="18" y="209" width="1144" height="26" rx="3" fill="#c2452d" opacity="0.07"/>
+<rect x="18" y="209" width="4" height="26" fill="#c2452d"/>
+<text x="32" y="227" class="t b">part-weighted point budget</text>
+<text x="330" y="227" class="m">measured</text>
+<text x="410" y="227" class="t">cosine flat across all 16 MANO parts, 0.346–0.380</text>
+<rect x="18" y="242" width="1144" height="26" rx="3" fill="var(--acc)" opacity="0.07"/>
+<rect x="18" y="242" width="4" height="26" fill="var(--acc)"/>
+<text x="32" y="260" class="t b">contact propagation</text>
+<text x="330" y="260" class="m">measured</text>
+<text x="410" y="260" class="t">free post-hoc; ceiling 0.857, buys 0.010 today</text>
+<rect x="18" y="275" width="1144" height="26" rx="3" fill="#2a9d4f" opacity="0.07"/>
+<rect x="18" y="275" width="4" height="26" fill="#2a9d4f"/>
+<text x="32" y="293" class="t b">training longer</text>
+<text x="330" y="293" class="m">trained</text>
+<text x="410" y="293" class="t">0.145 → 0.266 and still rising  ← the only thing that moved</text>
+<text x="18" y="322" class="lb">"measured" = killed by a diagnostic costing minutes rather than a training run costing GPU-hours</text>
+</svg>

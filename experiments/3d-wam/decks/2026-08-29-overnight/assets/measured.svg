@@ -1,0 +1,49 @@
+<svg viewBox="0 0 1180 372" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="22" class="t b">Eight questions answered with no training at all</text>
+<text x="22" y="46" class="b m">question</text>
+<text x="470" y="46" class="b m">measurement</text>
+<text x="800" y="46" class="b m">answer</text>
+<line x1="18" y1="54" x2="1162" y2="54" stroke="var(--line)"/>
+<rect x="18" y="62" width="1144" height="29" rx="3" fill="#c2452d" opacity="0.06"/>
+<rect x="18" y="62" width="4" height="29" fill="#c2452d"/>
+<text x="30" y="81" class="t">frame-0 geometry determines the future?</text>
+<text x="470" y="81" class="m">pair cosine ≈ 0 at every distance</text>
+<text x="800" y="81" class="t" fill="#c2452d">no — geometry carries no direction</text>
+<rect x="18" y="98" width="1144" height="29" rx="3" fill="#c2452d" opacity="0.06"/>
+<rect x="18" y="98" width="4" height="29" fill="#c2452d"/>
+<text x="30" y="117" class="t">frame-0 contact determines object direction?</text>
+<text x="470" y="117" class="m">≤ 0.08 in every bin</text>
+<text x="800" y="117" class="t" fill="#c2452d">no — contact is a gate, not a direction</text>
+<rect x="18" y="134" width="1144" height="29" rx="3" fill="#c2452d" opacity="0.06"/>
+<rect x="18" y="134" width="4" height="29" fill="#c2452d"/>
+<text x="30" y="153" class="t">is the fingertip point budget the blocker?</text>
+<text x="470" y="153" class="m">cosine flat across all 16 MANO parts</text>
+<text x="800" y="153" class="t" fill="#c2452d">no — saved a re-preprocessing campaign</text>
+<rect x="18" y="170" width="1144" height="29" rx="3" fill="#2a9d4f" opacity="0.06"/>
+<rect x="18" y="170" width="4" height="29" fill="#2a9d4f"/>
+<text x="30" y="189" class="t">do held objects move with the hand?</text>
+<text x="470" y="189" class="m">cosine 0.890, 1.79 M point-steps</text>
+<text x="800" y="189" class="t" fill="#2a9d4f">YES — the representation claim</text>
+<rect x="18" y="206" width="1144" height="29" rx="3" fill="#2a9d4f" opacity="0.06"/>
+<rect x="18" y="206" width="4" height="29" fill="#2a9d4f"/>
+<text x="30" y="225" class="t">what would propagating the hand buy?</text>
+<text x="470" y="225" class="m">object 0.152 → 0.857 with true hand flow</text>
+<text x="800" y="225" class="t" fill="#2a9d4f">ceiling is huge</text>
+<rect x="18" y="242" width="1144" height="29" rx="3" fill="#c2452d" opacity="0.06"/>
+<rect x="18" y="242" width="4" height="29" fill="#c2452d"/>
+<text x="30" y="261" class="t">…with our hand flow?</text>
+<text x="470" y="261" class="m">0.152 → 0.162</text>
+<text x="800" y="261" class="t" fill="#c2452d">not a lever at today's hand quality</text>
+<rect x="18" y="278" width="1144" height="29" rx="3" fill="#2a9d4f" opacity="0.06"/>
+<rect x="18" y="278" width="4" height="29" fill="#2a9d4f"/>
+<text x="30" y="297" class="t">does motion history carry direction?</text>
+<text x="470" y="297" class="m">cosine 0.734 at t=1 vs our 0.080</text>
+<text x="800" y="297" class="t" fill="#2a9d4f">YES — this became C1</text>
+<rect x="18" y="314" width="1144" height="29" rx="3" fill="#c2452d" opacity="0.06"/>
+<rect x="18" y="314" width="4" height="29" fill="#c2452d"/>
+<text x="30" y="333" class="t">is velocity a better predictor?</text>
+<text x="470" y="333" class="m">17.27 cm vs model 14.67, zero 12.93</text>
+<text x="800" y="333" class="t" fill="#c2452d">no — it is a magnitude failure</text>
+<text x="18" y="364" class="lb">each cost minutes; each would have cost roughly three GPU-hours to learn from a training run</text>
+</svg>

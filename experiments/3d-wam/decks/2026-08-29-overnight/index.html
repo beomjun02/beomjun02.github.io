@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #7 · overnight 2026-08-28/29: every experiment in one table, then one by one,
+     with every rollout the project has ever rendered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-29 · Overnight — history beats the baseline — 3D-WAM</title>
+<meta name="description" content="Deck #7: the overnight run. Every experiment in one table, then explained one at a time. Velocity conditioning (C1) is the first arm in this project to beat a zero-flow predictor: ADE 13.82 against 14.66, direction cosine 0.266 to 0.370, object cosine 0.076 to 0.220. Eight further questions were settled by measurement rather than training. Appendix carries all 86 rollout clips.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body>
+<div class="deck" data-project="3D-WAM" data-deck="Overnight — history beats the baseline" data-date="2026-08-29">
+
+<section class="slide s-title">
+  <h1>Motion history beats a zero predictor</h1>
+  <p class="ctx">3D-WAM · overnight run, 2026-08-28 into 08-29 · ten arms and eight measurements</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 29<br>Presented by Beomjun Kim</p>
+</section>
+
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Direction was missing from the input, not from the architecture</p>
+  <ul>
+    <li>Done: ten arms, eight measurement-only investigations</li>
+    <li>Result: C1 beats a zero predictor, a first</li>
+    <li>Decided: five architectural interventions ruled out</li>
+    <li>Discuss: duration is not delivering · what next</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/master.svg" alt="Every arm, what it changed, its cosine and ADE, and the verdict"><figcaption>every arm — what it changed from D1, where it landed, and whether it beat a zero predictor</figcaption></figure>
+  </div>
+  <p class="footnote">all arms 120 M parameters, identical data and loss · zero-flow baseline 14.66 cm · cosine above 0.5 is required to beat it</p>
+</section>
+
+<section class="slide s-method">
+  <h2>Method: what each arm changed</h2>
+  <p class="thesis">One variable per arm, so every comparison stays readable</p>
+  <ul>
+    <li>D1 is the baseline; every arm differs by one flag</li>
+    <li>C1 adds positions at three past frames</li>
+    <li>Measurements answer questions without training</li>
+    <li>Cosine is the metric; ADE hides magnitude effects</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/experiments.svg" alt="The arms: tokenisation, attention reach, and what each borrows"><figcaption>the arms — tokenisation, attention reach, and the prediction that would confirm each</figcaption></figure>
+  </div>
+  <p class="footnote">err = sqrt(m² + g² − 2mgc), so beating a zero predictor with calibrated magnitude needs cosine &gt; 0.5 exactly</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">C1 crosses the baseline at step 3,400 and stays across</p>
+  <ol class="agenda">
+    <li class="on">Velocity conditioning wins
+      <ul><li>ADE 13.82 vs zero 14.66 · cosine 0.266 → 0.370</li>
+          <li>objects 0.076 → 0.220, and motion rises rather than collapsing</li></ul></li>
+    <li>Five architectural interventions lost</li>
+    <li>The hand–object coupling is real but not yet a lever</li>
+    <li>Eight questions settled without training</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/history.svg" alt="Per-step direction cosine for D1, C1 and the velocity ceiling"><figcaption>history — per-step cosine · D1 frame-0 only, C1 plus three frames, and the model-free ceiling</figcaption></figure>
+    <figure><img src="assets/c1_oakink2_1s.gif" alt="C1 rollout on OakInk2"><figcaption>C1 · OakInk2 · ADE 3.1 cm, against D1's 4.0 on the same chunk</figcaption></figure>
+  </div>
+  <p class="footnote">C1 = D1 plus positions at t = −2, −1, 0 · parameter-matched at 119.95 M · t=1 cosine 0.080 → 0.453, a 5.7× gain</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">Every change made to the plain architecture lost to it</p>
+  <ol class="agenda">
+    <li>Velocity conditioning wins</li>
+    <li class="on">Five architectural interventions lost
+      <ul><li>causal time 0.206, PTv3 0.193, per-step target 0.066 vs D1's 0.266</li>
+          <li>duration is flat so far — 0.23 at four times the steps</li></ul></li>
+    <li>The hand–object coupling is real but not yet a lever</li>
+    <li>Eight questions settled without training</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/ruled_out.svg" alt="Interventions tested and their measured outcomes"><figcaption>interventions — green is the only lever that moved the cosine</figcaption></figure>
+    <figure><img src="assets/tradeoff.svg" alt="Error against generated motion for the architecture arms"><figcaption>trade-off — error vs motion per checkpoint · low error bought by moving less is not progress</figcaption></figure>
+  </div>
+  <p class="footnote">D5's 14.97 cm looks best in the table and is not a win — at 16 % motion it has become the zero predictor</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">A held object moves with its hand at 0.890 — the representation claim</p>
+  <ol class="agenda">
+    <li>Velocity conditioning wins</li>
+    <li>Five architectural interventions lost</li>
+    <li class="on">The coupling is real but not yet a lever
+      <ul><li>true hand flow lifts object cosine 0.152 → 0.857</li>
+          <li>our hand flow buys 0.010 — hand cosine at contact is 0.224</li></ul></li>
+    <li>Eight questions settled without training</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/coupling.svg" alt="Per-dataset coupling and what propagation buys"><figcaption>coupling — ground-truth hand↔object agreement, and propagation's ceiling against its realised gain</figcaption></figure>
+    <figure><img src="assets/threshold.svg" alt="Error relative to a zero predictor against direction cosine"><figcaption>threshold — error ÷ zero-predictor error against cosine · the 0.5 line is exact, not chosen</figcaption></figure>
+  </div>
+  <p class="footnote">this is what General Flow (object only, hand masked out) and MolmoMotion (object query points) leave on the table</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">Eight questions answered in minutes each, none needing a training run</p>
+  <ol class="agenda">
+    <li>Velocity conditioning wins</li>
+    <li>Five architectural interventions lost</li>
+    <li>The coupling is real but not yet a lever</li>
+    <li class="on">Settled without training
+      <ul><li>geometry and contact carry no direction; the point budget is innocent</li>
+          <li>history carries cosine 0.734 at t=1 — this became C1</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/measured.svg" alt="Eight measurement-only investigations and their answers"><figcaption>measurements — each cost minutes; each would have cost about three GPU-hours as a training run</figcaption></figure>
+  </div>
+  <p class="footnote">three of these killed hypotheses I had already written code for, including one I was an hour from launching</p>
+</section>
+
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Conditioning beat architecture and duration; spend there next</p>
+  <p class="subhead">Decided:</p>
+  <ul><li>Magnitude is solved — 94 % self-calibrated, no weighting</li></ul>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Duration is not delivering</b> — D6 cosine flat at 0.23 across four doublings, mid-schedule → let it anneal to 110 k before judging, but stop treating it as the lever (owner)</li>
+    <li><b>Where the remaining headroom is</b> — C1 saturates the velocity ceiling by t=10 but reaches only 0.453 of 0.734 at t=1 → richer short-horizon conditioning, or more history frames (owner)</li>
+    <li><b>MolmoMotion needs real imagery</b> — DexYCB colour is on this cluster; the alignment panels decide whether it is usable (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Harvest C2 = history + duration (C2 · me · today)</li>
+    <li>Owner verifies the DexYCB alignment panels (D4 · owner · today)</li>
+    <li>Render D6 checkpoints if its curve turns (viz · me · on request)</li>
+    <li>Decide the next conditioning arm (next · owner · today)</li>
+  </ol>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — C1 · plus three frames of history</h2>
+  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <div class="band">
+    <figure><img src="assets/tonight_c1_history_taco.gif" alt="taco · ADE 4.4 cm · motion 22 %"><figcaption>taco · ADE 4.4 cm · motion 22 %</figcaption></figure>
+    <figure><img src="assets/tonight_c1_history_arctic.gif" alt="arctic · ADE 8.5 cm · motion 21 %"><figcaption>arctic · ADE 8.5 cm · motion 21 %</figcaption></figure>
+    <figure><img src="assets/tonight_c1_history_dexycb.gif" alt="dexycb · ADE 6.9 cm · motion 170 %"><figcaption>dexycb · ADE 6.9 cm · motion 170 %</figcaption></figure>
+    <figure><img src="assets/tonight_c1_history_hot3d.gif" alt="hot3d · ADE 9.9 cm · motion 43 %"><figcaption>hot3d · ADE 9.9 cm · motion 43 %</figcaption></figure>
+    <figure><img src="assets/tonight_c1_history_oakink2.gif" alt="oakink2 · ADE 3.1 cm · motion 21 %"><figcaption>oakink2 · ADE 3.1 cm · motion 21 %</figcaption></figure>
+  </div>
+  <p class="footnote">the winning arm — ADE 13.82, first to beat a zero predictor · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D1 · frame 0 only</h2>
+  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <div class="band">
+    <figure><img src="assets/tonight_d1_patch_taco.gif" alt="taco · ADE 4.4 cm · motion 18 %"><figcaption>taco · ADE 4.4 cm · motion 18 %</figcaption></figure>
+    <figure><img src="assets/tonight_d1_patch_arctic.gif" alt="arctic · ADE 8.8 cm · motion 33 %"><figcaption>arctic · ADE 8.8 cm · motion 33 %</figcaption></figure>
+    <figure><img src="assets/tonight_d1_patch_dexycb.gif" alt="dexycb · ADE 6.9 cm · motion 80 %"><figcaption>dexycb · ADE 6.9 cm · motion 80 %</figcaption></figure>
+    <figure><img src="assets/tonight_d1_patch_hot3d.gif" alt="hot3d · ADE 10.6 cm · motion 16 %"><figcaption>hot3d · ADE 10.6 cm · motion 16 %</figcaption></figure>
+    <figure><img src="assets/tonight_d1_patch_oakink2.gif" alt="oakink2 · ADE 4.0 cm · motion 26 %"><figcaption>oakink2 · ADE 4.0 cm · motion 26 %</figcaption></figure>
+  </div>
+  <p class="footnote">the baseline every other arm is measured against · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D3 · block-causal temporal attention</h2>
+  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <div class="band">
+    <figure><img src="assets/tonight_d3_causal_taco.gif" alt="taco · ADE 4.4 cm · motion 34 %"><figcaption>taco · ADE 4.4 cm · motion 34 %</figcaption></figure>
+    <figure><img src="assets/tonight_d3_causal_arctic.gif" alt="arctic · ADE 8.3 cm · motion 17 %"><figcaption>arctic · ADE 8.3 cm · motion 17 %</figcaption></figure>
+    <figure><img src="assets/tonight_d3_causal_dexycb.gif" alt="dexycb · ADE 6.0 cm · motion 43 %"><figcaption>dexycb · ADE 6.0 cm · motion 43 %</figcaption></figure>
+    <figure><img src="assets/tonight_d3_causal_hot3d.gif" alt="hot3d · ADE 11.3 cm · motion 14 %"><figcaption>hot3d · ADE 11.3 cm · motion 14 %</figcaption></figure>
+    <figure><img src="assets/tonight_d3_causal_oakink2.gif" alt="oakink2 · ADE 3.9 cm · motion 31 %"><figcaption>oakink2 · ADE 3.9 cm · motion 31 %</figcaption></figure>
+  </div>
+  <p class="footnote">finished below the baseline · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D5 · per-step normalised target</h2>
+  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <div class="band">
+    <figure><img src="assets/tonight_d5_perstep_taco.gif" alt="taco · ADE 4.8 cm · motion 29 %"><figcaption>taco · ADE 4.8 cm · motion 29 %</figcaption></figure>
+    <figure><img src="assets/tonight_d5_perstep_arctic.gif" alt="arctic · ADE 8.3 cm · motion 20 %"><figcaption>arctic · ADE 8.3 cm · motion 20 %</figcaption></figure>
+    <figure><img src="assets/tonight_d5_perstep_dexycb.gif" alt="dexycb · ADE 5.7 cm · motion 21 %"><figcaption>dexycb · ADE 5.7 cm · motion 21 %</figcaption></figure>
+    <figure><img src="assets/tonight_d5_perstep_hot3d.gif" alt="hot3d · ADE 11.4 cm · motion 12 %"><figcaption>hot3d · ADE 11.4 cm · motion 12 %</figcaption></figure>
+    <figure><img src="assets/tonight_d5_perstep_oakink2.gif" alt="oakink2 · ADE 4.2 cm · motion 31 %"><figcaption>oakink2 · ADE 4.2 cm · motion 31 %</figcaption></figure>
+  </div>
+  <p class="footnote">collapsed to 16 % motion · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D2 · PTv3 windowed attention</h2>
+  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <div class="band">
+    <figure><img src="assets/tonight_d2_ptv3_taco.gif" alt="taco · ADE 11.6 cm · motion 229 %"><figcaption>taco · ADE 11.6 cm · motion 229 %</figcaption></figure>
+    <figure><img src="assets/tonight_d2_ptv3_arctic.gif" alt="arctic · ADE 12.8 cm · motion 119 %"><figcaption>arctic · ADE 12.8 cm · motion 119 %</figcaption></figure>
+    <figure><img src="assets/tonight_d2_ptv3_dexycb.gif" alt="dexycb · ADE 12.4 cm · motion 199 %"><figcaption>dexycb · ADE 12.4 cm · motion 199 %</figcaption></figure>
+    <figure><img src="assets/tonight_d2_ptv3_hot3d.gif" alt="hot3d · ADE 16.3 cm · motion 87 %"><figcaption>hot3d · ADE 16.3 cm · motion 87 %</figcaption></figure>
+    <figure><img src="assets/tonight_d2_ptv3_oakink2.gif" alt="oakink2 · ADE 10.7 cm · motion 278 %"><figcaption>oakink2 · ADE 10.7 cm · motion 278 %</figcaption></figure>
+  </div>
+  <p class="footnote">2,188 steps only — 9× fewer samples than the others · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: five-second chained rollouts</h2>
+  <p class="thesis ctx">Five one-second chunks, each re-predicted from the previous endpoint</p>
+  <div class="band">
+    <figure><img src="assets/five_d1_patch_oakink2_5s.gif" alt="d1 · patch · oakink2"><figcaption>d1 · patch · oakink2</figcaption></figure>
+    <figure><img src="assets/five_d1_patch_taco_5s.gif" alt="d1 · patch · taco"><figcaption>d1 · patch · taco</figcaption></figure>
+    <figure><img src="assets/five_d2_ptv3_oakink2_5s.gif" alt="d2 · ptv3 · oakink2"><figcaption>d2 · ptv3 · oakink2</figcaption></figure>
+    <figure><img src="assets/five_d2_ptv3_taco_5s.gif" alt="d2 · ptv3 · taco"><figcaption>d2 · ptv3 · taco</figcaption></figure>
+  </div>
+  <p class="footnote">closed-loop chunking — the mode General Flow and MolmoMotion deploy in · our open-loop horizon is one second</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: five-second chained rollouts</h2>
+  <p class="thesis ctx">Five one-second chunks, each re-predicted from the previous endpoint</p>
+  <div class="band">
+    <figure><img src="assets/five_d3_causal_oakink2_5s.gif" alt="d3 · causal · oakink2"><figcaption>d3 · causal · oakink2</figcaption></figure>
+    <figure><img src="assets/five_d3_causal_taco_5s.gif" alt="d3 · causal · taco"><figcaption>d3 · causal · taco</figcaption></figure>
+    <figure><img src="assets/five_d5_perstep_oakink2_5s.gif" alt="d5 · perstep · oakink2"><figcaption>d5 · perstep · oakink2</figcaption></figure>
+    <figure><img src="assets/five_d5_perstep_taco_5s.gif" alt="d5 · perstep · taco"><figcaption>d5 · perstep · taco</figcaption></figure>
+  </div>
+  <p class="footnote">closed-loop chunking — the mode General Flow and MolmoMotion deploy in · our open-loop horizon is one second</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — E5 · multi-stream, no weighting</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/e5_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e5_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e5_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e5_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e5_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/e5ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — E4 · multi-stream single-shot</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/e4_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e4_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e4_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e4_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e4_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/e4ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — E3 · multi-stream + AR</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/e3_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e3_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e3_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e3_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e3_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/e3ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — E2 · autoregressive head</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/e2_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e2_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e2_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e2_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e2_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/e2_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — E1 · motion-weighted loss</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/e1_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e1_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e1_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e1_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e1_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/e1_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D · deterministic regression @6k</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/r6_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/r6_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/r6_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/r6_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/r6_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/regress_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — D · deterministic regression @5k</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/r5_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/r5_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/r5_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/r5_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/r5_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/regress_5k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — C · x1 parameterisation</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/x1_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/x1_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/x1_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/x1_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/x1_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/x1_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — A · velocity target, 12k steps</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/ca_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/ca_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/ca_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/ca_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/ca_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/condA_12k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — pilot · first end-to-end run</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/pf_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/pf_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/pf_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/pf_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/pf_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/pilot_fast_N1024_20260826/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: rollouts — P5 · Sharpa geometry probe</h2>
+  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
+  <div class="band">
+    <figure><img src="assets/p5_1_arctic_sharpa_geometry_p5.gif" alt="arctic · sharpa · geometry"><figcaption>arctic · sharpa · geometry</figcaption></figure>
+    <figure><img src="assets/p5_2_dexycb_sharpa_geometry_p5.gif" alt="dexycb · sharpa · geometry"><figcaption>dexycb · sharpa · geometry</figcaption></figure>
+    <figure><img src="assets/p5_3_grab_sharpa_geometry_p5.gif" alt="grab · sharpa · geometry"><figcaption>grab · sharpa · geometry</figcaption></figure>
+  </div>
+  <p class="footnote">source: results/pilot_fast_N1024_20260826/clips_p5 · these predate tonight and use the 15 Hz / T = 16 configuration</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: figures — data and tokenisation</h2>
+  <p class="thesis ctx">How the data is built and how points become tokens</p>
+  <div class="band">
+    <figure><img src="assets/data.svg" alt="inventory — training chunks per dataset after the motion filter"><figcaption>inventory — training chunks per dataset after the motion filter</figcaption></figure>
+    <figure><img src="assets/tokenise.svg" alt="tokenisation — real Hilbert partition, curve to patch to (frame × patch) grid"><figcaption>tokenisation — real Hilbert partition, curve to patch to (frame × patch) grid</figcaption></figure>
+  </div>
+  <p class="footnote">see also deck #6 for the full architecture derivation</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: figures — arms and diagnosis</h2>
+  <p class="thesis ctx">What each arm changed, and the error decomposition that redirected us</p>
+  <div class="band">
+    <figure><img src="assets/experiments.svg" alt="the arms — tokenisation, attention reach, what each borrows"><figcaption>the arms — tokenisation, attention reach, what each borrows</figcaption></figure>
+    <figure><img src="assets/designs.svg" alt="attention masks per arm"><figcaption>attention masks per arm</figcaption></figure>
+    <figure><img src="assets/diagnosis.svg" alt="decomposition — oracle substitutions and per-step behaviour"><figcaption>decomposition — oracle substitutions and per-step behaviour</figcaption></figure>
+  </div>
+  <p class="footnote">diagnosis.svg is what showed direction, not magnitude, is the binding constraint</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: MolmoMotion (D4)</h2>
+  <p class="thesis ctx">Blocked on imagery that does not exist in our data — owner verification pending</p>
+  <div class="band">
+    <figure><img src="assets/d4_object.png" alt="object query points · synthetic render · green truth, red prediction"><figcaption>object query points · synthetic render · green truth, red prediction</figcaption></figure>
+    <figure><img src="assets/d4_hand.png" alt="hand query points · the case that beat a zero baseline 5 of 9"><figcaption>hand query points · the case that beat a zero baseline 5 of 9</figcaption></figure>
+    <figure><img src="assets/d4_align.png" alt="DexYCB alignment · three camera conventions over one real photograph"><figcaption>DexYCB alignment · three camera conventions over one real photograph</figcaption></figure>
+  </div>
+  <p class="footnote">these three need the owner's eyes: whether the render is recognisable, and which alignment panel is correct</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix: what is not here</h2>
+  <p class="thesis ctx">Every rollout we have ever rendered is in this deck; some things have none</p>
+  <p class="cut">Eight of the night's investigations produced tables, not rollouts, because they are measurements rather than models: the frame-0 geometry pair test, the contact-conditioned pair test, cosine per MANO part, the propagation bound, contact versus curvature, the velocity direction ceiling, the scaled-velocity baseline, and the mechanical pipeline. D6 (duration, 110k steps) and C2 (history + duration) were still running when this deck was built, so neither has clips yet — D6 has four checkpoints that could be rendered on request. D8 (quarter data) was cancelled at step 2,200 and D9 (contact input) before its smoke, so neither produced a checkpoint worth rendering. MP4 versions of all 86 clips exist alongside the GIFs under results/. The MolmoMotion renders are stills and alignment GIFs rather than rollouts, because that arm never trained.</p>
+</section>
+</div>
+</body>
+</html>

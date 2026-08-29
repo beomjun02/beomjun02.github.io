@@ -10,7 +10,7 @@
    "title": "3D-WAM",
    "tagline": "Observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow (human + Sharpa training); claim: robot-zero-shot execution of tasks demonstrated only by humans. Concept stage.",
    "path": "3d-wam/",
-   "now": "Rebuilt to the video-generation contract: 10 Hz human-only data, time as a token axis, Hilbert patches, plain masked-MSE loss; D1/D2/D3 running."
+   "now": "Motion history conditioning (C1) is the first arm to beat a zero-flow predictor — ADE 13.82 vs 14.66, object direction cosine 2.9x. Duration and five architectural interventions did not. C2 (history + duration) running."
   },
   "dpp-bmw": {
    "title": "DPP-BMW",
@@ -358,6 +358,26 @@
     "causal-attention"
    ],
    "format": "deck"
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-08-29",
+   "slug": "overnight-history",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-08-29",
+   "title": "Overnight — motion history beats a zero predictor (deck #7)",
+   "path": "3d-wam/decks/2026-08-29-overnight/",
+   "tldr": "Deck #7, the overnight run: every experiment in one table, then one at a time, with all 86 rollout clips the project has rendered. C1 — D1 plus positions at t=-2,-1,0, parameter-matched at 119.95 M — is the first arm to beat a zero-flow predictor: ADE 13.82 against 14.66, crossing at step 3,400 and staying, with motion RISING 48% to 65% rather than collapsing. Direction cosine 0.266 to 0.370 overall, 0.361 to 0.445 hands, and 0.076 to 0.220 for objects; per step, t=1 cosine 0.080 to 0.453, a 5.7x gain. The gain was predicted before the run from a model-free measurement (a two-frame difference carries cosine 0.734 at t=1) and both parts of the prediction held. Five architectural interventions lost to the plain baseline and duration is flat so far. Eight further questions were settled by measurement rather than training, including the hand-object coupling of 0.890 that is the paper's representation claim.",
+   "tags": [
+    "overnight",
+    "velocity-conditioning",
+    "history",
+    "cosine",
+    "negative-results",
+    "rollouts",
+    "coupling"
+   ]
   }
  ]
 }

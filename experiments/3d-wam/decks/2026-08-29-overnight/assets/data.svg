@@ -1,0 +1,26 @@
+<svg viewBox="0 0 1180 300" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="13">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}</style>
+<text x="18" y="24" class="t b">Training chunks after the motion filter (human only, 10 Hz, stride 1)</text>
+<text x="240" y="59" class="t" text-anchor="end">oakink2</text>
+<rect x="250" y="44" width="560.0" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="818" y="59" class="m">284,583  ·  492 episodes</text>
+<text x="240" y="92" class="t" text-anchor="end">hot3d</text>
+<rect x="250" y="77" width="532.6" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="791" y="92" class="m">270,674  ·  294 episodes</text>
+<text x="240" y="125" class="t" text-anchor="end">grab</text>
+<rect x="250" y="110" width="240.4" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="498" y="125" class="m">122,151  ·  1,332 episodes</text>
+<text x="240" y="158" class="t" text-anchor="end">taco</text>
+<rect x="250" y="143" width="188.9" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="447" y="158" class="m">96,010  ·  2,250 episodes</text>
+<text x="240" y="191" class="t" text-anchor="end">arctic</text>
+<rect x="250" y="176" width="126.4" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="384" y="191" class="m">64,237  ·  277 episodes</text>
+<text x="240" y="224" class="t" text-anchor="end">dexycb</text>
+<rect x="250" y="209" width="21.6" height="20" rx="3" fill="var(--acc)" opacity="0.82"/>
+<text x="280" y="224" class="m">10,967  ·  1,000 episodes</text>
+<line x1="250" y1="244" x2="810" y2="244" stroke="var(--line)"/>
+<text x="240" y="264" class="t b" text-anchor="end">total</text>
+<text x="250" y="264" class="t b">848,622 chunks  ·  5,645 episodes  ·  20.2 h of human motion</text>
+<text x="18" y="292" class="m">one epoch = 26,500 steps at batch 32 ≈ 7.6 h · a 3 h run sees 0.4 epoch</text>
+</svg>
