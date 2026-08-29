@@ -29,19 +29,19 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-29 02:30 KST (campaign still running)</dd></div>
-      <div><dt>Encoder data</dt><dd>274,526 EgoDex episodes (84.7%) · quality 100% on a 1,250-file audit · ~5,000/hour</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-30 03:10 KST (campaign in its final stretch)</dd></div>
+      <div><dt>Encoder data</dt><dd>312,232 EgoDex episodes (96.3%) · captions verified on every audited sidecar</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
       <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Bottom line</p>
       <p><b>PointWAM</b> can train on the full flow corpus today — 324,167 EgoDex + ~822,640 VITRA episodes (~4.0 TB), every sampled file valid.
-      <b>3D encoder</b> data is at <b>274,526 / 324,167 EgoDex episodes (84.7%)</b> and lands at ~5,000/hour on 24 GPUs;
-      coverage completes <b>2026-08-29 midday</b>. A quality audit after the latest fix found <b>object captions present in 1,250/1,250 sampled sidecars</b>.
-      One thing to know before you train: <b>captions come from three generations</b> of the captioner (table in §01). If you want a single homogeneous
-      corpus today, filter to <code>caption_style == "sf_gemma3_pass2_v1"</code> (109,729 episodes and growing); the whole set becomes that
-      generation by <b>08-30 evening</b>, when the older episodes finish reprocessing.</p>
+      <b>3D encoder</b> data covers <b>312,232 / 324,167 EgoDex episodes (96.3%)</b>; the remaining ~12k are episodes that were re-queued after a
+      caption fix and are being refilled now — <b>coverage completes 2026-08-30</b>. Captions come from three generations of the captioner (table in §01):
+      filter to <code>caption_style == "sf_gemma3_pass2_v1"</code> for the homogeneous SpaceFormer-A.7 set (<b>147,435 episodes, 45%</b>, growing to the
+      whole corpus by <b>2026-08-31</b>), or take everything and treat caption text as noisy supervision. Quality audits after the 08-28 fix found object
+      captions present in every sampled sidecar.</p>
     </div>
   </div>
 </header>
@@ -59,10 +59,10 @@
             <tr><td>part1</td><td class="mono">maskcap_pilot/egodex/</td><td class="mono">44,507</td><td class="mono">100%</td><td class="mono">v0/v2 — 44,507</td></tr>
             <tr><td>part2</td><td class="mono">maskcap_pilot/egodex_part2/</td><td class="mono">94,052</td><td class="mono">100%</td><td class="mono">v0/v2 18,559 · v3 75,493</td></tr>
             <tr><td>part3</td><td class="mono">maskcap_pilot/egodex_part3/</td><td class="mono">50,554</td><td class="mono">99.5%</td><td class="mono">v3 26,238 · <b>A.7 24,316</b></td></tr>
-            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">34,569</td><td class="mono">84.3%</td><td class="mono"><b>A.7 34,569</b></td></tr>
-            <tr><td>part5</td><td class="mono">maskcap_pilot/egodex_part5/</td><td class="mono">50,885</td><td class="mono">72.0%</td><td class="mono"><b>A.7 50,844</b></td></tr>
-            <tr><td class="muted">extra · test</td><td class="mono muted">maskcap_pilot/egodex_extra · _test/</td><td class="mono muted">0 / 23,169</td><td class="mono muted">queued</td><td class="mono muted">A.7 (planned)</td></tr>
-            <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>274,526</b></td><td class="mono"><b>84.7%</b></td><td class="mono">v0/v2 63,066 · v3 101,731 · <b>A.7 109,729</b></td></tr>
+            <tr><td>part4</td><td class="mono">maskcap_pilot/egodex_part4/</td><td class="mono">40,551</td><td class="mono">98.9%</td><td class="mono"><b>A.7 40,551</b></td></tr>
+            <tr><td>part5</td><td class="mono">maskcap_pilot/egodex_part5/</td><td class="mono">70,551</td><td class="mono">99.9%</td><td class="mono"><b>A.7 70,551</b></td></tr>
+            <tr><td>extra · test</td><td class="mono">maskcap_pilot/egodex_extra · _test/</td><td class="mono">21,568 / 23,169</td><td class="mono">93.1%</td><td class="mono"><b>A.7 21,568</b></td></tr>
+            <tr><td><b>total</b></td><td class="mono">—</td><td class="mono"><b>312,232</b></td><td class="mono"><b>96.3%</b></td><td class="mono">v0/v2 63,066 · v3 101,731 · <b>A.7 147,435</b></td></tr>
           </tbody>
         </table>
       </div>
@@ -86,9 +86,9 @@
         <table>
           <thead><tr><th>Goal</th><th>Filter</th><th>Episodes now</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">attrs["caption_style"] == "sf_gemma3_pass2_v1"</td><td class="mono">109,729</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows to the full set by 08-30 evening.</td></tr>
-            <tr><td><b>Maximum scale today</b></td><td class="mono">all sidecars</td><td class="mono">274,526</td><td>Mixed caption generations; fine if you treat caption text as noisy supervision.</td></tr>
-            <tr><td>Scale minus the known-bad generation</td><td class="mono">mtime &gt; 2026-08-19 12:00 KST</td><td class="mono">211,460</td><td>Drops the 63,066 v0/v2 episodes, whose large background instances can carry a neighbouring object&#39;s description.</td></tr>
+            <tr><td><b>Homogeneous, best captions</b></td><td class="mono">attrs["caption_style"] == "sf_gemma3_pass2_v1"</td><td class="mono">147,435</td><td>SpaceFormer A.7 protocol on Gemma-3-12b. Grows to the whole corpus by 08-31.</td></tr>
+            <tr><td><b>Maximum scale today</b></td><td class="mono">all sidecars</td><td class="mono">312,232</td><td>Mixed caption generations; fine if you treat caption text as noisy supervision.</td></tr>
+            <tr><td>Scale minus the known-bad generation</td><td class="mono">mtime &gt; 2026-08-19 12:00 KST</td><td class="mono">249,166</td><td>Drops the 63,066 v0/v2 episodes, whose large background instances can carry a neighbouring object&#39;s description.</td></tr>
             <tr><td>Object-only encoder</td><td class="mono">+ drop global_is_agent == true</td><td class="mono">—</td><td>Removes the human hand/forearm instances (template captions).</td></tr>
           </tbody>
         </table>

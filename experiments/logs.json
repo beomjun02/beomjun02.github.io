@@ -27,9 +27,9 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "maskcap campaign on 24 GPUs at ~5,000 episodes/hour: EgoDex coverage 84.7%, completing 08-29 midday; all-latest-config by 08-30 evening. Dataset usage guide published for consumers.",
+    "text": "maskcap: EgoDex coverage 96.3% (completing 08-30); all-latest-config by 08-31, then VITRA. Usage guide published for consumers.",
     "status": "active",
-    "updated": "2026-08-29"
+    "updated": "2026-08-30"
    }
   },
   "dex-point-policy": {
@@ -332,8 +332,8 @@
    "slug": "dataset-usage-guide",
    "title": "Human data, ready to consume — paths, statistics, schemas",
    "status": "done",
-   "updated": "2026-08-29",
-   "tldr": "Usage guide for the two consumers. PointWAM: the full flow corpus is ready — 324,167 EgoDex (~3.1 TB, ARKit GT hands) + ~822,640 VITRA (~2.8 TB, reconstructed MANO), all sampled files valid. 3D encoder: 274,526 EgoDex episodes (84.7%) with per-point instance ids + captions + SigLIP2 targets, arriving at ~5,000/hour; object captions present in 1,250/1,250 audited sidecars. Includes both H5 schemas, a load snippet, a subset-selection table (filter caption_style for the homogeneous A.7 Gemma set, 109,729 and growing) and the caption-generation history."
+   "updated": "2026-08-30",
+   "tldr": "Usage guide for the two consumers. PointWAM: full flow corpus ready — 324,167 EgoDex (~3.1 TB, ARKit GT hands) + ~822,640 VITRA (~2.8 TB, reconstructed MANO). 3D encoder: 312,232 EgoDex episodes (96.3%), completing 08-30; the homogeneous SpaceFormer-A.7 subset (caption_style=sf_gemma3_pass2_v1) is 147,435 and reaches the whole corpus by 08-31. Both H5 schemas, a load snippet, a subset-selection table and the caption-generation history."
   },
   {
    "project": "3d-wam",
