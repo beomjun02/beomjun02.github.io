@@ -29,8 +29,8 @@
     <p class="lede">Two consumers, two artifact families on the same episodes. <b>3D encoder (Mosaic3D-style):</b> maskcap sidecars — per-point instance ids + captions + SigLIP2 targets, from EgoDex. <b>PointWAM:</b> flow H5s — metric 3D scene points + hand skeletons, from EgoDex and VITRA. Every number below was measured today; schemas were validated on random samples (63/63 passed).</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill ok"><span class="dot"></span>usable now</span></dd></div>
-      <div><dt>Checked</dt><dd>2026-08-30 09:00 KST · coverage closed; generation split re-derived from every sidecar</dd></div>
-      <div><dt>Encoder data</dt><dd><b>324,167 / 324,167 EgoDex episodes (100%)</b> · 150,192 of them on the final A.7 captioner</dd></div>
+      <div><dt>Checked</dt><dd>2026-08-30 10:00 KST · coverage closed 08:57; upgrade phase rate measured on disk</dd></div>
+      <div><dt>Encoder data</dt><dd><b>324,167 / 324,167 EgoDex episodes (100%)</b> · 153,544 of them on the final A.7 captioner</dd></div>
       <div><dt>PointWAM data</dt><dd>324,167 EgoDex + ~822k VITRA episodes (100% available)</dd></div>
       <div><dt>Sanity</dt><dd>1,250/1,250 sidecars carry object captions · 31/31 flow H5s · 800/800 name matches</dd></div>
     </dl>
@@ -38,8 +38,8 @@
       <p class="k">Bottom line</p>
       <p><b>PointWAM</b> can train on the full flow corpus today &mdash; 324,167 EgoDex + ~822,640 VITRA episodes (~4.0&nbsp;TB), every sampled file valid.
       <b>3D encoder: coverage is closed &mdash; all 324,167 EgoDex episodes now have a maskcap sidecar</b> (verified filename-by-filename against the flow
-      directories, zero missing). What remains is homogeneity, not coverage: <b>150,192 (46%)</b> carry the SpaceFormer-A.7 Gemma-3 captions,
-      <b>97,162 (30%)</b> the v3 masked-crop Qwen3-VL captions, and <b>76,813 (24%)</b> the pre-fix v0/v2 captions whose crop was the mask&#39;s bounding
+      directories, zero missing). What remains is homogeneity, not coverage: <b>153,544 (47%)</b> carry the SpaceFormer-A.7 Gemma-3 captions,
+      <b>97,162 (30%)</b> the v3 masked-crop Qwen3-VL captions, and <b>73,461 (23%)</b> the pre-fix v0/v2 captions whose crop was the mask&#39;s bounding
       box &mdash; those last ones can name a large background surface after a nearby object. An upgrade fleet is rewriting the two older generations in
       place, worst-first, and it is currently working through v0/v2. Pick your subset from the shipped generation index (&sect;01) or from the
       <code>caption_style</code> attribute, which has now been backfilled onto every A.7 sidecar.</p>
@@ -206,17 +206,18 @@ with h5py.File(flow) as f, h5py.File(side) as s:
   <section>
     <div class="wrap">
       <h2><span class="n">05</span>What is still running, and when it lands</h2>
-      <p class="sub">Rate measured on the live fleet over a clean 30-minute window at 2026-08-30 03:35 KST:
-      <b>1,736 episodes/hour across 14 GPUs = 124 episodes/h/GPU</b>. (An earlier version of this page said 200/h/GPU — that came from per-episode
-      timings and ignored that the two driver processes on a card contend for it. The number below is the throughput actually observed on disk.)
-      Premium and high-priority QoS are not used, so these dates track cluster contention.</p>
+      <p class="sub"><b>Coverage is done</b> — every EgoDex episode has a sidecar as of 08-30 08:57. The fleet is now in its upgrade phase, rewriting the
+      two older caption generations in place. That phase runs measurably <i>faster</i> than the coverage phase did: <b>3,440 episodes/hour across
+      20 GPUs = 172 episodes/h/GPU</b>, measured on disk over a clean 30-minute window at 09:55 KST, versus 124/h/GPU while closing coverage.
+      The difference is real work per GPU-second: a gap-fill shard spent most of its time scanning a 40k-file directory and skipping episodes that were
+      already done, while an upgrade shard is handed an explicit manifest and every episode it opens is one it must process.</p>
       <div class="tw"><table>
-          <thead><tr><th>Milestone</th><th>Episodes</th><th>at 14 GPUs (now)</th><th>at 16</th><th>at 24</th></tr></thead>
+          <thead><tr><th>Milestone</th><th>Episodes left</th><th>at 14 GPUs</th><th>at 20 (now)</th><th>at 24</th></tr></thead>
           <tbody>
             <tr><td><b>Coverage 100%</b> — every EgoDex episode has a sidecar</td><td class="mono">0</td><td class="mono" colspan="3"><b>done 2026-08-30 08:57</b></td></tr>
-            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">76,813 left</td><td class="mono"><b>09-01 06:00</b></td><td class="mono">08-31 23:00</td><td class="mono">08-31 09:00</td></tr>
-            <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono"><b>09-03 14:00</b></td><td class="mono">09-03 00:00</td><td class="mono">09-01 17:00</td></tr>
-            <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-03</td><td class="mono muted">09-03</td><td class="mono muted">09-01</td></tr>
+            <tr><td><b>v0/v2 gone</b> — no episode carries a bbox-hijacked caption</td><td class="mono">73,461</td><td class="mono">08-31 16:00</td><td class="mono"><b>08-31 07:00</b></td><td class="mono">08-31 03:00</td></tr>
+            <tr><td><b>Whole corpus homogeneous A.7</b></td><td class="mono">+97,162</td><td class="mono">09-02 08:00</td><td class="mono"><b>09-01 11:00</b></td><td class="mono">09-01 03:00</td></tr>
+            <tr><td class="muted">VITRA sidecars start</td><td class="mono muted">after the above</td><td class="mono muted">09-02</td><td class="mono muted">09-01</td><td class="mono muted">09-01</td></tr>
           </tbody>
       </table></div>
       <p class="sub" style="margin-top:14px"><b>Nothing above blocks you.</b> The upgrade rewrites sidecars in place, atomically (<code>tmp</code> +
