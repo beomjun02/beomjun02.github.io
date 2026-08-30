@@ -1,4 +1,5 @@
 <svg viewBox="0 0 1180 300" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="13">
+<style>svg{--txt:#000000;--mut:#595959;--mut2:#8a8f98;--acc:#0070C0;--title:#0070C0;--line:#d5d9e0;--panel:#f5f7fa;--panel2:#eef1f6;--acc-bg:#e8f2fb;--acc-line:#9dc7ea}</style>
 <style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}</style>
 <text x="18" y="24" class="t b">D1  patch · full attention</text>
 <text x="18" y="44" class="m">2,560 tokens</text>
