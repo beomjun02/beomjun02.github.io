@@ -177,6 +177,14 @@ table.num .mute{opacity:.55}
       </table>
       <figcaption>258 matched (sequence, chunk-start) pairs on TACO: same task, same object, only the hand differs. <b>79&nbsp;% of hand direction accuracy is retained on a hand never seen in training.</b> Weak models show no gap because they have less to lose.</figcaption>
     </figure>
+    <figure>
+      <table class="num">
+        <tr><th>10 % Sharpa co-training (i9 vs i0, 10k)</th><th>Δ cos</th><th>95 % CI</th></tr>
+        <tr><td>evaluated on <b>Sharpa</b>, hand</td><td class="good">+0.0146</td><td>[+0.0054, +0.0238]</td></tr>
+        <tr><td>evaluated on <b>human</b>, hand</td><td class="good">+0.0141</td><td>[+0.0067, +0.0217]</td></tr>
+      </table>
+      <figcaption>Robot data helps the <b>human</b> predictions just as much, and the embodiment gap is unchanged. Co-training is not closing a domain gap — the retargeted hand behaves like more data of the same kind, which is the encouraging reading.</figcaption>
+    </figure>
   </div>
 </section>
 
