@@ -80,7 +80,7 @@
   </ol>
   <div class="band">
     <figure><img src="assets/history.svg" alt="history — per-step cosine · D1 frame-0 only, C1 plus three frames, model-free ceiling"><figcaption>history — per-step cosine · D1 frame-0 only, C1 plus three frames, model-free ceiling</figcaption></figure>
-    <figure><img src="assets/tonight_c1_history_oakink2.gif" alt="C1 · OakInk2 · ADE 3.1 cm against D1's 4.0 on the same chunk"><figcaption>C1 · OakInk2 · ADE 3.1 cm against D1's 4.0 on the same chunk</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_oakink2.gif" alt="C2 rollout on OakInk2"><figcaption>C2 · OakInk2 · the best arm — cosine 0.457, ADE 12.89 cm</figcaption></figure>
   </div>
   <p class="footnote">both long runs finished at 110,000 steps fully annealed · duration alone loses to a zero predictor by 23 %</p>
 </section>
@@ -278,6 +278,147 @@
 </section>
 
 <section class="slide s-appendix">
+  <h2>Appendix · earlier era — E5 · multi-stream, no weighting</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/e5_1_taco_human_p1.gif" alt="E5 · multi-stream, no weighting taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e5_2_taco_sharpa_p1.gif" alt="E5 · multi-stream, no weighting taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e5_3_arctic_human_p1.gif" alt="E5 · multi-stream, no weighting arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e5_4_arctic_tagswap_p3.gif" alt="E5 · multi-stream, no weighting arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e5_5_taco_textswap_p4.gif" alt="E5 · multi-stream, no weighting taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/e5ms/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — E4 · multi-stream single-shot</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/e4_1_taco_human_p1.gif" alt="E4 · multi-stream single-shot taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e4_2_taco_sharpa_p1.gif" alt="E4 · multi-stream single-shot taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e4_3_arctic_human_p1.gif" alt="E4 · multi-stream single-shot arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e4_4_arctic_tagswap_p3.gif" alt="E4 · multi-stream single-shot arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e4_5_taco_textswap_p4.gif" alt="E4 · multi-stream single-shot taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/e4ms/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — E3 · multi-stream + AR</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/e3_1_taco_human_p1.gif" alt="E3 · multi-stream + AR taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e3_2_taco_sharpa_p1.gif" alt="E3 · multi-stream + AR taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e3_3_arctic_human_p1.gif" alt="E3 · multi-stream + AR arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e3_4_arctic_tagswap_p3.gif" alt="E3 · multi-stream + AR arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e3_5_taco_textswap_p4.gif" alt="E3 · multi-stream + AR taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/e3ms/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — E2 · autoregressive head</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/e2_1_taco_human_p1.gif" alt="E2 · autoregressive head taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e2_2_taco_sharpa_p1.gif" alt="E2 · autoregressive head taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e2_3_arctic_human_p1.gif" alt="E2 · autoregressive head arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e2_4_arctic_tagswap_p3.gif" alt="E2 · autoregressive head arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e2_5_taco_textswap_p4.gif" alt="E2 · autoregressive head taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/e2_6k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — E1 · motion-weighted loss</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/e1_1_taco_human_p1.gif" alt="E1 · motion-weighted loss taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/e1_2_taco_sharpa_p1.gif" alt="E1 · motion-weighted loss taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/e1_3_arctic_human_p1.gif" alt="E1 · motion-weighted loss arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/e1_4_arctic_tagswap_p3.gif" alt="E1 · motion-weighted loss arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/e1_5_taco_textswap_p4.gif" alt="E1 · motion-weighted loss taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/e1_6k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — D · deterministic regression @6k</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/r6_1_taco_human_p1.gif" alt="D · deterministic regression @6k taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/r6_2_taco_sharpa_p1.gif" alt="D · deterministic regression @6k taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/r6_3_arctic_human_p1.gif" alt="D · deterministic regression @6k arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/r6_4_arctic_tagswap_p3.gif" alt="D · deterministic regression @6k arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/r6_5_taco_textswap_p4.gif" alt="D · deterministic regression @6k taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/regress_6k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — D · deterministic regression @5k</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/r5_1_taco_human_p1.gif" alt="D · deterministic regression @5k taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/r5_2_taco_sharpa_p1.gif" alt="D · deterministic regression @5k taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/r5_3_arctic_human_p1.gif" alt="D · deterministic regression @5k arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/r5_4_arctic_tagswap_p3.gif" alt="D · deterministic regression @5k arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/r5_5_taco_textswap_p4.gif" alt="D · deterministic regression @5k taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/regress_5k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — C · x1 parameterisation</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/x1_1_taco_human_p1.gif" alt="C · x1 parameterisation taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/x1_2_taco_sharpa_p1.gif" alt="C · x1 parameterisation taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/x1_3_arctic_human_p1.gif" alt="C · x1 parameterisation arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/x1_4_arctic_tagswap_p3.gif" alt="C · x1 parameterisation arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/x1_5_taco_textswap_p4.gif" alt="C · x1 parameterisation taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/x1_6k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — A · velocity target, 12k steps</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/ca_1_taco_human_p1.gif" alt="A · velocity target, 12k steps taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/ca_2_taco_sharpa_p1.gif" alt="A · velocity target, 12k steps taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/ca_3_arctic_human_p1.gif" alt="A · velocity target, 12k steps arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/ca_4_arctic_tagswap_p3.gif" alt="A · velocity target, 12k steps arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/ca_5_taco_textswap_p4.gif" alt="A · velocity target, 12k steps taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/condA_12k/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — pilot · first end-to-end run</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/pf_1_taco_human_p1.gif" alt="pilot · first end-to-end run taco · human"><figcaption>taco · human</figcaption></figure>
+    <figure><img src="assets/pf_2_taco_sharpa_p1.gif" alt="pilot · first end-to-end run taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
+    <figure><img src="assets/pf_3_arctic_human_p1.gif" alt="pilot · first end-to-end run arctic · human"><figcaption>arctic · human</figcaption></figure>
+    <figure><img src="assets/pf_4_arctic_tagswap_p3.gif" alt="pilot · first end-to-end run arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
+    <figure><img src="assets/pf_5_taco_textswap_p4.gif" alt="pilot · first end-to-end run taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
+  </div>
+  <p class="footnote">source results/pilot_fast_N1024_20260826/clips · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · earlier era — P5 · Sharpa geometry probe</h2>
+  <p class="thesis ctx">Predates the video-DiT rebuild · 15 Hz, T = 16, not directly comparable</p>
+  <div class="band">
+    <figure><img src="assets/p5_1_arctic_sharpa_geometry_p5.gif" alt="P5 · Sharpa geometry probe arctic · sharpa · geometry"><figcaption>arctic · sharpa · geometry</figcaption></figure>
+    <figure><img src="assets/p5_2_dexycb_sharpa_geometry_p5.gif" alt="P5 · Sharpa geometry probe dexycb · sharpa · geometry"><figcaption>dexycb · sharpa · geometry</figcaption></figure>
+    <figure><img src="assets/p5_3_grab_sharpa_geometry_p5.gif" alt="P5 · Sharpa geometry probe grab · sharpa · geometry"><figcaption>grab · sharpa · geometry</figcaption></figure>
+  </div>
+  <p class="footnote">source results/pilot_fast_N1024_20260826/clips_p5 · kept in reverse chronological order · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
   <h2>Appendix: figures — data and tokenisation</h2>
   <p class="thesis ctx">How the data is built and how points become tokens</p>
   <div class="band">
@@ -310,9 +451,9 @@
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: what is not here</h2>
-  <p class="thesis ctx">Every rollout we have ever rendered is in this deck; some things have none</p>
-  <p class="cut">Eight of the night's investigations produced tables, not rollouts, because they are measurements rather than models: the frame-0 geometry pair test, the contact-conditioned pair test, cosine per MANO part, the propagation bound, contact versus curvature, the velocity direction ceiling, the scaled-velocity baseline, and the mechanical pipeline. D6 (duration, 110k steps) and C2 (history + duration) were still running when this deck was built, so neither has clips yet — D6 has four checkpoints that could be rendered on request. D8 (quarter data) was cancelled at step 2,200 and D9 (contact input) before its smoke, so neither produced a checkpoint worth rendering. MP4 versions of all 86 clips exist alongside the GIFs under results/. The MolmoMotion renders are stills and alignment GIFs rather than rollouts, because that arm never trained.</p>
+  <h2>Appendix: ordering and what is not here</h2>
+  <p class="thesis ctx">Galleries are ordered best-first by direction cosine, not by error</p>
+  <p class="cut">Ordering: appendix galleries #1–#7 are the main line ranked by direction cosine (C2 0.457, C1 0.370, D6 0.282, D1 0.266, D3 0.206, D2 0.193, D5 0.066), then the five-second chained rollouts, then the earlier eras in reverse chronological order. Cosine is the sort key rather than ADE on purpose: D5 has a lower error than D1 only because it collapsed to 16 % motion, so an error ranking would place a failed arm above a working one. Eight of the night's investigations produced tables, not rollouts, because they are measurements rather than models: the frame-0 geometry pair test, the contact-conditioned pair test, cosine per MANO part, the propagation bound, contact versus curvature, the velocity direction ceiling, the scaled-velocity baseline, and the mechanical pipeline. D6 (duration, 110k steps) and C2 (history + duration) were still running when this deck was built, so neither has clips yet — D6 has four checkpoints that could be rendered on request. D8 (quarter data) was cancelled at step 2,200 and D9 (contact input) before its smoke, so neither produced a checkpoint worth rendering. MP4 versions of all 86 clips exist alongside the GIFs under results/. The MolmoMotion renders are stills and alignment GIFs rather than rollouts, because that arm never trained.</p>
 </section>
 </div>
 </body>
