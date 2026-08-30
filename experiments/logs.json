@@ -27,7 +27,7 @@
    "tagline": "Dexterous-hand point-cloud world-action model (EgoDex-pretrained) — sim + real deployment.",
    "path": "dex-pointwam/",
    "now": {
-    "text": "maskcap: EgoDex coverage closed 100%. Upgrade fleet on v0/v2 (37,284 left, done 08-31), then v3 (09-01). VITRA sidecars queued on 12 slots.",
+    "text": "maskcap: EgoDex coverage closed; v0/v2 upgrade done 08-31, all A.7 09-01. VITRA running at 801 eps/h/GPU after the episode-index fix, complete 09-02.",
     "status": "active",
     "updated": "2026-08-30"
    }
@@ -333,7 +333,7 @@
    "title": "Human data, ready to consume — paths, statistics, schemas",
    "status": "done",
    "updated": "2026-08-30",
-   "tldr": "Usage guide for the two consumers, with a live status board. PointWAM is unblocked: the full flow corpus (324,167 EgoDex + ~822,640 VITRA, ~4.0 TB) is complete and validated. 3D encoder: EgoDex sidecar coverage closed at 100% on 08-30; the remaining work is homogeneity — A.7 189,721 / v3 97,162 / pre-fix v0-v2 37,284 — with a fleet rewriting the older generations in place (v0/v2 by 08-31, all A.7 by 09-01). VITRA sidecars queued behind it. Paths, both H5 schemas, a load snippet, generation index."
+   "tldr": "Usage guide for the two consumers, with a live status board. PointWAM is unblocked: the full flow corpus (324,167 EgoDex + 825,935 VITRA) is complete and validated. 3D encoder: EgoDex coverage closed at 100%; the remaining work is homogeneity (A.7 193,492 / v3 97,162 / pre-fix v0-v2 33,513), done 09-01. VITRA sidecars now run at a measured 801 episodes/h/GPU after caching the episode enumeration that was costing every job 57 minutes of NFS scanning — VITRA completes 09-02."
   },
   {
    "project": "3d-wam",
