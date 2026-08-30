@@ -227,10 +227,12 @@ with h5py.File(flow) as f, h5py.File(side) as s:
       <p class="sub"><b>Nothing above blocks you.</b> The upgrade rewrites sidecars in place, atomically (<code>tmp</code> + <code>rename</code>), so a
       file is always either the old generation or the new one, never half-written — you can read the corpus while it runs. The flow H5s that PointWAM
       consumes are untouched by all of this and have been complete for both datasets since 08-27.</p>
-      <p class="sub"><b>Why not faster.</b> The cost is per-episode SAM2 AMG plus one Gemma-3 caption per instance, and the cluster gives us 14–24 GPUs
-      with no priority QoS. The v3&rarr;A.7 upgrade in principle only needs new captions — the instance grouping is unchanged — but the 2D mask crops
-      the captioner needs were never cached, so it costs a full re-run. Caching crops is the obvious next optimisation and would roughly halve the
-      v3 leg (the last and longest row above).</p>
+      <p class="sub"><b>Why not faster.</b> The cost is per-episode SAM2 AMG plus one Gemma-3 caption per instance, and the cluster gives us
+      20 GPUs for this work with no priority QoS (the rest of the fleet is now on VITRA). There is no shortcut for the v3 leg: re-captioning under the
+      A.7 protocol needs the red-outline context crop and the masked cutout, those are 2D image crops, and no crops were cached when v3 was written
+      (the <code>crops/</code> directories are empty; only per-point instance ids survive). Producing them means running SAM2 again, which is the
+      expensive half — so the v3 upgrade costs a full re-run, not a caption-only pass. Caching crops from here on would make any <i>future</i>
+      re-caption cheap, but it cannot shorten this one.</p>
     </div>
   </section>
 

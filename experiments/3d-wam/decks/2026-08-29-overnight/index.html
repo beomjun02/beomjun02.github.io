@@ -176,68 +176,81 @@
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: rollouts — C1 · plus three frames of history</h2>
-  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <h2>Appendix #1 · C2 · history + duration, 110k steps</h2>
+  <p class="thesis ctx">Ranked #1 of 7 by direction cosine — 0.457, ADE 12.89 cm</p>
   <div class="band">
-    <figure><img src="assets/tonight_c1_history_taco.gif" alt="taco · ADE 4.4 cm · motion 22 %"><figcaption>taco · ADE 4.4 cm · motion 22 %</figcaption></figure>
-    <figure><img src="assets/tonight_c1_history_arctic.gif" alt="arctic · ADE 8.5 cm · motion 21 %"><figcaption>arctic · ADE 8.5 cm · motion 21 %</figcaption></figure>
-    <figure><img src="assets/tonight_c1_history_dexycb.gif" alt="dexycb · ADE 6.9 cm · motion 170 %"><figcaption>dexycb · ADE 6.9 cm · motion 170 %</figcaption></figure>
-    <figure><img src="assets/tonight_c1_history_hot3d.gif" alt="hot3d · ADE 9.9 cm · motion 43 %"><figcaption>hot3d · ADE 9.9 cm · motion 43 %</figcaption></figure>
-    <figure><img src="assets/tonight_c1_history_oakink2.gif" alt="oakink2 · ADE 3.1 cm · motion 21 %"><figcaption>oakink2 · ADE 3.1 cm · motion 21 %</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_taco.gif" alt="c2_hist_long taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_arctic.gif" alt="c2_hist_long arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_dexycb.gif" alt="c2_hist_long dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_hot3d.gif" alt="c2_hist_long hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm01_c2_hist_long_oakink2.gif" alt="c2_hist_long oakink2"><figcaption>oakink2</figcaption></figure>
   </div>
-  <p class="footnote">the winning arm — ADE 13.82, first to beat a zero predictor · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+  <p class="footnote">BEST — the only arm to clear 0.5 on hands (0.544) · object rigid residual 0.23 cm · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: rollouts — D1 · frame 0 only</h2>
-  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <h2>Appendix #2 · C1 · history alone, 10k steps</h2>
+  <p class="thesis ctx">Ranked #2 of 7 by direction cosine — 0.370, ADE 13.82 cm</p>
   <div class="band">
-    <figure><img src="assets/tonight_d1_patch_taco.gif" alt="taco · ADE 4.4 cm · motion 18 %"><figcaption>taco · ADE 4.4 cm · motion 18 %</figcaption></figure>
-    <figure><img src="assets/tonight_d1_patch_arctic.gif" alt="arctic · ADE 8.8 cm · motion 33 %"><figcaption>arctic · ADE 8.8 cm · motion 33 %</figcaption></figure>
-    <figure><img src="assets/tonight_d1_patch_dexycb.gif" alt="dexycb · ADE 6.9 cm · motion 80 %"><figcaption>dexycb · ADE 6.9 cm · motion 80 %</figcaption></figure>
-    <figure><img src="assets/tonight_d1_patch_hot3d.gif" alt="hot3d · ADE 10.6 cm · motion 16 %"><figcaption>hot3d · ADE 10.6 cm · motion 16 %</figcaption></figure>
-    <figure><img src="assets/tonight_d1_patch_oakink2.gif" alt="oakink2 · ADE 4.0 cm · motion 26 %"><figcaption>oakink2 · ADE 4.0 cm · motion 26 %</figcaption></figure>
+    <figure><img src="assets/rankm02_c1_history_taco.gif" alt="c1_history taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm02_c1_history_arctic.gif" alt="c1_history arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm02_c1_history_dexycb.gif" alt="c1_history dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm02_c1_history_hot3d.gif" alt="c1_history hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm02_c1_history_oakink2.gif" alt="c1_history oakink2"><figcaption>oakink2</figcaption></figure>
   </div>
-  <p class="footnote">the baseline every other arm is measured against · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+  <p class="footnote">first arm ever to beat a zero predictor · object rigid residual 0.92 cm · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: rollouts — D3 · block-causal temporal attention</h2>
-  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <h2>Appendix #4 · D1 · baseline, frame 0 only</h2>
+  <p class="thesis ctx">Ranked #4 of 7 by direction cosine — 0.266, ADE 15.08 cm</p>
   <div class="band">
-    <figure><img src="assets/tonight_d3_causal_taco.gif" alt="taco · ADE 4.4 cm · motion 34 %"><figcaption>taco · ADE 4.4 cm · motion 34 %</figcaption></figure>
-    <figure><img src="assets/tonight_d3_causal_arctic.gif" alt="arctic · ADE 8.3 cm · motion 17 %"><figcaption>arctic · ADE 8.3 cm · motion 17 %</figcaption></figure>
-    <figure><img src="assets/tonight_d3_causal_dexycb.gif" alt="dexycb · ADE 6.0 cm · motion 43 %"><figcaption>dexycb · ADE 6.0 cm · motion 43 %</figcaption></figure>
-    <figure><img src="assets/tonight_d3_causal_hot3d.gif" alt="hot3d · ADE 11.3 cm · motion 14 %"><figcaption>hot3d · ADE 11.3 cm · motion 14 %</figcaption></figure>
-    <figure><img src="assets/tonight_d3_causal_oakink2.gif" alt="oakink2 · ADE 3.9 cm · motion 31 %"><figcaption>oakink2 · ADE 3.9 cm · motion 31 %</figcaption></figure>
+    <figure><img src="assets/rankm04_d1_patch_taco.gif" alt="d1_patch taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm04_d1_patch_arctic.gif" alt="d1_patch arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm04_d1_patch_dexycb.gif" alt="d1_patch dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm04_d1_patch_hot3d.gif" alt="d1_patch hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm04_d1_patch_oakink2.gif" alt="d1_patch oakink2"><figcaption>oakink2</figcaption></figure>
   </div>
-  <p class="footnote">finished below the baseline · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+  <p class="footnote">the reference every arm is measured against · object rigid residual 1.11 cm · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: rollouts — D5 · per-step normalised target</h2>
-  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <h2>Appendix #5 · D3 · block-causal time</h2>
+  <p class="thesis ctx">Ranked #5 of 7 by direction cosine — 0.206, ADE 16.54 cm</p>
   <div class="band">
-    <figure><img src="assets/tonight_d5_perstep_taco.gif" alt="taco · ADE 4.8 cm · motion 29 %"><figcaption>taco · ADE 4.8 cm · motion 29 %</figcaption></figure>
-    <figure><img src="assets/tonight_d5_perstep_arctic.gif" alt="arctic · ADE 8.3 cm · motion 20 %"><figcaption>arctic · ADE 8.3 cm · motion 20 %</figcaption></figure>
-    <figure><img src="assets/tonight_d5_perstep_dexycb.gif" alt="dexycb · ADE 5.7 cm · motion 21 %"><figcaption>dexycb · ADE 5.7 cm · motion 21 %</figcaption></figure>
-    <figure><img src="assets/tonight_d5_perstep_hot3d.gif" alt="hot3d · ADE 11.4 cm · motion 12 %"><figcaption>hot3d · ADE 11.4 cm · motion 12 %</figcaption></figure>
-    <figure><img src="assets/tonight_d5_perstep_oakink2.gif" alt="oakink2 · ADE 4.2 cm · motion 31 %"><figcaption>oakink2 · ADE 4.2 cm · motion 31 %</figcaption></figure>
+    <figure><img src="assets/rankm05_d3_causal_taco.gif" alt="d3_causal taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm05_d3_causal_arctic.gif" alt="d3_causal arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm05_d3_causal_dexycb.gif" alt="d3_causal dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm05_d3_causal_hot3d.gif" alt="d3_causal hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm05_d3_causal_oakink2.gif" alt="d3_causal oakink2"><figcaption>oakink2</figcaption></figure>
   </div>
-  <p class="footnote">collapsed to 16 % motion · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+  <p class="footnote">lost to the baseline · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
 </section>
 
 <section class="slide s-appendix">
-  <h2>Appendix: rollouts — D2 · PTv3 windowed attention</h2>
-  <p class="thesis ctx">One second · ground truth left, generated right, in every panel</p>
+  <h2>Appendix #6 · D2 · PTv3 windows, 2,188 steps</h2>
+  <p class="thesis ctx">Ranked #6 of 7 by direction cosine — 0.193, ADE 18.55 cm</p>
   <div class="band">
-    <figure><img src="assets/tonight_d2_ptv3_taco.gif" alt="taco · ADE 11.6 cm · motion 229 %"><figcaption>taco · ADE 11.6 cm · motion 229 %</figcaption></figure>
-    <figure><img src="assets/tonight_d2_ptv3_arctic.gif" alt="arctic · ADE 12.8 cm · motion 119 %"><figcaption>arctic · ADE 12.8 cm · motion 119 %</figcaption></figure>
-    <figure><img src="assets/tonight_d2_ptv3_dexycb.gif" alt="dexycb · ADE 12.4 cm · motion 199 %"><figcaption>dexycb · ADE 12.4 cm · motion 199 %</figcaption></figure>
-    <figure><img src="assets/tonight_d2_ptv3_hot3d.gif" alt="hot3d · ADE 16.3 cm · motion 87 %"><figcaption>hot3d · ADE 16.3 cm · motion 87 %</figcaption></figure>
-    <figure><img src="assets/tonight_d2_ptv3_oakink2.gif" alt="oakink2 · ADE 10.7 cm · motion 278 %"><figcaption>oakink2 · ADE 10.7 cm · motion 278 %</figcaption></figure>
+    <figure><img src="assets/rankm06_d2_ptv3_taco.gif" alt="d2_ptv3 taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm06_d2_ptv3_arctic.gif" alt="d2_ptv3 arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm06_d2_ptv3_dexycb.gif" alt="d2_ptv3 dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm06_d2_ptv3_hot3d.gif" alt="d2_ptv3 hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm06_d2_ptv3_oakink2.gif" alt="d2_ptv3 oakink2"><figcaption>oakink2</figcaption></figure>
   </div>
-  <p class="footnote">2,188 steps only — 9× fewer samples than the others · object orange · right hand green · left hand purple · per-clip ADE is one chunk, not the aggregate</p>
+  <p class="footnote">9x fewer samples — not comparable · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix #7 · D5 · per-step normalised target</h2>
+  <p class="thesis ctx">Ranked #7 of 7 by direction cosine — 0.066, ADE 14.97 cm</p>
+  <div class="band">
+    <figure><img src="assets/rankm07_d5_perstep_taco.gif" alt="d5_perstep taco"><figcaption>taco</figcaption></figure>
+    <figure><img src="assets/rankm07_d5_perstep_arctic.gif" alt="d5_perstep arctic"><figcaption>arctic</figcaption></figure>
+    <figure><img src="assets/rankm07_d5_perstep_dexycb.gif" alt="d5_perstep dexycb"><figcaption>dexycb</figcaption></figure>
+    <figure><img src="assets/rankm07_d5_perstep_hot3d.gif" alt="d5_perstep hot3d"><figcaption>hot3d</figcaption></figure>
+    <figure><img src="assets/rankm07_d5_perstep_oakink2.gif" alt="d5_perstep oakink2"><figcaption>oakink2</figcaption></figure>
+  </div>
+  <p class="footnote">low error only because it stopped moving (16 %) · ranked by cosine, not ADE: a collapsed arm can win on error by not moving · ground truth left, generated right</p>
 </section>
 
 <section class="slide s-appendix">
@@ -262,147 +275,6 @@
     <figure><img src="assets/five_d5_perstep_taco_5s.gif" alt="d5 · perstep · taco"><figcaption>d5 · perstep · taco</figcaption></figure>
   </div>
   <p class="footnote">closed-loop chunking — the mode General Flow and MolmoMotion deploy in · our open-loop horizon is one second</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — E5 · multi-stream, no weighting</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/e5_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/e5_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/e5_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/e5_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/e5_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/e5ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — E4 · multi-stream single-shot</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/e4_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/e4_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/e4_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/e4_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/e4_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/e4ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — E3 · multi-stream + AR</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/e3_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/e3_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/e3_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/e3_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/e3_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/e3ms/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — E2 · autoregressive head</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/e2_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/e2_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/e2_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/e2_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/e2_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/e2_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — E1 · motion-weighted loss</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/e1_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/e1_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/e1_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/e1_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/e1_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/e1_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — D · deterministic regression @6k</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/r6_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/r6_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/r6_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/r6_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/r6_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/regress_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — D · deterministic regression @5k</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/r5_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/r5_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/r5_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/r5_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/r5_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/regress_5k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — C · x1 parameterisation</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/x1_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/x1_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/x1_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/x1_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/x1_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/x1_6k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — A · velocity target, 12k steps</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/ca_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/ca_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/ca_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/ca_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/ca_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/condA_12k/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — pilot · first end-to-end run</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/pf_1_taco_human_p1.gif" alt="taco · human"><figcaption>taco · human</figcaption></figure>
-    <figure><img src="assets/pf_2_taco_sharpa_p1.gif" alt="taco · sharpa"><figcaption>taco · sharpa</figcaption></figure>
-    <figure><img src="assets/pf_3_arctic_human_p1.gif" alt="arctic · human"><figcaption>arctic · human</figcaption></figure>
-    <figure><img src="assets/pf_4_arctic_tagswap_p3.gif" alt="arctic · tagswap · p3"><figcaption>arctic · tagswap · p3</figcaption></figure>
-    <figure><img src="assets/pf_5_taco_textswap_p4.gif" alt="taco · textswap · p4"><figcaption>taco · textswap · p4</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/pilot_fast_N1024_20260826/clips · these predate tonight and use the 15 Hz / T = 16 configuration</p>
-</section>
-
-<section class="slide s-appendix">
-  <h2>Appendix: rollouts — P5 · Sharpa geometry probe</h2>
-  <p class="thesis ctx">Earlier arms, same rendering convention · one second per clip</p>
-  <div class="band">
-    <figure><img src="assets/p5_1_arctic_sharpa_geometry_p5.gif" alt="arctic · sharpa · geometry"><figcaption>arctic · sharpa · geometry</figcaption></figure>
-    <figure><img src="assets/p5_2_dexycb_sharpa_geometry_p5.gif" alt="dexycb · sharpa · geometry"><figcaption>dexycb · sharpa · geometry</figcaption></figure>
-    <figure><img src="assets/p5_3_grab_sharpa_geometry_p5.gif" alt="grab · sharpa · geometry"><figcaption>grab · sharpa · geometry</figcaption></figure>
-  </div>
-  <p class="footnote">source: results/pilot_fast_N1024_20260826/clips_p5 · these predate tonight and use the 15 Hz / T = 16 configuration</p>
 </section>
 
 <section class="slide s-appendix">
