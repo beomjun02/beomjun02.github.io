@@ -11,6 +11,15 @@
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
+<style>
+/* deck.css sets .s-appendix .band{display:block} while .band>figure>img{height:100%}, which
+   resolves to zero height in a block container -- every appendix gallery image was invisible.
+   Restore a flex row and let the images take their intrinsic height. */
+.s-appendix .band{display:flex;flex-wrap:wrap;gap:1.1em;align-items:flex-start;justify-content:center}
+.s-appendix .band>figure{flex:1 1 17%;min-width:150px;display:block}
+.s-appendix .band>figure>img{width:100%;height:auto;flex:none;display:block}
+.s-appendix .band>figure>table{width:100%}
+</style>
 </head>
 <body>
 <div class="deck" data-project="3D-WAM" data-deck="Overnight — history beats the baseline" data-date="2026-08-29">

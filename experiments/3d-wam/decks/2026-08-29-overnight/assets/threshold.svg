@@ -1,4 +1,4 @@
-<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<svg viewBox="0 0 1180 352" width="1180" height="352" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
 <style>svg{--txt:#000000;--mut:#595959;--mut2:#8a8f98;--acc:#0070C0;--title:#0070C0;--line:#d5d9e0;--panel:#f5f7fa;--panel2:#eef1f6;--acc-bg:#e8f2fb;--acc-line:#9dc7ea}</style>
 <style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
 <text x="18" y="22" class="t b">Beating a zero predictor needs direction-cosine above 0.5. Exactly.</text>
