@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #8 · 2026-08-30/31: the evaluation was measuring one dataset; the scoreboard
+     restated; every architecture addition null or negative; the levers are data and length;
+     zero-shot transfer to the Sharpa hand measured. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-31 · The evaluation was one dataset — 3D-WAM</title>
+<meta name="description" content="Deck #8. Every evaluation number this project has reported came from 32-48 arctic chunks, because the val loader walks the index in file order. Restated on a stratified six-dataset val: the ranking survives, absolute values halve, nothing beats a zero predictor. Of nine single-flag ablations only three were ever distinguishable from their control. Every architecture addition tried this session is null or negative; the levers are data composition (+0.008 over its own volume control) and training length. A model trained only on human hands keeps 79% of its direction accuracy on the Sharpa hand, zero-shot.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+.s-appendix .band{display:flex;flex-wrap:wrap;gap:1.1em;align-items:flex-start;justify-content:center}
+.s-appendix .band>figure{flex:1 1 17%;min-width:150px;display:block}
+.s-appendix .band>figure>img{width:100%;height:auto;flex:none;display:block}
+.s-appendix .band>figure>table{width:100%}
+table.num{border-collapse:collapse;font-size:.8em;width:100%}
+table.num th,table.num td{border-bottom:1px solid var(--rule,#8884);padding:.18em .5em;text-align:right}
+table.num th:first-child,table.num td:first-child{text-align:left}
+table.num .good{color:#1a7f37;font-weight:600}
+table.num .bad{color:#b3261e;font-weight:600}
+table.num .mute{opacity:.55}
+</style>
+</head>
+<body>
+<div class="deck" data-project="3D-WAM" data-deck="The evaluation was one dataset" data-date="2026-08-31">
+
+<section class="slide s-title">
+  <h1>Every number we had was one dataset</h1>
+  <p class="ctx">3D-WAM · 2026-08-30 into 08-31 · the scoreboard restated, the architecture settled, and the first cross-embodiment measurement</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="date">2026-08-31</p>
+  <p class="who">Beomjun Kim</p>
+</section>
+
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="tldr"><b>[TL;DR]</b> The val loader never left arctic, so every result this project has reported was measured on 32–48 chunks of one dataset; restated properly the ranking survives but nothing beats a zero predictor, every architecture addition we tried is null or negative, and the only real levers are data composition and training length.</p>
+  <ul>
+    <li><b>Found:</b> <code>build_loader</code> gates every sampler on <code>split=="train"</code>, so val walks the chunk index in file order — the first 400 batches are 100&nbsp;% arctic.</li>
+    <li><b>Fixed and restated:</b> a stratified six-dataset evaluator, validated to reproduce the old probe digit-for-digit on the old 48 chunks; 18 historical checkpoints rescored.</li>
+    <li><b>Settled:</b> nine ablations re-tested with a paired bootstrap — only three were ever distinguishable from their control. Eight new arms this session: all architecture additions null or negative.</li>
+    <li><b>New:</b> a model trained only on human hands keeps <b>79&nbsp;%</b> of its hand direction accuracy on the Sharpa hand, zero-shot, on matched sequences.</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/xemb_human.gif" alt="C2 rollout, human hand"><figcaption>C2 · human hand (TACO, chunk 33)</figcaption></figure>
+    <figure><img src="assets/xemb_sharpa.gif" alt="C2 rollout, Sharpa hand, zero-shot"><figcaption>Same sequence, same moment · <b>Sharpa hand, zero-shot</b> — no robot data in training</figcaption></figure>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Method (1): what the evaluation was actually measuring</h2>
+  <p class="tldr">Val has 41,907 chunks over six datasets; <code>evaluate()</code> saw the first 32, and they are all arctic.</p>
+  <ul>
+    <li>Every sampler in <code>build_loader</code> is gated on <code>split == "train"</code>; val therefore iterates the index in file order, and <code>find_manifests</code> sorts alphabetically.</li>
+    <li>The probe that produced the whole scoreboard, <code>dir_mag_split_c.py --batches 6</code>, saw the first <b>48</b> chunks. The first <b>400</b> batches are arctic.</li>
+    <li>arctic is atypical: two hands plus one large articulated object, second-richest in contact (6.9&nbsp;% of points within 1&nbsp;cm), smallest scenes (52&nbsp;cm).</li>
+  </ul>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>dataset</th><th>val chunks</th><th>share</th><th>first seen at batch</th></tr>
+        <tr><td>arctic</td><td>3,977</td><td>9.5 %</td><td><b>0</b></td></tr>
+        <tr><td>dexycb</td><td>491</td><td>1.2 %</td><td>497</td></tr>
+        <tr><td>grab</td><td>7,033</td><td>16.8 %</td><td>558</td></tr>
+        <tr><td>hot3d</td><td>12,326</td><td>29.4 %</td><td>1,437</td></tr>
+        <tr><td>oakink2</td><td>13,582</td><td>32.4 %</td><td>2,978</td></tr>
+        <tr><td>taco</td><td>4,498</td><td>10.7 %</td><td>4,676</td></tr>
+      </table>
+      <figcaption>The val split, and when the loader first reaches each part of it.</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>C2 @109k</th><th>ADE cm</th><th>zero</th><th>cos</th><th>hand</th></tr>
+        <tr><td>old probe, 48 arctic chunks</td><td>13.28</td><td>13.60</td><td>0.445</td><td>0.528</td></tr>
+        <tr><td>new evaluator, <b>same</b> 48 chunks</td><td>13.28</td><td>13.60</td><td>0.445</td><td>0.528</td></tr>
+        <tr><td>new evaluator, 576 stratified</td><td class="bad">8.43</td><td>7.97</td><td class="bad">0.248</td><td>0.337</td></tr>
+      </table>
+      <figcaption>The tool is not the difference — it reproduces the old probe exactly. The sample is.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Method (2): what was tried, and how it was judged</h2>
+  <p class="tldr">Two architecture components aimed at the interface, three data-composition arms, each with its own control.</p>
+  <ul>
+    <li><b>Measured before designing:</b> the hand–object interface is <b>2.7 %</b> of points, but only <b>5.8 %</b> of k=8 patches mix a contacting with a non-contacting point — so this is capacity allocation, not resolution.</li>
+    <li><b>i1</b> interface tokens (128 nearest cross-entity points as k=1 tokens, zero-init residual) · <b>i2</b> spatial RoPE over (t,x,y,z) · <b>i3</b> both · <b>i4</b> uniform k=4 as the token-count control.</li>
+    <li><b>i5</b> drop hot3d · <b>i7</b> drop hot3d+dexycb · <b>i8</b> a random 68&nbsp;% of episodes, the data-volume control · <b>i9</b> 10&nbsp;% Sharpa co-training.</li>
+    <li>Judged by <b>paired bootstrap</b> over the same stratified chunks, at matched step counts — not by the in-training curve.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Results</h2>
+  <p class="sub"><b>(1) the scoreboard, restated</b> · <span class="mute">(2) the architecture verdict · (3) data and cross-embodiment</span></p>
+  <p class="tldr">The ranking survives; the absolute numbers roughly halve; nothing beats a zero predictor.</p>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>model</th><th>steps</th><th>cos (stratified)</th><th>cos (as reported)</th><th>ADE</th><th>zero</th></tr>
+        <tr><td>c2_hist_long</td><td>109k</td><td><b>0.248</b></td><td class="mute">0.457</td><td>8.43</td><td>7.97</td></tr>
+        <tr><td>c1_history</td><td>100k</td><td>0.182</td><td class="mute">0.370</td><td>9.09</td><td>7.97</td></tr>
+        <tr><td>a0_control</td><td>3.4k</td><td>0.135</td><td class="mute">—</td><td>9.11</td><td>7.57</td></tr>
+        <tr><td>d6_long</td><td>110k</td><td class="bad">0.080</td><td class="mute">0.282</td><td>10.69</td><td>7.57</td></tr>
+        <tr><td>d1_patch</td><td>10k</td><td>0.041</td><td class="mute">0.266</td><td>10.89</td><td>7.97</td></tr>
+        <tr><td>d5_perstep</td><td>10k</td><td>−0.002</td><td class="mute">0.066</td><td>8.27</td><td>7.57</td></tr>
+      </table>
+      <figcaption>18 checkpoints rescored. <b>D6 — duration alone, 110,000 steps — lands below a0_control at 3,400 steps with history on.</b> History for 3.4k beats no-history for 110k.</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>predictor</th><th>ADE cm</th><th>cos</th></tr>
+        <tr><td>zero</td><td><b>7.97</b></td><td>0.000</td></tr>
+        <tr><td>linear v·t</td><td>21.06</td><td>0.205</td></tr>
+        <tr><td>quadratic</td><td>133.27</td><td>0.207</td></tr>
+        <tr><td>C2 @109k</td><td>8.43</td><td class="good">0.248</td></tr>
+      </table>
+      <figcaption>A reversal: on arctic-48 quadratic extrapolation beat C2 and I concluded the model lost to a model-free predictor. Stratified, <b>C2 beats both extrapolators on direction</b>. Nothing beats zero on ADE.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Results</h2>
+  <p class="sub"><span class="mute">(1) the scoreboard, restated ·</span> <b>(2) the architecture verdict</b> <span class="mute">· (3) data and cross-embodiment</span></p>
+  <p class="tldr">Nothing we added survives; the ablation table we had been ranking decisions on was mostly noise.</p>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>new arm</th><th>@5k</th><th>@10k</th><th>@15k</th><th>verdict</th></tr>
+        <tr><td>i1 interface tokens</td><td>+0.002</td><td>−0.001</td><td>—</td><td>null</td></tr>
+        <tr><td>i2 spatial RoPE</td><td>+0.001</td><td class="bad">−0.008</td><td class="bad">−0.009</td><td>negative</td></tr>
+        <tr><td>i3 both</td><td class="bad">−0.009</td><td>—</td><td>—</td><td>negative</td></tr>
+        <tr><td>i4 uniform k=4</td><td class="bad">−0.007</td><td>—</td><td>—</td><td>negative</td></tr>
+      </table>
+      <figcaption>Δ cosine against the i0 control, paired bootstrap, 95&nbsp;% CI. <b>i2 is the lesson:</b> on the 32 arctic chunks the trainer evaluates it read a steady +0.013…+0.019 over three evals; stratified, the same checkpoints are significantly <i>worse</i>.</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>old ablation vs its control</th><th>Δ cos</th><th>95 % CI</th></tr>
+        <tr><td>a2 no time-RoPE</td><td class="good">+0.016</td><td>[+0.003, +0.030]</td></tr>
+        <tr><td>a1 per-frame history gain</td><td>+0.005</td><td>[+0.002, +0.009]</td></tr>
+        <tr><td>a3 x1 · a5 k=16 · a9 rigid-lo · a7 causal</td><td class="mute">+0.006 … −0.000</td><td class="mute">all span 0</td></tr>
+        <tr><td>a10 rigidity loss</td><td class="bad">−0.018</td><td>[−0.022, −0.014]</td></tr>
+      </table>
+      <figcaption>Of nine single-flag ablations, <b>three</b> are distinguishable from the control and two of those are worth 0.005. a4 (k=4) was truncated at 2,339 of 3,400 steps and never supported the "finer patches hurt" claim — <b>i4, step-matched, now does</b>.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Results</h2>
+  <p class="sub"><span class="mute">(1) the scoreboard, restated · (2) the architecture verdict ·</span> <b>(3) data and cross-embodiment</b></p>
+  <p class="tldr">The only real gain is data composition, and it survives its own volume control; the Sharpa hand transfers zero-shot with a real but modest loss.</p>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>manipulation</th><th>Δ cos @5k</th><th>95 % CI</th></tr>
+        <tr><td>random 32 % of episodes removed (i8)</td><td>+0.005</td><td>[+0.000, +0.010]</td></tr>
+        <tr><td><b>hot3d removed</b> (i5, 31.9 % of chunks)</td><td class="good">+0.013</td><td>[+0.009, +0.018]</td></tr>
+        <tr><td><b>i5 vs i8, paired directly</b></td><td class="good">+0.008</td><td>[+0.002, +0.014]</td></tr>
+      </table>
+      <figcaption>hot3d is 31.9&nbsp;% of the chunks at <b>1.23&nbsp;%</b> contact density against taco's 4.64&nbsp;%. Some of the gain is just less data — the control earns +0.005 — but the composition effect survives it.</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>C2, human hands only</th><th>cos</th><th>hand cos</th></tr>
+        <tr><td>human</td><td>0.244</td><td>0.272</td></tr>
+        <tr><td><b>Sharpa, zero-shot</b></td><td><b>0.193</b></td><td><b>0.207</b></td></tr>
+        <tr><td>paired gap</td><td class="bad">−0.045</td><td class="bad">−0.052</td></tr>
+        <tr><td>95 % CI</td><td>[−0.077, −0.013]</td><td>[−0.091, −0.015]</td></tr>
+      </table>
+      <figcaption>258 matched (sequence, chunk-start) pairs on TACO: same task, same object, only the hand differs. <b>79&nbsp;% of hand direction accuracy is retained on a hand never seen in training.</b> Weak models show no gap because they have less to lose.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Discussion &amp; action items</h2>
+  <p class="tldr">Stop adding architecture. The configuration that works is the plain one; spend the compute on data curation and training length.</p>
+  <ul>
+    <li><b>Keep:</b> video-DiT over (frame × patch) tokens · k=8 part-major Hilbert patches (k=4 worse, k=16 null) · full 3-D attention (PTv3 windows −0.097) · v-parameterisation · time-RoPE only · <b>history H=2</b> (+0.044, the one architectural lever that ever paid) · <b>no auxiliary losses</b> (rigidity −0.018) · 512 pts/entity, T=10 @10 Hz.</li>
+    <li><b>Ranked levers:</b> ① training length (109k → 0.248 vs 10k → 0.183) ② history +0.044 ③ data composition +0.008 ④ everything else null or negative.</li>
+    <li><b>Discussion —</b> the interface is 2.7&nbsp;% of points and therefore 2.7&nbsp;% of the loss; structural fixes did not reach it. Options: (a) accept it and buy length, (b) weight the loss at contact — which breaks the "flow loss only" decision. <i>Recommend (a) until the base model beats zero.</i></li>
+    <li><b>Action items —</b> ① <code>val_stratified</code> on for every new run (implemented, default off so runs in flight keep their basis) · owner: me · done ② long run of the recommended recipe to 110k · running ③ Sharpa co-training at 10&nbsp;% vs zero-shot · running ④ owner to verify the paired rollout clips.</li>
+  </ul>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix — rollouts, setup, repro</h2>
+  <div class="band">
+    <figure><img src="assets/xemb_human.gif" alt="human"><figcaption>C2 · TACO human · chunk 33</figcaption></figure>
+    <figure><img src="assets/xemb_sharpa.gif" alt="sharpa"><figcaption>C2 · TACO <b>Sharpa zero-shot</b> · chunk 33</figcaption></figure>
+    <figure><img src="assets/c2_taco.gif" alt="c2 taco"><figcaption>C2 · taco</figcaption></figure>
+    <figure><img src="assets/c2_arctic.gif" alt="c2 arctic"><figcaption>C2 · arctic</figcaption></figure>
+    <figure><img src="assets/c2_dexycb.gif" alt="c2 dexycb"><figcaption>C2 · dexycb</figcaption></figure>
+    <figure><img src="assets/c2_oakink2.gif" alt="c2 oakink2"><figcaption>C2 · oakink2</figcaption></figure>
+    <figure><img src="assets/i5_taco.gif" alt="i5 taco"><figcaption>i5 @20k · taco</figcaption></figure>
+    <figure><img src="assets/i5_arctic.gif" alt="i5 arctic"><figcaption>i5 @20k · arctic</figcaption></figure>
+    <figure><img src="assets/i5_dexycb.gif" alt="i5 dexycb"><figcaption>i5 @20k · dexycb</figcaption></figure>
+    <figure><img src="assets/i5_oakink2.gif" alt="i5 oakink2"><figcaption>i5 @20k · oakink2</figcaption></figure>
+  </div>
+  <pre>
+DATA        10 Hz / N=1024 stored / 512 per entity / T=10 · 894,656 chunks after the motion filter
+            interface = 2.7 % of points within 1 cm of another entity; 67.9 % of chunks contain such a pair
+            contact density: taco 4.64 % · arctic 4.34 % · dexycb 4.29 % · oakink2 3.70 % · grab 2.69 % · hot3d 1.23 %
+            the preprocessor's contact flags and the stored tracks AGREE everywhere — hot3d is not a bug
+EVAL        review/train/ieval.py  --per-dataset 96 --embodiment human   (stratified, P-bucketed, ratio of aggregates)
+            review/train/ipaired.py --ref &lt;arm&gt; --metric cos|cos_near_hand   (paired bootstrap, 10,000 resamples)
+            review/train/xeval.py  --pairs 384   (matched human/Sharpa chunk pairs on TACO)
+            validated: ieval --legacy-first 48 reproduces dir_mag_split_c.py --batches 6 digit-for-digit
+FIXES       wam/train/loaders.py   DataConfig.val_stratified (default false; new configs should set it)
+            wam/train/vmetrics.py  cosine + INTERFACE group reported inline at every eval
+            scripts/viz_vdit_c.py  str(Path + str) precedence bug — the renderer had been failing for every k
+CORRECTIONS a4_patch4's −0.035 was 2,339 of 3,400 steps: confounded, retracted as evidence about k=4
+            a1_histframe called null, is real at +0.005 — real and negligible are different claims
+            "quadratic extrapolation beats C2" held on arctic-48 only; stratified, C2 wins on direction
+            "has_robot=False is a one-line bug": WRONG — the robot columns in *_loaded are empty for every
+            dataset; the Sharpa retarget exists only in TACO's hf_release. Change reverted.
+CUT         i6 (spatial RoPE without time RoPE, stopped at 9,680 steps, not resolved: CI [−0.005,+0.026])
+            i7 dose-response (+0.005, CI spans 0) · per-dataset proportional pooling · contact-weighted sampling
+  </pre>
+</section>
+
+</div>
+</body>
+</html>

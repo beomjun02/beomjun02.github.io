@@ -47,6 +47,16 @@
  "logs": [
   {
    "project": "3d-wam",
+   "date": "2026-08-31",
+   "slug": "evaluation",
+   "title": "Every number we had was one dataset",
+   "status": "done",
+   "format": "deck",
+   "updated": "2026-08-31",
+   "tldr": "The val loader gates every sampler on split=='train', so it walks the chunk index in file order and the first 400 batches are 100% arctic: every evaluation number this project has reported came from 32-48 chunks of one dataset. Restated on a stratified six-dataset val (validated to reproduce the old probe digit-for-digit on the old 48 chunks), the ranking survives but absolute values roughly halve and nothing beats a zero predictor; D6 at 110k steps lands below a 3.4k-step arm with history on. A paired bootstrap says only three of nine single-flag ablations were ever distinguishable from their control. Eight new arms: interface tokens null, spatial RoPE negative (-0.008 at 10k) despite looking like a steady +0.015 on the arctic curve, uniform k=4 negative (-0.007, settling the patchify question). The one real gain is data composition: dropping hot3d beats its own data-volume control by +0.008 [+0.002,+0.014]. And a model trained only on human hands keeps 79% of its hand direction accuracy on the Sharpa hand zero-shot, gap -0.052 [-0.091,-0.015] over 258 matched pairs."
+  },
+  {
+   "project": "3d-wam",
    "date": "2026-08-28",
    "slug": "multistream",
    "title": "Multi-stream joint attention did not fix it — a falsified prediction",
