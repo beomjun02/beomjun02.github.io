@@ -1,102 +1,83 @@
-<svg viewBox="0 0 1180 430" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<svg viewBox="0 0 1180 400" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
 <style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
 <text x="22" y="22" class="b m">arm</text>
-<text x="72" y="22" class="b m">what changed from D1</text>
-<text x="430" y="22" class="b m">steps</text>
-<text x="520" y="22" class="b m">cosine</text>
-<text x="600" y="22" class="b m">ADE cm</text>
-<text x="676" y="22" class="b m">beats zero</text>
-<text x="770" y="22" class="b m">verdict</text>
+<text x="96" y="22" class="b m">what it is</text>
+<text x="470" y="22" class="b m">cosine</text>
+<text x="560" y="22" class="b m">ADE cm</text>
+<text x="645" y="22" class="b m">beats zero</text>
+<text x="745" y="22" class="b m">verdict</text>
 <line x1="18" y1="30" x2="1162" y2="30" stroke="var(--line)"/>
-<rect x="18" y="38" width="1144" height="31" rx="3" fill="var(--mut)" opacity="0.05"/>
-<rect x="18" y="38" width="4" height="31" fill="var(--mut)"/>
-<text x="30" y="58" class="t b">D1</text>
-<text x="72" y="58" class="t">patch + full attention (baseline)</text>
-<text x="430" y="58" class="m">10,000</text>
-<text x="520" y="58" class="t">0.266</text>
-<text x="600" y="58" class="t">15.08</text>
-<text x="690" y="58" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="58" class="t" fill="var(--mut)">reference</text>
-<rect x="18" y="76" width="1144" height="31" rx="3" fill="var(--mut)" opacity="0.05"/>
-<rect x="18" y="76" width="4" height="31" fill="var(--mut)"/>
-<text x="30" y="96" class="t b">D2</text>
-<text x="72" y="96" class="t">PTv3 windowed attention</text>
-<text x="430" y="96" class="m">2,188</text>
-<text x="520" y="96" class="t">0.193</text>
-<text x="600" y="96" class="t">18.55</text>
-<text x="690" y="96" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="96" class="t" fill="var(--mut)">inconclusive — 9× fewer samples</text>
-<rect x="18" y="114" width="1144" height="31" rx="3" fill="#c2452d" opacity="0.05"/>
-<rect x="18" y="114" width="4" height="31" fill="#c2452d"/>
-<text x="30" y="134" class="t b">D3</text>
-<text x="72" y="134" class="t">block-causal time (MolmoMotion)</text>
-<text x="430" y="134" class="m">8,217</text>
-<text x="520" y="134" class="t">0.206</text>
-<text x="600" y="134" class="t">16.54</text>
-<text x="690" y="134" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="134" class="t" fill="#c2452d">lost to the baseline</text>
-<rect x="18" y="152" width="1144" height="31" rx="3" fill="#c2452d" opacity="0.05"/>
-<rect x="18" y="152" width="4" height="31" fill="#c2452d"/>
-<text x="30" y="172" class="t b">D5</text>
-<text x="72" y="172" class="t">per-step normalised target</text>
-<text x="430" y="172" class="m">8,500</text>
-<text x="520" y="172" class="t">0.066</text>
-<text x="600" y="172" class="t">14.97</text>
-<text x="690" y="172" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="172" class="t" fill="#c2452d">collapsed to 16 % motion</text>
-<rect x="18" y="190" width="1144" height="31" rx="3" fill="#2a9d4f" opacity="0.13"/>
-<rect x="18" y="190" width="4" height="31" fill="#2a9d4f"/>
-<text x="30" y="210" class="t b" font-weight="700">C1</text>
-<text x="72" y="210" class="t" font-weight="700">+ three frames of motion history</text>
-<text x="430" y="210" class="m">10,000</text>
-<text x="520" y="210" class="t" font-weight="700">0.370</text>
-<text x="600" y="210" class="t" font-weight="700">13.82</text>
-<text x="690" y="210" fill="#2a9d4f" font-weight="700">✓</text>
-<text x="770" y="210" class="t" fill="#2a9d4f" font-weight="700">BEATS THE ZERO PREDICTOR</text>
-<rect x="18" y="228" width="1144" height="31" rx="3" fill="var(--acc)" opacity="0.05"/>
-<rect x="18" y="228" width="4" height="31" fill="var(--acc)"/>
-<text x="30" y="248" class="t b">D6</text>
-<text x="72" y="248" class="t">duration — 110,000 steps</text>
-<text x="430" y="248" class="m">running</text>
-<text x="520" y="248" class="t">~0.23</text>
-<text x="600" y="248" class="t">—</text>
-<text x="690" y="248" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="248" class="t" fill="var(--acc)">flat so far, mid-schedule</text>
-<rect x="18" y="266" width="1144" height="31" rx="3" fill="var(--acc)" opacity="0.05"/>
-<rect x="18" y="266" width="4" height="31" fill="var(--acc)"/>
-<text x="30" y="286" class="t b">C2</text>
-<text x="72" y="286" class="t">history + duration</text>
-<text x="430" y="286" class="m">running</text>
-<text x="520" y="286" class="t">—</text>
-<text x="600" y="286" class="t">—</text>
-<text x="690" y="286" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="286" class="t" fill="var(--acc)">the two levers composed</text>
-<rect x="18" y="304" width="1144" height="31" rx="3" fill="var(--mut)" opacity="0.05"/>
-<rect x="18" y="304" width="4" height="31" fill="var(--mut)"/>
-<text x="30" y="324" class="t b">D8</text>
-<text x="72" y="324" class="t">quarter of the data</text>
-<text x="430" y="324" class="m">cancelled</text>
-<text x="520" y="324" class="t">—</text>
-<text x="600" y="324" class="t">—</text>
-<text x="690" y="324" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="324" class="t" fill="var(--mut)">stopped at 2,200 to free a GPU for C1</text>
-<rect x="18" y="342" width="1144" height="31" rx="3" fill="var(--mut)" opacity="0.05"/>
-<rect x="18" y="342" width="4" height="31" fill="var(--mut)"/>
-<text x="30" y="362" class="t b">D9</text>
-<text x="72" y="362" class="t">frame-0 contact as input</text>
-<text x="430" y="362" class="m">cancelled</text>
-<text x="520" y="362" class="t">—</text>
-<text x="600" y="362" class="t">—</text>
-<text x="690" y="362" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="362" class="t" fill="var(--mut)">evidence only suggestive</text>
-<rect x="18" y="380" width="1144" height="31" rx="3" fill="var(--mut)" opacity="0.05"/>
-<rect x="18" y="380" width="4" height="31" fill="var(--mut)"/>
-<text x="30" y="400" class="t b">D4</text>
-<text x="72" y="400" class="t">MolmoMotion-4B finetune</text>
-<text x="430" y="400" class="m">zero-shot</text>
-<text x="520" y="400" class="t">—</text>
-<text x="600" y="400" class="t">—</text>
-<text x="690" y="400" fill="#2a9d4f" font-weight="700"></text>
-<text x="770" y="400" class="t" fill="var(--mut)">blocked — no imagery in our data</text>
-<text x="18" y="422" class="lb">all arms 120 M parameters, identical data and loss · zero-flow baseline 14.66 cm · cosine &gt; 0.5 is required to beat it</text>
+<rect x="18" y="38" width="1144" height="32" rx="3" fill="#2a9d4f" opacity="0.05"/>
+<rect x="18" y="38" width="4" height="32" fill="#2a9d4f"/>
+<text x="30" y="59" class="t b">C2</text>
+<text x="96" y="59" class="t">history + duration, 110k steps</text>
+<text x="470" y="59" class="t">0.457</text>
+<text x="560" y="59" class="t">12.89</text>
+<text x="660" y="59" fill="#2a9d4f" font-weight="700">✓</text>
+<text x="745" y="59" class="t" fill="#2a9d4f">best trained arm</text>
+<rect x="18" y="77" width="1144" height="32" rx="3" fill="#2a9d4f" opacity="0.16"/>
+<rect x="18" y="77" width="4" height="32" fill="#2a9d4f"/>
+<text x="30" y="98" class="t b" font-weight="700">C2 +k8</text>
+<text x="96" y="98" class="t" font-weight="700">same weights, mean of 8 samples</text>
+<text x="470" y="98" class="t" font-weight="700">0.593</text>
+<text x="560" y="98" class="t" font-weight="700">10.41</text>
+<text x="660" y="98" fill="#2a9d4f" font-weight="700">✓</text>
+<text x="745" y="98" class="t" fill="#2a9d4f" font-weight="700">BEST — no training at all</text>
+<rect x="18" y="116" width="1144" height="32" rx="3" fill="#2a9d4f" opacity="0.05"/>
+<rect x="18" y="116" width="4" height="32" fill="#2a9d4f"/>
+<text x="30" y="137" class="t b">C1</text>
+<text x="96" y="137" class="t">history alone, 10k steps</text>
+<text x="470" y="137" class="t">0.370</text>
+<text x="560" y="137" class="t">13.82</text>
+<text x="660" y="137" fill="#2a9d4f" font-weight="700">✓</text>
+<text x="745" y="137" class="t" fill="#2a9d4f">first to beat zero</text>
+<rect x="18" y="155" width="1144" height="32" rx="3" fill="var(--mut)" opacity="0.05"/>
+<rect x="18" y="155" width="4" height="32" fill="var(--mut)"/>
+<text x="30" y="176" class="t b">D1</text>
+<text x="96" y="176" class="t">baseline, frame 0 only</text>
+<text x="470" y="176" class="t">0.266</text>
+<text x="560" y="176" class="t">15.08</text>
+<text x="660" y="176" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="176" class="t" fill="var(--mut)">reference</text>
+<rect x="18" y="194" width="1144" height="32" rx="3" fill="#c2452d" opacity="0.05"/>
+<rect x="18" y="194" width="4" height="32" fill="#c2452d"/>
+<text x="30" y="215" class="t b">D6</text>
+<text x="96" y="215" class="t">duration alone, 110k steps</text>
+<text x="470" y="215" class="t">0.282</text>
+<text x="560" y="215" class="t">16.69</text>
+<text x="660" y="215" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="215" class="t" fill="#c2452d">loses to zero by 23 %</text>
+<rect x="18" y="233" width="1144" height="32" rx="3" fill="#c2452d" opacity="0.05"/>
+<rect x="18" y="233" width="4" height="32" fill="#c2452d"/>
+<text x="30" y="254" class="t b">D3</text>
+<text x="96" y="254" class="t">block-causal time</text>
+<text x="470" y="254" class="t">0.206</text>
+<text x="560" y="254" class="t">16.54</text>
+<text x="660" y="254" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="254" class="t" fill="#c2452d">lost</text>
+<rect x="18" y="272" width="1144" height="32" rx="3" fill="#c2452d" opacity="0.05"/>
+<rect x="18" y="272" width="4" height="32" fill="#c2452d"/>
+<text x="30" y="293" class="t b">D5</text>
+<text x="96" y="293" class="t">per-step normalised target</text>
+<text x="470" y="293" class="t">0.066</text>
+<text x="560" y="293" class="t">14.97</text>
+<text x="660" y="293" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="293" class="t" fill="#c2452d">collapsed to 16 % motion</text>
+<rect x="18" y="311" width="1144" height="32" rx="3" fill="var(--mut)" opacity="0.05"/>
+<rect x="18" y="311" width="4" height="32" fill="var(--mut)"/>
+<text x="30" y="332" class="t b">D2</text>
+<text x="96" y="332" class="t">PTv3 windows, 2,188 steps</text>
+<text x="470" y="332" class="t">0.193</text>
+<text x="560" y="332" class="t">18.55</text>
+<text x="660" y="332" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="332" class="t" fill="var(--mut)">9× fewer samples</text>
+<rect x="18" y="350" width="1144" height="32" rx="3" fill="var(--mut)" opacity="0.05"/>
+<rect x="18" y="350" width="4" height="32" fill="var(--mut)"/>
+<text x="30" y="371" class="t b">D4</text>
+<text x="96" y="371" class="t">MolmoMotion-4B zero-shot</text>
+<text x="470" y="371" class="t">—</text>
+<text x="560" y="371" class="t">—</text>
+<text x="660" y="371" fill="#2a9d4f" font-weight="700"></text>
+<text x="745" y="371" class="t" fill="var(--mut)">blocked — no imagery in our data</text>
+<text x="18" y="392" class="lb">all arms 120 M parameters, identical data and loss · zero-flow baseline 14.66 cm · cosine above 0.5 beats it</text>
 </svg>

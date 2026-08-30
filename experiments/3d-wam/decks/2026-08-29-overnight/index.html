@@ -24,12 +24,12 @@
 
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Direction was missing from the input, not from the architecture</p>
+  <p class="thesis"><b>[TL;DR]</b> The model was better than we could measure — the fix was inference</p>
   <ul>
     <li>Done: ten arms, eight measurement-only investigations</li>
-    <li>Result: C1 beats a zero predictor, a first</li>
+    <li>Result: ADE 10.41, 29 % better than predicting nothing</li>
     <li>Decided: five architectural interventions ruled out</li>
-    <li>Discuss: duration is not delivering · what next</li>
+    <li>Discuss: contact placement · object rigidity · C3</li>
   </ul>
   <div class="band">
     <figure><img src="assets/master.svg" alt="Every arm, what it changed, its cosine and ADE, and the verdict"><figcaption>every arm — what it changed from D1, where it landed, and whether it beat a zero predictor</figcaption></figure>
@@ -54,92 +54,115 @@
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">C1 crosses the baseline at step 3,400 and stays across</p>
+  <p class="thesis">History is worth more than nine times the compute</p>
   <ol class="agenda">
-    <li class="on">Velocity conditioning wins
-      <ul><li>ADE 13.82 vs zero 14.66 · cosine 0.266 → 0.370</li>
-          <li>objects 0.076 → 0.220, and motion rises rather than collapsing</li></ul></li>
-    <li>Five architectural interventions lost</li>
-    <li>The hand–object coupling is real but not yet a lever</li>
-    <li>Eight questions settled without training</li>
+    <li class="on">History beats duration, decisively
+      <ul><li>C2 0.457 / 12.89 cm · D6 0.282 / 16.69 · both 110 k steps annealed</li>
+          <li>hand cosine 0.544 — the first crossing of the 0.5 threshold</li></ul></li>
+    <li class="">The metric was punishing a correct sampler
+      <ul><li>best of 8 reaches 0.837 against a model-free ceiling of 0.861</li>
+          <li>averaging samples: ADE 10.41, 29 % better than a zero predictor</li></ul></li>
+    <li class="">Interaction quality improves with it
+      <ul><li>object shape 4.8×, contact placement 2×, over-penetration resolved</li>
+          <li>metric suite taken from the hand-object generation literature</li></ul></li>
+    <li class="">Ten-arm ablation: x1 wins, rigidity backfires
+      <ul><li>x1 halves penetration and improves shape 33–36 %</li>
+          <li>removing RoPE gives the best direction and the worst shape</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/history.svg" alt="Per-step direction cosine for D1, C1 and the velocity ceiling"><figcaption>history — per-step cosine · D1 frame-0 only, C1 plus three frames, and the model-free ceiling</figcaption></figure>
-    <figure><img src="assets/c1_oakink2_1s.gif" alt="C1 rollout on OakInk2"><figcaption>C1 · OakInk2 · ADE 3.1 cm, against D1's 4.0 on the same chunk</figcaption></figure>
+    <figure><img src="assets/history.svg" alt="history — per-step cosine · D1 frame-0 only, C1 plus three frames, model-free ceiling"><figcaption>history — per-step cosine · D1 frame-0 only, C1 plus three frames, model-free ceiling</figcaption></figure>
+    <figure><img src="assets/tonight_c1_history_oakink2.gif" alt="C1 · OakInk2 · ADE 3.1 cm against D1's 4.0 on the same chunk"><figcaption>C1 · OakInk2 · ADE 3.1 cm against D1's 4.0 on the same chunk</figcaption></figure>
   </div>
-  <p class="footnote">C1 = D1 plus positions at t = −2, −1, 0 · parameter-matched at 119.95 M · t=1 cosine 0.080 → 0.453, a 5.7× gain</p>
+  <p class="footnote">both long runs finished at 110,000 steps fully annealed · duration alone loses to a zero predictor by 23 %</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">Every change made to the plain architecture lost to it</p>
+  <p class="thesis">Best of eight reaches the model-free ceiling — selection, not capability</p>
   <ol class="agenda">
-    <li>Velocity conditioning wins</li>
-    <li class="on">Five architectural interventions lost
-      <ul><li>causal time 0.206, PTv3 0.193, per-step target 0.066 vs D1's 0.266</li>
-          <li>duration is flat so far — 0.23 at four times the steps</li></ul></li>
-    <li>The hand–object coupling is real but not yet a lever</li>
-    <li>Eight questions settled without training</li>
+    <li class="">History beats duration, decisively
+      <ul><li>C2 0.457 / 12.89 cm · D6 0.282 / 16.69 · both 110 k steps annealed</li>
+          <li>hand cosine 0.544 — the first crossing of the 0.5 threshold</li></ul></li>
+    <li class="on">The metric was punishing a correct sampler
+      <ul><li>best of 8 reaches 0.837 against a model-free ceiling of 0.861</li>
+          <li>averaging samples: ADE 10.41, 29 % better than a zero predictor</li></ul></li>
+    <li class="">Interaction quality improves with it
+      <ul><li>object shape 4.8×, contact placement 2×, over-penetration resolved</li>
+          <li>metric suite taken from the hand-object generation literature</li></ul></li>
+    <li class="">Ten-arm ablation: x1 wins, rigidity backfires
+      <ul><li>x1 halves penetration and improves shape 33–36 %</li>
+          <li>removing RoPE gives the best direction and the worst shape</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/ruled_out.svg" alt="Interventions tested and their measured outcomes"><figcaption>interventions — green is the only lever that moved the cosine</figcaption></figure>
-    <figure><img src="assets/tradeoff.svg" alt="Error against generated motion for the architecture arms"><figcaption>trade-off — error vs motion per checkpoint · low error bought by moving less is not progress</figcaption></figure>
+    <figure><img src="assets/sampler.svg" alt="sampler — one draw vs the mean and the best of eight, against the quadratic ceiling"><figcaption>sampler — one draw vs the mean and the best of eight, against the quadratic ceiling</figcaption></figure>
+    <figure><img src="assets/sweep.svg" alt="inference sweep — ADE against forward passes, coloured by number of samples"><figcaption>inference sweep — ADE against forward passes, coloured by number of samples</figcaption></figure>
   </div>
-  <p class="footnote">D5's 14.97 cm looks best in the table and is not a win — at 16 % motion it has become the zero predictor</p>
+  <p class="footnote">36 recipes on a checkpoint we already had · k dominates: every top-10 recipe has k ≥ 4, guidance moves ADE by 0.17</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">A held object moves with its hand at 0.890 — the representation claim</p>
+  <p class="thesis">Shape, contact and penetration all improve with history</p>
   <ol class="agenda">
-    <li>Velocity conditioning wins</li>
-    <li>Five architectural interventions lost</li>
-    <li class="on">The coupling is real but not yet a lever
-      <ul><li>true hand flow lifts object cosine 0.152 → 0.857</li>
-          <li>our hand flow buys 0.010 — hand cosine at contact is 0.224</li></ul></li>
-    <li>Eight questions settled without training</li>
+    <li class="">History beats duration, decisively
+      <ul><li>C2 0.457 / 12.89 cm · D6 0.282 / 16.69 · both 110 k steps annealed</li>
+          <li>hand cosine 0.544 — the first crossing of the 0.5 threshold</li></ul></li>
+    <li class="">The metric was punishing a correct sampler
+      <ul><li>best of 8 reaches 0.837 against a model-free ceiling of 0.861</li>
+          <li>averaging samples: ADE 10.41, 29 % better than a zero predictor</li></ul></li>
+    <li class="on">Interaction quality improves with it
+      <ul><li>object shape 4.8×, contact placement 2×, over-penetration resolved</li>
+          <li>metric suite taken from the hand-object generation literature</li></ul></li>
+    <li class="">Ten-arm ablation: x1 wins, rigidity backfires
+      <ul><li>x1 halves penetration and improves shape 33–36 %</li>
+          <li>removing RoPE gives the best direction and the worst shape</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/coupling.svg" alt="Per-dataset coupling and what propagation buys"><figcaption>coupling — ground-truth hand↔object agreement, and propagation's ceiling against its realised gain</figcaption></figure>
-    <figure><img src="assets/threshold.svg" alt="Error relative to a zero predictor against direction cosine"><figcaption>threshold — error ÷ zero-predictor error against cosine · the 0.5 line is exact, not chosen</figcaption></figure>
+    <figure><img src="assets/interaction.svg" alt="interaction quality — object rigidity, contact IoU and penetration across arms"><figcaption>interaction quality — object rigidity, contact IoU and penetration across arms</figcaption></figure>
   </div>
-  <p class="footnote">this is what General Flow (object only, hand masked out) and MolmoMotion (object query points) leave on the table</p>
+  <p class="footnote">suite adapted from CG-HOI, Text2HOI, HO-Flow and JointHOI · objects still deform 23× more than physics allows</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
-  <p class="thesis">Eight questions answered in minutes each, none needing a training run</p>
+  <p class="thesis">Ten arms, one flag each, scored on direction and on physics</p>
   <ol class="agenda">
-    <li>Velocity conditioning wins</li>
-    <li>Five architectural interventions lost</li>
-    <li>The coupling is real but not yet a lever</li>
-    <li class="on">Settled without training
-      <ul><li>geometry and contact carry no direction; the point budget is innocent</li>
-          <li>history carries cosine 0.734 at t=1 — this became C1</li></ul></li>
+    <li class="">History beats duration, decisively
+      <ul><li>C2 0.457 / 12.89 cm · D6 0.282 / 16.69 · both 110 k steps annealed</li>
+          <li>hand cosine 0.544 — the first crossing of the 0.5 threshold</li></ul></li>
+    <li class="">The metric was punishing a correct sampler
+      <ul><li>best of 8 reaches 0.837 against a model-free ceiling of 0.861</li>
+          <li>averaging samples: ADE 10.41, 29 % better than a zero predictor</li></ul></li>
+    <li class="">Interaction quality improves with it
+      <ul><li>object shape 4.8×, contact placement 2×, over-penetration resolved</li>
+          <li>metric suite taken from the hand-object generation literature</li></ul></li>
+    <li class="on">Ten-arm ablation: x1 wins, rigidity backfires
+      <ul><li>x1 halves penetration and improves shape 33–36 %</li>
+          <li>removing RoPE gives the best direction and the worst shape</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/measured.svg" alt="Eight measurement-only investigations and their answers"><figcaption>measurements — each cost minutes; each would have cost about three GPU-hours as a training run</figcaption></figure>
+    <figure><img src="assets/ablation.svg" alt="ablation — every arm on both metric axes"><figcaption>ablation — every arm on both metric axes</figcaption></figure>
   </div>
-  <p class="footnote">three of these killed hypotheses I had already written code for, including one I was an hour from launching</p>
+  <p class="footnote">x1 parameterisation is the best architectural change and is now combined with history as C3 · the rigidity term made shape worse, not better</p>
 </section>
 
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Conditioning beat architecture and duration; spend there next</p>
+  <p class="thesis">Two knobs left: contact placement and object rigidity</p>
   <p class="subhead">Decided:</p>
-  <ul><li>Magnitude is solved — 94 % self-calibrated, no weighting</li></ul>
+  <ul><li>Deployment averages eight samples — free, and worth 29 %</li></ul>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Duration is not delivering</b> — D6 cosine flat at 0.23 across four doublings, mid-schedule → let it anneal to 110 k before judging, but stop treating it as the lever (owner)</li>
-    <li><b>Where the remaining headroom is</b> — C1 saturates the velocity ceiling by t=10 but reaches only 0.453 of 0.734 at t=1 → richer short-horizon conditioning, or more history frames (owner)</li>
-    <li><b>MolmoMotion needs real imagery</b> — DexYCB colour is on this cluster; the alignment panels decide whether it is usable (owner)</li>
+    <li><b>Contact IoU is 38.8 %</b> — the right amount of contact in the wrong places, and the rigidity loss made shape worse rather than better → the remaining lever is representational, not a penalty (owner)</li>
+    <li><b>Objects still deform 23× beyond physics</b> — x1 parameterisation halves penetration and improves shape 33 %, so C3 = history + x1 is running (owner)</li>
+    <li><b>Two of my hypotheses were null</b> — per-frame history gain and the rigidity term both did nothing or harm; the sampler finding replaced both (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Harvest C2 = history + duration (C2 · me · today)</li>
+    <li>Harvest C3 = history + x1 (C3 · me · today)</li>
+    <li>Re-render clips with the k = 8 recipe (viz · me · today)</li>
     <li>Owner verifies the DexYCB alignment panels (D4 · owner · today)</li>
-    <li>Render D6 checkpoints if its curve turns (viz · me · on request)</li>
-    <li>Decide the next conditioning arm (next · owner · today)</li>
+    <li>Decide whether contact placement gets its own arm (next · owner · today)</li>
   </ol>
 </section>
 

@@ -365,18 +365,22 @@
    "slug": "overnight-history",
    "format": "deck",
    "status": "running",
-   "updated": "2026-08-29",
-   "title": "Overnight — motion history beats a zero predictor (deck #7)",
+   "updated": "2026-08-30",
+   "title": "Overnight — the model was better than we could measure (deck #7)",
    "path": "3d-wam/decks/2026-08-29-overnight/",
-   "tldr": "Deck #7, the overnight run: every experiment in one table, then one at a time, with all 86 rollout clips the project has rendered. C1 — D1 plus positions at t=-2,-1,0, parameter-matched at 119.95 M — is the first arm to beat a zero-flow predictor: ADE 13.82 against 14.66, crossing at step 3,400 and staying, with motion RISING 48% to 65% rather than collapsing. Direction cosine 0.266 to 0.370 overall, 0.361 to 0.445 hands, and 0.076 to 0.220 for objects; per step, t=1 cosine 0.080 to 0.453, a 5.7x gain. The gain was predicted before the run from a model-free measurement (a two-frame difference carries cosine 0.734 at t=1) and both parts of the prediction held. Five architectural interventions lost to the plain baseline and duration is flat so far. Eight further questions were settled by measurement rather than training, including the hand-object coupling of 0.890 that is the paper's representation claim.",
+   "tldr": "Deck #7: ten trained arms, ten ablation arms and nine measurement-only investigations. Both long runs finished at 110k steps fully annealed: history + duration reaches cosine 0.457 and ADE 12.89, duration alone 0.282 and 16.69 — losing to a zero predictor by 23 %, so history is worth more than nine times the compute. The decisive finding is a metric one: best-of-8 sampling reaches cosine 0.837 against a model-free ceiling of 0.861, so the distribution already contains near-optimal trajectories and the failure is SELECTION. A 36-recipe inference sweep on an existing checkpoint reaches ADE 10.41, 29 % better than predicting nothing, with no training at all. A new interaction-quality suite adapted from the hand-object generation literature (CG-HOI, Text2HOI, HO-Flow, JointHOI) shows object shape improving 4.8x and contact placement 2x across arms, while objects still deform 23x beyond physics and contact IoU sits at 38.8 %. In the ablation x1 parameterisation halves penetration and improves shape 33-36 %; the rigidity loss made shape worse, not better.",
    "tags": [
-    "overnight",
-    "velocity-conditioning",
-    "history",
+    "ablation",
     "cosine",
+    "coupling",
+    "history",
+    "inference-sweep",
+    "interaction-metrics",
     "negative-results",
+    "overnight",
     "rollouts",
-    "coupling"
+    "sampling",
+    "velocity-conditioning"
    ]
   }
  ]

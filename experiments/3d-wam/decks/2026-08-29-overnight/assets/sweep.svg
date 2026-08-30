@@ -1,0 +1,53 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="22" class="t b">Averaging samples is worth 29 % — and it costs no training</text>
+<line x1="70" y1="296.0" x2="930" y2="296.0" stroke="var(--line)"/>
+<line x1="70" y1="44" x2="70" y2="296.0" stroke="var(--line)"/>
+<text x="131" y="312" class="lb" text-anchor="middle">8</text>
+<text x="254" y="312" class="lb" text-anchor="middle">16</text>
+<text x="377" y="312" class="lb" text-anchor="middle">32</text>
+<text x="500" y="312" class="lb" text-anchor="middle">64</text>
+<text x="623" y="312" class="lb" text-anchor="middle">128</text>
+<text x="746" y="312" class="lb" text-anchor="middle">256</text>
+<text x="869" y="312" class="lb" text-anchor="middle">512</text>
+<text x="62" y="48" class="lb" text-anchor="end">10</text>
+<line x1="70" y1="44.0" x2="930" y2="44.0" stroke="var(--line)" opacity="0.22"/>
+<text x="62" y="96" class="lb" text-anchor="end">11</text>
+<line x1="70" y1="92.5" x2="930" y2="92.5" stroke="var(--line)" opacity="0.22"/>
+<text x="62" y="145" class="lb" text-anchor="end">12</text>
+<line x1="70" y1="140.9" x2="930" y2="140.9" stroke="var(--line)" opacity="0.22"/>
+<text x="62" y="193" class="lb" text-anchor="end">13</text>
+<line x1="70" y1="189.4" x2="930" y2="189.4" stroke="var(--line)" opacity="0.22"/>
+<text x="62" y="242" class="lb" text-anchor="end">14</text>
+<line x1="70" y1="237.8" x2="930" y2="237.8" stroke="var(--line)" opacity="0.22"/>
+<text x="62" y="290" class="lb" text-anchor="end">15</text>
+<line x1="70" y1="286.3" x2="930" y2="286.3" stroke="var(--line)" opacity="0.22"/>
+<line x1="70" y1="269.8" x2="930" y2="269.8" stroke="#c2452d" stroke-dasharray="5 4"/>
+<text x="936" y="274" class="lb" fill="#c2452d">predict nothing 14.66</text>
+<circle cx="868.6" cy="63.9" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="868.6" cy="67.3" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="868.6" cy="69.2" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="745.7" cy="72.1" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="745.7" cy="77.0" r="3.6" fill="#6a9fd8" opacity="0.9"/>
+<circle cx="745.7" cy="77.9" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="745.7" cy="81.8" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="745.7" cy="84.7" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="622.9" cy="89.1" r="4.5" fill="#2a9d4f" opacity="0.9"/>
+<circle cx="622.9" cy="90.5" r="3.6" fill="#6a9fd8" opacity="0.9"/>
+<circle cx="500.0" cy="119.1" r="3.6" fill="var(--mut)" opacity="0.9"/>
+<circle cx="254.3" cy="155.0" r="3.6" fill="var(--mut)" opacity="0.9"/>
+<circle cx="131.4" cy="150.1" r="3.6" fill="var(--mut)" opacity="0.9"/>
+<text x="869" y="54" class="lb" fill="#2a9d4f" text-anchor="middle">10.41</text>
+<text x="131" y="140" class="lb" text-anchor="middle">12.19</text>
+<circle cx="942" cy="49" r="5" fill="var(--mut)"/>
+<text x="954" y="53" class="t">k = 1 sample</text>
+<circle cx="942" cy="69" r="5" fill="#6a9fd8"/>
+<text x="954" y="73" class="t">k = 4</text>
+<circle cx="942" cy="89" r="5" fill="#2a9d4f"/>
+<text x="954" y="93" class="t">k = 8</text>
+<text x="936" y="128" class="lb">guidance moves ADE by only</text>
+<text x="936" y="142" class="lb">0.17 across 1.0 → 3.0;</text>
+<text x="936" y="156" class="lb">k dominates everything</text>
+<text x="500" y="338" class="t b" text-anchor="middle">forward passes per prediction (log scale)</text>
+<text x="16" y="30" class="t b">ADE (cm)</text>
+</svg>

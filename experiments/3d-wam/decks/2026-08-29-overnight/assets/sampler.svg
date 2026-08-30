@@ -1,0 +1,20 @@
+<svg viewBox="0 0 1180 352" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Calibri, Carlito, 'Source Sans 3', Arial, sans-serif" font-size="12.5">
+<style>.t{fill:var(--txt)}.m{fill:var(--mut)}.b{font-weight:600}.lb{font-size:10.5px;fill:var(--mut)}</style>
+<text x="18" y="24" class="t b">The distribution already contains near-optimal trajectories</text>
+<text x="240" y="67" class="t" text-anchor="end">one sample — what we reported</text>
+<rect x="250" y="52" width="299" height="21" rx="3" fill="var(--acc)" opacity="0.88"/>
+<text x="557" y="67" class="t b">0.451</text>
+<text x="240" y="113" class="t" text-anchor="end">mean of 8 samples</text>
+<rect x="250" y="98" width="319" height="21" rx="3" fill="#6a9fd8" opacity="0.88"/>
+<text x="577" y="113" class="t b">0.481</text>
+<text x="240" y="159" class="t" text-anchor="end">best of 8 samples</text>
+<rect x="250" y="144" width="555" height="21" rx="3" fill="#2a9d4f" opacity="0.88"/>
+<text x="813" y="159" class="t b">0.837</text>
+<text x="240" y="205" class="t" text-anchor="end">model-free ceiling (quadratic)</text>
+<rect x="250" y="190" width="571" height="21" rx="3" fill="var(--mut)" opacity="0.88"/>
+<text x="829" y="205" class="t b">0.861</text>
+<line x1="582" y1="42" x2="582" y2="230" stroke="#c2452d" stroke-dasharray="4 3"/>
+<text x="588" y="38" class="lb" fill="#c2452d">threshold 0.5</text>
+<text x="18" y="322" class="t">Direction cosine, C2 at 100,000 steps. A single draw scores 0.451; the same model's best of eight scores 0.837.</text>
+<text x="18" y="340" class="lb">the failure is SELECTION, not capability — and selection is an inference-time knob, not an architecture</text>
+</svg>
