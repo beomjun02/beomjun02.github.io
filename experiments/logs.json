@@ -46,6 +46,29 @@
  },
  "logs": [
   {
+   "project": "dex-pointwam",
+   "date": "2026-08-31",
+   "slug": "dataset-usage-guide",
+   "title": "Dataset usage guide — EgoDex and VITRA human data",
+   "status": "done",
+   "format": "deck",
+   "updated": "2026-08-31",
+   "path": "dex-pointwam/decks/2026-08-31-dataset-usage-guide/",
+   "tldr": "Consumer-facing usage guide as a meeting deck, deliberately minimal: where the data lives and which keys to read. Two artifact families over the same episodes, joined by filename — maskcap sidecars for the 3D encoder, flow H5s for PointWAM, all under /virtual_lab/sjw_alinlab/beomjun/ with manifests/a7_stems.txt and manifests/generation_index.tsv as the caption-subset selectors. Keys: camera_0_scene_flows (11,N,3) world metres, camera_0_scene_colors, embodiment_joints (ARKit GT on EgoDex, reconstructed MANO on VITRA; 12-kp dex view = indices [0,24,5,15,20,10] x 2 hands), camera_0_robot_valid as the idle-hand mask; on the sidecar side camera_0_instance_id, global_siglip2 (G,1152) as the encoder target, global_captions and global_is_agent. Sample visualisations for both families. Per-part statistics, complete schemas and the load snippet stay in the 2026-08-27 log.",
+   "tags": [
+    "dataset",
+    "usage-guide",
+    "EgoDex",
+    "VITRA",
+    "maskcap",
+    "SigLIP2",
+    "3d-encoder",
+    "paths",
+    "schema",
+    "deck"
+   ]
+  },
+  {
    "project": "3d-wam",
    "date": "2026-08-31",
    "slug": "evaluation",

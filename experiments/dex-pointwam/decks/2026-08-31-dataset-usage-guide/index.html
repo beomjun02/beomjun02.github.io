@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!-- Deck: dex-pointwam dataset usage guide. Deliberately minimal (owner, 2026-08-31): paths,
+     the minimal set of keys to read, and the sample visualisations. No campaign status, no
+     schemas beyond the keys, no decisions — the 2026-08-27 log stays the full reference.
+     Structure per _template/DECK-STYLE.md §3; caps §4. Media reused by absolute path. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-08-31 · Dataset usage guide — dex-pointwam</title>
+<meta name="description" content="Deck: where the EgoDex and VITRA human data lives and which keys to read for the 3D encoder and PointWAM.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="Dex-PointWAM" data-deck="dataset usage guide" data-date="2026-08-31">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Dataset usage guide — EgoDex and VITRA human data</h1>
+  <p class="ctx">Dex-PointWAM · where the data is and which keys to read</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 08. 31<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Two artifact families over the same episodes, joined by filename.</p>
+  <ul>
+    <li>3D encoder: maskcap sidecars</li>
+    <li>PointWAM: flow H5s</li>
+    <li>Join: same filename, same clip keys</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/dex-pointwam/logs/2026-08-13-spaceformer-data-engine/assets/pipeline.jpg" alt="Data engine schematic: every 3D point gets an instance id, a caption and a SigLIP2 embedding">
+      <figcaption>Schematic, not a run — every 3D point gets an instance id, a caption and a SigLIP2 embedding</figcaption></figure>
+  </div>
+  <p class="footnote">full reference (per-part statistics, complete schemas, load snippet): <a href="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/">dataset usage guide (log)</a></p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): Where the data is</h2>
+  <p class="thesis">Flows, sidecars and the subset manifests sit under one root.</p>
+  <ul>
+    <li>Absolute paths on the shared filesystem</li>
+    <li>EgoDex spans seven part directories</li>
+    <li>Manifests pick a caption subset</li>
+  </ul>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>what</th><th>absolute path</th></tr></thead>
+        <tbody>
+          <tr><td>EgoDex flow H5 — PointWAM</td><td><code>/virtual_lab/sjw_alinlab/beomjun/flows/flow_{part1…part5,extra,test}_pw/</code></td></tr>
+          <tr><td>VITRA flow H5 — PointWAM</td><td><code>/virtual_lab/sjw_alinlab/beomjun/vitra_1m/flows/</code></td></tr>
+          <tr><td>EgoDex maskcap sidecar — 3D encoder</td><td><code>/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/{egodex,egodex_part2…part5,egodex_extra,egodex_test}/</code></td></tr>
+          <tr><td>homogeneous caption subset</td><td><code>/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/manifests/a7_stems.txt</code></td></tr>
+          <tr><td>caption generation per episode</td><td><code>/virtual_lab/sjw_alinlab/beomjun/maskcap_pilot/manifests/generation_index.tsv</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">sidecar and flow H5 share the filename, so the join is by name · the manifests are rebuilt as the corpus changes — re-read them rather than caching</p>
+</section>
+
+<!-- SECTION: method (2) -->
+<section class="slide s-method">
+  <h2>Method (2): Keys to use</h2>
+  <p class="thesis">Per clip group: points, colours, hand joints, instance ids.</p>
+  <ul>
+    <li>Clip keys are named start:end</li>
+    <li>Clips: 11 steps at ~10 Hz</li>
+    <li>Skip instances whose caption is empty</li>
+  </ul>
+  <div class="band">
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>flow H5 — PointWAM</th><th>shape</th><th>what to do with it</th></tr></thead>
+        <tbody>
+          <tr><td><code>camera_0_scene_flows</code></td><td>(11, N, 3) f32</td><td>tracked 3D points in world metres; index i is the same physical point at every t</td></tr>
+          <tr><td><code>camera_0_scene_colors</code></td><td>(N, 3) uint8</td><td>RGB per point</td></tr>
+          <tr><td><code>embodiment_joints</code></td><td>(11,50,3) EgoDex · (11,2,21,3) VITRA</td><td>hand joints per timestep; the 12-kp dex view is indices [0,24,5,15,20,10] × 2 hands</td></tr>
+          <tr><td><code>camera_0_robot_valid</code></td><td>(11, 12) uint8</td><td>EgoDex idle-hand mask — select keypoints by this, never by magnitude</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>maskcap sidecar — 3D encoder</th><th>shape</th><th>what to do with it</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;clip&gt;/camera_0_instance_id</code></td><td>(N,) uint16</td><td>per-point instance id, 0 = unlabeled; N matches scene_flows of the same clip</td></tr>
+          <tr><td><code>global_siglip2</code></td><td>(G, 1152) f16</td><td>row g−1 = SigLIP2 embedding of instance g's caption — the encoder target</td></tr>
+          <tr><td>attr <code>global_captions</code></td><td>JSON {id: str}</td><td>one caption per instance; empty beyond the per-episode caption budget</td></tr>
+          <tr><td>attr <code>global_is_agent</code></td><td>JSON {id: bool}</td><td>true = human hand or forearm; drop these for an object-only encoder</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">also per clip: <code>camera_0_extrinsic</code> (4,4) cam→world · <code>camera_0_initial_rgb</code> JPEG · EgoDex projection needs the full-res ARKit K [[736.63,0,960],[0,736.63,540],[0,0,1]] — the file-level intrinsic is tracking-resolution and squashes it; VITRA carries a per-episode intrinsic</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">PointWAM — scene points and hand skeleton
+      <ul><li>same contract on both sources; EgoDex 1080p, VITRA 240p</li>
+          <li>EgoDex hands are ARKit GT, VITRA hands are reconstructed MANO</li></ul></li>
+    <li>3D encoder — instances and their captions</li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/pw_egodex.jpg" alt="EgoDex episode: left scene points in their own colours, right hand skeleton joints">
+      <figcaption>EgoDex — left scene_flows[0] in its own colours, right embodiment_joints[0] (wrist + 5 fingertips per hand)</figcaption></figure>
+    <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/pw_vitra.jpg" alt="VITRA episode: scene points and reconstructed MANO hands at 240p">
+      <figcaption>VITRA — the same contract at 240p; hands reconstructed MANO, metric anchor is the HaWoR hand</figcaption></figure>
+  </div>
+  <p class="footnote">metric scale on EgoDex comes from fitting VGGT-Omega depth to the GT hand depths per chunk</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>PointWAM — scene points and hand skeleton</li>
+    <li class="on">3D encoder — instances and their captions
+      <ul><li>each tile isolates one instance's points over a dimmed anchor frame</li>
+          <li>tiles sorted by number of points; captions are the A.7 Gemma-3 generation</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/enc_paint_clean_brush.jpg" alt="Per-instance grid for paint_clean_brush: each tile is one instance's points with its caption">
+      <figcaption>paint_clean_brush — one tile per instance, each with the caption whose SigLIP2 row is the target</figcaption></figure>
+    <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/enc_peel_place_sticker.jpg" alt="Per-instance grid for peel_place_sticker">
+      <figcaption>peel_place_sticker — same rendering, different task; agent instances appear alongside objects</figcaption></figure>
+  </div>
+  <p class="footnote">more sample grids: <a href="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/">usage-guide log</a> · <a href="/experiments/dex-pointwam/logs/2026-08-13-spaceformer-data-engine/">SpaceFormer data engine log</a></p>
+</section>
+
+</main>
+</body>
+</html>
