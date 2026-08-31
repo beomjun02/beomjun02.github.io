@@ -158,11 +158,11 @@ table.num .mute{opacity:.55}
     <figure>
       <table class="num">
         <tr><th>p1 lever (0.95 s/step today)</th><th>gain</th></tr>
-        <tr><td>batch 32×1 — identical gradient</td><td>1.3–1.7×</td></tr>
+        <tr><td>batch 32×1 — same eff. 32, identical gradient</td><td>1.3–1.7×</td></tr>
         <tr><td>torch.compile + fused AdamW + sync fix</td><td>1.4–2×</td></tr>
         <tr><td><b>combined (overlapping)</b></td><td class="good"><b>2–2.5×</b></td></tr>
       </table>
-      <figcaption>gate: metric-identical at 5k vs the existing i0@5k checkpoint (ipaired)</figcaption>
+      <figcaption>p1 validation only — keeps effective 32 to stay comparable with i0@5k (ipaired gate); production arms p2/p4/p5 train at effective 64</figcaption>
     </figure>
     <figure>
       <table class="num">
