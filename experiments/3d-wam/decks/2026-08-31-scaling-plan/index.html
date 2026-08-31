@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #9 · 2026-08-31: the p-series plan — throughput (the A100 is under-fed),
-     batch geometry (accumulation adds no speed), and a 320M arm at pi0.5 expert dims.
-     First deck under the v4 VIZ-FIRST caps (DECK-STYLE.md 2026-08-31). -->
+<!-- 3D-WAM deck #9 · 2026-08-31 (evening revision, owner's order): current best first
+     (C2 vs i5, with rollouts), then the scale-up/config update, then tonight's window —
+     everything lands by 09-01 09:00 KST; training on h100, evaluations on debug (A100).
+     v4 VIZ-FIRST caps. Media reused from deck #8 by absolute path. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-08-31 · Faster, then bigger — 3D-WAM</title>
-<meta name="description" content="Deck #9. Training is already bf16 on A100 but runs at ~9% MFU; p1 recovers 2-2.5x with batch geometry and compile. Accumulation adds no throughput on one GPU. p4 scales the video-DiT to 320M — pi0.5 action-expert dims — on the h100 partition, 5 epochs of the no-hot3d basis in ~11-14h. 120M stays the screening model.">
+<meta name="description" content="Deck #9 (evening). i5 (no-hot3d) is the first model to beat the zero predictor — at 50k steps, winning 4/6 datasets including hot3d itself; C2@109k never did. Cross-embodiment: 79% of hand direction retained zero-shot on Sharpa, 10% co-training free. Update: 320M at pi0.5-expert dims, micro-batch 64, compile recovers 2-2.5x of a 9%-MFU A100. Tonight: p1/p2/p4/p5 on h100, evals pre-queued on debug — all done by 09-01 09:00 KST.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -27,7 +28,7 @@ table.num .mute{opacity:.55}
 <!-- SECTION: title -->
 <section class="slide s-title">
   <h1>Faster, then bigger — a 320M expert on the settled recipe</h1>
-  <p class="ctx">3D-WAM · p-series plan · throughput, batch geometry, scale</p>
+  <p class="ctx">3D-WAM · current best · scale-up · tonight's window (all done by 09-01 09:00)</p>
   <p class="venue"><b>Lab meeting</b></p>
   <p class="when">2026. 08. 31<br>Presented by beomjun</p>
 </section>
@@ -35,152 +36,141 @@ table.num .mute{opacity:.55}
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> The GPU is under-fed; recover 2–2.5×, then scale to π0.5-expert size.</p>
+  <p class="thesis"><b>[TL;DR]</b> i5 beat the zero predictor; 320M and Sharpa-10 % land by 09:00.</p>
   <ul>
-    <li>Done: i5 beats zero @50k</li>
-    <li>Found: ~9 % MFU, recoverable 2–2.5×</li>
-    <li>Discuss: p-series, H100, 320M scale</li>
+    <li>Done: i5 > zero, 4/6 datasets</li>
+    <li>Update: 320M config, H100 open</li>
+    <li>Tonight: p1–p5 + evals, 09:00</li>
   </ul>
   <div class="band">
-    <figure><img src="assets/i5_training_curve.png" alt="i5 training curve: loss to 57.5k steps, stratified ADE crossing the zero predictor between 30k and 50k, cosine approaching C2">
-      <figcaption>i5_nohot3d to 57.5k of 110k — loss (log), stratified ADE vs the zero predictor, stratified cos vs C2@109k</figcaption></figure>
+    <figure><img src="assets/i5_training_curve.png" alt="i5 training curve: loss, stratified ADE crossing the zero predictor, cosine approaching C2">
+      <figcaption>i5_nohot3d to 57.5k of 110k — ADE crosses the zero predictor between 30k and 50k; cos approaches C2@109k</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_human.gif" alt="C2 rollout, human hand, TACO chunk 33">
+      <figcaption>C2 · human hand (TACO, chunk 33)</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_sharpa.gif" alt="C2 rollout, Sharpa hand zero-shot, same sequence and moment">
+      <figcaption>same sequence, same moment · Sharpa, zero-shot — no robot data in training</figcaption></figure>
   </div>
-  <p class="footnote">stratified evals: ieval.py, jobs 144911/146286 · logs: carm_*144790/145521 · plan: ~/3d-wam/P-SERIES.md · config: code/configs/p4_320m.yaml</p>
+  <p class="footnote">ieval jobs 144911/146286 · plan: ~/3d-wam/P-SERIES.md · config: code/configs/p4_320m.yaml · deck #8 = the full evaluation story</p>
 </section>
 
-<!-- SECTION: method (1) -->
-<section class="slide s-method">
-  <h2>Method (1): Where the step time goes</h2>
-  <p class="thesis">0.95 s/step is steady overhead, not compute — ≈9 % MFU.</p>
-  <ul>
-    <li>bf16 already on since C-series</li>
-    <li>No loader stalls: p50 = p90</li>
-    <li>Micro-batch 16 starves the A100</li>
-  </ul>
-  <div class="band">
-    <figure>
-      <table class="num">
-        <tr><th>per-step time (1,200 log intervals)</th><th>seconds</th></tr>
-        <tr><td>p10</td><td>0.950</td></tr>
-        <tr><td>p50</td><td><b>0.950</b></td></tr>
-        <tr><td>p90</td><td>0.950</td></tr>
-        <tr><td>p99 (eval/ckpt pauses)</td><td class="mute">1.85</td></tr>
-      </table>
-      <figcaption>job 145521 timestamps — dead-steady step time: one bottleneck, and it is not the dataloader</figcaption>
-    </figure>
-    <figure>
-      <table class="num">
-        <tr><th>p1 lever</th><th>expected</th></tr>
-        <tr><td>batch 32 × 1 (same eff. 32, identical gradient)</td><td>1.3–1.7×</td></tr>
-        <tr><td>torch.compile</td><td>1.3–1.8×</td></tr>
-        <tr><td>host-sync removal + fused AdamW</td><td>~1.1×</td></tr>
-        <tr><td><b>combined (overlapping)</b></td><td class="good"><b>2–2.5×</b></td></tr>
-      </table>
-      <figcaption>p1_throughput — gate: metric-identical at 5k vs the existing i0@5k checkpoint (same seed, ipaired)</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- SECTION: method (2) -->
-<section class="slide s-method">
-  <h2>Method (2): Batch geometry on one GPU</h2>
-  <p class="thesis">Accumulation adds zero speed; the micro-batch sets samples per hour.</p>
-  <ul>
-    <li>Effective 64 = ceiling at 320M</li>
-    <li>Large batch ≠ regularization (noise is)</li>
-    <li>p2/p3 measure 64/128 cheaply</li>
-  </ul>
-  <div class="band">
-    <figure>
-      <table class="num">
-        <tr><th>effective batch (120M)</th><th>LR</th><th>samples/h</th><th>110k-equiv</th></tr>
-        <tr><td>32 (today)</td><td>3e-4</td><td>1×</td><td>~13.7 h</td></tr>
-        <tr><td><b>64</b> (p2)</td><td>4.5e-4</td><td class="good">~1.45×</td><td><b>~9.5 h</b></td></tr>
-        <tr><td>128 (p3, conditional)</td><td>~6e-4</td><td>~1.9×</td><td>~7.5 h</td></tr>
-      </table>
-      <figcaption>post-p1 estimates — gains are real only below the critical batch size; judged at matched samples</figcaption>
-    </figure>
-    <figure>
-      <table class="num">
-        <tr><th>reference</th><th>global batch</th><th>GPUs</th><th>per-GPU micro</th></tr>
-        <tr><td>π0.5 fine-tune</td><td>256</td><td>4</td><td><b>64</b></td></tr>
-        <tr><td>GR00T N1.5 pretrain</td><td>16,384</td><td>1,024 H100</td><td><b>16</b></td></tr>
-      </table>
-      <figcaption>the labs' huge batches are device-count plumbing — per-GPU micro-batches are 16–64, not thousands</figcaption>
-    </figure>
-  </div>
-  <p class="footnote">openpi config.py · GR00T N1.5 (research.nvidia.com/labs/gear) · Keskar et al. 2017: small-batch noise is the regularizer, large batch removes it</p>
-</section>
-
-<!-- SECTION: results (1) -->
+<!-- SECTION: results (1) · current best -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li class="on">Long runs land overnight
-      <ul><li>i5 crossed zero at 50k</li>
-          <li>both reach 110k before cap</li></ul></li>
-    <li>Scale target and capacity</li>
+    <li class="on">Current best: i5 (hot3d excluded)
+      <ul><li>crossed zero at 50k</li>
+          <li>110k lands ~06:00 KST</li></ul></li>
+    <li>Cross-embodiment status</li>
   </ol>
   <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_taco.gif" alt="i5 rollout on taco">
+      <figcaption>i5 @20k · taco — ego view, object orange, R-hand green</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_oakink2.gif" alt="i5 rollout on oakink2">
+      <figcaption>i5 @20k · oakink2</figcaption></figure>
     <figure>
       <table class="num">
-        <tr><th>run</th><th>step now</th><th>ETA 100k</th><th>ETA 110k</th><th>wall left</th></tr>
-        <tr><td><b>i5_nohot3d</b> (145521)</td><td>~61k</td><td>~03:15</td><td>~06:00</td><td>24.6 h ✓</td></tr>
-        <tr><td>i0_ctl (145496)</td><td>~62k</td><td>—</td><td>~05:50</td><td>23.8 h ✓</td></tr>
+        <tr><th>model</th><th>cos</th><th>hand</th><th>ADE</th><th>zero</th></tr>
+        <tr><td><b>i5 @50k</b></td><td>0.237</td><td>0.324</td><td class="good"><b>7.71</b></td><td>7.97</td></tr>
+        <tr><td>C2 @109k</td><td>0.248</td><td>0.337</td><td class="bad">8.43</td><td>7.97</td></tr>
+        <tr><td>i9 @30k</td><td>0.213</td><td>0.291</td><td>8.25</td><td>7.97</td></tr>
       </table>
-      <figcaption>continuations at ~3.7k steps/h — pre-queued SLURM jobs, no watchers; 100k checkpoint lands on the 5k cadence</figcaption>
+      <figcaption>stratified val — first crossing in the project; C2 spent 109k steps and never did</figcaption>
     </figure>
     <figure>
       <table class="num">
-        <tr><th>dataset</th><th>i5@50k ADE</th><th>zero</th></tr>
+        <tr><th>dataset</th><th>i5 ADE</th><th>zero</th></tr>
         <tr><td>dexycb</td><td class="good">9.44</td><td>10.00</td></tr>
         <tr><td>grab</td><td class="good">16.13</td><td>17.75</td></tr>
-        <tr><td><b>hot3d — excluded from training</b></td><td class="good"><b>6.68</b></td><td>6.89</td></tr>
+        <tr><td><b>hot3d — never trained on</b></td><td class="good"><b>6.68</b></td><td>6.89</td></tr>
         <tr><td>oakink2</td><td class="good">2.50</td><td>2.68</td></tr>
         <tr><td>arctic</td><td class="bad">9.67</td><td>9.34</td></tr>
         <tr><td>taco</td><td class="bad">4.86</td><td>4.47</td></tr>
       </table>
-      <figcaption>per-dataset ADE, stratified val (job 146286) — the curation win generalizes to the dataset it dropped</figcaption>
+      <figcaption>per-dataset — the curation win generalizes to the dataset it dropped</figcaption>
     </figure>
   </div>
 </section>
 
-<!-- SECTION: results (2) -->
+<!-- SECTION: results (2) · cross-embodiment -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li>Long runs land overnight</li>
-    <li class="on">Scale target and capacity
-      <ul><li>p4 = π0.5 expert, dimension-for-dimension</li>
-          <li>h100 partition: lightest queue</li></ul></li>
+    <li>Current best: i5 (hot3d excluded)</li>
+    <li class="on">Cross-embodiment status
+      <ul><li>object + hand motion transfer</li>
+          <li>hand detail noised → p5</li></ul></li>
   </ol>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_human.gif" alt="C2 human hand rollout">
+      <figcaption>C2 · human — the source embodiment</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_sharpa.gif" alt="C2 Sharpa hand rollout, zero-shot">
+      <figcaption>C2 · Sharpa zero-shot — motion transfers, finger detail noisier</figcaption></figure>
+    <figure>
+      <table class="num">
+        <tr><th>C2, human-only training</th><th>cos</th><th>hand cos</th></tr>
+        <tr><td>human</td><td>0.244</td><td>0.272</td></tr>
+        <tr><td><b>Sharpa, zero-shot</b></td><td>0.193</td><td><b>0.207</b></td></tr>
+        <tr><td>paired gap [95 % CI]</td><td class="bad">−0.045</td><td class="bad">−0.052 [−0.091, −0.015]</td></tr>
+      </table>
+      <figcaption>258 matched TACO pairs — 79 % of hand direction retained on a never-seen hand</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>paired @30k</th><th>Δ hand cos</th><th>95 % CI</th></tr>
+        <tr><td><b>i9 vs i5 · Sharpa</b></td><td class="good">+0.0135</td><td>[+0.0025, +0.0246]</td></tr>
+        <tr><td>i9 vs i5 · human</td><td class="mute">−0.0046</td><td>[−0.0124, +0.0034]</td></tr>
+        <tr><td>i5 vs i0 · human</td><td class="good">+0.0274</td><td>[+0.0177, +0.0378]</td></tr>
+        <tr><td>i5 vs i0 · Sharpa</td><td>+0.0103</td><td>[−0.0005, +0.0217]</td></tr>
+      </table>
+      <figcaption>10 % co-training is free on the robot hand; human-side curation transfers only half → p5 combines both at 320M</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- SECTION: method (1) · scale-up and training config -->
+<section class="slide s-method">
+  <h2>Method (1): Scale-up and training config</h2>
+  <p class="thesis">320M at π0.5-expert dims; micro-batch 64; compile recovers 2–2.5×.</p>
+  <ul>
+    <li>9 % MFU today, fixable</li>
+    <li>Accumulation adds zero speed</li>
+    <li>Train h100 · eval debug</li>
+  </ul>
   <div class="band">
     <figure>
       <table class="num">
-        <tr><th></th><th>ours</th><th>π0.5 expert</th><th>GR00T N1.7 head</th></tr>
-        <tr><td>params</td><td>0.12B</td><td>~0.30B</td><td>~0.5–0.7B</td></tr>
-        <tr><td>layers × width</td><td>12 × 768</td><td><b>18 × 1024</b></td><td>16 blk × 1024/1536</td></tr>
-        <tr><td>heads × dim</td><td>12 × 64</td><td>8 × 128</td><td>32 × 48</td></tr>
+        <tr><th></th><th>ours → p4</th><th>π0.5 expert</th><th>GR00T N1.7</th></tr>
+        <tr><td>params</td><td>0.12B → <b>0.32B</b></td><td>~0.30B</td><td>~0.5–0.7B head</td></tr>
+        <tr><td>layers × width</td><td>12×768 → <b>18×1024</b></td><td>18 × 1024</td><td>16 blk × 1024/1536</td></tr>
         <tr><td>upstream model</td><td class="good"><b>none</b></td><td>~3B VLM</td><td>2B VLM</td></tr>
       </table>
-      <figcaption>p4_320m = the π0.5 expert's 18 × 1024, no VLM, no robot data — params scale as layers × width²</figcaption>
+      <figcaption>p4 = the π0.5 expert dimension-for-dimension, no VLM, no robot data</figcaption>
     </figure>
     <figure>
       <table class="num">
-        <tr><th>pool</th><th>GPUs</th><th>queue at check</th></tr>
-        <tr><td>sjw_alinlab</td><td>32 × A100-80GB</td><td>9 R / 20 P</td></tr>
-        <tr><td><b>h100</b></td><td>24 × H100-80GB (16 live)</td><td class="good"><b>6 R</b></td></tr>
+        <tr><th>training config</th><th>i5 (120M)</th><th>p4/p5 (320M)</th></tr>
+        <tr><td>batch × accum</td><td>16 × 2</td><td><b>64 × 1</b></td></tr>
+        <tr><td>lr / warmup</td><td>3e-4 / 300</td><td>3e-4 / 2,000</td></tr>
+        <tr><td>steps = epochs</td><td>110k = 6.1</td><td><b>45k = 5.0</b></td></tr>
       </table>
-      <figcaption>sinfo 08-31 — submit --partition=h100,sjw_alinlab; smoke job doubles as the access test</figcaption>
+      <figcaption>one recipe change per arm; lr width- and batch-scaled from the measured anchor</figcaption>
     </figure>
     <figure>
       <table class="num">
-        <tr><th>unit (post-p1)</th><th>A100</th><th>H100</th></tr>
-        <tr><td>120M · 20k screen</td><td>~2.5–3 h</td><td class="good">~1.5 h</td></tr>
-        <tr><td>120M · 110k full</td><td>~13–15 h</td><td>~7 h</td></tr>
-        <tr><td><b>320M · 45k = 5 epochs</b></td><td>~25–28 h</td><td class="good"><b>~11–14 h</b></td></tr>
+        <tr><th>p1 lever (0.95 s/step today)</th><th>gain</th></tr>
+        <tr><td>batch 32×1 — identical gradient</td><td>1.3–1.7×</td></tr>
+        <tr><td>torch.compile + fused AdamW + sync fix</td><td>1.4–2×</td></tr>
+        <tr><td><b>combined (overlapping)</b></td><td class="good"><b>2–2.5×</b></td></tr>
       </table>
-      <figcaption>ETA sheet — every screening unit fits the owner's 6 h cycle; the 320M full run is one night on H100</figcaption>
+      <figcaption>gate: metric-identical at 5k vs the existing i0@5k checkpoint (ipaired)</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>pool</th><th>GPUs</th><th>queue</th></tr>
+        <tr><td><b>h100 — training</b></td><td>16 live H100-80GB</td><td class="good">6 R</td></tr>
+        <tr><td>debug — evals, 3 h cap</td><td>A100</td><td>≤3 concurrent</td></tr>
+      </table>
+      <figcaption>sinfo 08-31 — dual-target h100,sjw_alinlab; evals pre-queued on debug with --begin</figcaption>
     </figure>
   </div>
 </section>
@@ -188,45 +178,46 @@ table.num .mute{opacity:.55}
 <!-- SECTION: discussion-actions -->
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Queue p1–p4 tomorrow; H100 first; 120M remains the screening model.</p>
+  <p class="thesis">Everything below lands by 09:00; launch tonight by 19:30.</p>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>p-series submit</b> — with tomorrow's touch vs after 110k → with the touch (owner)</li>
-    <li><b>H100 adoption</b> — h100-first vs A100-only → dual-target h100,sjw_alinlab (owner)</li>
-    <li><b>320M policy</b> — new default vs two-tier → two-tier; default only with a data-scale move (owner)</li>
+    <li><b>Tonight's submit</b> — wait for p1 vs dependency-chain now → chain now, post-hoc p1 gate (owner)</li>
+    <li><b>Compile risk on p4/p5</b> — unvalidated compile rides along → smoke catches crashes; discard if p1's ipaired fails (owner)</li>
+    <li><b>GR-1 closed-loop</b> — cannot fit tonight → next phase: IK decode + env, first clips ~09-04/05 (owner)</li>
   </ol>
-  <p class="subhead">Action items:</p>
+  <p class="subhead">Action items (all before 09-01 09:00 KST):</p>
   <ol>
-    <li>Touch B: 100k ieval + ego rollouts (agent · 09-01 AM)</li>
-    <li>p1 + p2 5k validations (agent · 09-01)</li>
-    <li>p4_320m smoke → 45k run on h100 (agent · after p1)</li>
-    <li>Pair-clip eye-verification, standing since deck #8 (owner)</li>
+    <li>p1 + p2 5k validations, p4 smoke (h100 · 20:00–22:00)</li>
+    <li>p4_320m + p5_sharpa10, 45k, dependency-chained (h100 · ≥40k by 09:00, done ~06:30–09:30)</li>
+    <li>100k/110k evals + 5× multi-chunk rollouts, teacher-forced & autoregressive (debug, --begin 04:00/06:45 · by 08:30)</li>
+    <li>Pair-clip eye-verification — standing since deck #8 (owner)</li>
   </ol>
 </section>
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix · p4 config · math · corrections · cut list</h2>
+  <h2>Appendix · tonight's schedule · p4 config · corrections · cut list</h2>
   <div class="cols">
     <div>
       <dl class="kv">
-        <dt>p4_320m</dt><dd>d1024 × 18L × 16h × mlp 4096 ≈ 320M · micro 64, accum 1 · lr 3e-4 (width ×768/1024, batch ×√2 from 3e-4@d768/b32) · warmup 2,000 (~4.4 %) · cosine → 0.1 · AdamW(0.9,0.95) wd 0.05 clip 1.0 EMA 0.999 · 45k steps = 5.0 epochs of 577,948 no-hot3d chunks · val_stratified true · grad_checkpoint false (45 GB act @ micro 64) · seed 0 · code/configs/p4_320m.yaml</dd>
-        <dt>MFU math</dt><dd>120M × 1,280 tok × 6 FLOPs ≈ 2.9e13/step(eff.32) ÷ 0.95 s ≈ 30 TF/s vs 312 bf16 peak ≈ 9 %</dd>
-        <dt>Epochs</dt><dd>100k steps × 32 = 3.2M draws ÷ 578k chunks ≈ 5.5 ep; stride-1 overlap ⇒ ~55 unique-content passes — data, not steps, is the binding lever</dd>
-        <dt>Memory</dt><dd>320M @ micro 64 ≈ 45 GB act + 6.5 GB states (80 GB ok) · micro 128 @320M ≈ 80 GB act = OOM ⇒ 64 is the ceiling; H100 = 80 GB (H200 141 / B200 192 — none on cluster)</dd>
+        <dt>Tonight</dt><dd>19:30 one batched touch: rsync code/configs/P-SERIES.md up → sbatch p1_5k, p2_5k, p4_smoke (h100) · p4_45k + p5_45k `--dependency=afterok:smoke` (h100) · ieval@100k `--begin=04:00` + 110k harvest + 5×-demo rollout renders `--begin=06:45` (debug, 3 h cap each) · all `--mail-type=END,FAIL` · no watchers, scheduler-native chaining only</dd>
+        <dt>p4_320m</dt><dd>d1024 × 18L × 16h × mlp 4096 ≈ 320M · micro 64, accum 1 · lr 3e-4, warmup 2k, cosine → 0.1 · AdamW(0.9,0.95) wd 0.05 clip 1.0 EMA 0.999 · 45k = 5.0 epochs of 577,948 no-hot3d chunks · val_stratified true · seed 0</dd>
+        <dt>p5</dt><dd>= p4 + sharpa_fraction 0.1 (TACO-only retarget, as i9) · new xeval metrics: contact-region IoU (pred vs GT, 1 cm) · Sharpa feasibility (per-link Procrustes residual + joint limits after IK)</dd>
+        <dt>Rollouts</dt><dd>full-episode, chunk-wise re-inference: (a) teacher-forced from GT · (b) autoregressive from own prediction (drift horizon) · ~5× demos per model · ego, H.264</dd>
       </dl>
     </div>
     <div>
       <ul>
-        <li>Correction (for the record): "trainer is fp32" was wrong — bf16 autocast has been on since the C-series (vflow_c.py:84); the p1 gain is batch geometry + compile, not precision</li>
-        <li>TF32 set only in the SetDiT trainer (train.py:526), not train_v_c — irrelevant under bf16, do not "fix"</li>
-        <li>Accum ×4 to eff. 256 rejected: same samples/h, 11k-step horizon, LR risk — accumulation is for spanning devices</li>
-        <li>i5 step rate 3,693/h measured (33,555 → 57,560 in 6.5 h, job 145521); the log's perf/s_per_step is wrong after resume (divides by global step)</li>
+        <li>Correction: "trainer is fp32" was wrong — bf16 autocast since the C-series (vflow_c.py:84); p1's gain is batch geometry + compile, not precision</li>
+        <li>Accum to eff. 128/256 rejected on one GPU: same samples/h, shorter optimizer horizon, LR risk — accumulation is for spanning devices</li>
+        <li>Batch context: π0.5 FT = 256 global = 64/GPU × 4; GR00T N1.5 = 16,384 global = 16/GPU × 1,024 H100 — big batch is device plumbing</li>
+        <li>i5 measured 3,693 steps/h (job 145521); log's perf/s_per_step is wrong after resume</li>
+        <li>MFU: 120M × 1,280 tok × 6 FLOPs ÷ 0.95 s ≈ 30 TF/s of 312 peak ≈ 9 %</li>
       </ul>
-      <p class="cut"><b>Cut list</b> (kept in P-SERIES.md / this session): full π0/GR00T hyperparameter survey · critical-batch-size theory (gradient noise scale) · regularization-vs-variance-reduction discussion · DDP analysis (rejected: model never DDP-wrapped; overhead-bound regime scales badly) · A100 step-time p99/max detail · two-tier policy rationale · Ego-Exo4D data-scale pairing</p>
+      <p class="cut"><b>Cut list</b> (kept in P-SERIES.md / deck #8): full DDP analysis (rejected) · critical-batch theory · regularization-vs-variance discussion · GR-1 decode design (conditioning choice: GR-1 points vs cross-decode — next phase) · Ego-Exo4D data pairing · step-time percentile table · capacity sinfo detail · C2 rollout gallery (deck #8 appendix)</p>
     </div>
   </div>
-  <p class="footnote">plan: ~/3d-wam/P-SERIES.md · openpi: github.com/Physical-Intelligence/openpi · GR00T: huggingface.co/nvidia/GR00T-N1.7-3B · curve data: carm_*144790/145521 + ieval jobs 144911/146286</p>
+  <p class="footnote">plan: ~/3d-wam/P-SERIES.md · evidence: ieval 144911/146286 · logs carm_*144790/145521 · openpi · huggingface.co/nvidia/GR00T-N1.7-3B</p>
 </section>
 
 </main>
