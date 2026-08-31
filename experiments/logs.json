@@ -13,13 +13,13 @@
    "now": "Motion history conditioning (C1) is the first arm to beat a zero-flow predictor — ADE 13.82 vs 14.66, object direction cosine 2.9x. Duration and five architectural interventions did not. C2 (history + duration) running."
   },
   "dpp-bmw": {
-   "title": "DPP-BMW",
-   "tagline": "Dexterous Point Policy on the BMW assembly rig — base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).",
+   "title": "BMW & Frontier Demo",
+   "tagline": "Dexterous Point Policy on real human demonstrations, two tasks in one place. BMW assembly rig (4-view: MANO hand pose + VGGT-Omega object points + HaWoR contact) and Frontier Demo logistics (ego-stereo HMD: promptable segmentation + VGGT-Omega stereo depth). No sim, no residual RL.",
    "path": "dpp-bmw/",
    "now": {
-    "text": "bmw_0821 (60-run) processed end-to-end; 7 base policies trained & verified — Exp1 initdest/subtask matrix (3), Exp2 subsample×point-augmentation (4, all subtask, no initdest). Eval/rollout next.",
+    "text": "BMW: 7 base policies trained & verified @100k (left-hand corrected); eval/rollout next. Frontier Demo (logistics): rig confirmed ego-stereo only across v1-v6 — no external view; mask-free object points proven on one episode, hand pose from ego-stereo not yet built.",
     "status": "active",
-    "updated": "2026-08-23"
+    "updated": "2026-09-01"
    }
   },
   "dex-pointwam": {

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>DPP-BMW — real-human-data base policy</title>
-<meta name="description" content="Dexterous Point Policy on the BMW assembly rig: base policies trained on real human demonstrations (4-view MANO hand pose + VGGT-Omega object points + HaWoR contact).">
+<title>BMW &amp; Frontier Demo — real-human-data base policies</title>
+<meta name="description" content="Dexterous Point Policy on real human demonstrations across two tasks: the BMW assembly rig (4-view) and Frontier Demo logistics (ego-stereo HMD).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 
 <header class="top">
   <div class="wrap">
-    <div class="brand">DPP-BMW <b>·</b> BMW assembly rig</div>
+    <div class="brand">BMW &amp; Frontier Demo <b>·</b> assembly rig <b>·</b> logistics HMD</div>
     <nav>
       <a href="#logs">Logs</a>
       <a href="#pipe">Pipeline</a>
@@ -29,17 +29,18 @@
 
 <div class="hero"><div class="wrap">
   <div class="reveal">
-    <div class="eyebrow">Base policy · real human data only</div>
-    <h1>DPP-BMW <span class="hl">→</span> base policy on real human demonstrations</h1>
-    <p class="lede">Raw 4-camera rosbags become a Dexterous Point Policy: 4-view MANO hand pose, single-view HaWoR contact, and VGGT-Omega object points, all in one BA world frame. No sim, no residual RL. Newest batch bmw_0821 (60 runs) processed end-to-end; 7 base policies trained and verified.</p>
+    <div class="eyebrow">Base policies · real human data only · two tasks</div>
+    <h1>BMW &amp; Frontier Demo <span class="hl">→</span> base policies on real human demonstrations</h1>
+    <p class="lede">Two tasks, one pipeline family. <b>BMW assembly</b>: raw 4-camera rosbags become a Dexterous Point Policy — 4-view MANO hand pose, single-view HaWoR contact, VGGT-Omega object points, all in one BA world frame; bmw_0821 (60 runs) processed end-to-end, 7 base policies trained and verified. <b>Frontier Demo logistics</b>: an ego-stereo HMD rig with no external view and no stored depth or intrinsics — class-agnostic promptable segmentation plus self-calibrating stereo depth, metric-anchored on the 66&nbsp;mm baseline. No sim, no residual RL.</p>
     <div class="meta-line">
       <span>Updated 2026-08-25</span><span class="dot"></span>
-      <span>bmw_0821 · 60 runs · jig · ecu · bracket · drill</span>
+      <span>BMW bmw_0821 · 60 runs · jig · ecu · bracket · drill</span>
     </div>
     <div class="chips">
       <span class="chip"><span class="st done">done</span> 60-run data pipeline</span>
       <span class="chip"><span class="st done">done</span> 7 base policies @ 100k</span>
       <span class="chip"><span class="st wip">next</span> eval / rollout</span>
+      <span class="chip"><span class="st wip">next</span> logistics point data (object + hand)</span>
     </div>
   </div>
 </div></div>
@@ -104,7 +105,7 @@
 
 <footer><div class="wrap">
   <div>
-    <div style="color:var(--ink);font-weight:600;font-size:14px">DPP-BMW — base policy on real human data</div>
+    <div style="color:var(--ink);font-weight:600;font-size:14px">BMW &amp; Frontier Demo — base policies on real human data</div>
     <div style="margin-top:6px">Internal page · updated 2026-08-25</div>
   </div>
   <div class="paths">
