@@ -183,7 +183,17 @@ table.num .mute{opacity:.55}
         <tr><td>evaluated on <b>Sharpa</b>, hand</td><td class="good">+0.0146</td><td>[+0.0054, +0.0238]</td></tr>
         <tr><td>evaluated on <b>human</b>, hand</td><td class="good">+0.0141</td><td>[+0.0067, +0.0217]</td></tr>
       </table>
-      <figcaption>Robot data helps the <b>human</b> predictions just as much, and the embodiment gap is unchanged. Co-training is not closing a domain gap — the retargeted hand behaves like more data of the same kind, which is the encouraging reading.</figcaption>
+      <figcaption>At 10k, robot data helps the <b>human</b> predictions just as much and the gap is unchanged — the retargeted hand behaves like more data of the same kind.</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>at 30,000 steps, paired</th><th>Δ cos</th><th>95 % CI</th></tr>
+        <tr><td>i9 vs i5, on <b>Sharpa</b></td><td class="good">+0.0135</td><td>[+0.0025, +0.0246]</td></tr>
+        <tr><td>i9 vs i5, on human</td><td class="mute">−0.0046</td><td>[−0.0124, +0.0034]</td></tr>
+        <tr><td>i5 vs i0, on human</td><td class="good">+0.0274</td><td>[+0.0177, +0.0378]</td></tr>
+        <tr><td>i5 vs i0, on <b>Sharpa</b></td><td>+0.0103</td><td>[−0.0005, +0.0217]</td></tr>
+      </table>
+      <figcaption>By 30k the picture sharpens: <b>10 % co-training buys +0.014 on the robot hand for free</b>, while the human-side data curation transfers only half (+0.027 human vs +0.010 Sharpa) — which is why the strongest human-only model carries the largest gap (−0.032).</figcaption>
     </figure>
   </div>
 </section>
