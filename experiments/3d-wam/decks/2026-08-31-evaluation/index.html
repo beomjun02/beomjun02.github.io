@@ -43,7 +43,8 @@ table.num .mute{opacity:.55}
     <li><b>Found:</b> <code>build_loader</code> gates every sampler on <code>split=="train"</code>, so val walks the chunk index in file order — the first 400 batches are 100&nbsp;% arctic.</li>
     <li><b>Fixed and restated:</b> a stratified six-dataset evaluator, validated to reproduce the old probe digit-for-digit on the old 48 chunks; 18 historical checkpoints rescored.</li>
     <li><b>Settled:</b> nine ablations re-tested with a paired bootstrap — only three were ever distinguishable from their control. Eight new arms this session: all architecture additions null or negative.</li>
-    <li><b>New:</b> a model trained only on human hands keeps <b>79&nbsp;%</b> of its hand direction accuracy on the Sharpa hand, zero-shot, on matched sequences.</li>
+    <li><b>New:</b> a model trained only on human hands keeps <b>79&nbsp;%</b> of its hand direction accuracy on the Sharpa hand, zero-shot; 10&nbsp;% co-training buys +0.014 on the robot at no cost on the human.</li>
+    <li><b>And the base now works:</b> the recommended configuration plus one data decision reaches <b>ADE 7.71 against a 7.97 zero predictor at 50,000 steps</b> — the first model in this project to beat predicting nothing on a real evaluation, winning on four of six datasets.</li>
   </ul>
   <div class="band">
     <figure><img src="assets/xemb_human.gif" alt="C2 rollout, human hand"><figcaption>C2 · human hand (TACO, chunk 33)</figcaption></figure>
