@@ -1,4 +1,4 @@
-# DECK-STYLE — the meeting slide-deck format (2026-08-26 evening: colours sampled from the reference pixels, text caps tightened)
+# DECK-STYLE — the meeting slide-deck format (2026-08-26 evening: colours sampled from the reference pixels, text caps tightened · 2026-08-31 **v4 VIZ-FIRST**: evidence mandatory on every content slide, text caps tightened again — owner: "still too much text; prioritize visualizations — rollouts, tables, graphs — over text")
 
 Deck = the default record for new experiments (README.md). Files: `assets/deck.css` + `deck.js`, template `_template/deck.html`, worked example `_template/deck-example/` (one canonical slide per section — read it instead of the reference PDF). Side-by-side proofs vs the reference pages: `~/3d-wam/ref/compare_v3/` (v3 = this version; `compare/` = the morning version). Reference pages rendered at 110 dpi: `~/3d-wam/ref/refdeck/p01–p15.png`.
 
@@ -39,7 +39,7 @@ Source: T. Kim, lab seminar 2026-08-10 (15 pp, 720×405 pt = 16:9). Structure an
 
 Every deck, in this order (`<!-- SECTION: … -->` names in the markup; worked examples in `_template/deck-example/`):
 1. **title** `s-title` — reference p01 literally: centred block — deck title (bold blue, 1–2 lines) · one plain context line (e.g. "3D-WAM · action item 1.2 · point budget") · bold venue line ("Lab meeting") · date · "Presented by". Nothing else.
-2. **overview** `s-overview` — ONE slide that merges the old TL;DR + Agenda: `<b>[TL;DR]</b>` thesis (one line) + ≤ 4 bullets that say what was DONE and what is to DISCUSS today; 1–2 media filling the band; sources in the footnote. No two-column layout, no separate Agenda slide.
+2. **overview** `s-overview` — ONE slide that merges the old TL;DR + Agenda: `<b>[TL;DR]</b>` thesis (one line) + ≤ 3 bullets that say what was DONE and what is to DISCUSS today; 1–2 media filling the band (a hero visual is mandatory); sources in the footnote. No two-column layout, no separate Agenda slide.
 3. **method** `s-method` — what you did, 1–3 slides titled "Method (1): …", "Method (2): …" (p8–9): thesis + ≤ 3 bullets + 1–2 figures. Optional content types (related work `s-table`, background, data facts) are *variants* of this slide — allowed only in the appendix, not in the main flow.
 4. **results** `s-results` — what you observed, 1–3 slides all titled "Results" (p10–12): `<ol class="agenda">` cumulative numbered sub-agenda, the item shown on this slide `<li class="on">` bold with ≤ 2 one-line sub-bullets, the others light grey; ≤ 2 media fill the band (a ≤ 6-row table counts as one), captions (label first) say what is shown and which parameter varies — never how it looks.
 5. **discussion-actions** `s-discuss` — ONE slide: bold thesis · optional `<p class="subhead">Decided:</p>` one bullet · `<p class="subhead">Discussion:</p>` ≤ 3 numbered ONE-LINE items: bold decision — options → recommendation (who decides) · `<p class="subhead">Action items:</p>` ≤ 4 numbered one-line items with "(id · owner · ETA)". No sub-bullets (2026-08-26 evening). The old Asks and Next slides are folded in here.
@@ -54,16 +54,17 @@ Purpose (owner): prevent content/text overload in experiment records so attentio
 3. **Budget** — 5–10 min ≈ 6–8 main slides, ~1 min each; DISCUSS items get the most time.
 4. **Order** — the fixed structure of §3: Title → Overview → Method → Results → Discussion & Action items → appendix.  5. Overview and Discussion & Action items are **mandatory**.
 
-**Hard caps** (owner, 2026-08-26 evening: "too much text in slides — only essentials"; over a cap → cut TEXT or move it to the appendix, never shrink the font):
+**Hard caps** (owner, 2026-08-26 evening: "too much text in slides — only essentials"; tightened 2026-08-31 **v4**: "still too much text — prioritize visualizations (rollouts, tables, graphs) over text"; over a cap → cut TEXT or move it to the appendix, never shrink the font; when a slide is over budget, bullets go before figures):
 - main deck **≤ 8 slides** (title + overview + ≤ 3 method + ≤ 3 results + discussion)
-- **one** thesis sentence per slide, **≤ 14 words**, ONE line at stage width
-- **≤ 4 bullets** per slide, each **≤ 8 words** (word = token containing a letter or digit; "·", "→", "=" do not count) — noun phrases or clipped clauses, no trailing period
+- **one** thesis sentence per slide, **≤ 12 words**, ONE line at stage width
+- **≤ 3 bullets** per slide, each **≤ 6 words** (word = token containing a letter or digit; "·", "→", "=" do not count) — noun phrases or clipped clauses, no trailing period
 - **no sub-bullets on main slides** except the Results agenda (`ol.agenda > li.on > ul`, ≤ 2 items, each one line); Discussion and Action items are **one line each** (bold lead + options → recommendation + "(owner)" / "(id · owner · ETA)")
-- **≤ 2 media per slide** (a table counts as one); appendix slides may hold 3
+- **evidence is the slide: 1–4 evidence items per content slide** (rollout GIF > graph > table; a table counts as one item), **≥ 1 mandatory on every content slide** — a slide with no visual gets one made, or gets cut; appendix slides uncapped
+- media priority when trimming: keep the rollout, then the graph, then the table — text goes first
 - **every measured number lives in a figure or in a table of ≤ 6 body rows (+ 1 total row)** — never in prose; a thesis may name a setting (N = 2048, 15 Hz) and an agenda sub-bullet may carry one number
 - title slide = exactly title · context · venue · date · presenter · Discussion **≤ 3** items · Action items **≤ 4**
 - everything else → appendix or DROPPED; the last appendix slide carries a **cut list** (`<p class="cut">`, wraps — never truncated) so nothing is silently lost
-**Pre-publish check** (run it programmatically — `wc`-style word counts per `.thesis` / `li`, media per `.band`, rows per table): main slides ≤ 8 · thesis ≤ 14 words and one line at 1440 px (deck.css clips a wrapping thesis with an ellipsis — shorten the text) · bullets ≤ 8 words, none wraps · no `li > ul` on main slides outside `ol.agenda` · ≤ 2 media per band · tables ≤ 6 body rows · numbers not in prose · title slide minimal · Discussion ≤ 3, actions ≤ 4 · cut list present · no image judged in text · screenshot every slide (Playwright, 1440×810, light) and compare a title, an overview and a results slide side by side with p01 / p02 / p10 before publishing.
+**Pre-publish check** (run it programmatically — `wc`-style word counts per `.thesis` / `li`, media per `.band`, rows per table): main slides ≤ 8 · thesis ≤ 12 words and one line at 1440 px (deck.css clips a wrapping thesis with an ellipsis — shorten the text) · bullets ≤ 6 words, none wraps · no `li > ul` on main slides outside `ol.agenda` · 1–4 media per band and ≥ 1 on every content slide · tables ≤ 6 body rows · numbers not in prose · title slide minimal · Discussion ≤ 3, actions ≤ 4 · cut list present · no image judged in text · screenshot every slide (Playwright, 1440×810, light) and compare a title, an overview and a results slide side by side with p01 / p02 / p10 before publishing.
 
 ## 5. Keys
 → ↓ Space PgDn Enter (l/j) next step or slide · ← ↑ PgUp Backspace (h/k) back · Home/End · `o`/Esc overview · `f` fullscreen · `d` theme (the only way — there is no button) · `?` help · swipe · `#/n`, `#/n/s` deep links · ⌘P → PDF (one 16:9 page per slide, light theme forced while printing). Nothing is painted on the stage except the slide number bottom-right.

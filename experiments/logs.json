@@ -46,6 +46,16 @@
  },
  "logs": [
   {
+   "project": "3d-wam",
+   "date": "2026-08-31",
+   "slug": "scaling-plan",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-08-31",
+   "title": "Faster, then bigger — the p-series: throughput, batch geometry, a 320M expert (deck #9)",
+   "tldr": "Deck #9: training was already bf16 — but the A100 runs at ~9% MFU on micro-batch 16; p1 recovers 2–2.5× (batch 32×1, torch.compile, fused optimizer). Accumulation adds no speed on one GPU — effective 64 is the ceiling at 320M. p4 scales the video-DiT to π0.5 action-expert dims (d1024×18L ≈ 320M), 5 epochs of the no-hot3d basis ≈ 11–14 h on the h100 partition. 120M stays the screening model; i0/i5 land 110k overnight."
+  },
+  {
    "project": "dex-pointwam",
    "date": "2026-08-31",
    "slug": "dataset-usage-guide",
