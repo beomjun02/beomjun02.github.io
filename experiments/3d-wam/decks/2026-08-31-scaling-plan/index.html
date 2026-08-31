@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
 <style>
-table.num{border-collapse:collapse;font-size:.8em;width:100%}
-table.num th,table.num td{border-bottom:1px solid var(--rule,#8884);padding:.18em .5em;text-align:right}
+table.num{border-collapse:collapse;font-size:.95em;width:100%}
+table.num th,table.num td{border-bottom:1px solid var(--rule,#8884);padding:.3em .55em;text-align:right}
 table.num th:first-child,table.num td:first-child{text-align:left}
 table.num .good{color:#1a7f37;font-weight:600}
 table.num .bad{color:#b3261e;font-weight:600}
@@ -61,6 +61,7 @@ table.num .mute{opacity:.55}
       <ul><li>crossed zero at 50k</li>
           <li>110k lands ~06:00 KST</li></ul></li>
     <li>Cross-embodiment status</li>
+    <li>Rollout gallery: C2 vs i5</li>
   </ol>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_taco.gif" alt="i5 rollout on taco">
@@ -99,6 +100,7 @@ table.num .mute{opacity:.55}
     <li class="on">Cross-embodiment status
       <ul><li>object + hand motion transfer</li>
           <li>hand detail noised → p5</li></ul></li>
+    <li>Rollout gallery: C2 vs i5</li>
   </ol>
   <div class="band">
     <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_human.gif" alt="C2 human hand rollout">
@@ -148,15 +150,6 @@ table.num .mute{opacity:.55}
     </figure>
     <figure>
       <table class="num">
-        <tr><th>training config</th><th>i5 (120M)</th><th>p4/p5 (320M)</th></tr>
-        <tr><td>batch × accum</td><td>16 × 2</td><td><b>64 × 1</b></td></tr>
-        <tr><td>lr / warmup</td><td>3e-4 / 300</td><td>3e-4 / 2,000</td></tr>
-        <tr><td>steps = epochs</td><td>110k = 6.1</td><td><b>45k = 5.0</b></td></tr>
-      </table>
-      <figcaption>one recipe change per arm; lr width- and batch-scaled from the measured anchor</figcaption>
-    </figure>
-    <figure>
-      <table class="num">
         <tr><th>p1 lever (0.95 s/step today)</th><th>gain</th></tr>
         <tr><td>batch 32×1 — same eff. 32, identical gradient</td><td>1.3–1.7×</td></tr>
         <tr><td>torch.compile + fused AdamW + sync fix</td><td>1.4–2×</td></tr>
@@ -173,6 +166,66 @@ table.num .mute{opacity:.55}
       <figcaption>sinfo 08-31 — dual-target h100,sjw_alinlab; evals pre-queued on debug with --begin</figcaption>
     </figure>
   </div>
+</section>
+
+<!-- SECTION: method (2) · full training config -->
+<section class="slide s-method">
+  <h2>Method (2): Training config — every knob</h2>
+  <p class="thesis">Every knob on one slide; one change per arm.</p>
+  <ul>
+    <li>LR width- and batch-scaled</li>
+    <li>Warmup 2k for 320M</li>
+    <li>Same optimizer family throughout</li>
+  </ul>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>model</th><th>i5 / i0 (now)</th><th>p4 / p5</th></tr>
+        <tr><td>params</td><td>119.95M</td><td><b>~320M</b></td></tr>
+        <tr><td>d × layers</td><td>768 × 12</td><td><b>1024 × 18</b></td></tr>
+        <tr><td>heads × head-dim</td><td>12 × 64</td><td>16 × 64</td></tr>
+        <tr><td>MLP dim</td><td>3072</td><td>4096</td></tr>
+        <tr><td>tokens / sample</td><td>1,280 + history 2</td><td>same</td></tr>
+      </table>
+      <figcaption>architecture otherwise frozen: k=8 patches, full attention, v-param, time-RoPE, no aux losses</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>optimization</th><th>i5 (120M)</th><th>p2</th><th>p4 / p5 (320M)</th></tr>
+        <tr><td>effective batch (micro × accum)</td><td>32 (16×2)</td><td>64 (64×1)</td><td><b>64 (64×1)</b></td></tr>
+        <tr><td>peak LR</td><td>3e-4</td><td>4.5e-4</td><td><b>3e-4</b></td></tr>
+        <tr><td>warmup steps</td><td>300</td><td>150</td><td><b>2,000</b></td></tr>
+        <tr><td>target steps = epochs</td><td>110k = 6.1</td><td>55k = 6.1</td><td><b>45k = 5.0</b></td></tr>
+        <tr><td>wd · EMA · clip</td><td colspan="3">0.05 · 0.999 · 1.0 (all arms)</td></tr>
+        <tr><td>schedule · precision</td><td colspan="3">cosine → 0.1 · bf16 autocast (+ compile on p-arms)</td></tr>
+      </table>
+      <figcaption>AdamW(0.9, 0.95) throughout; p4/p5 LR = 3e-4 anchor × (768/1024) width × √2 batch ≈ 3.2e-4, rounded down</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">configs: code/configs/{i0_ctl,p1_throughput,p2_b64,p4_320m,p5_sharpa10}.yaml · data: 577,948 no-hot3d chunks (p1/p2 keep all six datasets = i0 basis)</p>
+</section>
+
+<!-- SECTION: results (3) · rollout gallery C2 vs i5 -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Current best: i5 (hot3d excluded)</li>
+    <li>Cross-embodiment status</li>
+    <li class="on">Rollout gallery: C2 vs i5
+      <ul><li>same datasets, side by side</li>
+          <li>110k renders land 08:00</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/c2_taco.gif" alt="C2 109k rollout on taco">
+      <figcaption>C2 @109k · taco</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_taco.gif" alt="i5 20k rollout on taco">
+      <figcaption>i5 @20k · taco — freshest render; refreshes to 110k at 08:00</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/c2_oakink2.gif" alt="C2 109k rollout on oakink2">
+      <figcaption>C2 @109k · oakink2</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_oakink2.gif" alt="i5 20k rollout on oakink2">
+      <figcaption>i5 @20k · oakink2</figcaption></figure>
+  </div>
+  <p class="footnote">arctic + dexycb pairs in the appendix · render job 147280 (--begin 06:50) refreshes all clips at i5@110k before the meeting</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -192,11 +245,85 @@ table.num .mute{opacity:.55}
     <li>100k/110k evals + 5× multi-chunk rollouts, teacher-forced & autoregressive (debug, --begin 04:00/06:45 · by 08:30)</li>
     <li>Pair-clip eye-verification — standing since deck #8 (owner)</li>
   </ol>
+  <div class="band">
+    <figure>
+      <svg viewBox="0 0 460 190" role="img" aria-label="Tonight's job chain" style="width:100%;height:auto">
+        <defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--mut,#595959)"/></marker></defs>
+        <g font-family="inherit" font-size="12" fill="var(--txt,#000)">
+          <rect x="6" y="10" width="118" height="64" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="65" y="28" text-anchor="middle" font-weight="700">tonight 19:30</text>
+          <text x="65" y="45" text-anchor="middle">p1 5k · p2 5k</text>
+          <text x="65" y="61" text-anchor="middle">p4 smoke 20′</text>
+          <rect x="176" y="10" width="128" height="64" rx="6" fill="var(--acc-bg,#e8f1fb)" stroke="var(--acc-line,#9cc)"/>
+          <text x="240" y="28" text-anchor="middle" font-weight="700" fill="var(--acc,#0070C0)">overnight · h100</text>
+          <text x="240" y="45" text-anchor="middle">p4 320M · 45k</text>
+          <text x="240" y="61" text-anchor="middle">p5 +10 % Sharpa</text>
+          <rect x="352" y="10" width="102" height="64" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="403" y="28" text-anchor="middle" font-weight="700">09:00</text>
+          <text x="403" y="45" text-anchor="middle">meeting:</text>
+          <text x="403" y="61" text-anchor="middle">all results in</text>
+          <line x1="124" y1="42" x2="174" y2="42" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <text x="149" y="34" text-anchor="middle" font-size="10" fill="var(--mut,#595959)">afterok</text>
+          <line x1="304" y1="42" x2="350" y2="42" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <rect x="6" y="106" width="200" height="64" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="106" y="124" text-anchor="middle" font-weight="700">self-firing (--begin) · debug</text>
+          <text x="106" y="141" text-anchor="middle">04:00 ieval i5@100k</text>
+          <text x="106" y="157" text-anchor="middle">06:45 110k harvest · 06:50 renders</text>
+          <rect x="258" y="106" width="196" height="64" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="356" y="124" text-anchor="middle" font-weight="700">running since last night</text>
+          <text x="356" y="141" text-anchor="middle">i5 → 110k ~06:00</text>
+          <text x="356" y="157" text-anchor="middle">i0 → 110k ~05:50</text>
+          <line x1="206" y1="138" x2="256" y2="138" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar)"/>
+        </g>
+      </svg>
+      <figcaption>tonight's chain — jobs 147273–147280: SLURM dependencies and --begin timers only, no watchers</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 460 190" role="img" aria-label="GR-1 closed loop pipeline" style="width:100%;height:auto">
+        <defs><marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--mut,#595959)"/></marker></defs>
+        <g font-family="inherit" font-size="12" fill="var(--txt,#000)">
+          <text x="230" y="20" text-anchor="middle" font-weight="700" fill="var(--acc,#0070C0)">next phase · closed loop on GR-1 tabletop (zero-shot, unseen task)</text>
+          <rect x="6" y="38" width="104" height="56" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="58" y="58" text-anchor="middle">sim state:</text>
+          <text x="58" y="74" text-anchor="middle">≤2 objects + hand</text>
+          <text x="58" y="88" text-anchor="middle">512 pts each</text>
+          <rect x="142" y="38" width="90" height="56" rx="6" fill="var(--acc-bg,#e8f1fb)" stroke="var(--acc-line,#9cc)"/>
+          <text x="187" y="62" text-anchor="middle" font-weight="700">320M DiT</text>
+          <text x="187" y="80" text-anchor="middle">+ instruction</text>
+          <rect x="264" y="38" width="84" height="56" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="306" y="62" text-anchor="middle">hand point</text>
+          <text x="306" y="80" text-anchor="middle">flow (1 s)</text>
+          <rect x="380" y="38" width="74" height="56" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="417" y="56" text-anchor="middle">Procrustes</text>
+          <text x="417" y="72" text-anchor="middle">+ IK →</text>
+          <text x="417" y="88" text-anchor="middle">joints</text>
+          <line x1="110" y1="66" x2="140" y2="66" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <line x1="232" y1="66" x2="262" y2="66" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <line x1="348" y1="66" x2="378" y2="66" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <rect x="142" y="122" width="212" height="48" rx="6" fill="var(--panel,#f5f7fa)" stroke="var(--line,#ccd)"/>
+          <text x="248" y="142" text-anchor="middle" font-weight="700">Isaac · GR-1 tabletop steps 1 s</text>
+          <text x="248" y="158" text-anchor="middle">re-observe → next chunk</text>
+          <path d="M 417 94 L 417 146 L 356 146" fill="none" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <path d="M 140 146 L 58 146 L 58 96" fill="none" stroke="var(--mut,#595959)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <text x="20" y="128" font-size="10" fill="var(--mut,#595959)">closed loop</text>
+        </g>
+      </svg>
+      <figcaption>the decode IS the retargeter — same pipeline, any hand; open decision: condition on GR-1's own points vs cross-decode</figcaption>
+    </figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/xemb_sharpa.gif" alt="Sharpa zero-shot transfer clip">
+      <figcaption>what p5 sharpens — Sharpa zero-shot today: motion right, finger detail noisy</figcaption></figure>
+  </div>
 </section>
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix · tonight's schedule · p4 config · corrections · cut list</h2>
+  <h2>Appendix · remaining rollout pairs · tonight's schedule · corrections · cut list</h2>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/c2_arctic.gif" alt="C2 arctic"><figcaption>C2 @109k · arctic</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_arctic.gif" alt="i5 arctic"><figcaption>i5 @20k · arctic</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/c2_dexycb.gif" alt="C2 dexycb"><figcaption>C2 @109k · dexycb</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-31-evaluation/assets/i5_dexycb.gif" alt="i5 dexycb"><figcaption>i5 @20k · dexycb</figcaption></figure>
+  </div>
   <div class="cols">
     <div>
       <dl class="kv">
