@@ -118,5 +118,39 @@ caption — a slide about an arena we have never run in must show that arena. Ta
 Pair it with a **components table** (one row per thing still to build, state + ETA) where anything
 with no precedent in our pipeline is a **risk row, not an ETA**.
 
+## 4c. Producing a deck without burning the session (process, 2026-09-01)
+
+Owner, after a deck rebuild ate most of a context window: **deck production is delegated work, not
+main-thread work.** Layout iteration is a slow loop — edit, render, look, trim, repeat — and every
+screenshot costs context that the actual research needs.
+
+1. **Delegate the build to a subagent.** Hand it: the numbers (as a table), the slide order, the
+   caps in §4/§4b, and the asset paths. Ask it to return the finished file plus the screenshot
+   check below. Keep the *content decisions* on the main thread; give away the pixel-fitting.
+2. **Start from a known-good layout, do not re-derive one.** The recipes below are measured to fit
+   at 1440x810; picking one up front avoids the trim-and-retry loop entirely.
+3. **Verify with a screenshot pass, always.** Overflow is invisible in the markup: a caption that
+   collides with the ETA strip, a table that runs off the right edge, a grid row pushed off the
+   bottom. Serve the repo and shoot each slide:
+   `python3 -m http.server 8931` then
+   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+     --hide-scrollbars --virtual-time-budget=4000 --screenshot=/tmp/sN.png --window-size=1440,810 \
+     "http://localhost:8931/<deck path>/index.html#/N"`
+   A deck has never yet survived its first screenshot pass unchanged.
+
+**Layout recipes that fit (measured):**
+
+| slide kind | recipe |
+|---|---|
+| workstream results | agenda (4 items) + band of **2 tables** + `p.etabar` + 1-line footnote. Three tables only WITHOUT an agenda list. |
+| arena / benchmark | thesis, NO bullets (they duplicate the tables) + a full-width image band at `flex:0 0 76%` + band of 2 tables + etabar |
+| pipeline + components | band of **3** (diagram, components, risks) + a second band for placeholder tiles |
+| viz grid, 3 columns | at most **2 clip rows + 1 placeholder row**, `.vizgrid img{max-height:11em;object-fit:contain}`, captions <= 2 lines, no etabar (its dates live on the workstream slide) |
+| closing summary | band of 2 tables + a **full-width** band for the decisions table (long recommendation text needs the whole width) + etabar |
+
+**Trim order when a slide overflows** (apply in this order, stop when it fits): bullets that restate
+a table -> caption length -> a table row -> an evidence item moved to the appendix -> split into
+two bands. Never shrink the font.
+
 ## 5. Keys
 → ↓ Space PgDn Enter (l/j) next step or slide · ← ↑ PgUp Backspace (h/k) back · Home/End · `o`/Esc overview · `f` fullscreen · `d` theme (the only way — there is no button) · `?` help · swipe · `#/n`, `#/n/s` deep links · ⌘P → PDF (one 16:9 page per slide, light theme forced while printing). Nothing is painted on the stage except the slide number bottom-right.
