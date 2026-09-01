@@ -1,4 +1,4 @@
-# DECK-STYLE — the meeting slide-deck format (2026-08-26 evening: colours sampled from the reference pixels, text caps tightened · 2026-08-31 **v4 VIZ-FIRST**: evidence mandatory on every content slide, text caps tightened again — owner: "still too much text; prioritize visualizations — rollouts, tables, graphs — over text" · 2026-09-01 **v5 WORKSTREAM-ORDERED**: parallel workstreams each get setup → results → ETA, pending results become placeholder rows with an ETA, every training visual is labelled with its comparable unit, pure-viz slides carry no interpretation — see §4b)
+# DECK-STYLE — the meeting slide-deck format (2026-08-26 evening: colours sampled from the reference pixels, text caps tightened · 2026-08-31 **v4 VIZ-FIRST**: evidence mandatory on every content slide, text caps tightened again — owner: "still too much text; prioritize visualizations — rollouts, tables, graphs — over text" · 2026-09-01 **v5 WORKSTREAM-ORDERED**: a block per workstream (setup → results → ETA), dated placeholders for pending results *and* pending visuals, effective-epoch labelling, un-narrated viz grids outside the slide cap, **ETA as its own strip stating hours not just dates**, closing summary slide = running / due / your-decisions, external arenas introduced from source with their own image — see §4b; §2 compacted the same day)
 
 Deck = the default record for new experiments (README.md). Files: `assets/deck.css` + `deck.js`, template `_template/deck.html`, worked example `_template/deck-example/` (one canonical slide per section — read it instead of the reference PDF). Side-by-side proofs vs the reference pages: `~/3d-wam/ref/compare_v3/` (v3 = this version; `compare/` = the morning version). Reference pages rendered at 110 dpi: `~/3d-wam/ref/refdeck/p01–p15.png`.
 
@@ -25,16 +25,13 @@ Source: T. Kim, lab seminar 2026-08-10 (15 pp, 720×405 pt = 16:9). Structure an
 
 **Adaptation to the site tokens** — light = the PDF, exactly: `--title:#0070C0`, `--ink:#000`, `--cap:#595959`, `--dim:#B3B3B3`, `--link:#0097A7`, `--stage:#FFFFFF` (plain grey links inside footnotes). **Light is the default in every viewer: the OS dark preference is ignored and the site's theme choice does not leak in** (deck.js keeps its own `deck-theme` key); dark exists only on an explicit `d` press and maps the roles onto the site's dark tokens (#4CC2FF title, #E6EBF2 text, #98A4B6 captions, #6B788C dimmed, #121722 stage). deck.css also PINS the site tokens that inline-SVG figures use (`--txt --mut --mut2 --acc --line --panel --panel2 --acc-bg --acc-line`) to the light palette inside `.deck`, so a figure never inherits the site theme — that was the 2026-08-26 "colours don't match" bug. **Font stack** `Calibri, Carlito, "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif`; deck.css `@import`s Source Sans 3 (400/600/700 + italic) from Google Fonts so Linux / no-Office machines get a Calibri-class face — the one-line thesis test is run with that fallback. `--mono` only for paths, appendix, code.
 
-## 2. Secondary sources — mechanics, and the rules the reference confirms
+## 2. Secondary sources — compacted (2026-09-01); each line = source → the rule it gave us
 
-- **Alley, assertion-evidence** (assertion-evidence.com; Garner & Alley 2013, writing.engr.psu.edu/ae_comprehension.pdf) — headline = a sentence stating the slide's assertion; body = visual evidence, not bullets; 110 students: better comprehension, fewer misconceptions, lower reported cognitive load, stronger recall a week later. → our **thesis line is the assertion**; the reference's topic title stays above it because that is how this lab reads decks.
-- **Doumont, *Trees, maps, and theorems*** (principiae.be/X0100.php) — one message per slide, stated as a full sentence on ≤ 2 lines, top-left; remove everything that does not carry the message. → thesis ≤ 2 lines; no decoration, gradients, logos.
-- **Fatahalian, *Tips for Giving Clear Talks*** (graphics.stanford.edu/~kayvonf/misc/cleartalktips.pdf) — "One point per slide — and the point is the title"; "Show, don't tell"; explain every results graph: axes first, then the one point; "read your slide titles in thumbnail view"; end on a positive note. → the `o` overview grid is the thumbnail test; captions name what varies.
-- **Peyton Jones, *How to give a great research talk*** (microsoft.com/en-us/research/…/How-to-give-a-great-research-talk.pdf) — motivation 20 % / key idea 80 % / "there is no 3"; "you have 2 minutes"; one key idea ("if you remember nothing else, remember this"); examples over the general case; no outline slide; finish on time. → verdict on slide 2, main deck ≤ 8 slides; the Overview bullets are a triage list (done | discuss), not a table of contents.
-- **Tufte, *The Cognitive Style of PowerPoint*** (Beautiful Evidence, 2006) — PP graphics average ≈ 12 numbers vs > 1000 in Science; "presenter-oriented, not content-oriented". → tables carry real numbers; the appendix keeps the dense facts a Log used to hold.
-- **Butterick, Practical Typography → Presentations** (practicaltypography.com/presentations.html) — one base point size for every slide, even one-liners; avoid pure black on pure white. **speaking.io** (Holman, /design/typography) — "remove words, make it bigger"; high contrast; clean sans. → one fixed type scale per slide class; `--txt` not #000.
-- **Mechanics** — reveal.js (revealjs.com/presentation-size, /pdf-export): a fixed canvas (960×700 default) scaled uniformly and letterboxed; ← → Space, O/Esc overview, F fullscreen, ?, hash `#/h/v`; PDF via `?print-pdf` + Chrome landscape / no margins / background graphics. Slidev (sli.dev/guide/ui): `o` overview, `f` fullscreen, `d` dark, `g` goto. → keys in §5; we print with no special URL (`@page` 320×180 mm, one slide per page).
-
+- **Alley, assertion-evidence** (assertion-evidence.com; Garner & Alley 2013) — headline states the assertion, body is visual evidence → **the thesis line IS the assertion**; the reference's topic title stays above it because that is how this lab reads decks.
+- **Doumont, *Trees, maps, and theorems*** · **Fatahalian, *Clear Talks*** · **Peyton Jones, *Great research talk*** — one message per slide stated as a sentence; "show, don't tell"; explain a graph's axes before its point; motivation 20 / key idea 80, "there is no 3"; no outline slide → thesis ≤ 2 lines · captions name what varies · main deck ≤ 8 content slides · Overview bullets are a triage list (done | discuss), never a table of contents · the `o` grid is the thumbnail test.
+- **Tufte, *Cognitive Style of PowerPoint*** — PP graphics carry ~12 numbers where Science carries >1000 → tables carry real numbers; the appendix holds what a Log used to.
+- **Butterick** (practicaltypography.com/presentations.html) · **speaking.io** — one base type size per slide even for one-liners; "remove words, make it bigger"; avoid pure black on pure white → one fixed scale per slide class.
+- **Mechanics** — reveal.js (fixed canvas, scaled+letterboxed; ← → Space, O overview, F fullscreen, `?print-pdf`) and Slidev (`o`/`f`/`d`/`g`) → our keys in §5; we print with no special URL (`@page` 320×180 mm, one slide per page).
 ## 3. Fixed deck structure — one deck = one question (owner's rule, 2026-08-26)
 
 Every deck, in this order (`<!-- SECTION: … -->` names in the markup; worked examples in `_template/deck-example/`):
@@ -64,58 +61,62 @@ Purpose (owner): prevent content/text overload in experiment records so attentio
 - **every measured number lives in a figure or in a table of ≤ 6 body rows (+ 1 total row)** — never in prose; a thesis may name a setting (N = 2048, 15 Hz) and an agenda sub-bullet may carry one number
 - title slide = exactly title · context · venue · date · presenter · Discussion **≤ 3** items · Action items **≤ 4**
 - everything else → appendix or DROPPED; the last appendix slide carries a **cut list** (`<p class="cut">`, wraps — never truncated) so nothing is silently lost
-**Pre-publish check** (run it programmatically — `wc`-style word counts per `.thesis` / `li`, media per `.band`, rows per table): main slides ≤ 8 **excluding viz-grid slides (§4b D)** · thesis ≤ 12 words and one line at 1440 px (deck.css clips a wrapping thesis with an ellipsis — shorten the text) · bullets ≤ 6 words, none wraps · no `li > ul` on main slides outside `ol.agenda` · 1–4 media per band and ≥ 1 on every content slide · tables ≤ 6 body rows · numbers not in prose · title slide minimal · Discussion ≤ 3, actions ≤ 4 · cut list present · no image judged in text · **every `src="assets/…"` resolves and every asset in the folder is referenced or deliberately kept** · **v5: each workstream block has setup + results + ETA; every pending result is a `tr.pend` row with a date; every training clip caption carries model + step + effective epoch + mode + horizon + task; no two evaluation bases inside one table; viz-grid slides contain no verdict text** · screenshot every slide (Playwright, 1440×810, light) and compare a title, an overview and a results slide side by side with p01 / p02 / p10 before publishing.
+**Pre-publish check** (run it programmatically — `wc`-style word counts per `.thesis` / `li`, media per `.band`, rows per table): main slides ≤ 8 **excluding viz-grid slides (§4b D)** · thesis ≤ 12 words and one line at 1440 px (deck.css clips a wrapping thesis with an ellipsis — shorten the text) · bullets ≤ 6 words, none wraps · no `li > ul` on main slides outside `ol.agenda` · 1–4 media per band and ≥ 1 on every content slide · tables ≤ 6 body rows · numbers not in prose · title slide minimal · Discussion ≤ 3, actions ≤ 4 · cut list present · no image judged in text · **every `src="assets/…"` resolves and every asset in the folder is referenced or deliberately kept** · **v5: each workstream block has setup + results + an `p.etabar` ETA strip quoting HOURS as well as a date; every pending result is a `tr.pend` row with a date and every pending visual a `figure.phold` tile; every training clip caption carries model + step + effective epoch + mode + horizon + task; no two evaluation bases inside one table; viz-grid slides contain no verdict text; the last main slide is the running / due / your-decisions summary; an external-arena slide shows that arena's own credited image** · screenshot every slide (Playwright, 1440×810, light) and compare a title, an overview and a results slide side by side with p01 / p02 / p10 before publishing.
 
-## 4b. v5 — workstream ordering, fair units, honest placeholders (owner, 2026-09-01)
+## 4b. v5 — workstreams, fair units, honest placeholders, ETA (owner, 2026-09-01)
 
-All of §3 and §4 stays in force; v5 governs decks that report **several workstreams running in
-parallel** (the common case once more than one experiment is live) and how visuals are labelled.
+§3 and §4 stay in force. v5 governs decks reporting **several workstreams in parallel** (the normal
+case once more than one experiment is live), how visuals are labelled, and how time is stated.
 
-**A. Order by workstream, not by chronology.** When the deck covers N parallel lines of work, the
-main flow is one block per workstream, in the owner's stated priority order, and **each block
-carries setup → results → ETA** (three tables side by side in the band is the working layout:
-*setup* = the one-variable config, *results* = measured rows, *ETA* = when the missing rows land).
-Title → Overview → workstream blocks → Discussion & Action items → appendix is the v5 skeleton;
-the Results-agenda stepper (§3.4) numbers the workstreams so the reader always knows which block
-they are in. The old "campaign chronology" ordering (what happened first) is **superseded** — it
-buries the live decisions behind finished work.
+**A. Order by workstream, not by chronology.** One block per workstream in the owner's priority
+order, each carrying **setup → results → ETA**. Title → Overview → workstream blocks → closing
+summary → appendix. The Results-agenda stepper (§3.4) numbers the workstreams. Campaign chronology
+as an ordering is **superseded** — it buries live decisions behind finished work.
 
-**B. Not-yet results are shown, never omitted.** Every workstream block lists its pending results
-as explicit placeholder rows — `<tr class="pend">` — each with an **ETA** and, where the number has
-a target to beat, that target in the caption. A workstream with no results yet still gets its block,
-its setup and its ETA. Rationale: an absent row reads as "not thought about"; a placeholder with a
-date reads as a plan, and it is what the supervisor actually needs in order to schedule.
+**B. Not-yet results are shown, never omitted.** Pending results are explicit `tr.pend` rows with a
+date, and the caption names the target the number must beat. A workstream with no results yet still
+gets its block, its setup and its ETA. An absent row reads as "not thought about".
 
-**C. Every training visual and results row carries its comparable unit.** Steps are **not**
-comparable across configurations: a 320M step at effective batch 256 carries 8× the samples of a
-120M step at 32, and corpora differ (curated 577,948 chunks vs uncurated 848,622). So label
-**effective epochs = samples ÷ corpus** (samples = steps × effective batch) on every clip caption,
-every axis and every results row, and name the corpus. The general rule: **when two things are
-compared, the axis is the fair one, not the convenient one** — and if the fair axis reveals that a
-previous claim rested on the convenient one, that correction goes in the appendix on the record.
-The same discipline applies to evaluation bases: **never mix two bases in one comparison**, and name
-the basis (with its own baseline) in the caption or footnote wherever a number appears.
+**C. Every visual and results row carries its comparable unit.** Steps are **not** comparable across
+configs (a 320M step at batch 256 = 8× the samples of a 120M step at 32; corpora differ too), so
+label **effective epochs = steps × effective batch ÷ corpus** and name the corpus. General rule:
+**when two things are compared, the axis is the fair one, not the convenient one** — and if the fair
+axis breaks an earlier claim, that correction goes in the appendix on the record. Likewise **never mix
+two evaluation bases in one table**; name the basis and its own baseline wherever a number appears.
 
-**D. Visualisation-grid slides are unlimited and un-narrated.** Grids of clips/figures may be added
-as their own slides **beyond the ≤ 8 content-slide cap** (owner, 2026-09-01: "if visualizations are
-too few to fit, freely add separate slides that contain a grid of visualizations") — they are
-evidence, not content, and they belong in the MAIN flow next to the workstream they serve, not in
-the appendix. On such a slide there is **no interpretation, no verdict, no opinion** — only the
-grid plus captions. Each caption states, in this order: **model · training step · effective epoch ·
-mode (e.g. teacher-forced vs self-predicted) · horizon or chunk length · dataset, episode/chunk id,
-task text**, and the per-item metric if one exists. Comparisons are made by *construction* — same
-chunk id, same camera, same seed across rows — and the footnote says so. A caption may not say how
-something looks; the owner judges the picture (see the standing rule that owners verify embodied
-outputs).
+**D. Visualisation grids are unlimited, un-narrated, and outside the ≤ 8 cap.** Grids of clips or
+figures get their own slides in the MAIN flow beside the workstream they serve (owner: "freely add
+separate slides that contain a grid of visualizations"). **No interpretation, no verdict** — only the
+grid and its captions. Each caption states: **model · training step · effective epoch · mode ·
+horizon/chunk · dataset, episode or chunk id, task text**, plus the per-item metric if one exists.
+Comparisons are made by *construction* (same chunk id, camera, seed) and the footnote says so. A
+caption never says how something looks — the owner judges pictures.
 
-**E. An external benchmark is introduced from its source, in one slide.** Before proposing a claim
-against someone else's benchmark, state, fetched from the repo/paper and not from memory: number of
-tasks and their split by type · demonstrations per task · simulator/engine · embodiment id ·
-episode budget and eval command verbatim · **published baseline numbers, with the row that is the
-honest comparison for OUR claim marked** (a zero-shot claim compares against their zero-shot row,
-never their post-trained one). The full task list goes to the appendix. Pair it with a
-**components table** — one row per thing still to build, with state and ETA — and mark any component
-with no precedent in our pipeline as a risk row rather than an ETA.
+**E. Pending visuals get a placeholder tile.** A figure that does not exist yet is a dashed
+`figure.phold > .pbox` reading "WILL UPDATE", what it will show (model · target epoch · same chunk),
+and its caption gives the date and the hours. Never leave the slot out and never quietly re-use an
+older clip in its place.
+
+**F. ETA is its own section — never a column inside the results table.** Each workstream slide ends
+with an `p.etabar` strip below the band (accent rule, panel background), and it states **hours of
+work as well as the clock time**: "+28.3 h compute → Wed 09-02 ~22:45". Hours are what makes an ETA
+checkable; a bare date hides whether a slip is minutes or a day. Unestimated work is labelled
+**unestimated** rather than given an invented number.
+
+**G. The closing slide is the summary.** Last main slide = three tables: **what is running** (current
+progress, target, compute left, landing time) · **results due that need no input** (hours + when) ·
+**decisions the owner must make** (deadline + my recommendation), plus an "ETA at a glance" strip.
+It replaces a generic Discussion slide: the owner's question is always "what is running, when does it
+land, what do you need from me".
+
+**H. An external arena/benchmark gets introduced from its source, with its own picture.** State,
+fetched and not remembered: tasks + split by type · demos per task · simulator/engine · embodiment id
+· episode budget · eval command verbatim · **published baselines with the row that honestly matches
+OUR claim marked** (a zero-shot claim compares to their zero-shot row, never their post-trained one).
+Include **the benchmark's own figure or scene image** from its repo/project page, credited in the
+caption — a slide about an arena we have never run in must show that arena. Task list → appendix.
+Pair it with a **components table** (one row per thing still to build, state + ETA) where anything
+with no precedent in our pipeline is a **risk row, not an ETA**.
 
 ## 5. Keys
 → ↓ Space PgDn Enter (l/j) next step or slide · ← ↑ PgUp Backspace (h/k) back · Home/End · `o`/Esc overview · `f` fullscreen · `d` theme (the only way — there is no button) · `?` help · swipe · `#/n`, `#/n/s` deep links · ⌘P → PDF (one 16:9 page per slide, light theme forced while printing). Nothing is painted on the stage except the slide number bottom-right.
