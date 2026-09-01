@@ -410,14 +410,27 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       <figcaption><b>320M @4k</b> · <span class="epoch">1.77 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
     <figure><img src="assets/grid_taco_sharpa.gif" alt="120M base, taco s33, Sharpa hand" loading="lazy">
       <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
+    <figure><img src="assets/p320mr_4k_taco_human_s33.gif" alt="320M plus robot data, step 4000, taco s33, human hand" loading="lazy">
+      <figcaption><b>320M+robot @4k</b> · <span class="epoch">1.77 ep</span> · taco s33 · human hand</figcaption></figure>
+    <figure><img src="assets/p320mr_4k_taco_sharpa.gif" alt="320M plus robot data, step 4000, taco s33, Sharpa hand" loading="lazy">
+      <figcaption><b>320M+robot @4k</b> · <span class="epoch">1.77 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
     <figure><img src="assets/grid_dexycb.gif" alt="120M base, dexycb chunk 4222" loading="lazy">
       <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · dexycb, chunk 4222<br>"grasp the tomato soup can" · ADE 3.92 cm</figcaption></figure>
-    <figure><img src="assets/grid_grab.gif" alt="120M base, grab chunk 7984" loading="lazy">
-      <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · grab, chunk 7984<br>"lift the hand" · ADE 12.75 cm · motion 12.68 vs GT 4.11 cm</figcaption></figure>
-    <figure><img src="assets/p320m_4k_taco.gif" alt="320M step 4000, taco chunk 29206" loading="lazy">
-      <figcaption><b>320M @4k</b> · <span class="epoch">1.77 ep</span> · taco, chunk 29206<br>"empty the cup with the kettle" · ADE 4.46 cm</figcaption></figure>
   </div>
-  <p class="footnote">sources: results/iviz/i5_110k/clips/ · results/iviz/p4b_4k/clips/ (+ mp4 and poster jpg alongside every gif) · per-clip numbers from each run's own report.json · 320M+robot twin clips pending the queued render job</p>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>same chunks, 1.77 ep vs 6.09 ep · ADE cm</th><th>320M</th><th>320M+robot</th><th>120M @6.09 ep</th></tr>
+        <tr><td>taco 29206</td><td>4.46</td><td>4.37</td><td class="good">2.71</td></tr>
+        <tr><td>arctic 1988</td><td>7.58</td><td>7.95</td><td class="good">7.22</td></tr>
+        <tr><td>dexycb 4222</td><td>4.22</td><td>4.31</td><td class="good">3.92</td></tr>
+        <tr><td>oakink2 18292</td><td>2.99</td><td>2.92</td><td class="good">1.15</td></tr>
+        <tr><td>grab 7984</td><td class="good">9.46</td><td>10.36</td><td class="bad">12.75</td></tr>
+      </table>
+      <figcaption>the twins track each other within 0.1–0.9 cm on every clip — the same "robot co-training is free" reading the metrics give; the 120M column is at 3.4× the epochs, and its one loss (grab) is the clip where it over-predicts motion 12.68 against 4.11 cm true</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">sources: results/iviz/{i5_110k,p4b_4k,p5b_4k}/clips/ (+ mp4 and poster jpg alongside every gif) · per-clip numbers from each run's own report.json · single-chunk open-loop, 10 frames = 1 s</p>
 </section>
 
 <!-- SECTION: appendix · GR-1 task list -->
