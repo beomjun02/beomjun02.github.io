@@ -31,7 +31,7 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
 .vizgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55em .9em;width:100%}
 .vizgrid.two{grid-template-columns:repeat(2,1fr)}
 .vizgrid figure{margin:0}
-.vizgrid img{width:100%;height:auto;border-radius:3px}
+.vizgrid img{width:100%;height:auto;max-height:11em;object-fit:contain;border-radius:3px}
 .vizgrid figcaption{font-size:.74em;opacity:.8;text-align:left;line-height:1.35}
 .epoch{display:inline-block;font-weight:700;color:var(--acc,#0070C0)}
 .gr1band{justify-content:center}
@@ -43,7 +43,8 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
   background:var(--panel,#f5f7fa);font-size:.82em;line-height:1.5}
 .etabar b.k{color:var(--acc,#0070C0);letter-spacing:.04em}
 .etabar .h{font-weight:700}
-.phold .pbox{display:flex;align-items:center;justify-content:center;text-align:center;
+.vizgrid .phold .pbox{min-height:3.1em;font-size:.72em}
+.phold .pbox{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.15em;
   min-height:5.2em;padding:.6em;border:2px dashed var(--dim,#B3B3B3);border-radius:4px;
   color:var(--cap,#595959);font-size:.78em;line-height:1.45;background:var(--panel,#f5f7fa)}
 </style>
@@ -149,8 +150,7 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
     <figure class="phold"><div class="pbox">WILL UPDATE<br><b>120M @180,608 · 10.00 ep</b><br>oakink2 18292</div>
       <figcaption>placeholder · renders Wed 09-02 ~13:10, +18.6 h</figcaption></figure>
   </div>
-  <p class="etabar"><b class="k">ETA</b> — bottom row fills when the two runs finish: <b>320M 4.98 ep</b> Wed 09-02 ~22:50 (<span class="h">+9.0 h</span> after the held continuation starts) · <b>120M 10 ep</b> Wed 09-02 ~13:10 (<span class="h">+18.6 h</span> from 18:22 today) · each render is a 2-minute job on the freed GPU</p>
-  <p class="footnote">identical chunk ids and identical camera in both rows · single-chunk open-loop generation, 10 frames = 1 s @10 Hz · left half of each frame ground truth, right half prediction · renderer scripts/viz_vdit_c.py --k 8 · sources results/iviz/{i5_110k,p4b_4k}/clips/</p>
+  <p class="footnote">same chunk ids and camera in every row · single-chunk open-loop, 10 frames = 1 s @10 Hz · left half GT, right half prediction</p>
 </section>
 
 <!-- SECTION: results (2) · cross-embodiment -->
@@ -267,36 +267,38 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
           <text x="14" y="130" font-size="9.5" fill="var(--mut,#595959)">closed loop, 1 Hz replan</text>
         </g>
       </svg>
-      <figcaption>the loop the rollout driver already runs offline — predict 1 s, step, re-observe — with the sim substituted for the recorded episode</figcaption>
+      <figcaption>the loop the rollout driver already runs offline, with sim replacing the recorded episode</figcaption>
     </figure>
     <figure>
       <table class="num">
         <tr><th>component</th><th>state</th><th>ETA</th></tr>
         <tr><td>1 · chunk-chained rollout driver</td><td class="good">built</td><td>done</td></tr>
         <tr><td>2 · per-link rigid fit (IK front-end)</td><td class="good">built</td><td>done</td></tr>
-        <tr><td>3 · fitted poses → joint angles</td><td>to build</td><td>09-02</td></tr>
-        <tr><td>4 · decoded-GT replay validation</td><td>to build</td><td>09-03</td></tr>
-        <tr><td>5 · GR-1 env install + obs adapter</td><td>to build</td><td>09-03</td></tr>
+        <tr><td>3 · fitted poses → joint angles</td><td class="good">built 09-01</td><td>done</td></tr>
+        <tr><td>4 · decoded-GT replay validation</td><td>next</td><td>09-02</td></tr>
+        <tr><td>5 · env install + obs adapter</td><td>next</td><td>09-03</td></tr>
         <tr><td>6 · GR-1 hand ↔ our part labels</td><td class="bad">unknown</td><td>09-04</td></tr>
       </table>
-      <figcaption>rung order is deliberate: decoded-GT replay isolates decode quality from model quality before any model drives the robot</figcaption>
+      <figcaption>decoded-GT replay isolates decode quality from model quality</figcaption>
     </figure>
     <figure>
       <table class="num">
         <tr><th>open risk</th><th>why it matters</th></tr>
         <tr><td>Fourier hand ≠ MANO ≠ Sharpa</td><td>part labels must remap</td></tr>
-        <tr><td>obs/action space undocumented</td><td>needs a code read</td></tr>
-        <tr><td>AR drift breaks in ~1 s</td><td>sets replan rate at 1 Hz</td></tr>
+        <tr><td class="good">obs/action space — resolved</td><td>8-step chunk @20 Hz</td></tr>
+        <tr><td class="good">their replan rate 0.4 s</td><td>inside our 1 s drift horizon</td></tr>
       </table>
-      <figcaption>the hand-topology remap is the one item with no precedent in our pipeline — Sharpa had 33 declared link frames, the Fourier hand is a different mechanism</figcaption>
+      <figcaption>their eval is RGB-only → we drive their envs with our own loop, reading sim state</figcaption>
     </figure>
+  </div>
+  <div class="band">
     <figure class="phold"><div class="pbox">WILL UPDATE<br><b>decoded-GT replay on the robot hand</b><br>sim clip, isolates decode from model</div>
-      <figcaption>placeholder · rung ④, Thu 09-03 (+4 h)</figcaption></figure>
+      <figcaption>placeholder · rung ④, Wed 09-02 (+4 h)</figcaption></figure>
     <figure class="phold"><div class="pbox">WILL UPDATE<br><b>first GR-1 zero-shot rollout</b><br>1 of 24 tasks, 720-step episode</div>
       <figcaption>placeholder · rung ⑥, Fri 09-04</figcaption></figure>
   </div>
-  <p class="etabar"><b class="k">ETA</b> — ③ fitted poses → joints <b>Wed 09-02</b> (<span class="h">4 h</span>) · ④ decoded-GT replay <b>Thu 09-03</b> (<span class="h">4 h</span>) · ⑤ env install + observation adapter <b>Thu 09-03</b> (<span class="h">6 h</span>) · ⑥ hand remap <b>Fri 09-04</b>, <b>unestimated</b> — it is the schedule risk, not the build hours</p>
-  <p class="footnote">de-risk path if ⑥ stalls: first closed loop in chord_isaaclab on Sharpa/TACO, where assets and ground truth already exist · conditioning choice (GR-1's own hand points vs human/Sharpa points + cross-decode) is an inference-time switch, try both</p>
+  <p class="etabar"><b class="k">ETA</b> — ③ joints from fitted poses <b>done 09-01</b> (8 tests, 13 µm on its own FK) · ④ decoded-GT replay <b>Wed 09-02</b> (<span class="h">4 h</span>) · ⑤ env install + obs adapter <b>Thu 09-03</b> (<span class="h">6 h</span>, ~10 GB of assets) · ⑥ hand remap <b>Fri 09-04</b>, <b>unestimated</b> — still the schedule risk</p>
+  <p class="footnote">de-risk if ⑥ stalls: first closed loop in chord_isaaclab on Sharpa/TACO, where assets and GT exist · full interface read: ~/3d-wam/GR1-CLOSED-LOOP.md</p>
 </section>
 
 <!-- SECTION: viz · rollout modes -->
@@ -351,7 +353,7 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
         <tr><td>screen length</td><td>20k steps = 1.11 ep</td></tr>
         <tr><td>step-time overhead</td><td>0.954 vs 0.950 s</td></tr>
       </table>
-      <figcaption>penalises ‖(x̂_hand − x̂_obj) − (x_hand − x_obj)‖ on ground-truth contacting pairs; the pairing is data, gradients flow through the predicted positions only</figcaption>
+      <figcaption>penalises the predicted relative position of ground-truth contacting pairs</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -362,7 +364,7 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
         <tr><td>λ = 1.00</td><td class="bad">7.31</td><td>0.67</td></tr>
         <tr><td class="mute">E-series contact term, 2026-08</td><td class="mute">~1e-5</td><td class="mute">inert</td></tr>
       </table>
-      <figcaption>the term touches only 7.8 % of points, so per unit of loss its gradient is ~7× the main objective's — λ 0.1 would have taken the run over, which is why λ was measured and not assumed</figcaption>
+      <figcaption>it touches 7.8 % of points, so its gradient is ~7× the objective’s per unit loss</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -372,11 +374,11 @@ table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transpar
         <tr class="pend"><td>hand-at-contact cosine</td><td>0.224 (GT 0.890)</td></tr>
         <tr><td>live gradient share, real data</td><td>0.005–0.008</td></tr>
       </table>
-      <figcaption>the targets are the base model's own numbers on the same metrics; the live share is 10× below the synthetic estimate, so a null result would argue for a higher λ rather than against the idea</figcaption>
+      <figcaption>targets are the base model’s own numbers; a null result would argue for a higher λ</figcaption>
     </figure>
   </div>
   <p class="etabar"><b class="k">ETA</b> — screen reaches 20k steps (1.11 ep) in <span class="h">+4.9 h</span> → <b>tonight ~23:15</b> · three metrics then take <span class="h">≈40 min</span> → <b>verdict ~00:00</b>, in the deck Wed morning · a follow-up arm at higher λ, if the share stays under 1 %, is another <span class="h">5.3 h</span></p>
-  <p class="footnote">prior: eight architecture additions have been falsified in this project and the settled verdict prefers data and length — this arm is cheap and instrumented, not a change of direction · the 2026-08 co-motion form differed (paired points share a flow vector) and ran at ~1e-5 of the objective on collapsed models</p>
+  <p class="footnote">prior: eight architecture additions falsified here and the verdict prefers data and length — this arm is cheap and instrumented · the 2026-08 co-motion form differed and ran at ~1e-5 of the objective</p>
 </section>
 
 <!-- SECTION: discussion-actions · closing summary -->
