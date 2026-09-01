@@ -53,6 +53,10 @@
   </div>
   <div class="road reveal">
     <div class="item"><span class="badge wip">running</span><div>
+      <h3><a href="decks/2026-09-02-all-objects-nearest/">Frontier logistics: segment every object, keep the nearest one</a></h3>
+      <p><code>2026-09-02 · deck · running</code> — The missed styrofoam box and poly mailer were a <b>selection</b> failure, not a detector failure: the old pass kept one instance per frame from one prompt. Screened 12 prompts over the full episode — <code>package</code> alone covers 429/433 frames at 4.36 instances/frame, <code>white styrofoam box</code> is a clean per-frame detector, <code>poly mailer</code> and <code>parcel</code> detect nothing, and each prompt costs ~1 min. Every instance is now stored, and the object is chosen locally by <b>metric depth</b> (nearest to the ego camera, IoU-merged across prompts): coverage <b>81/217 → 217/217</b> frames. Hand provenance: seungjun's pipeline is MediaPipe-fed too; a HaWoR MANO run is queued. SAM 3D blocked on HF access.</p>
+    </div></div>
+    <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-09-01-train-data-3d/">Frontier Demo train data in 3D: human hand keypoints + object points in one frame</a></h3>
       <p><code>2026-09-01 · deck · running</code> — The stored hand block is the capture <b>retargeted into allex's 48-dim joint schema</b> — joint angles behind a URDF that is not on the cluster — so hand geometry now comes from the <b>ego video</b>: MediaPipe 21 keypoints per hand, fitted by SQPnP and scale-anchored on VGGT metric depth, landing in the same ego-left camera frame as the object points. Two independent metric anchors agree to 6&nbsp;%; the fitted hand reprojects at ~6–7&nbsp;px. Rendered in BMW's two-panel grammar and in the static <code>base</code> frame across three episodes. Hands run on CPU; the object cloud is still 1 of 80 episodes.</p>
     </div></div>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-02 · All objects, nearest one — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Deck: segment every object in the logistics scene, then keep the one nearest the ego camera — object coverage 37% to 100%.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<style>
+  /* v5 hooks not yet in the shared deck.css — kept local to this deck */
+  .deck .etabar{margin:.6em 0 0;padding:.45em .8em;border-left:3px solid #0070C0;
+    background:#F2F6FA;font-size:1.5em;color:#333}
+  .deck figure.phold .pbox{display:flex;align-items:center;justify-content:center;text-align:center;
+    min-height:9em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.5em;
+    padding:1em;background:#FAFAFA}
+  .deck tr.pend td{color:#595959;font-style:italic}
+</style>
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="all objects, nearest one" data-date="2026-09-02">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Frontier logistics: segment every object, keep the nearest one</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · overnight run · object selection and hand provenance</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 02<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Keeping every instance and picking the nearest fixes coverage.</p>
+  <ul>
+    <li>Done: twelve prompts screened, costed</li>
+    <li>Done: depth selection, every frame</li>
+    <li>Blocked: SAM 3D access not granted</li>
+  </ul>
+  <div class="band">
+    <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0, full episode — left: ego RGB · right: every candidate (slate), the selected object (orange), both hands</figcaption></figure>
+    <figure><img src="assets/fig_selection.jpg" alt="Three panels: object coverage before and after, depth histogram of selected versus rejected candidates, and candidates found per frame.">
+      <figcaption>Coverage before/after · depth of selected vs rejected · candidates per frame</figcaption></figure>
+  </div>
+  <p class="footnote">object orange · rejected slate · left hand purple · right hand green · hollow ring = stored (retargeted) wrist · v3/human_hmd_new ep0</p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): One prompt already sees everything</h2>
+  <p class="thesis">The old misses came from the selection rule, not the detector.</p>
+  <ul>
+    <li>“package” finds every object class</li>
+    <li>Two named concepts detect nothing</li>
+    <li>Each prompt costs about a minute</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_prompts.jpg" alt="Left: horizontal bars of frames covered per text prompt, coloured by object class, annotated with instances per frame. Right: seconds per prompt.">
+      <figcaption>What each text prompt detects, and what it costs over the whole episode</figcaption></figure>
+    <figure><img src="assets/prompt_package_montage.jpg" alt="Six frames spanning the episode with every instance found by the prompt package overlaid in different colours.">
+      <figcaption>“package” overlay, six frames across the episode — one colour per tracked instance</figcaption></figure>
+  </div>
+  <p class="footnote">dead concepts: “poly mailer”, “parcel” — zero instances; “plastic mailing bag” only a handful. 433 frames, SAM3.1, area floor 0.3 %</p>
+</section>
+
+<!-- SECTION: method (2) -->
+<section class="slide s-method">
+  <h2>Method (2): Selection by metric depth</h2>
+  <p class="thesis">Merge instances across prompts, keep the one nearest the camera.</p>
+  <ul>
+    <li>IoU merge removes cross-prompt duplicates</li>
+    <li>VGGT metric depth ranks candidates</li>
+    <li>Continuity credit prevents identity flicker</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_selection.jpg" alt="Object coverage before and after, depth histogram of selected versus rejected candidates, and how many candidates were available per frame.">
+      <figcaption>The selected object separates cleanly in depth from the ones rejected</figcaption></figure>
+    <figure><img src="assets/prompt_styrofoam_montage.jpg" alt="Six frames with the white styrofoam box instances overlaid, roughly one per frame.">
+      <figcaption>“white styrofoam box” — a clean one-per-frame detector for the second class</figcaption></figure>
+  </div>
+  <p class="footnote">selection is local post-processing: every instance is stored, so changing the rule needs no GPU re-run</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Every candidate, and the one chosen
+      <ul><li>orange selected, slate rejected, per frame</li>
+          <li>caption prints its depth and candidate count</li></ul></li>
+    <li>Hand and object together in 3D</li>
+    <li>Where the hand pose comes from</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0, full episode — right panel is pixel-aligned with the left by construction</figcaption></figure>
+  </div>
+  <p class="footnote">BMW's two-panel grammar (mano_run101_work/viz_handobj2.py), so the two rigs read side by side</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Every candidate, and the one chosen</li>
+    <li class="on">Hand and object together in 3D
+      <ul><li>static base world frame, three episodes</li>
+          <li>ep0 now carries an object on every depth frame</li></ul></li>
+    <li>Where the hand pose comes from</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 · ep1 · ep2 — hands with wrist trails, ep0 also carrying its selected object cloud</figcaption></figure>
+  </div>
+  <p class="footnote">ep1/ep2 have no depth pass yet, so they show hands only — object lifting still needs a GPU run per episode</p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Every candidate, and the one chosen</li>
+    <li>Hand and object together in 3D</li>
+    <li class="on">Where the hand pose comes from
+      <ul><li>seungjun's solver is MediaPipe-fed as well</li>
+          <li>his upgrade is a MANO fit, now queued</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/fig_handlift.jpg" alt="Left: histogram of the fitted hand's reprojection residual for three episodes. Right: hand-size PnP depth against VGGT metric depth with the 1:1 line.">
+      <figcaption>Current hands: fit residual against its own landmarks · two independent metric anchors</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE — HaWoR MANO hands<br>ep0 ego-left, same clip and frames<br>queued on debug, ~1 h after it starts</div>
+      <figcaption>HaWoR monocular MANO vs the MediaPipe hands at left</figcaption></figure>
+  </div>
+  <p class="etabar"><b>ETA</b> · HaWoR ep0 hands: ~1 h GPU after start → same morning · ep1–ep19 extraction: unestimated, needs the go</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Two decisions; everything else is queued and needs no input.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Object slots</b> — package only vs package + conveyor → both, the conveyor is the destination (owner)</li>
+    <li><b>Hand source</b> — MediaPipe now vs HaWoR MANO → HaWoR if its format matches BMW's (owner)</li>
+    <li><b>SAM 3D</b> — request HF access or drop → request it; mesh completion is the only remaining gap (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Confirm the selected object reads correctly (owner · today)</li>
+    <li>Ask HF for facebook/sam-3d-objects access (owner · today)</li>
+    <li>HaWoR vs MediaPipe hand comparison (agent · queued)</li>
+    <li>Object extraction ep1–ep19 (agent · after go)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · evidence paths · references · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Masks</dt><dd class="mono">hmd_object_demo/sam3_multi.py → ep0/sam3_multi/{masks_multi.npz, screen.json, prompt_*.jpg} · job 151337, debug, 11.7 min, 7840 instances</dd>
+        <dt>Selection</dt><dd class="mono">viz/object_select.py → viz/cache/ep0_objsel.npz (IoU 0.55 merge, depth rank, 5 cm continuity credit)</dd>
+        <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py (HaWoR MANO, job 151355)</dd>
+        <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py · viz/deck_figs3.py</dd>
+        <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — repo exists, 31 files, TRELLIS-style (slat/ss encoders+decoders); HF returns 403 GatedRepoError "not in the authorized list"</dd>
+        <dt>Rig</dt><dd class="mono">human Quest capture retargeted into allex's 48-dim schema; no external camera in 79 datasets or 30 raw sessions</dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>seungjun's MANO-pipeline: 2D/3D front end is MediaPipe (<code>mp_joints_3d_interpolated.npy</code>, <code>03_mp_3d_joints_generation.py</code>); monocular path ensembles WiLoR + HaMeR 3D then fits MANO with 2D+3D+fingertip+barrier losses</li>
+        <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-01-train-data-3d/">train data in 3D</a> · <a href="/experiments/dpp-bmw/decks/2026-09-01-logistics-rig-frame/">logistics rig &amp; frame</a></li>
+      </ul>
+      <p class="cut"><b>Cut:</b> temporal accumulation for full object surface (waiting on the SAM 3D decision) · conveyor as a second DPP slot · per-instance mask storage format details · the 63.5 mm Quest calibration vs 66.4 mm measured baseline · allex FK hand keypoints (superseded by the video route) · intrinsics disagreement VGGT 709 px vs Quest 863 px.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

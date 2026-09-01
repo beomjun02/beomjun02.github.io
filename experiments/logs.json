@@ -17,9 +17,9 @@
    "tagline": "Dexterous Point Policy on real human demonstrations, two tasks in one place. BMW assembly rig (4-view: MANO hand pose + VGGT-Omega object points + HaWoR contact) and Frontier Demo logistics (ego-stereo HMD: promptable segmentation + VGGT-Omega stereo depth). No sim, no residual RL.",
    "path": "dpp-bmw/",
    "now": {
-    "text": "Frontier Demo train data now visualised in 3D: human hand keypoints come from the ego video (MediaPipe + PnP + VGGT depth anchor), object points from SAM3+VGGT, both in one frame. The stored hand joints are a retargeted allex schema and are not used. Object lifting still 1 of 80 episodes. BMW: 7 base policies verified @100k, eval/rollout still next.",
+    "text": "Frontier logistics object pipeline fixed: all SAM3 instances kept, object chosen by metric depth (nearest to the ego camera) — coverage 81/217 → 217/217 frames. Hands from the ego video (MediaPipe + PnP + VGGT anchor); HaWoR MANO comparison queued. SAM 3D blocked on HF access. BMW: 7 base policies verified @100k, eval/rollout still next.",
     "status": "active",
-    "updated": "2026-09-01"
+    "updated": "2026-09-02"
    }
   },
   "dex-pointwam": {
@@ -45,6 +45,27 @@
   }
  },
  "logs": [
+  {
+   "project": "dpp-bmw",
+   "date": "2026-09-02",
+   "slug": "all-objects-nearest",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-02",
+   "title": "Frontier logistics: segment every object, keep the nearest one",
+   "tldr": "The 08-30 object pipeline missed the styrofoam box and the poly mailer because it kept ONE instance per frame from ONE prompt, not because SAM3 failed to see them. Screened 12 text prompts over the whole episode: 'package' alone covers 429/433 frames at 4.36 instances per frame, 'white styrofoam box' is a clean one-per-frame detector for that class, 'conveyor belt' picks up the destination surface, and 'poly mailer' / 'parcel' detect literally nothing. Each prompt costs about a minute for 433 frames, so prompts are linear, not free. Every instance is now stored with its bbox, area, score and prompt, and object choice became a local decision: merge instances across prompts by IoU, rank them by VGGT metric depth, and keep the one nearest the ego camera with a small continuity credit. Object coverage went from 81/217 to 217/217 depth frames, median selected depth 0.544 m out of 7.7 candidates per frame. Full-episode viz in BMW's two-panel grammar plus a base-frame 3D scene across three episodes. Hand provenance settled: seungjun's MANO-pipeline is also MediaPipe-fed (mp_joints_3d_interpolated.npy), its upgrade being a WiLoR/HaMeR 3D ensemble and a MANO fit; a HaWoR monocular MANO run on the same clip is queued after fixing a numpy 2 / torch 1.13 ABI break in that env. SAM 3D is blocked: the repo exists but HF returns 403, the account is not in the authorized list.",
+   "path": "dpp-bmw/decks/2026-09-02-all-objects-nearest/",
+   "tags": [
+    "logistics",
+    "frontier-demo",
+    "sam3",
+    "segmentation",
+    "object-selection",
+    "hand-pose",
+    "hawor",
+    "viz"
+   ]
+  },
   {
    "project": "dpp-bmw",
    "date": "2026-09-01",
