@@ -36,7 +36,7 @@
   <p class="thesis"><b>[TL;DR]</b> Keeping every instance and picking the nearest fixes coverage.</p>
   <ul>
     <li>Done: twelve prompts screened, costed</li>
-    <li>Done: depth selection, every frame</li>
+    <li>Done: depth selection plus HaWoR comparison</li>
     <li>Blocked: SAM 3D access not granted</li>
   </ul>
   <div class="band">
@@ -126,15 +126,15 @@
     <li>Hand and object together in 3D</li>
     <li class="on">Where the hand pose comes from
       <ul><li>seungjun's solver is MediaPipe-fed as well</li>
-          <li>his upgrade is a MANO fit, now queued</li></ul></li>
+          <li>HaWoR agrees on position, not orientation</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/fig_handlift.jpg" alt="Left: histogram of the fitted hand's reprojection residual for three episodes. Right: hand-size PnP depth against VGGT metric depth with the 1:1 line.">
-      <figcaption>Current hands: fit residual against its own landmarks · two independent metric anchors</figcaption></figure>
-    <figure class="phold"><div class="pbox">WILL UPDATE — HaWoR MANO hands<br>ep0 ego-left, same clip and frames<br>queued on debug, ~1 h after it starts</div>
-      <figcaption>HaWoR monocular MANO vs the MediaPipe hands at left</figcaption></figure>
+    <figure><img src="assets/fig_hawor.jpg" alt="Three panels: HaWoR palm depth against the MediaPipe+VGGT depth, histograms of wrist and all-joint distance between the two methods, and the reprojection of HaWoR joints against MediaPipe 2D landmarks.">
+      <figcaption>HaWoR MANO vs MediaPipe+VGGT — depth agreement · wrist and joint distance · reprojection</figcaption></figure>
+    <figure><video src="assets/ep0_hawor_vs_mp.mp4" poster="assets/ep0_hawor_vs_mp.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>Both skeletons projected into the ego camera — purple MediaPipe, green HaWoR</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · HaWoR ep0 hands: ~1 h GPU after start → same morning · ep1–ep19 extraction: unestimated, needs the go</p>
+  <p class="etabar"><b>ETA</b> · HaWoR ep0 hands: <b>done tonight</b> (job 151398, MANO params + joints saved) · ep1–ep19 object+hand extraction: unestimated, needs the go</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -164,7 +164,8 @@
       <dl class="kv">
         <dt>Masks</dt><dd class="mono">hmd_object_demo/sam3_multi.py → ep0/sam3_multi/{masks_multi.npz, screen.json, prompt_*.jpg} · job 151337, debug, 11.7 min, 7840 instances</dd>
         <dt>Selection</dt><dd class="mono">viz/object_select.py → viz/cache/ep0_objsel.npz (IoU 0.55 merge, depth rank, 5 cm continuity credit)</dd>
-        <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py (HaWoR MANO, job 151355)</dd>
+        <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py → hawor_out/ep0_hawor.npz (MANO trans/rot/pose/betas + joints + vertices, both hands, all 866 frames; job 151398) · viz/hawor_compare.py</dd>
+        <dt>HaWoR frame</dt><dd class="mono">its run_mano joints are canonical-space; `trans` IS the camera-space wrist (10.6 cm median from the MediaPipe wrists; a global similarity fit does not improve it, so no convention is being missed). Skeleton = root-relative joints placed at trans. Slots assigned per frame, not by its naming</dd>
         <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py · viz/deck_figs3.py</dd>
         <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — repo exists, 31 files, TRELLIS-style (slat/ss encoders+decoders); HF returns 403 GatedRepoError "not in the authorized list"</dd>
         <dt>Rig</dt><dd class="mono">human Quest capture retargeted into allex's 48-dim schema; no external camera in 79 datasets or 30 raw sessions</dd>
@@ -175,7 +176,7 @@
         <li>seungjun's MANO-pipeline: 2D/3D front end is MediaPipe (<code>mp_joints_3d_interpolated.npy</code>, <code>03_mp_3d_joints_generation.py</code>); monocular path ensembles WiLoR + HaMeR 3D then fits MANO with 2D+3D+fingertip+barrier losses</li>
         <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-01-train-data-3d/">train data in 3D</a> · <a href="/experiments/dpp-bmw/decks/2026-09-01-logistics-rig-frame/">logistics rig &amp; frame</a></li>
       </ul>
-      <p class="cut"><b>Cut:</b> temporal accumulation for full object surface (waiting on the SAM 3D decision) · conveyor as a second DPP slot · per-instance mask storage format details · the 63.5 mm Quest calibration vs 66.4 mm measured baseline · allex FK hand keypoints (superseded by the video route) · intrinsics disagreement VGGT 709 px vs Quest 863 px.</p>
+      <p class="cut"><b>Cut:</b> HaWoR contact/force heads (`--vis_contact`, `--vis_force`) · WiLoR+HaMeR 3D ensemble (tools_monocular absent from the readable checkout) · temporal accumulation for full object surface (waiting on the SAM 3D decision) · conveyor as a second DPP slot · per-instance mask storage format details · the 63.5 mm Quest calibration vs 66.4 mm measured baseline · allex FK hand keypoints (superseded by the video route) · intrinsics disagreement VGGT 709 px vs Quest 863 px.</p>
     </div>
   </div>
 </section>
