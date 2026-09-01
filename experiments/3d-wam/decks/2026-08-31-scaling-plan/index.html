@@ -18,6 +18,10 @@ table.num th:first-child,table.num td:first-child{text-align:left}
 table.num .good{color:#1a7f37;font-weight:600}
 table.num .bad{color:#b3261e;font-weight:600}
 table.num .mute{opacity:.55}
+.vizgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6em 1em;width:100%}
+.vizgrid figure{margin:0}
+.vizgrid img{width:100%;height:auto}
+.vizgrid figcaption{font-size:.78em;opacity:.75;text-align:center}
 </style>
 </head>
 <body class="deck-page">
@@ -66,7 +70,7 @@ table.num .mute{opacity:.55}
         <tr><td><b>base, curated data</b></td><td class="good"><b>0.279</b></td><td class="good"><b>0.373</b></td><td class="good"><b>7.94</b></td><td>7.97</td></tr>
         <tr><td>previous best (uncurated, 109k)</td><td>0.248</td><td>0.337</td><td class="bad">8.43</td><td>7.97</td></tr>
         <tr><td>base @50k (best calibration)</td><td>0.237</td><td>0.324</td><td class="good">7.71</td><td>7.97</td></tr>
-        <tr><td class="mute">uncurated control @110k — eval pending</td><td class="mute" colspan="4">finished training 07:10; scored on the next touch</td></tr>
+        <tr><td class="mute">uncurated control @110k — eval pending</td><td class="mute" colspan="4">finished training 14:47; first eval attempt (12:29) raced the still-running job → resubmit</td></tr>
       </table>
       <figcaption>stratified 576-chunk val — one data decision (drop the low-contact third) beats 109k steps of the old recipe</figcaption>
     </figure>
@@ -82,25 +86,26 @@ table.num .mute{opacity:.55}
   <h2>Results</h2>
   <ol class="agenda">
     <li>The 120M base model, finished</li>
-    <li class="on">The 320M generation, first hours
+    <li class="on">The 320M generation, at 2 epochs
       <ul><li>π0.5 expert size, DiT recipe</li>
-          <li>behind at matched samples, catching fast</li></ul></li>
+          <li>direction climbing steeply, calibrated</li></ul></li>
     <li>New measurements for closed-loop</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/p320m_curves.png" alt="320M training curves vs the 120M base at matched samples">
-      <figcaption>two 320M models (with and without 10 % robot-hand data) vs the 120M base at matched samples — at 0.51M samples the full 576-chunk eval reads cos 0.115 — below the 120M trajectory (colder LR, 4× fewer updates) — but the slope is steep and magnitude calibration is already 93–96 % (the 120M base never exceeded 71 %)</figcaption></figure>
+    <figure><img src="assets/p320m_curves.png" alt="320M twin training curves to step 4,000: direction cosine climbing steeply, ADE approaching the zero-predictor line">
+      <figcaption>both 320M twins to step 4,000 (in-run stratified quick-val, CFG 1 — smaller sample than the 576-chunk eval, its zero predictor reads 6.96) — direction still climbing steeply at 2 epochs with no sign of flattening; ADE has fallen 33 → 8.5 cm and beats velocity extrapolation from ~step 3,000</figcaption></figure>
     <figure>
       <table class="num">
-        <tr><th>at matched samples (0.51M)</th><th>cos</th><th>ADE cm</th></tr>
-        <tr><td>320M</td><td>0.115</td><td>11.83</td></tr>
-        <tr><td>320M + 10 % robot data</td><td>0.113</td><td>11.65</td></tr>
-        <tr><td>120M base at same samples</td><td>≈0.19–0.20</td><td>≈8.1 (interp.)</td></tr>
+        <tr><th>320M progress (quick-val)</th><th>cos</th><th>ADE cm</th></tr>
+        <tr><td>320M @2k (1 epoch)</td><td>0.151</td><td>10.41</td></tr>
+        <tr><td>320M @4k (2 epochs)</td><td class="good"><b>0.283</b></td><td class="good"><b>8.68</b></td></tr>
+        <tr><td>320M + robot data @4k</td><td class="good"><b>0.280</b></td><td class="good"><b>8.38</b></td></tr>
+        <tr><td class="mute">zero predictor (this val sample)</td><td class="mute">—</td><td class="mute">6.96</td></tr>
       </table>
-      <figcaption>first full stratified eval of the 320M checkpoints (step 2,000) — early, honest read; the twins are statistically identical, so robot co-training again costs nothing</figcaption>
+      <figcaption>the twins remain statistically identical at every checkpoint — robot co-training still costs nothing; magnitude calibration stays 86–102 % throughout (the 120M base never exceeded 71 %)</figcaption>
     </figure>
   </div>
-  <p class="footnote">recipe: lr 1e-4 · eff. batch 256 · warmup 350 · 11,250 steps = 5 epochs (canonical from-scratch DiT) · measured 15.6 s/step on A100 ≈ 59k samples/h · now ~step 3,500 = 1.6 epochs · 40 h budget exits Wed 13:40 at ~4.1 epochs · 5 epochs ≈ Wed night with one continuation (≈2× faster if an H100 slot opens)</p>
+  <p class="footnote">recipe: lr 1e-4 · eff. batch 256 · warmup 350 · 11,250 steps = 5 epochs (canonical from-scratch DiT) · status 09-01 16:55: step ~4,440 = 2.0 epochs, 19.3 h elapsed, 15.6 s/step dead steady · 40 h budget exits Wed 13:40 at ~4.1 epochs · 5 epochs ≈ Wed ~22:30 with one continuation · quick-val and the 576-chunk ieval are different samples — final claims use ieval only (step-2k full ieval: cos 0.115/0.113, in the appendix run map)</p>
 </section>
 
 <!-- SECTION: results (3) · new measurements -->
@@ -138,6 +143,21 @@ table.num .mute{opacity:.55}
     <figure><img src="assets/roll_ar.gif" alt="full-episode rollout chained from the model's own predictions, drifting">
       <figcaption>a whole episode chained from its own predictions (arctic) — the drift the closed loop must correct by re-observing</figcaption></figure>
   </div>
+</section>
+
+<!-- SECTION: results (viz gallery) · rollout pairs, teacher vs autoregressive -->
+<section class="slide s-results">
+  <h2>Rollout gallery · replan-from-truth vs chained-from-itself</h2>
+  <p class="thesis">Same episode, same model — only the replanning source differs.</p>
+  <div class="vizgrid">
+    <figure><img src="assets/rollpair_taco_teacher.gif" alt="taco episode, teacher-forced full rollout" loading="lazy"><figcaption>taco · from ground truth (bounded all episode)</figcaption></figure>
+    <figure><img src="assets/rollpair_arctic_teacher.gif" alt="arctic episode, teacher-forced full rollout" loading="lazy"><figcaption>arctic · from ground truth</figcaption></figure>
+    <figure><img src="assets/rollpair_oakink2_teacher.gif" alt="oakink2 episode, teacher-forced full rollout" loading="lazy"><figcaption>oakink2 · from ground truth</figcaption></figure>
+    <figure><img src="assets/rollpair_taco_ar.gif" alt="same taco episode, chained from its own predictions" loading="lazy"><figcaption>taco · from its own predictions (drifts in ~1 s)</figcaption></figure>
+    <figure><img src="assets/rollpair_arctic_ar.gif" alt="same arctic episode, chained from its own predictions" loading="lazy"><figcaption>arctic · from its own predictions</figcaption></figure>
+    <figure><img src="assets/rollpair_oakink2_ar.gif" alt="same oakink2 episode, chained from its own predictions" loading="lazy"><figcaption>oakink2 · from its own predictions</figcaption></figure>
+  </div>
+  <p class="footnote">finished base model (110k) · full episodes, chunk = 1 s · top row re-observes truth each chunk (the closed-loop regime); bottom row feeds itself (open-loop) · owner eye-verification requested — sources: results/iroll/i5_110k_{teacher,ar}/ · 12 more episode pairs in the pulled set</p>
 </section>
 
 <!-- SECTION: method · what was built + closed-loop plan -->
@@ -212,7 +232,7 @@ table.num .mute{opacity:.55}
     <li>320M pair: finish 5 epochs + paired robot-data verdict (agent · Wed night)</li>
     <li>IK joints + GT-replay validation, then GR-1 env (agent · 09-02 → 09-04)</li>
     <li>Owner: eye-verify fresh 110k clips + rollout drift clips (this deck's band)</li>
-    <li>Control's final eval + decode gate on later 320M checkpoints (agent · next touch)</li>
+    <li>Control's final eval (resubmit — first attempt raced the run) + decode gate on later 320M checkpoints (agent · next touch)</li>
   </ol>
   <div class="band">
     <figure>
@@ -279,6 +299,20 @@ table.num .mute{opacity:.55}
   <p class="footnote">code: review/train/iroll.py · review/train/xcontact.py · review/train/ifeas.py (rigid_fit importable for the IK stage) · all unit-tested before first cluster run</p>
 </section>
 
+<!-- SECTION: appendix · per-dataset clip gallery -->
+<section class="slide s-appendix">
+  <h2>Appendix · finished base model, one clip per dataset (fresh, 110k)</h2>
+  <div class="vizgrid">
+    <figure><img src="assets/grid_taco.gif" alt="taco rollout clip" loading="lazy"><figcaption>taco (s2)</figcaption></figure>
+    <figure><img src="assets/grid_arctic.gif" alt="arctic rollout clip" loading="lazy"><figcaption>arctic (s161)</figcaption></figure>
+    <figure><img src="assets/grid_oakink2.gif" alt="oakink2 rollout clip" loading="lazy"><figcaption>oakink2 (s100)</figcaption></figure>
+    <figure><img src="assets/grid_dexycb.gif" alt="dexycb rollout clip" loading="lazy"><figcaption>dexycb (s9)</figcaption></figure>
+    <figure><img src="assets/grid_grab.gif" alt="grab rollout clip" loading="lazy"><figcaption>grab (s23)</figcaption></figure>
+    <figure><img src="assets/grid_taco_sharpa.gif" alt="taco with the Sharpa robot hand, zero-shot" loading="lazy"><figcaption>taco (s33) · Sharpa hand, zero-shot</figcaption></figure>
+  </div>
+  <p class="footnote">renderer scripts/viz_vdit_c.py · sources: results/iviz/i5_110k/clips/ (mp4 + poster jpg alongside each gif) · owner eye-verification requested (with the deck-#8 pair clips still pending)</p>
+</section>
+
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
   <h2>Appendix · run map · configs · overnight record · cut list</h2>
@@ -287,7 +321,8 @@ table.num .mute{opacity:.55}
       <dl class="kv">
         <dt>Run map</dt><dd>"120M base (curated)" = i5_nohot3d @110k · "previous best" = c2_hist_long @109k · "uncurated control" = i0_ctl · "320M" = p4b_dit256 (job 148158) · "320M + robot data" = p5b_dit256 (148159, sharpa_fraction 0.1) · rollout driver = review/train/iroll.py · metrics = review/train/{xcontact,ifeas}.py</dd>
         <dt>320M config</dt><dd>d1024 × 18L × 16h × mlp 4096 = 305.17M · micro 16 × accum 16 = eff 256 · lr 1e-4 · warmup 350 · cosine → 0.1 · AdamW(0.9,0.95) wd 0.05 clip 1.0 EMA 0.999 · 11,250 steps = 5 epochs (577,948 no-hot3d chunks) · A100, 15.6 s/step · val_stratified quick-eval every 500</dd>
-        <dt>Overnight</dt><dd>i5 110k done 06:11 (20.9 h continuation) · ieval 100k/110k jobs 147278/147279 · fresh clips job 147280 (32 s) · morning chain 148893–148897 (320M ieval → metrics human → metrics sharpa → rollout teacher → rollout ar) · i0 finished ~07:10, final eval pending the next touch</dd>
+        <dt>Overnight</dt><dd>i5 110k done 06:11 (20.9 h continuation) · ieval 100k/110k jobs 147278/147279 · fresh clips job 147280 (32 s) · morning chain 148893–148897 (320M ieval → metrics human → metrics sharpa → rollout teacher → rollout ar)</dd>
+        <dt>16:55 status</dt><dd>148158/148159 RUNNING on node109, step ~4,440 = 2.0 ep, 15.6 s/step steady · i0_ctl finished 110k at 14:47 (job 145496, 30.3 h) — the earlier "~07:10" note was wrong, it was still running · ieval attempt 149558 (12:29) ran 11 s against the unfinished run and wrote nothing → i0 final eval still pending · quick-val curve source: logs carm_*148158/148159 (mirrored to pull3)</dd>
       </dl>
     </div>
     <div>

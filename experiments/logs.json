@@ -73,7 +73,7 @@
    "status": "running",
    "updated": "2026-09-01",
    "title": "The base model is finished; the 320M generation is training (deck #9)",
-   "tldr": "Deck #9 final: the 120M curated base finished 110k steps — cos 0.279 vs previous best 0.248, ADE 7.94 beating the 7.97 zero predictor; best calibration at 50k. Two 320M models (π0.5 action-expert dims, canonical DiT recipe lr 1e-4 @ eff 256) train on; at 0.51M samples they trail the 120M trajectory but calibrate magnitude at 93–96%. First closed-loop groundwork: chunk-chained rollouts (bounded when replanning from truth; ~1 s break horizon from own predictions), contact-region IoU 0.44 (94% hit, 2.8 cm centroid error), per-part hand rigid residual 0.17 cm vs GT 0.08 — the predicted hand is decodable. Arena: GR00T's open-source GR-1 tabletop benchmark."
+   "tldr": "Deck #9 final: the 120M curated base finished 110k steps — cos 0.279 vs previous best 0.248, ADE 7.94 beating the 7.97 zero predictor; best calibration at 50k. Two 320M models (π0.5 action-expert dims, canonical DiT recipe lr 1e-4 @ eff 256) train on; at 2 epochs (step 4k) quick-val cos has climbed 0.087→0.283 with no flattening, ADE 33→8.5 cm beating velocity extrapolation, twins statistically identical, magnitude calibrated 86–102% throughout. First closed-loop groundwork: chunk-chained rollouts (bounded when replanning from truth; ~1 s break horizon from own predictions), contact-region IoU 0.44 (94% hit, 2.8 cm centroid error), per-part hand rigid residual 0.17 cm vs GT 0.08 — the predicted hand is decodable. Arena: GR00T's open-source GR-1 tabletop benchmark."
   },
   {
    "project": "dex-pointwam",
