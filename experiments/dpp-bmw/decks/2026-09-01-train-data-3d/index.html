@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-01 · Train data in 3D — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Deck: human hand keypoints from the ego video plus lifted object points, together in one 3D frame.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="train data in 3D" data-date="2026-09-01">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Frontier Demo train data in 3D: human hand + object points</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · logistics · what the policy would actually consume</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 01<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Human hands come from the video, not the stored joints.</p>
+  <ul>
+    <li>Done: 21-kp hands, three episodes</li>
+    <li>Done: hand + object, one frame</li>
+    <li>Discuss: batch size · handedness · intrinsics</li>
+  </ul>
+  <div class="band">
+    <figure><video src="assets/ep0_egoview.mp4" poster="assets/ep0_egoview.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 — left: ego-left RGB · right: the same points projected into that camera</figcaption></figure>
+  </div>
+  <p class="footnote">object orange · left hand purple · right hand green · hollow ring = the stored (retargeted) wrist · v3/human_hmd_new</p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): Why the video, not the stored joints</h2>
+  <p class="thesis">The stored hand block is retargeted allex angles behind a missing URDF.</p>
+  <ul>
+    <li>Capture: human wearing a Quest</li>
+    <li>Schema: allex joints, angles only</li>
+    <li>No external camera exists anywhere</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_inputs.jpg" alt="Table of the three DPP inputs with their source, frame, coverage and status; plus the stored joint block marked unused.">
+      <figcaption>The three DPP inputs on this rig — source · frame · coverage · status</figcaption></figure>
+  </div>
+  <p class="footnote">verified across all 79 frontier_demo datasets and 30 raw capture sessions: two ego streams, no external view</p>
+</section>
+
+<!-- SECTION: method (2) -->
+<section class="slide s-method">
+  <h2>Method (2): Lifting the hand to metric 3D</h2>
+  <p class="thesis">Shape from the tracker, metric scale from depth, one camera frame.</p>
+  <ul>
+    <li>MediaPipe 21 keypoints per hand</li>
+    <li>Perspective fit to the landmarks</li>
+    <li>Scale anchored on VGGT depth</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_handlift.jpg" alt="Left: histogram of the fitted hand's reprojection residual in pixels for three episodes. Right: scatter of hand-size PnP depth against VGGT metric depth with the 1:1 line and the median ratio.">
+      <figcaption>Left: fit residual against its own 2D landmarks · right: two independent metric anchors compared</figcaption></figure>
+  </div>
+  <p class="footnote">hands run on CPU, no cluster · object points come from the 08-30 SAM3 + VGGT-Omega pass</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Hand and object in the ego view
+      <ul><li>points projected into the ego-left camera</li>
+          <li>hollow ring = stored wrist, for comparison</li></ul></li>
+    <li>3D structure at one timestep</li>
+    <li>The same pipeline on every episode</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_egoview.mp4" poster="assets/ep0_egoview.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0, full episode — the right panel is pixel-aligned with the left by construction</figcaption></figure>
+  </div>
+  <p class="footnote">same two-panel grammar as the BMW record, so the two rigs read side by side</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Hand and object in the ego view</li>
+    <li class="on">3D structure at one timestep
+      <ul><li>rotates about the fitted support plane</li>
+          <li>frame chosen where the hand is nearest</li></ul></li>
+    <li>The same pipeline on every episode</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_turntable.mp4" poster="assets/ep0_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 turntable — left: that frame's ego RGB · right: hand + object, azimuth sweeps 360°</figcaption></figure>
+  </div>
+  <p class="footnote">support plane = smallest-eigenvalue eigenvector of the object cloud, oriented toward the camera</p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Hand and object in the ego view</li>
+    <li>3D structure at one timestep</li>
+    <li class="on">The same pipeline on every episode
+      <ul><li>static base frame, hands plus ep0 object</li>
+          <li>object lifted for 1 of 80 episodes</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 · ep1 · ep2 in the base world frame — only the episode varies</figcaption></figure>
+    <figure><img src="assets/fig_coverage.jpg" alt="Grouped bars per episode: frames processed, left-hand detections, right-hand detections, both hands, object cloud frames.">
+      <figcaption>Per-episode coverage — hands everywhere, object on ep0 only</figcaption></figure>
+  </div>
+  <p class="footnote">ep1/ep2 have no depth pass yet, so their hand scale uses the fit validated against VGGT on ep0</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three decisions; silence means the recommendation stands.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Extraction batch</b> — pilot 5 vs all 20 episodes → 20, one array job, spec before submit (owner)</li>
+    <li><b>Handedness</b> — tracker label vs stored wrist → stored wrist, colours need one eyeball (owner)</li>
+    <li><b>Intrinsics</b> — VGGT estimate vs the Quest calibration → settle before any training h5 (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Confirm hand and object read correctly (owner · today)</li>
+    <li>Object extraction on the agreed episodes (agent · after go)</li>
+    <li>Contact from the ego video, HaWoR (agent · after batch)</li>
+    <li>Human-hand DPP h5 for training (agent · after batch)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · evidence paths · references · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Hand</dt><dd class="mono">viz/hand_from_video.py → viz/cache/ep{0,1,2}_hands.npz (21 kp, ego-left camera frame)</dd>
+        <dt>Render</dt><dd class="mono">viz/frontier_handobj.py (port of mano_run101_work/viz_handobj2.py) · viz/hands3d_multi.py · viz/deck_figs2.py</dd>
+        <dt>Object</dt><dd class="mono">/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo/ep0/{sam3/masks.npz,vggt/vggt.npz}</dd>
+        <dt>Data</dt><dd class="mono">/rlwrld2/home/aaron_jeong/frontier_demo/v3/human_hmd_new/train_no_subtask (robot_type=allex, sources allex_p2_teleop_*)</dd>
+        <dt>Intrinsics</dt><dd class="mono">VGGT median fx 709.4 fy 714.3 (1280×720) vs Quest calibration.json fx 863.8 (1280×1280) — unresolved</dd>
+        <dt>Index map</dt><dd class="mono">mask index j ↔ parquet row 2j ↔ video frame 2j (pixel-identity checked against sam3/prev)</dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>MediaPipe Hands 21-keypoint topology · SQPnP perspective fit · VGGT-Omega self-calibrating metric depth</li>
+        <li>BMW counterpart, same two-panel grammar: <a href="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/">base + augmentation</a></li>
+        <li>Rig and frame convention: <a href="/experiments/dpp-bmw/decks/2026-09-01-logistics-rig-frame/">logistics rig &amp; frame</a></li>
+      </ul>
+      <p class="cut"><b>Cut:</b> allex FK hand keypoints (URDF not located; superseded by the video route) · per-frame contact · stored-vs-video wrist agreement statistics · human_umi column · the 63.5 mm Quest baseline vs 66.4 mm measured discrepancy.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

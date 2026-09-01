@@ -17,7 +17,7 @@
    "tagline": "Dexterous Point Policy on real human demonstrations, two tasks in one place. BMW assembly rig (4-view: MANO hand pose + VGGT-Omega object points + HaWoR contact) and Frontier Demo logistics (ego-stereo HMD: promptable segmentation + VGGT-Omega stereo depth). No sim, no residual RL.",
    "path": "dpp-bmw/",
    "now": {
-    "text": "Frontier Demo (logistics) onboarding: rig confirmed ego-stereo only across v1-v6, frame convention pinned (rot6d = rows, base = static world frame), hand pose found already present in the dataset. Object lifting proven on 1 of 80 episodes. BMW: 7 base policies verified @100k, eval/rollout still next.",
+    "text": "Frontier Demo train data now visualised in 3D: human hand keypoints come from the ego video (MediaPipe + PnP + VGGT depth anchor), object points from SAM3+VGGT, both in one frame. The stored hand joints are a retargeted allex schema and are not used. Object lifting still 1 of 80 episodes. BMW: 7 base policies verified @100k, eval/rollout still next.",
     "status": "active",
     "updated": "2026-09-01"
    }
@@ -45,6 +45,27 @@
   }
  },
  "logs": [
+  {
+   "project": "dpp-bmw",
+   "date": "2026-09-01",
+   "slug": "train-data-3d",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-01",
+   "title": "Frontier Demo train data in 3D: human hand keypoints + object points in one frame",
+   "tldr": "The stored hand block turned out to be the capture retargeted into allex's 48-dim joint schema -- joint angles behind a URDF that is not on the cluster -- so hand geometry now comes from the ego video instead: MediaPipe 21 keypoints per hand, fitted to the 2D landmarks by SQPnP and scale-anchored on VGGT metric depth, which lands the hand in the same ego-left camera frame the object points were lifted into. Two independent metric anchors agree to 6% (hand-size PnP vs VGGT depth) and the fitted hand reprojects onto its own landmarks at ~6-7 px. Rendered in BMW's exact two-panel grammar (ego RGB | points projected into that camera, plus a turntable about the fitted support plane) so the two rigs read side by side, and in the static base world frame across three episodes. Hands run on CPU with no cluster; the object cloud still exists for 1 of 80 episodes. Also settled by exhaustive probe: no external camera in any of the 79 datasets or 30 raw capture sessions, and the raw Quest sessions carry a tracking.jsonl that the LeRobot conversion drops.",
+   "path": "dpp-bmw/decks/2026-09-01-train-data-3d/",
+   "tags": [
+    "logistics",
+    "frontier-demo",
+    "hand-pose",
+    "mediapipe",
+    "vggt",
+    "3d",
+    "viz",
+    "train-data"
+   ]
+  },
   {
    "project": "dpp-bmw",
    "date": "2026-09-01",
