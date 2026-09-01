@@ -17,7 +17,7 @@
    "tagline": "Dexterous Point Policy on real human demonstrations, two tasks in one place. BMW assembly rig (4-view: MANO hand pose + VGGT-Omega object points + HaWoR contact) and Frontier Demo logistics (ego-stereo HMD: promptable segmentation + VGGT-Omega stereo depth). No sim, no residual RL.",
    "path": "dpp-bmw/",
    "now": {
-    "text": "BMW: 7 base policies trained & verified @100k (left-hand corrected); eval/rollout next. Frontier Demo (logistics): rig confirmed ego-stereo only across v1-v6 — no external view; mask-free object points proven on one episode, hand pose from ego-stereo not yet built.",
+    "text": "Frontier Demo (logistics) onboarding: rig confirmed ego-stereo only across v1-v6, frame convention pinned (rot6d = rows, base = static world frame), hand pose found already present in the dataset. Object lifting proven on 1 of 80 episodes. BMW: 7 base policies verified @100k, eval/rollout still next.",
     "status": "active",
     "updated": "2026-09-01"
    }
@@ -45,6 +45,26 @@
   }
  },
  "logs": [
+  {
+   "project": "dpp-bmw",
+   "date": "2026-09-01",
+   "slug": "logistics-rig-frame",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-01",
+   "title": "Frontier Demo (logistics): the rig is ego-stereo only, and already carries hand pose and a world frame",
+   "tldr": "Probed 16 frontier_demo datasets (v1-v6 x allex/human_umi/human_hmd, all resolutions): every one has exactly two visual streams, camera_ego_left/right, and no external camera anywhere -- including the allex robot-teleop column. So the BMW 4-view pipeline does not transfer. Pinned the frame convention from the data itself: rot6d is the first two ROWS of R (the only decode that makes the rigid stereo offset constant in the left-camera frame), the stereo baseline is 66.4388 mm with zero variance, and the stored `base` frame is a static world frame shared across episodes -- bit-identical start pose, no drift, no per-episode reset -- so no SLAM is needed. Head motion is only ~10 cm. Biggest finding: hand pose is already in the dataset (wrist 6D pose plus 15 dof per hand, in the base frame, with only the two waist dims dead), so hand points need allex FK rather than MANO or HaWoR re-estimation. Object points still need lifting: proven on one episode of 80. Preflight clips of head+wrists rendered for 3 episodes, awaiting the owner's visual sign-off before the 20-episode extraction batch.",
+   "path": "dpp-bmw/decks/2026-09-01-logistics-rig-frame/",
+   "tags": [
+    "logistics",
+    "frontier-demo",
+    "ego-stereo",
+    "frame-convention",
+    "hmd",
+    "rig-audit",
+    "viz"
+   ]
+  },
   {
    "project": "3d-wam",
    "date": "2026-08-31",

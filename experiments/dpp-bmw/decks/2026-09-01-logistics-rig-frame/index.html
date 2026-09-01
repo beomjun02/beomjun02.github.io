@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-01 · Logistics rig &amp; frame — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Deck: the Frontier Demo logistics rig is ego-stereo only, and it already carries hand pose and a static world frame.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="logistics rig &amp; frame" data-date="2026-09-01">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Frontier Demo (logistics): what the ego-stereo rig actually provides</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · logistics onboarding · rig audit and frame convention</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 01<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> No external view; hand pose and world frame already provided.</p>
+  <ul>
+    <li>Done: 16 datasets probed, ego-stereo only</li>
+    <li>Done: frame convention pinned from data</li>
+    <li>Discuss: object mesh · batch size · URDF</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_dpp_inputs.jpg" alt="Three DPP inputs on the logistics rig: hand already in the dataset, object must be lifted, contact not started">
+      <figcaption>DPP inputs on this rig — status per input · what each still needs</figcaption></figure>
+    <figure><video src="assets/ep1_episode.mp4" poster="assets/ep1_episode.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep1, full episode — head and both wrists in the base frame · hand-joint strips below</figcaption></figure>
+  </div>
+  <p class="footnote">head grey · left wrist purple · right wrist green · v3/human_hmd_new · probe + viz: ~/claude-code-rc/DPP-BMW/</p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): Rig inventory across v1–v6</h2>
+  <p class="thesis">Every version and column carries exactly two ego cameras.</p>
+  <ul>
+    <li>One metadata read per dataset</li>
+    <li>allex teleop also ego-stereo only</li>
+    <li>Resolution variants rescale, same streams</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_inventory.jpg" alt="Grid of versions v1 to v6 by column allex, human_umi, human_hmd; every collected cell shows two ego cameras and zero external">
+      <figcaption>Camera inventory — rows: capture version · columns: data source · cell: streams found</figcaption></figure>
+  </div>
+  <p class="footnote">source: each dataset's meta/info.json · one batched read-only ssh · paths listed in the appendix</p>
+</section>
+
+<!-- SECTION: method (2) -->
+<section class="slide s-method">
+  <h2>Method (2): Frame convention from the rigid baseline</h2>
+  <p class="thesis">The rigid stereo offset selects the correct rot6d decode.</p>
+  <ul>
+    <li>rot6d = first two rows</li>
+    <li>Offset constant in left frame</li>
+    <li>Column decode rejected, rows accepted</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_convention.jpg" alt="Left: log-scale bars of per-axis standard deviation for column versus row decode. Right: stereo baseline magnitude over time.">
+      <figcaption>Decode test — left: per-axis std under each convention · right: baseline magnitude over the episode</figcaption></figure>
+  </div>
+  <p class="footnote">every [9] key is [pos3, rot6d] · test applies R<sup>T</sup> to the left→right offset · viz/hmd_frames_viz.py</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Base frame is static and usable
+      <ul><li>head + both wrists, base frame, full episode</li>
+          <li>identical start pose across episodes, no reset</li></ul></li>
+    <li>3D structure at a frozen timestep</li>
+    <li>Hand pose already in the dataset</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_episode.mp4" poster="assets/ep0_episode.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0, full episode — fixed base-frame camera · trails show the last 3 s</figcaption></figure>
+    <figure><video src="assets/ep2_episode.mp4" poster="assets/ep2_episode.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep2, same rendering — only the episode varies</figcaption></figure>
+  </div>
+  <p class="footnote">head grey · left wrist purple · right wrist green · <a href="assets/ep0_episode.mp4">ep0_episode.mp4</a> · <a href="assets/ep2_episode.mp4">ep2_episode.mp4</a> · produced by viz/hmd_frames_viz.py</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Base frame is static and usable</li>
+    <li class="on">3D structure at a frozen timestep
+      <ul><li>view orbits a single mid-episode frame</li>
+          <li>wrist triads show orientation, not only position</li></ul></li>
+    <li>Hand pose already in the dataset</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_turntable.mp4" poster="assets/ep0_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 turntable — frozen mid-episode frame · azimuth sweeps 360°</figcaption></figure>
+    <figure><video src="assets/ep1_turntable.mp4" poster="assets/ep1_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep1 turntable — same sweep and elevation; only the episode varies</figcaption></figure>
+  </div>
+  <p class="footnote">triad axes = the frame's own x/y/z · <a href="assets/ep0_turntable.mp4">ep0_turntable.mp4</a> · <a href="assets/ep1_turntable.mp4">ep1_turntable.mp4</a></p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Base frame is static and usable</li>
+    <li>3D structure at a frozen timestep</li>
+    <li class="on">Hand pose already in the dataset
+      <ul><li>wrist 6D pose plus per-hand joints, both hands</li>
+          <li>only the two waist dims are identically zero</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/fig_handdata.jpg" alt="Left: per-dimension standard deviation across the 48 joint dims grouped by body block. Right: head and wrist paths in the base frame.">
+      <figcaption>What the state vector carries — left: per-dim activity by block · right: head and wrist paths</figcaption></figure>
+  </div>
+  <p class="footnote">blocks per meta/modality.json · these are allex joints retargeted from the human, not MANO keypoints</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three decisions; silence means the recommendation stands.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Object mesh from partial views</b> — temporal accumulation vs cuboid fit vs BundleSDF → accumulation for points, cuboid for contact (owner)</li>
+    <li><b>Extraction batch size</b> — pilot 5 vs full 20 episodes → 20, one array job, sign-off before submit (owner)</li>
+    <li><b>Hand points</b> — allex FK vs MANO re-estimation → FK, blocked on the URDF path (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Confirm the preflight clips read correctly (owner · today)</li>
+    <li>allex URDF path for hand FK (owner · blocking)</li>
+    <li>Object + hand extraction, 20 episodes (agent · after go)</li>
+    <li>20-demo gallery deck (agent · after extraction)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · evidence paths · references · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Probed</dt><dd class="mono">/rlwrld2/home/aaron_jeong/frontier_demo/{v1…v6}/{allex,human_umi,human_hmd_new}/… · /rlwrld2/home/david/lerobot_data_convert/… · /rlwrld2/home/david/frontier_demo_cumul/v1_v2</dd>
+        <dt>Probe data</dt><dd class="mono">~/claude-code-rc/DPP-BMW/data-probe/v3_human_hmd_new/ (meta + eps 0–2)</dd>
+        <dt>Scripts</dt><dd class="mono">~/claude-code-rc/DPP-BMW/viz/hmd_frames_viz.py · viz/deck_figs.py</dd>
+        <dt>Prior demo</dt><dd class="mono">/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo/ (SAM3 + VGGT, ep0 only)</dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>SAM3.1 text-prompt segmentation · VGGT-Omega self-calibrating stereo depth</li>
+        <li>BundleSDF — model-free simultaneous 6D tracking and reconstruction</li>
+        <li>BMW counterpart records: <a href="/experiments/dpp-bmw/logs/2026-08-23-bmw0821-base-and-augmentation/">base + augmentation</a> · <a href="/experiments/dpp-bmw/logs/2026-08-24-lefthand-refix/">left-hand refix</a> · <a href="/experiments/dpp-bmw/logs/2026-08-24-chord-contact-wrench/">CHORD</a></li>
+      </ul>
+      <p class="cut"><b>Cut list</b> (dropped from this deck): BMW eval/rollout of the 7 base policies · action item #5 old-batch hand-bug check · CHORD 20 of 60 failed runs · ready-pose anchor ruling · project rename to BMW &amp; Frontier Demo · UMI column not yet examined for hand labels · 37% object-mask coverage on the ep0 demo</p>
+    </div>
+  </div>
+  <p class="footnote">rig facts verified 2026-08-31 / 2026-09-01 · memory: logistics-frontier-demo-rig.md</p>
+</section>
+
+</main>
+</body>
+</html>
