@@ -28,6 +28,13 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
 .vizgrid figcaption{font-size:.74em;opacity:.8;text-align:left;line-height:1.35}
 .epoch{display:inline-block;font-weight:700;color:var(--acc,#0070C0)}
 .tasklist{columns:2;font-size:.72em;line-height:1.5;opacity:.85}
+.etabar{margin:.5em 0 .2em;padding:.4em .7em;border-left:3px solid var(--acc,#0070C0);
+  background:var(--panel,#f5f7fa);font-size:.82em;line-height:1.5}
+.etabar b.k{color:var(--acc,#0070C0);letter-spacing:.04em}
+.etabar .h{font-weight:700}
+.phold .pbox{display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:5.2em;padding:.6em;border:2px dashed var(--dim,#B3B3B3);border-radius:4px;
+  color:var(--cap,#595959);font-size:.78em;line-height:1.45;background:var(--panel,#f5f7fa)}
 </style>
 </head>
 <body class="deck-page">
@@ -71,9 +78,9 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li class="on">Scale-up to 320M — setup, results, ETA
-      <ul><li>π0.5 expert size, DiT recipe</li>
-          <li>direction still climbing steeply</li></ul></li>
+    <li class="on">Scale-up and training length — setup, results
+      <ul><li>One 320M base, not two</li>
+          <li>120M continues to 10 epochs</li></ul></li>
     <li>Cross-embodiment transfer</li>
     <li>GR-1 tabletop closed-loop</li>
     <li>Contact auxiliary loss</li>
@@ -81,38 +88,30 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
   <div class="band">
     <figure>
       <table class="num">
-        <tr><th>setup</th><th>120M base</th><th>320M twins</th></tr>
-        <tr><td>d × depth × heads</td><td>768×12×12</td><td>1024×18×16</td></tr>
-        <tr><td>params</td><td>119.95M</td><td>305.17M</td></tr>
+        <tr><th>setup · two ways to spend a GPU</th><th>120M</th><th>320M</th></tr>
+        <tr><td>d × depth · params</td><td>768×12 · 120M</td><td>1024×18 · 305M</td></tr>
         <tr><td>lr · effective batch</td><td>3e-4 · 32</td><td>1e-4 · 256</td></tr>
-        <tr><td>steps → effective epochs</td><td>110k → 6.09</td><td>11,250 → 4.98</td></tr>
-        <tr><td>s/step · GPU</td><td>0.95 · 1×A100</td><td>15.6 · 1×A100</td></tr>
+        <tr><td>samples/s · h per epoch</td><td>33.7 · 4.8</td><td>16.4 · 9.8</td></tr>
+        <tr><td>live arm → target</td><td>p7 → 10.00 ep</td><td>p4b → 4.98 ep</td></tr>
+        <tr><td class="mute">retired 09-01: 320M robot twin</td><td class="mute" colspan="2">freed its GPU for p7</td></tr>
       </table>
-      <figcaption>one variable is the model; the recipe is canonical from-scratch DiT (warmup 350, cosine→0.1, wd 0.05, EMA 0.999)</figcaption>
+      <figcaption>the 320M costs only 2.05× per epoch, not 16× — the 8× batch cancels most of the slower step, so epochs and parallelism set the cycle time, not model size</figcaption>
     </figure>
     <figure>
       <table class="num">
         <tr><th>results</th><th>eff. ep</th><th>cos</th><th>ADE cm</th></tr>
         <tr><td>320M @4k · quick-val</td><td>1.77</td><td>0.283</td><td>8.68</td></tr>
-        <tr><td>320M+robot @4k · quick-val</td><td>1.77</td><td>0.280</td><td>8.38</td></tr>
         <tr><td class="mute">↳ zero predictor, that basis</td><td class="mute">—</td><td class="mute">—</td><td class="mute">6.96</td></tr>
-        <tr><td>120M base @110k · ieval</td><td>6.09</td><td class="good">0.279</td><td class="good">7.94</td></tr>
+        <tr><td>120M @50k · ieval</td><td>2.77</td><td>0.237</td><td class="good">7.71</td></tr>
+        <tr><td>120M @110k · ieval</td><td>6.09</td><td class="good">0.279</td><td>7.94</td></tr>
         <tr><td class="mute">↳ zero predictor, that basis</td><td class="mute">—</td><td class="mute">—</td><td class="mute">7.97</td></tr>
-        <tr class="pend"><td>320M @11,250 — pending</td><td>4.98</td><td colspan="2">ETA Wed 09-02, one continuation</td></tr>
+        <tr class="pend"><td>320M @4.98 ep · 120M @10 ep</td><td colspan="3">both pending — see ETA below</td></tr>
       </table>
-      <figcaption>the 320M is at 1.77 epochs against the base's 6.09 — the comparison the deck must not fudge; a matched-epoch read needs the run to finish</figcaption>
-    </figure>
-    <figure>
-      <table class="num">
-        <tr><th>ETA</th><th>when</th><th>gives</th></tr>
-        <tr><td>40 h budget exit</td><td>Wed 13:40</td><td>4.1 ep</td></tr>
-        <tr><td>+ one continuation</td><td>Wed ~22:30</td><td>4.98 ep</td></tr>
-        <tr><td>matched-epoch verdict</td><td>Thu 09-03</td><td>ieval + ipaired</td></tr>
-      </table>
-      <figcaption>H100 would halve the remainder but the partition has no free GPU today (all nodes mixed, one job pending on Resources)</figcaption>
+      <figcaption>direction rises to the very end (0.237→0.279 over 2.77→6.09 ep) while ADE bottoms at 2.77 — that divergence is why the 10-epoch arm is judged on cosine, with ADE watched</figcaption>
     </figure>
   </div>
-  <p class="footnote">software throughput levers are closed: batch-geometry + host-sync arm measured null (0.948 vs 0.950 s/step) · torch.compile crashes this torch build · true MFU ≈27 %, compute-bound</p>
+  <p class="etabar"><b class="k">ETA</b> — <b>320M @4.98 ep</b>: <span class="h">+28.3 h</span> compute → budget exit Wed 09-02 ~13:45 at 4.06 ep, held continuation adds <span class="h">9.0 h</span> → <b>Wed 09-02 ~22:45</b> · <b>120M @10 ep</b> (resumed today at 6.09 ep): <span class="h">+18.6 h</span> → 8 ep Wed ~03:30, <b>10 ep Wed ~13:00</b> · matched-epoch paired verdict <b>Thu 09-03</b>, ≈1 h of eval</p>
+  <p class="footnote">software throughput levers are closed: batch-geometry + host-sync null (0.948 vs 0.950 s/step) · torch.compile crashes this build · MFU ≈27 %, compute-bound · no free GPU in the partition, so the twin's GPU is what funds the 10-epoch arm · structural options if the cycle must shorten further: 4-GPU DDP (script exists, unvalidated) or H100 (≈2×)</p>
 </section>
 
 <!-- SECTION: viz · scale-up, same chunks, both sizes -->
@@ -132,7 +131,14 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       <figcaption><b>320M @4k</b> · <span class="epoch">1.77 ep</span> · arctic, chunk 1988<br>same clip · ADE 7.58 cm · motion 3.27 vs GT 7.99 cm</figcaption></figure>
     <figure><img src="assets/p320m_4k_oakink2.gif" alt="320M at step 4000, oakink2 chunk 18292" loading="lazy">
       <figcaption><b>320M @4k</b> · <span class="epoch">1.77 ep</span> · oakink2, chunk 18292<br>same clip · ADE 2.99 cm · motion 2.28 vs GT 3.4 cm</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br><b>320M @11,250 · 2.82 ep more</b><br>taco 29206</div>
+      <figcaption>placeholder · renders Wed 09-02 ~22:50, +9.0 h</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br><b>320M @11,250 · 4.98 ep</b><br>arctic 1988</div>
+      <figcaption>placeholder · same chunk, matched camera</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br><b>120M @180,608 · 10.00 ep</b><br>oakink2 18292</div>
+      <figcaption>placeholder · renders Wed 09-02 ~13:10, +18.6 h</figcaption></figure>
   </div>
+  <p class="etabar"><b class="k">ETA</b> — bottom row fills when the two runs finish: <b>320M 4.98 ep</b> Wed 09-02 ~22:50 (<span class="h">+9.0 h</span> after the held continuation starts) · <b>120M 10 ep</b> Wed 09-02 ~13:10 (<span class="h">+18.6 h</span> from 18:22 today) · each render is a 2-minute job on the freed GPU</p>
   <p class="footnote">identical chunk ids and identical camera in both rows · single-chunk open-loop generation, 10 frames = 1 s @10 Hz · left half of each frame ground truth, right half prediction · renderer scripts/viz_vdit_c.py --k 8 · sources results/iviz/{i5_110k,p4b_4k}/clips/</p>
 </section>
 
@@ -155,9 +161,10 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>test hand</td><td>Sharpa Wave, zero-shot</td></tr>
         <tr><td>retarget coverage</td><td>TACO only, 1,148 eps</td></tr>
         <tr><td>matching</td><td>same seq + chunk start</td></tr>
-        <tr><td>co-training arm</td><td>10 % Sharpa (i9, p5b)</td></tr>
+        <tr><td>co-training arm</td><td>10 % Sharpa, 120M (i9)</td></tr>
+        <tr><td class="mute">320M twin, retired at 2.06 ep</td><td class="mute">evidence kept, GPU reused</td></tr>
       </table>
-      <figcaption>matching holds task, object and scene fixed, so the measured gap is the hand alone (xeval.py --pairs 384)</figcaption>
+      <figcaption>matching holds task, object and scene fixed, so the measured gap is the hand alone (xeval.py --pairs 384); this workstream now screens at 120M per the two-tier policy</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -166,15 +173,17 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>Sharpa hand, zero-shot</td><td class="good">0.207 = 79 %</td></tr>
         <tr><td>paired gap [95 % CI]</td><td>−0.052 [−0.091, −0.015]</td></tr>
         <tr><td>10 % co-train: human / robot</td><td>+0.0141 / +0.0146</td></tr>
-        <tr class="pend"><td>320M twins, matched epoch — pending</td><td>ETA Thu 09-03</td></tr>
+        <tr><td>320M twins @1.77 ep (before retirement)</td><td>0.283 vs 0.280</td></tr>
+        <tr class="pend"><td>10-epoch base, Sharpa gap — pending</td><td>see ETA below</td></tr>
       </table>
-      <figcaption>at 320M the twins are already statistically identical at every checkpoint (0.283 vs 0.280 @1.77 ep) — co-training still costs nothing</figcaption>
+      <figcaption>the twins were statistically identical at every checkpoint and within 0.1–0.9 cm on every clip, so the 320M arm was retired having already answered its question</figcaption>
     </figure>
     <figure><img src="assets/b110k_taco_human.gif" alt="120M base, taco s33, human hand" loading="lazy">
       <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · human hand</figcaption></figure>
     <figure><img src="assets/b110k_taco_sharpa.gif" alt="120M base, taco s33, Sharpa hand zero-shot" loading="lazy">
       <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
   </div>
+  <p class="etabar"><b class="k">ETA</b> — <b>120M paired verdict</b> (i5 vs i9, xeval on existing checkpoints, eval-only <span class="h">≈1 h</span>): tonight after the contact screen frees a GPU, <b>~00:30</b> · <b>Sharpa gap at 10 epochs</b>: <span class="h">+1 h</span> after the 120M arm lands → <b>Wed 09-02 ~14:00</b> · no new training needed for either</p>
   <p class="footnote">same sequence and chunk start in both clips, only the hand differs · the retarget exists for TACO only (`chord/data/taco/hf_release/taco/&lt;seq&gt;/motion_v1.parquet`) · 320M pair clips at 1.77 ep in the appendix gallery</p>
 </section>
 
@@ -187,6 +196,10 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
     <li>RoboCasa sim, GR-1 humanoid</li>
     <li>Published baselines to beat</li>
   </ul>
+  <div class="band">
+    <figure><img src="assets/gr1_tasks_banner.png" alt="RoboCasa GR-1 tabletop tasks: five pairs of simulated tabletop scenes with the GR-1 humanoid manipulating objects on tables, shelves and in a cabinet">
+      <figcaption>the arena itself — GR-1 in the RoboCasa tabletop scenes we will be scored in (figure: the benchmark's own README banner, robocasa/robocasa-gr1-tabletop-tasks)</figcaption></figure>
+  </div>
   <div class="band">
     <figure>
       <table class="num">
@@ -223,6 +236,7 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       <figcaption>scripts/simulation_service.py --client --env_name &lt;TASK&gt; --max_episode_steps 720 --n_envs 5 --n_episodes 10 · full 24-task list in the appendix</figcaption>
     </figure>
   </div>
+  <p class="etabar"><b class="k">ETA</b> — <b>first zero-shot success rate on their 24 tasks</b>: <b>Fri 09-04</b>, gated on the four unbuilt components (≈<span class="h">14 h</span> of build: IK 4 h, GT replay 4 h, env + adapter 6 h) plus the hand remap, which has <b>no estimate</b> until the env code is read · eval itself is <span class="h">≈2 h</span> for 24 tasks × 10 episodes</p>
   <p class="footnote">baseline-settings rule: their tasks, their success metric, their episode budget — no custom metric · secondary arena isaac-sim/IsaacLabEvalTasks (GR1-T2, 2 industrial tasks)</p>
 </section>
 
@@ -285,7 +299,12 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       </table>
       <figcaption>the hand-topology remap is the one item with no precedent in our pipeline — Sharpa had 33 declared link frames, the Fourier hand is a different mechanism</figcaption>
     </figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br><b>decoded-GT replay on the robot hand</b><br>sim clip, isolates decode from model</div>
+      <figcaption>placeholder · rung ④, Thu 09-03 (+4 h)</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br><b>first GR-1 zero-shot rollout</b><br>1 of 24 tasks, 720-step episode</div>
+      <figcaption>placeholder · rung ⑥, Fri 09-04</figcaption></figure>
   </div>
+  <p class="etabar"><b class="k">ETA</b> — ③ fitted poses → joints <b>Wed 09-02</b> (<span class="h">4 h</span>) · ④ decoded-GT replay <b>Thu 09-03</b> (<span class="h">4 h</span>) · ⑤ env install + observation adapter <b>Thu 09-03</b> (<span class="h">6 h</span>) · ⑥ hand remap <b>Fri 09-04</b>, <b>unestimated</b> — it is the schedule risk, not the build hours</p>
   <p class="footnote">de-risk path if ⑥ stalls: first closed loop in chord_isaaclab on Sharpa/TACO, where assets and ground truth already exist · conditioning choice (GR-1's own hand points vs human/Sharpa points + cross-decode) is an inference-time switch, try both</p>
 </section>
 
@@ -356,48 +375,59 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
     </figure>
     <figure>
       <table class="num">
-        <tr><th>results — pending</th><th>ETA</th></tr>
-        <tr class="pend"><td>paired vs i5 @1.11 ep (ipaired)</td><td>Wed 09-02 am</td></tr>
-        <tr class="pend"><td>contact IoU · centroid error (xcontact)</td><td>Wed 09-02 am</td></tr>
-        <tr class="pend"><td>hand-at-contact cosine</td><td>Wed 09-02 am</td></tr>
+        <tr><th>results — all pending</th><th>target to beat</th></tr>
+        <tr class="pend"><td>paired cosine vs i5 @1.11 ep</td><td>i5's own 1.11-ep ckpt</td></tr>
+        <tr class="pend"><td>contact IoU · centroid error</td><td>0.44 · 2.84 cm</td></tr>
+        <tr class="pend"><td>hand-at-contact cosine</td><td>0.224 (GT 0.890)</td></tr>
+        <tr><td>live gradient share, real data</td><td>0.005–0.008</td></tr>
       </table>
-      <figcaption>targets to beat, measured on the base model: contact IoU 0.44, centroid error 2.84 cm, hand-at-contact cos 0.224 against 0.890 in ground truth</figcaption>
+      <figcaption>the targets are the base model's own numbers on the same metrics; the live share is 10× below the synthetic estimate, so a null result would argue for a higher λ rather than against the idea</figcaption>
     </figure>
   </div>
+  <p class="etabar"><b class="k">ETA</b> — screen reaches 20k steps (1.11 ep) in <span class="h">+4.9 h</span> → <b>tonight ~23:15</b> · three metrics then take <span class="h">≈40 min</span> → <b>verdict ~00:00</b>, in the deck Wed morning · a follow-up arm at higher λ, if the share stays under 1 %, is another <span class="h">5.3 h</span></p>
   <p class="footnote">prior: eight architecture additions have been falsified in this project and the settled verdict prefers data and length — this arm is cheap and instrumented, not a change of direction · the 2026-08 co-motion form differed (paired points share a flow vector) and ran at ~1e-5 of the objective on collapsed models</p>
 </section>
 
-<!-- SECTION: discussion-actions -->
+<!-- SECTION: discussion-actions · closing summary -->
 <section class="slide s-discuss">
-  <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Four decisions, one with a Wednesday deadline.</p>
-  <p class="subhead">Discussion:</p>
-  <ol>
-    <li><b>320M finish path</b> — 40 h budget ends Wed 13:40 at 4.1 of 4.98 epochs → continuation submit vs H100 requeue; H100 has no free GPU today, so recommendation is a dependency-held continuation with dual-target partition (owner)</li>
-    <li><b>Base checkpoint policy</b> — 2.77 ep (best calibration) vs 6.09 ep (best direction) as the deployed base → rollouts and IK favour calibration, analysis favours direction; pick per consumer (owner)</li>
-    <li><b>GR-1 conditioning choice</b> — condition on GR-1's own hand points (fully OOD, strongest claim) vs human/Sharpa points with cross-decode (safer) → inference-time switch, recommend running both (owner)</li>
-    <li><b>Contact-loss follow-up</b> — if the screen moves contact IoU but not ADE, is that worth a 320M slot? (owner)</li>
-  </ol>
-  <p class="subhead">Action items:</p>
-  <ol>
-    <li>320M twins to 4.98 epochs + matched-epoch paired verdict (agent · Wed–Thu)</li>
-    <li>IK joints → decoded-GT replay → GR-1 env + hand remap (agent · 09-02 → 09-04)</li>
-    <li>Contact screen verdict at 1.11 ep, with the gradient share on real data (agent · Wed am)</li>
-    <li>Owner: eye-verify the rollout and per-size galleries in this deck</li>
-    <li>Uncurated control's final eval — resubmit, first attempt raced the unfinished run (agent · next touch)</li>
-  </ol>
+  <h2>Summary: what is running, when it lands, what you decide</h2>
+  <p class="thesis">Three GPUs busy; four results by Wednesday night; three decisions.</p>
   <div class="band">
     <figure>
       <table class="num">
-        <tr><th>next 72 h</th><th>Wed 09-02</th><th>Thu 09-03</th><th>Fri 09-04</th></tr>
-        <tr><td>scale-up</td><td>4.98 ep done</td><td>paired verdict</td><td>—</td></tr>
-        <tr><td>cross-embodiment</td><td>—</td><td>320M twins verdict</td><td>—</td></tr>
-        <tr><td>GR-1 closed-loop</td><td>IK joints</td><td>GT replay + env</td><td>first zero-shot</td></tr>
-        <tr><td>contact loss</td><td>screen verdict</td><td>—</td><td>—</td></tr>
+        <tr><th>running now (3 GPUs, all ours)</th><th>at</th><th>target</th><th>compute left</th><th>lands</th></tr>
+        <tr><td>320M base · p4b</td><td>2.09 ep</td><td>4.98 ep</td><td>28.3 h</td><td>Wed 22:45</td></tr>
+        <tr><td>↳ continuation, dependency-held</td><td class="mute">queued</td><td class="mute">auto-starts</td><td>9.0 h</td><td class="mute">of the above</td></tr>
+        <tr><td>120M length arm · p7</td><td>6.09 ep</td><td>10.00 ep</td><td>18.6 h</td><td>Wed 13:00</td></tr>
+        <tr><td>Contact screen · p6</td><td>0.09 ep</td><td>1.11 ep</td><td>4.9 h</td><td>tonight 23:15</td></tr>
+        <tr><td class="mute">320M robot twin · retired 09-01</td><td class="mute">2.06 ep</td><td class="mute">—</td><td class="mute">freed 1 GPU</td><td class="mute">resumable</td></tr>
       </table>
-      <figcaption>the four workstreams against the calendar — GR-1 is the only one whose Friday depends on an unknown (the hand remap)</figcaption>
+      <figcaption>the twin's GPU funds the 10-epoch arm; the partition had no free GPU, so the alternative would have preempted six other users' jobs</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>results due, no input needed</th><th>hours</th><th>when</th></tr>
+        <tr><td>Contact-loss verdict, 3 metrics</td><td>+5.6 h</td><td>tonight ~00:00</td></tr>
+        <tr><td>Cross-embodiment at 120M (eval only)</td><td>+1 h</td><td>tonight ~00:30</td></tr>
+        <tr><td>120M at 10 epochs + clips</td><td>+18.6 h</td><td>Wed 13:10</td></tr>
+        <tr><td>320M at 4.98 epochs + clips</td><td>+28.3 h</td><td>Wed 22:50</td></tr>
+        <tr><td>Matched-epoch paired verdict</td><td>+1 h</td><td>Thu 09-03</td></tr>
+        <tr><td>GR-1 first zero-shot success rate</td><td>+16 h build</td><td>Fri 09-04</td></tr>
+      </table>
+      <figcaption>every row is already submitted or needs only agent time — nothing here waits on a decision</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>your decisions</th><th>by</th><th>my recommendation</th></tr>
+        <tr><td>Base checkpoint: 2.77 ep (calibration) vs 6.09/10 ep (direction)</td><td>Thu</td><td>per consumer: IK/rollouts 2.77, analysis latest</td></tr>
+        <tr><td>GR-1 conditioning: GR-1's own hand points vs human/Sharpa + cross-decode</td><td>Thu 09-03</td><td>run both, it is an inference switch</td></tr>
+        <tr><td>Contact follow-up if IoU moves but ADE does not</td><td>Wed am</td><td>one higher-λ screen, then drop or keep</td></tr>
+        <tr><td class="mute">Eye-verification: rollout + per-size galleries</td><td class="mute">anytime</td><td class="mute">owner only — I cannot judge clips</td></tr>
+      </table>
+      <figcaption>three rulings plus the standing eye-verification; the uncurated control's final eval also needs a fresh go after its first attempt raced the run</figcaption>
     </figure>
   </div>
+  <p class="etabar"><b class="k">ETA at a glance</b> — <b>tonight</b>: contact verdict + cross-embodiment (<span class="h">≈6 h</span>) · <b>Wed 13:00</b>: 120M at 10 ep (<span class="h">18.6 h</span>) · <b>Wed 22:45</b>: 320M at 4.98 ep (<span class="h">28.3 h</span>) · <b>Thu</b>: matched-epoch verdict · <b>Fri</b>: GR-1 zero-shot, the only date exposed to an unestimated component</p>
 </section>
 
 <!-- SECTION: appendix · 320M cross-embodiment pair + per-dataset -->
