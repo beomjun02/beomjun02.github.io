@@ -14,19 +14,30 @@
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
 <style>
-table.num{border-collapse:collapse;font-size:.95em;width:100%}
-table.num th,table.num td{border-bottom:1px solid var(--rule,#8884);padding:.3em .55em;text-align:right}
-table.num th:first-child,table.num td:first-child{text-align:left}
-table.num .good{color:#1a7f37;font-weight:600}
-table.num .bad{color:#b3261e;font-weight:600}
+/* terminal-style tables: monospace, tabular figures, pipe column rules, one header rule,
+   no row rules — the layout a terminal prints, not a web table */
+table.num{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.80em;
+  font-variant-numeric:tabular-nums;line-height:1.5;
+  background:var(--panel,#f7f8fa);border:1px solid var(--line,#d7dbe0)}
+table.num th,table.num td{padding:.24em .62em;text-align:right;border:0;white-space:nowrap}
+table.num th:first-child,table.num td:first-child{text-align:left;white-space:normal}
+table.num td:last-child{white-space:normal}
+table.num td+td,table.num th+th{border-left:1px solid var(--line,#d7dbe0)}
+table.num th{font-weight:700;border-bottom:1px solid var(--mut,#595959)}
+table.num .good{color:#1a7f37;font-weight:700}
+table.num .bad{color:#b3261e;font-weight:700}
 table.num .mute{opacity:.55}
-table.num tr.pend td{background:var(--panel,#f5f7fa)}
+table.num tr.pend td{background:color-mix(in srgb,var(--acc,#0070C0) 7%,transparent);font-style:italic}
 .vizgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55em .9em;width:100%}
 .vizgrid.two{grid-template-columns:repeat(2,1fr)}
 .vizgrid figure{margin:0}
 .vizgrid img{width:100%;height:auto;border-radius:3px}
 .vizgrid figcaption{font-size:.74em;opacity:.8;text-align:left;line-height:1.35}
 .epoch{display:inline-block;font-weight:700;color:var(--acc,#0070C0)}
+.gr1band{justify-content:center}
+.slide .band.gr1band{margin-bottom:.2em}
+.slide .band.gr1band figure{flex:0 0 76%}
+.slide .band.gr1band img{width:100%}
 .tasklist{columns:2;font-size:.72em;line-height:1.5;opacity:.85}
 .etabar{margin:.5em 0 .2em;padding:.4em .7em;border-left:3px solid var(--acc,#0070C0);
   background:var(--panel,#f5f7fa);font-size:.82em;line-height:1.5}
@@ -95,7 +106,7 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>live arm → target</td><td>p7 → 10.00 ep</td><td>p4b → 4.98 ep</td></tr>
         <tr><td class="mute">retired 09-01: 320M robot twin</td><td class="mute" colspan="2">freed its GPU for p7</td></tr>
       </table>
-      <figcaption>the 320M costs only 2.05× per epoch, not 16× — the 8× batch cancels most of the slower step, so epochs and parallelism set the cycle time, not model size</figcaption>
+      <figcaption>320M costs 2.05× per epoch, not 16× — the 8× batch cancels most of the slower step</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -107,11 +118,11 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td class="mute">↳ zero predictor, that basis</td><td class="mute">—</td><td class="mute">—</td><td class="mute">7.97</td></tr>
         <tr class="pend"><td>320M @4.98 ep · 120M @10 ep</td><td colspan="3">both pending — see ETA below</td></tr>
       </table>
-      <figcaption>direction rises to the very end (0.237→0.279 over 2.77→6.09 ep) while ADE bottoms at 2.77 — that divergence is why the 10-epoch arm is judged on cosine, with ADE watched</figcaption>
+      <figcaption>direction rises to the end, ADE bottoms at 2.77 ep — the 10-epoch arm is judged on cosine</figcaption>
     </figure>
   </div>
-  <p class="etabar"><b class="k">ETA</b> — <b>320M @4.98 ep</b>: <span class="h">+28.3 h</span> compute → budget exit Wed 09-02 ~13:45 at 4.06 ep, held continuation adds <span class="h">9.0 h</span> → <b>Wed 09-02 ~22:45</b> · <b>120M @10 ep</b> (resumed today at 6.09 ep): <span class="h">+18.6 h</span> → 8 ep Wed ~03:30, <b>10 ep Wed ~13:00</b> · matched-epoch paired verdict <b>Thu 09-03</b>, ≈1 h of eval</p>
-  <p class="footnote">software throughput levers are closed: batch-geometry + host-sync null (0.948 vs 0.950 s/step) · torch.compile crashes this build · MFU ≈27 %, compute-bound · no free GPU in the partition, so the twin's GPU is what funds the 10-epoch arm · structural options if the cycle must shorten further: 4-GPU DDP (script exists, unvalidated) or H100 (≈2×)</p>
+  <p class="etabar"><b class="k">ETA</b> — <b>320M @4.98 ep</b>: <span class="h">+28.3 h</span> → <b>Wed 09-02 ~22:45</b> (budget exit ~13:45 at 4.06 ep, held continuation <span class="h">+9.0 h</span>) · <b>120M @10 ep</b>: <span class="h">+18.6 h</span> → <b>Wed ~13:00</b> · paired verdict <b>Thu 09-03</b> (<span class="h">+1 h</span>)</p>
+  <p class="footnote">throughput levers closed: batch-geometry null · compile crashes this build · MFU ≈27 % · no free GPU, so the twin funds the 10-epoch arm · if the cycle must shorten: 4-GPU DDP or H100 (≈2×)</p>
 </section>
 
 <!-- SECTION: viz · scale-up, same chunks, both sizes -->
@@ -164,7 +175,7 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>co-training arm</td><td>10 % Sharpa, 120M (i9)</td></tr>
         <tr><td class="mute">320M twin, retired at 2.06 ep</td><td class="mute">evidence kept, GPU reused</td></tr>
       </table>
-      <figcaption>matching holds task, object and scene fixed, so the measured gap is the hand alone (xeval.py --pairs 384); this workstream now screens at 120M per the two-tier policy</figcaption>
+      <figcaption>matching fixes task, object and scene, so the gap is the hand alone (xeval --pairs 384)</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -176,29 +187,20 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>320M twins @1.77 ep (before retirement)</td><td>0.283 vs 0.280</td></tr>
         <tr class="pend"><td>10-epoch base, Sharpa gap — pending</td><td>see ETA below</td></tr>
       </table>
-      <figcaption>the twins were statistically identical at every checkpoint and within 0.1–0.9 cm on every clip, so the 320M arm was retired having already answered its question</figcaption>
+      <figcaption>twins identical at every checkpoint and within 0.9 cm on every clip — question answered</figcaption>
     </figure>
-    <figure><img src="assets/b110k_taco_human.gif" alt="120M base, taco s33, human hand" loading="lazy">
-      <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · human hand</figcaption></figure>
-    <figure><img src="assets/b110k_taco_sharpa.gif" alt="120M base, taco s33, Sharpa hand zero-shot" loading="lazy">
-      <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
   </div>
   <p class="etabar"><b class="k">ETA</b> — <b>120M paired verdict</b> (i5 vs i9, xeval on existing checkpoints, eval-only <span class="h">≈1 h</span>): tonight after the contact screen frees a GPU, <b>~00:30</b> · <b>Sharpa gap at 10 epochs</b>: <span class="h">+1 h</span> after the 120M arm lands → <b>Wed 09-02 ~14:00</b> · no new training needed for either</p>
-  <p class="footnote">same sequence and chunk start in both clips, only the hand differs · the retarget exists for TACO only (`chord/data/taco/hf_release/taco/&lt;seq&gt;/motion_v1.parquet`) · 320M pair clips at 1.77 ep in the appendix gallery</p>
+  <p class="footnote">the human/Sharpa pair clips at both model sizes are in the appendix gallery — same sequence and chunk start, only the hand differs · retarget exists for TACO only</p>
 </section>
 
 <!-- SECTION: method · GR-1 benchmark -->
 <section class="slide s-method">
   <h2>Method: the GR-1 tabletop closed-loop arena</h2>
   <p class="thesis">We evaluate inside GR00T's own benchmark, so numbers compare directly.</p>
-  <ul>
-    <li>24 tasks, 1,000 demos each</li>
-    <li>RoboCasa sim, GR-1 humanoid</li>
-    <li>Published baselines to beat</li>
-  </ul>
-  <div class="band">
+  <div class="band gr1band">
     <figure><img src="assets/gr1_tasks_banner.png" alt="RoboCasa GR-1 tabletop tasks: five pairs of simulated tabletop scenes with the GR-1 humanoid manipulating objects on tables, shelves and in a cabinet">
-      <figcaption>the arena itself — GR-1 in the RoboCasa tabletop scenes we will be scored in (figure: the benchmark's own README banner, robocasa/robocasa-gr1-tabletop-tasks)</figcaption></figure>
+      <figcaption>the arena we will be scored in — figure from the benchmark's own README</figcaption></figure>
   </div>
   <div class="band">
     <figure>
@@ -208,11 +210,9 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>↳ novel-object pick-and-place</td><td>18</td></tr>
         <tr><td>↳ articulated-object interaction</td><td>6</td></tr>
         <tr><td>demos per task (teleop)</td><td>1,000</td></tr>
-        <tr><td>simulator</td><td>RoboCasa / robosuite</td></tr>
-        <tr><td>embodiment</td><td>GR1ArmsAndWaistFourierHands</td></tr>
         <tr><td>max episode steps</td><td>720</td></tr>
       </table>
-      <figcaption>robocasa/robocasa-gr1-tabletop-tasks — the suite GR00T N1/N1.5 report on; assets, tasks and eval protocol come for free</figcaption>
+      <figcaption>the suite GR00T N1/N1.5 report on</figcaption>
     </figure>
     <figure>
       <table class="num">
@@ -222,22 +222,13 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
         <tr><td>VP-VLA</td><td>53.8</td></tr>
         <tr><td>TwinBrainVLA (Qwen3-VL-4B)</td><td>54.6</td></tr>
         <tr><td>ACE-Ego-0</td><td>72.8</td></tr>
-        <tr class="pend"><td>3D-WAM zero-shot — pending</td><td>ETA Fri 09-04</td></tr>
+        <tr class="pend"><td>3D-WAM zero-shot — pending</td><td>Fri 09-04</td></tr>
       </table>
-      <figcaption>our claim is human-demo-only zero-shot, so GR00T N1.5's 42 % zero-shot row is the honest comparison point, not the post-trained numbers</figcaption>
-    </figure>
-    <figure>
-      <table class="num">
-        <tr><th>eval protocol (theirs, unchanged)</th><th>value</th></tr>
-        <tr><td>episodes per task</td><td>10</td></tr>
-        <tr><td>parallel envs</td><td>5</td></tr>
-        <tr><td>video capture</td><td>per episode</td></tr>
-      </table>
-      <figcaption>scripts/simulation_service.py --client --env_name &lt;TASK&gt; --max_episode_steps 720 --n_envs 5 --n_episodes 10 · full 24-task list in the appendix</figcaption>
+      <figcaption>human-demo-only claim → their zero-shot row is our comparison</figcaption>
     </figure>
   </div>
-  <p class="etabar"><b class="k">ETA</b> — <b>first zero-shot success rate on their 24 tasks</b>: <b>Fri 09-04</b>, gated on the four unbuilt components (≈<span class="h">14 h</span> of build: IK 4 h, GT replay 4 h, env + adapter 6 h) plus the hand remap, which has <b>no estimate</b> until the env code is read · eval itself is <span class="h">≈2 h</span> for 24 tasks × 10 episodes</p>
-  <p class="footnote">baseline-settings rule: their tasks, their success metric, their episode budget — no custom metric · secondary arena isaac-sim/IsaacLabEvalTasks (GR1-T2, 2 industrial tasks)</p>
+  <p class="etabar"><b class="k">ETA</b> — <b>first zero-shot success rate, 24 tasks</b>: <b>Fri 09-04</b> · ≈<span class="h">14 h</span> of build left (IK 4 h · GT replay 4 h · env + adapter 6 h) plus the hand remap, <b>unestimated</b> until the env code is read · the eval run itself is <span class="h">≈2 h</span></p>
+  <p class="footnote">RoboCasa / robosuite · GR1ArmsAndWaistFourierHands · their metric and episode budget, no custom metric · eval command and 24-task list in the appendix</p>
 </section>
 
 <!-- SECTION: method · how we connect + components + ETA -->
@@ -416,13 +407,15 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       </table>
       <figcaption>every row is already submitted or needs only agent time — nothing here waits on a decision</figcaption>
     </figure>
+  </div>
+  <div class="band">
     <figure>
       <table class="num">
         <tr><th>your decisions</th><th>by</th><th>my recommendation</th></tr>
-        <tr><td>Base checkpoint: 2.77 ep (calibration) vs 6.09/10 ep (direction)</td><td>Thu</td><td>per consumer: IK/rollouts 2.77, analysis latest</td></tr>
-        <tr><td>GR-1 conditioning: GR-1's own hand points vs human/Sharpa + cross-decode</td><td>Thu 09-03</td><td>run both, it is an inference switch</td></tr>
-        <tr><td>Contact follow-up if IoU moves but ADE does not</td><td>Wed am</td><td>one higher-λ screen, then drop or keep</td></tr>
-        <tr><td class="mute">Eye-verification: rollout + per-size galleries</td><td class="mute">anytime</td><td class="mute">owner only — I cannot judge clips</td></tr>
+        <tr><td>Base checkpoint: 2.77 ep (calibration) vs 6.09/10 ep (direction)</td><td>Thu</td><td>per consumer — IK and rollouts 2.77, analysis the latest</td></tr>
+        <tr><td>GR-1 conditioning: GR-1's own hand points vs human/Sharpa + cross-decode</td><td>Thu 09-03</td><td>run both — it is an inference-time switch</td></tr>
+        <tr><td>Contact follow-up if IoU moves but ADE does not</td><td>Wed am</td><td>one higher-λ screen, then keep or drop</td></tr>
+        <tr><td class="mute">Eye-verification: rollout and per-size galleries</td><td class="mute">anytime</td><td class="mute">owner only — I cannot judge clips</td></tr>
       </table>
       <figcaption>three rulings plus the standing eye-verification; the uncurated control's final eval also needs a fresh go after its first attempt raced the run</figcaption>
     </figure>
@@ -444,8 +437,8 @@ table.num tr.pend td{background:var(--panel,#f5f7fa)}
       <figcaption><b>320M+robot @4k</b> · <span class="epoch">1.77 ep</span> · taco s33 · human hand</figcaption></figure>
     <figure><img src="assets/p320mr_4k_taco_sharpa.gif" alt="320M plus robot data, step 4000, taco s33, Sharpa hand" loading="lazy">
       <figcaption><b>320M+robot @4k</b> · <span class="epoch">1.77 ep</span> · taco s33 · Sharpa hand, zero-shot</figcaption></figure>
-    <figure><img src="assets/grid_dexycb.gif" alt="120M base, dexycb chunk 4222" loading="lazy">
-      <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · dexycb, chunk 4222<br>"grasp the tomato soup can" · ADE 3.92 cm</figcaption></figure>
+    <figure><img src="assets/b110k_taco_human.gif" alt="120M base, taco s33, human hand" loading="lazy">
+      <figcaption><b>120M @110k</b> · <span class="epoch">6.09 ep</span> · taco s33 · human hand<br>pairs with the Sharpa tile below</figcaption></figure>
   </div>
   <div class="band">
     <figure>
