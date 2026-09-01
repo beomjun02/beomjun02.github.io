@@ -214,6 +214,26 @@ table.num .mute{opacity:.55}
     <li>Owner: eye-verify fresh 110k clips + rollout drift clips (this deck's band)</li>
     <li>Control's final eval + decode gate on later 320M checkpoints (agent · next touch)</li>
   </ol>
+  <div class="band">
+    <figure>
+      <table class="num">
+        <tr><th>320M finish options</th><th>done at</th><th>note</th></tr>
+        <tr><td>40 h budget alone</td><td>Wed 13:40</td><td>stops at ~4.1 of 5 epochs</td></tr>
+        <tr><td><b>+ one continuation submit</b></td><td><b>Wed ~22:30</b></td><td>full 5 epochs, same GPU</td></tr>
+        <tr><td>requeue when H100 frees</td><td>~24 h total</td><td>queue-dependent</td></tr>
+      </table>
+      <figcaption>the continuation decision (Discussion 2) — measured 15.6 s/step, ~59k samples/h on A100</figcaption>
+    </figure>
+    <figure>
+      <table class="num">
+        <tr><th>closed-loop ladder (Discussion 3 feeds it)</th><th>when</th></tr>
+        <tr><td class="good">rollout driver + drift measured · decode gate + first numbers</td><td class="good">done</td></tr>
+        <tr><td>IK joints + decoded-GT replay on the robot hand (sim)</td><td>09-02/03</td></tr>
+        <tr><td>GR-1 benchmark env + first zero-shot closed-loop clips</td><td>09-04/05</td></tr>
+      </table>
+      <figcaption>replan-rate sweep (0.25/0.5/1 s) slots in before the env work if Discussion 3 picks it</figcaption>
+    </figure>
+  </div>
 </section>
 
 <!-- SECTION: appendix · how the new tools work, step by step -->
