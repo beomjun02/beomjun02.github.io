@@ -128,7 +128,7 @@
     <li>Hand and object together in 3D</li>
     <li class="on">Why a hand pointed the wrong way
       <ul><li>our hands were silently flipping chirality</li>
-          <li>HaWoR's two hands are swapped</li></ul></li>
+          <li>HaWoR's hand slots are inverted</li></ul></li>
   </ol>
   <div class="band">
     <figure><img src="assets/fig_hawor_diag.jpg" alt="Three panels: every hand detection by depth and box area showing two separate populations; chirality flips over the episode for each method; and HaWoR-to-MediaPipe wrist distance under the two possible slot pairings.">
@@ -151,7 +151,7 @@
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Confirm which hand is left (owner · one frame)</li>
+    <li>Confirm the selected object reads right (owner · one look)</li>
     <li>Ask HF for facebook/sam-3d-objects access (owner · today)</li>
     <li>HaWoR vs MediaPipe hand comparison (agent · queued)</li>
     <li>Object extraction ep2–ep19 (agent · after go)</li>
@@ -167,7 +167,8 @@
         <dt>Masks</dt><dd class="mono">hmd_object_demo/sam3_multi.py → ep0/sam3_multi/{masks_multi.npz, screen.json, prompt_*.jpg} · job 151337, debug, 11.7 min, 7840 instances</dd>
         <dt>Selection</dt><dd class="mono">viz/object_select.py → viz/cache/ep0_objsel.npz (IoU 0.55 merge, depth rank, 5 cm continuity credit)</dd>
         <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py → hawor_out/ep0_hawor.npz (MANO trans/rot/pose/betas + joints + vertices, both hands, all 866 frames; job 151398) · viz/hawor_compare.py</dd>
-        <dt>Hand fixes</dt><dd class="mono">(1) MediaPipe emits world_landmarks in its per-frame handedness guess, which is a coin flip on a self-view — chirality flipped 27/88 and 60/188 times, impossible for a real hand; now forced to one chirality per slot (110 of 276 ep0 detections mirrored back, 0 flips after). (2) HaWoR's slots are swapped: wrist distance 11.7 cm swapped vs 31.6 cm as-run. (3) Two people in frame is real (10 % of detections ≥ 0.8 m, 5× smaller, higher in frame) but is NOT the cause — depth-gating the video changed nothing (98°→96°).</dd>
+        <dt>Frame bug</dt><dd class="mono">Found 2026-09-02 by the rigid-stereo unit test: with rot6d decoded as rows=(b1,b2,b1×b2), the base→camera map is <b>R.T·(X−p)</b>, not R·(X−p) — only the former makes the 66.4388 mm stereo offset constant ([66.3665,−2.0523,2.3220] mm, std 2e−5 mm vs 9–12 mm). My viz used the wrong form; corrected in to_cam/to_base and everything re-rendered. It had inflated the right-hand detection share (88/188 → 130/146) and made the stored wrists look unusable as a handedness reference (L:41/R:1258 → L:689/R:610).</dd>
+        <dt>Hand fixes</dt><dd class="mono">(1) MediaPipe emits world_landmarks in its per-frame handedness guess, which is a coin flip on a self-view — chirality flipped 27/88 and 60/188 times, impossible for a real hand; now forced to one chirality per slot (110 of 276 ep0 detections mirrored back, 0 flips after). (2) HaWoR's output slots are inverted — confirmed against two independent references after the frame fix: vs our MediaPipe hands 11.0 cm swapped vs 35.6 cm as-run, and vs the dataset's own Quest-derived wrists 19.7 cm vs 38.7 cm. Its per-detection handedness label is actually GOOD (86% agreement with the stored-wrist geometry, mapping label 0 = left), so the inversion is in its label→slot convention, not its detector. (3) Two people in frame is real (10 % of detections ≥ 0.8 m, 5× smaller, higher in frame) but is NOT the cause — depth-gating the video changed nothing (98°→96°).</dd>
         <dt>HaWoR frame</dt><dd class="mono">its run_mano joints are canonical-space; `trans` IS the camera-space wrist (10.6 cm median from the MediaPipe wrists; a global similarity fit does not improve it, so no convention is being missed). Skeleton = root-relative joints placed at trans. Slots assigned per frame, not by its naming</dd>
         <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py · viz/deck_figs3.py</dd>
         <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — repo exists, 31 files, TRELLIS-style (slat/ss encoders+decoders); HF returns 403 GatedRepoError "not in the authorized list"</dd>
