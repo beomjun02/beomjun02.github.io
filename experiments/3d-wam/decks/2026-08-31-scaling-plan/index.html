@@ -1,22 +1,27 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #9 · 2026-09-02 rev5: figures-first rewrite (8 main slides) + the three
-     v5 viz-grid slides restored (captions only, OUTSIDE the <=8 cap). Two evaluation
-     bases, never mixed: ieval stratified 576 chunks (zero 7.97 cm) and the Sharpa
-     96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps x effective batch
-     / 577,948 curated chunks. -->
+<!-- 3D-WAM deck #9 · 2026-09-02 rev6: the 19-checkpoint ladder (job 152593) landed and
+     CONTRADICTS rev5 — 7.75 eff ep (140k) is the best checkpoint, not the 10.00-ep
+     endpoint, and ADE saturates at ~2 eff ep while cosine and motion keep climbing.
+     Also: the MLXP 320M was cancelled and NEVER TRAINED (SIGABRT on rank 0 masked by
+     backoffLimit 32); Out% is a broken metric and is published nowhere. Structure is
+     unchanged: 8 main slides + v5 viz-grid slides OUTSIDE the <=8 cap, captions only.
+     Two evaluation bases, never mixed: ieval stratified 576 chunks (zero 7.97 cm) and
+     the Sharpa 96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps x
+     effective batch / 577,948 curated chunks. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-02 · Scale-up, cross-embodiment, closed-loop, contact loss — 3D-WAM</title>
-<meta name="description" content="Deck #9 rev5. The 120M line at 10.00 effective epochs is the new project best (ADE 7.71 cm against a 7.97 zero predictor, cosine 0.295 = 72.8°); the contact auxiliary loss is null at every lambda; the 320M has no result and is queue-blocked; 10 % Sharpa co-training is free on human and worth +0.033 cosine on the robot hand.">
+<meta name="description" content="Deck #9 rev6. A 19-checkpoint ladder on one basis (ieval stratified 576, zero predictor 7.97 cm) shows ADE saturating at about 2 effective epochs while cosine and motion magnitude keep climbing — more epochs buy direction, not placement. The best checkpoint is 140k = 7.75 effective epochs (Acc5 64.1 %, ADE 7.46 cm), not the 10.00-epoch endpoint (63.3 %, 7.71). The contact auxiliary loss is null at every lambda; the 320M was cancelled and never trained; 10 % Sharpa co-training is free on human and worth +0.033 cosine on the robot hand.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
   .deck .etabar{margin:.6em 0 0;padding:.45em .8em;border-left:3px solid #0070C0;
     background:#F2F6FA;font-size:1.5em;color:#333;line-height:1.4}
   .deck .band{margin-top:1.4em}
+  .deck .band.tight{margin-top:2.2em}
   .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.3em;
     align-items:center;justify-content:center;text-align:center;min-height:4.5em;
     border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;
@@ -29,6 +34,7 @@
   .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;
     grid-template-columns:repeat(3,1fr);gap:.7em 1.1em;align-content:stretch}
   .deck .vizgrid.two{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+  .deck .vizgrid.rows2{grid-template-rows:repeat(2,1fr)}
   .deck .vizgrid.paircols{grid-template-rows:repeat(2,1fr);grid-auto-flow:column}
   .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
   .deck .vizgrid figure>img{flex:1 1 0;min-height:0;width:100%;height:100%;
@@ -56,17 +62,17 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> New best beats zero; contact loss dead; scale-up blocked.</p>
+  <p class="thesis"><b>[TL;DR]</b> More epochs buy direction, not placement — best is 7.75 ep.</p>
   <ul>
-    <li>p7 at 10 epochs: project best</li>
+    <li>ADE flat past 2 effective epochs</li>
     <li>Contact loss null at every λ</li>
-    <li>320M still has no result</li>
+    <li>320M cancelled — never trained</li>
   </ul>
   <div class="band">
+    <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode point-cloud rollout of taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: ground truth on the left, prediction on the right, each one-second chunk starting from the model's own previous output. Orange object points, green right hand, purple left hand." loading="lazy">
+      <figcaption><b>120M p7 @ 10.00 eff ep</b> — taco ep 2488, self-predicted, 1 s chunks, full episode</figcaption></figure>
     <figure><img src="assets/fig_training_curve.png" alt="Training loss on a log axis against effective epochs for the three long 120M arms: i5 to p7 in blue running the full 0 to 10 epochs, i0_ctl in orange stopping near 6.1, i9_sharpa10 in green stopping near 1.9. Faint traces are raw logged loss, solid lines are the EMA. All three collapse from about 1.2 to 0.01 within the first half epoch, then decline slowly; the blue arm is still falling at 10 epochs, around 0.003.">
-      <figcaption>19,148 logged points across three arms — the blue line is <b>still falling at 10.00 effective epochs</b></figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 rollout clips @ 10.00 eff ep<br>same chunks, camera, seed as @6.09</div></div>
-      <figcaption>Rendering now, job 152592 — the 6.09-epoch clips are not re-used as a stand-in</figcaption></figure>
+      <figcaption>Loss is <b>still falling at 10.00 eff ep</b> — but ADE has not moved since <b>2.21</b></figcaption></figure>
   </div>
   <p class="footnote">two bases, never mixed — <b>ieval</b>: stratified 576 chunks (96 × 6 datasets), zero predictor 7.97 cm · <b>Sharpa</b>: 96 TACO chunks, zero 4.99 cm · record ~/3d-wam/P-SERIES.md</p>
 </section>
@@ -83,7 +89,7 @@
     <figure><img src="assets/fig_gr1_decode.png" alt="Line chart of maximum joint error in degrees against per-point noise in millimetres, measured on the real GR-1 Fourier hand: 0 mm gives 0.01 degrees, 1 mm gives 1.7, 3 mm gives 5.0, 5 mm gives 8.0 — very close to linear.">
       <figcaption>Decode is not the bottleneck: <b>1 mm of point noise costs 1.7°</b>, 3 mm costs 5.0°</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>GR-1 action layout<br>all 24 indices moved zero joints</div></div>
-      <figcaption>Re-measure queued, job 152131 — <b>≈1 h</b> once it starts; the fix is written</figcaption></figure>
+      <figcaption>Still pending on <code>cpu</code>, job 152131 — <b>≈1 h</b> once it starts; the fix is written</figcaption></figure>
   </div>
   <p class="footnote">MuJoCo · robosuite 1.5.1 · GR1ArmsAndWaistFourierHands · 17 DoF + 11 hinge joints/hand · ABSOLUTE joint-position actions · 20 Hz, 0.4 s replan vs our 1 s</p>
 </section>
@@ -93,20 +99,18 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li class="on">Scale-up and training length
-      <ul><li>120M at 10 epochs is the new best; the 320M has none</li></ul></li>
+      <ul><li>19 checkpoints: direction improves, placement does not</li></ul></li>
     <li>Cross-embodiment transfer</li>
     <li>Contact auxiliary loss</li>
   </ol>
-  <div class="band">
-    <figure><img src="assets/fig_h200_throughput.png" alt="Bar chart of training throughput in samples per second by micro-batch on four H200 GPUs, effective batch held at 256: micro 8 gives 108.7, micro 16 gives 120.0 and is the chosen setting, micro 32 gives 121.5, and micro 64 is marked OOM with no bar.">
-      <figcaption>Flat past micro 16: <b>120.0 vs 121.5 samples/s</b> — micro 64 is out of memory</figcaption></figure>
-    <figure><img src="assets/fig_h200_memory.png" alt="Bar chart of peak memory in GiB by micro-batch: 38.1 at micro 8, 70.9 at micro 16, 136.5 at micro 32, against a dashed line marking 140.4 GiB usable on an H200 and a dotted 80 percent headroom limit at about 112 GiB.">
-      <figcaption>…and micro 32 costs it: <b>136.5 of 140.4 GiB</b>, no room for the EMA shadow</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>320M @ 10.00 eff ep — queued, pod Pending<br>Acc3D ladder, 19 checkpoints — job 152593</div></div>
-      <figcaption><b>13.4 h once admitted</b>, 126/128 MLXP GPUs held · <b>no Acc3D number exists yet</b>, none quoted</figcaption></figure>
+  <div class="band tight">
+    <figure><img src="assets/fig_ladder_ade.png" alt="Line chart of ADE in centimetres against effective epochs across 19 checkpoints of the 120M p7 run, from 0.28 to 10.00 epochs. ADE falls steeply from 8.58 to about 7.55 by 2.2 epochs, then wanders flat between 7.46 and 7.94 with no trend. A dashed horizontal line marks the zero predictor at 7.97 cm; a labelled dip at 5.5 to 6.1 epochs rises back above it to 7.93 and 7.94. The minimum, 7.46 cm at 7.75 epochs, is marked with a green dot; the endpoint at 10.00 epochs reads 7.71.">
+      <figcaption>Flat from <b>2.21 eff ep</b> — 7.46–7.94 cm, non-monotone · best <b>7.46 @ 7.75</b>, endpoint <b>7.71 @ 10.00</b></figcaption></figure>
+    <figure><img src="assets/fig_ladder_acc.png" alt="Line chart of scene-flow accuracy in percent of points against effective epochs over the same 19 checkpoints. Acc10 in green rises from 73.8 to about 77 percent by 2.2 epochs then stays flat, peaking at 77.7. Acc5 in blue rises from 59.3 to about 63 percent by 2.2 epochs then stays flat, with a marked peak of 64.1 percent at 7.75 epochs and 63.3 at the 10.00-epoch endpoint.">
+      <figcaption>Acc5 peaks at the same point — <b>64.1 % @ 7.75</b> vs <b>63.3 %</b> at 10.00 · Acc10 <b>77.7 → 76.9 %</b></figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · <b>ieval 576</b>: p7 @ <b>10.00 eff ep</b> — ADE <b>7.71 cm</b> under the 7.97 zero predictor, cos <b>0.295 = 72.8°</b> (hand 0.394 = 66.8°); previous best @6.09 ep was 7.94 / 0.279 = 73.8°. 320M: <b>no result</b>, queue-blocked</p>
-  <p class="footnote">effective epochs = steps × effective batch ÷ 577,948 curated chunks — 120M at batch 32, 320M at 256, so raw step counts never compare</p>
+  <p class="etabar"><b>Verdict</b> · <b>ieval 576</b> (zero 7.97 cm): best is <b>140k = 7.75 eff ep</b>, not the endpoint — Acc5 <b>64.1 %</b> / ADE <b>7.46 cm</b> vs 63.3 % / 7.71 @10.00. Over 2.21 → 10.00 ep cos <b>0.234 = 76.5° → 0.295 = 72.8°</b>, motion <b>53 → 70 %</b>, ADE flat: <b>epochs buy direction, not placement</b></p>
+  <p class="footnote">eff ep = steps × effective batch ÷ 577,948 curated chunks · degrees are arccos(cos); the ladder's own mean-angle column reads 68.4–68.8° over the same span</p>
 </section>
 
 <!-- SECTION: viz A · single-chunk open-loop · captions only, no interpretation (v5 §4b D) -->
@@ -119,20 +123,32 @@
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>arctic, chunk 1988, "use the capsule machine"</figcaption></figure>
     <figure><img src="assets/grid_oakink2.gif" alt="Point-cloud rollout, oakink2 chunk 18292: ground truth on the left, model prediction on the right, ten frames of one second." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>oakink2, chunk 18292, "tidy up the table"</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 @ 10.00 eff ep<br>same chunks, rendering now (job 152592)</div></div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 @ 7.75 eff ep (140k, the best ckpt)<br>these three chunks &middot; rendering now, job 152656</div></div>
       <figcaption>placeholder &middot; the 6.09-epoch clips are not re-used as a stand-in</figcaption></figure>
   </div>
   <p class="footnote">same chunk, camera and seed across arms, so the comparison is by construction &middot; results/iviz/i5_110k/clips/</p>
 </section>
 
-<!-- SECTION: viz B · teacher-forced vs self-predicted · captions only, no conclusion stated -->
+<!-- SECTION: viz B1 · taco ep 2488, 6.09 vs 10.00 eff ep, both modes · captions only, no conclusion stated -->
 <section class="slide s-viz">
-  <h2>Rollouts &middot; teacher-forced vs self-predicted</h2>
-  <div class="vizgrid paircols">
-    <figure><img src="assets/rollpair_taco_teacher.gif" alt="Full-episode rollout of taco episode 2488, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
+  <h2>Rollouts &middot; taco ep 2488 &middot; 6.09 vs 10.00 eff ep</h2>
+  <div class="vizgrid two big">
+    <figure><img src="assets/rollpair_taco_teacher.gif" alt="Full-episode rollout of taco episode 2488 by the 120M model at 110k steps, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
-    <figure><img src="assets/rollpair_taco_ar.gif" alt="Full-episode rollout of taco episode 2488, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
+    <figure><img src="assets/p7_10ep_roll_taco_teacher.gif" alt="Full-episode rollout of the same taco episode 2488 by the 120M p7 model at 180,608 steps, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_taco_ar.gif" alt="Full-episode rollout of taco episode 2488 by the 120M model at 110k steps, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode rollout of the same taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+  </div>
+  <p class="footnote">same episode, camera and seed in all four &middot; columns differ only in training length, rows only in whether the previous chunk is ground truth or the model's own output</p>
+</section>
+
+<!-- SECTION: viz B2 · the other two datasets at 6.09 eff ep · captions only, no conclusion stated -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; teacher-forced vs self-predicted &middot; arctic, oakink2</h2>
+  <div class="vizgrid paircols">
     <figure><img src="assets/rollpair_arctic_teacher.gif" alt="Full-episode rollout of arctic episode 56, teacher-forced: each one-second chunk restarts from ground truth." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/rollpair_arctic_ar.gif" alt="Full-episode rollout of arctic episode 56, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
@@ -142,7 +158,7 @@
     <figure><img src="assets/rollpair_oakink2_ar.gif" alt="Full-episode rollout of oakink2 episode 1486, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
   </div>
-  <p class="footnote">identical episode, camera and seed in both modes &middot; the only difference is whether the previous chunk is ground truth or the model's own output</p>
+  <p class="footnote">identical episode, camera and seed in both modes &middot; the only difference is whether the previous chunk is ground truth or the model's own output &middot; 10.00-ep counterparts not rendered</p>
 </section>
 
 <!-- SECTION: results (2) · cross-embodiment -->
@@ -158,7 +174,7 @@
     <figure><img src="assets/fig_crossembod.png" alt="Grouped bar chart comparing i0_ctl human-only in blue against i9 with 10 percent Sharpa co-training in green. On human, evaluated on 576 stratified chunks, both reach cosine 0.208. On the Sharpa hand, evaluated on 96 TACO chunks, i0 reaches 0.130 and i9 reaches 0.163, an annotated gain of plus 0.033.">
       <figcaption>Free on human (<b>0.208 both</b>, 78.0°), <b>+0.033 on the robot hand</b> (0.130 → 0.163, 82.5° → 80.6°)</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p9 @ 10.00 eff ep<br>120M + 10 % Sharpa · HELD</div></div>
-      <figcaption>Held on decision (b) — <b>14 h</b> to 3 eff ep, <b>47.7 h</b> to 10, from release</figcaption></figure>
+      <figcaption>Still held — <b>14 h</b> to 3 eff ep, <b>47.7 h</b> to 10, from release</figcaption></figure>
   </div>
   <p class="etabar"><b>Verdict</b> · on human <b>Δcos −0.001 [−0.008, +0.005]</b> — free (ieval 576) · on the <b>Sharpa 96-TACO basis</b> ADE 7.04 → <b>6.00 cm</b>, that basis's own zero being 4.99. Control is <b>i0_ctl, not i5</b> — i5 also drops hot3d, confounding composition</p>
   <p class="footnote">pairing fixes sequence, chunk start, task, object and scene, so the measured gap is the hand alone · both arms matched at ~32k steps with hot3d in</p>
@@ -166,18 +182,22 @@
 
 <!-- SECTION: viz C · cross-embodiment and model size · captions only, size caveat in the footnote -->
 <section class="slide s-viz">
-  <h2>Rollouts &middot; human vs Sharpa hand, two sizes</h2>
-  <div class="vizgrid two big">
+  <h2>Rollouts &middot; human vs Sharpa hand, two lengths, two sizes</h2>
+  <div class="vizgrid rows2">
     <figure><img src="assets/b110k_taco_human.gif" alt="Point-cloud rollout, taco sequence s33 with the human MANO hand, 120M model at 110k steps. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+    <figure><img src="assets/p7_10ep_taco_human.gif" alt="Point-cloud rollout, the same taco sequence s33 with the human MANO hand, 120M p7 model at 180,608 steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+    <figure><img src="assets/p320m_4k_taco_human_s33.gif" alt="Point-cloud rollout, taco sequence s33 with the human hand, 320M model at 4k steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>human hand &middot; only 320M weights that exist</figcaption></figure>
     <figure><img src="assets/grid_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 retargeted to the Sharpa robot hand, 120M model at 110k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
-    <figure><img src="assets/p320m_4k_taco_human_s33.gif" alt="Point-cloud rollout, taco sequence s33 with the human hand, 320M model at 4k steps. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>human hand &middot; run cancelled at 2.66 ep</figcaption></figure>
+    <figure><img src="assets/p7_10ep_taco_sharpa.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, 120M p7 model at 180,608 steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
     <figure><img src="assets/p320m_4k_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 on the Sharpa robot hand, 320M model at 4k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot &middot; run cancelled at 2.66 ep</figcaption></figure>
   </div>
-  <p class="footnote">same chunk, camera and seed &middot; <b>the 320M clips are at 1.77 eff epochs against the 120M's 6.09, so they are NOT a size comparison</b></p>
+  <p class="footnote">same chunk, camera and seed &middot; columns 1–2 differ only in training length &middot; <b>the 320M column is at 1.77 eff epochs, so it is NOT a size comparison</b></p>
 </section>
 
 <!-- SECTION: results (3) · contact aux loss -->
@@ -194,6 +214,8 @@
       <figcaption><b>Every CI spans zero</b> — Δcos −0.002 / −0.001 / −0.006 at λ 0.03 / 0.1 / 1.0</figcaption></figure>
     <figure><img src="assets/fig_contact_curve.png" alt="Training loss on a log axis against effective epochs from 0 to 1.11 for the three contact arms and the i5 baseline in black. The lambda 1.0 arm in orange starts about 40 percent higher and stays above the baseline throughout; lambda 0.03 in green tracks slightly below it. All curves fall from above 1 to below 0.01.">
       <figcaption>λ 1.0 starts <b>40 % higher</b> and never catches up — the aux term is dominating, not helping</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>λ 0.03 / 0.1 / 1.0 rollout clips<br>never visualised &middot; rendering now, job 152656</div></div>
+      <figcaption>The verdict above is numeric only — <b>no λ arm has been seen yet</b></figcaption></figure>
   </div>
   <p class="etabar"><b>Verdict</b> · <b>close this workstream.</b> ieval 576 @ 1.11 eff ep: ADE <b>8.63 / 8.62 / 8.78 cm</b> vs the i5 baseline's <b>8.15</b> — monotonically worse in λ, and no interval clears zero. Ninth architecture addition falsified; the levers stay data composition and training length</p>
   <p class="footnote">λ was picked by measured gradient share (0.1 → 0.73, rejected; 0.03 → 0.22), then swept anyway · harness check: one ckpt under two tags gave Δcos +0.000 [0, 0]</p>
@@ -202,46 +224,45 @@
 <!-- SECTION: discussion-actions -->
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Nothing is training. Three rulings put the GPUs back to work.</p>
+  <p class="thesis">Nothing is training. Length is spent; the next GPU-hour needs a ruling.</p>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
-    <li><b>MLXP capacity</b> — 126/128 GPUs held, <code>preemption: not helpful</code>; six pods died with no readable reason → <b>escalate to infra with the job name</b>, we cannot read the scheduler ourselves (today)</li>
-    <li><b>The one free GPU</b> — release p9 (47.7 h → 10 eff ep) or hold it for a Slurm 320M DDP fallback → <b>the fallback</b>: cross-embodiment already has a clean answer, scale-up has none (today)</li>
+    <li><b>Stop buying epochs</b> — ADE flat 2.21 → 10.00 ep, only direction and motion still move → <b>stop the length sweep, spend on data composition</b>; ship 140k (7.75 ep) as the reference checkpoint (today)</li>
+    <li><b>Resubmit the 320M, or not</b> — the H200 run never trained: SIGABRT on rank 0, <code>backoffLimit: 32</code> restarted it behind a <code>1/1 Running</code> pod for 142 min → <b>one resubmit with backoffLimit 0 and the abort surfaced</b>; sweep, venv and code tree survive (today)</li>
     <li><b>GR-1 embodiment tag</b> — only TAG_HUMAN and TAG_SHARPA are trained, GR-1 is a third → <b>decide by running the rollout both ways</b>, not by argument (before the first closed-loop run)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Land p7 rollout clips and the 19-point Acc3D ladder (agent · jobs 152592 / 152593, running)</li>
-    <li>Re-measure the GR-1 action layout, then the decoded-GT sim replay (agent · job 152131)</li>
+    <li>Put a motion floor in the outlier definition and re-run it — <b>Out% is quoted nowhere until then</b> (agent)</li>
+    <li>Land the λ-arm and p7 @7.75 ep clips (job 152656), re-measure the GR-1 action layout (job 152131) (agent)</li>
     <li>Eye-verify the clip galleries — I cannot judge pictures (owner · standing)</li>
   </ol>
-  <p class="etabar"><b>ETA</b> · 320M <b>13.4 h</b> once admitted, admission unestimated · p9 <b>14 h</b> → 3 ep / <b>47.7 h</b> → 10 ep from release · GR-1 re-measure <b>≈1 h</b> from start · Acc3D ladder and p7 clips <b>unestimated</b>, both already running</p>
+  <p class="etabar"><b>ETA</b> · λ-arm + p7 @140k clips <b>unestimated</b>, job 152656 running · GR-1 re-measure <b>≈1 h</b> once <code>cpu</code> admits, admission unestimated · 320M resubmit <b>13.4 h</b> of compute, crash fix <b>unestimated</b> · p9 <b>14 h</b> → 3 ep / <b>47.7 h</b> → 10 ep from release · Out% re-run <b>≈1 h</b></p>
 </section>
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix · evidence · epochs · corrections · cut list</h2>
+  <h2>Appendix · ladder · evidence · corrections · cut list</h2>
   <div class="cols">
     <div>
       <dl class="kv">
-        <dt>Evidence</dt><dd class="mono">review/train/ieval_*.json (stratified 576) · review/train/{ipaired,xeval,iroll,xcontact,ifeas}.py · results/iviz/{i5_110k,p4b_4k}/clips/ · gr1-bench/ · P-SERIES.md · jobs 152131 / 152592 / 152593</dd>
-        <dt>Epochs</dt><dd class="mono">eff ep = steps × effective batch ÷ 577,948 curated chunks (hot3d dropped). 120M @ batch 32: 20k → 1.11 · 110k → 6.09 · 180,608 → 10.00. 320M @ batch 256: 22,576 → 10.00 — one 320M step carries 8× the samples.</dd>
-        <dt>Bases</dt><dd class="mono">ieval stratified 576 (96 × 6 datasets), zero 7.97 cm, interface-point zero 6.93 · Sharpa 96 TACO, zero 4.99 cm. p7 on interface points: cos 0.340 = 70.1°, ADE 6.81. Never combined in one table.</dd>
-        <dt>GR-1</dt><dd class="mono">obs adapter validated live: P = 1024 (512 hand + 512 object), 16/16 MANO parts, palm rigidity drift 0.00000 mm. Known issue: the budget is palm-heavy — palm 239 of 512, each finger 6–26; reweighting is queued before any success rate is quoted.</dd>
+        <dt>Ladder</dt><dd class="mono">19 ckpts, one basis (ieval 576), job 152593. Acc5/Acc10/ADE/ang°/cos/motion — 7.75 ep (140k): 64.1 / 77.7 / 7.46 / 68.8 / 0.293 / 65 % · 8.86 ep (160k): 63.3 / 77.1 / 7.62 / 68.4 / 0.299 / 69 % · 10.00 ep (180,608): 63.3 / 76.9 / 7.71 / 68.5 / 0.295 / 70 %. ang° = mean per-point angle, NOT arccos(mean cos); they differ ~4°.</dd>
+        <dt>MLXP</dt><dd class="mono">320M cancelled at the owner's request. It NEVER TRAINED: the pod read 1/1 Running for 142 min while rank 0 had SIGABRTed and backoffLimit: 32 restarted it. Zero footprint now; at its batch 256 a 10.00-ep run is 22,576 steps. Surviving: cached micro-batch sweep, venv, rebased manifests, byte-identical code tree.</dd>
+        <dt>Bases</dt><dd class="mono">ieval stratified 576 (96 × 6 datasets), zero 7.97 cm · Sharpa 96 TACO, zero 4.99 cm. Never combined.</dd>
+        <dt>Evidence</dt><dd class="mono">review/train/{ieval,ipaired,xeval,iroll,xcontact,ifeas} · results/iviz/{i5_110k,p7_180k,p4b_4k}/clips/ · gr1-bench/ · P-SERIES.md · job 152656</dd>
       </dl>
     </div>
     <div>
       <p class="subhead">Corrections on the record</p>
       <ul>
-        <li><b>"fp32, tensor cores unused" was WRONG</b> — bf16 autocast is live at <code>wam/train/vflow_c.py:105</code>; 141 TFLOP/s/GPU is 210 % of H200 fp32 peak. Real figure <b>14 % MFU</b> — the lever is torch.compile kernel efficiency, not precision, not the data path.</li>
-        <li><b>Data tax is 0.7 / −0.7 / +0.6 %</b> — mmap shards would buy ~0–1 %. Not the fix.</li>
-        <li><b>"motion 70 %" = the model under-predicts true motion by 30 %</b> — a finding, not a footnote.</li>
-        <li>Mean EPE on a heavy-tailed field is dominated by the few fast points — hence <b>Acc3D as primary</b>.</li>
-        <li>A stale trainer copy on DDN would have trained <b>4 unsynchronised replicas at a real effective batch of 64 while reporting 256</b>; trees are now byte-identical.</li>
+        <li><b>"p7 @10.00 ep is the project best" was WRONG</b> (rev5) — the best ckpt is <b>140k = 7.75 eff ep</b> (Acc5 64.1 %, ADE 7.46 cm); 10.00 ep reads 63.3 % / 7.71.</li>
+        <li><b>The old 110k "best" sat in a dip</b> — 5.5–6.1 eff ep reads 7.93 / 7.94 while its neighbours read 7.55–7.61: an unlucky sample, not a plateau.</li>
+        <li><b>Out% is BROKEN and published nowhere</b> — <code>EPE &gt; 30 cm OR rel &gt; 10 %</code> with <code>rel = err/‖gt‖</code>, so near-static points explode it: 99.7–100 % at all 19 ckpts. Needs a motion floor. Acc5/Acc10 unaffected — they OR with an absolute threshold, and mean EPE is dominated by the few fast points, hence <b>Acc3D as primary</b>.</li>
+        <li><b>"fp32, tensor cores unused" was WRONG</b> — bf16 autocast is live; real figure <b>14 % MFU</b>.</li>
       </ul>
     </div>
   </div>
-  <p class="cut"><b>Cut:</b> per-clip ADE tables · the 24-task split dump · 320M throughput post-mortem · MLXP pod-spec iterations · contact-IoU and hand-feasibility suites.</p>
+  <p class="cut"><b>Cut:</b> the full 19-row ladder dump · per-clip ADE tables · the 24-task split dump · H200 sizing charts (the run never happened) · MLXP pod-spec iterations · contact-IoU and hand-feasibility suites.</p>
 </section>
 
 </main>
