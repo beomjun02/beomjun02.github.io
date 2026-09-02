@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-02 · Policy-rate inputs &amp; SAM 3D — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Deck: can RGB-D to object points run inside a 100 ms policy budget, and what SAM 3D adds.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<style>
+  .deck .etabar{margin:.6em 0 0;padding:.45em .8em;border-left:3px solid #0070C0;
+    background:#F2F6FA;font-size:1.5em;color:#333}
+  .deck figure.phold .pbox{display:flex;align-items:center;justify-content:center;text-align:center;
+    min-height:9em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.5em;
+    padding:1em;background:#FAFAFA}
+</style>
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="policy-rate inputs" data-date="2026-09-02">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Can input generation run at policy rate?</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · logistics · RGB-D to object points against a 100 ms budget</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 02<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Geometry fits in 21 ms; the semantic mask does not.</p>
+  <ul>
+    <li>Done: every stage timed, one GPU</li>
+    <li>Fixed: sampler was 96% of cost</li>
+    <li>Blocker: mask floor is 103 ms</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_stages.jpg" alt="Per-stage cost, as run versus optimised, on a log millisecond axis with the 100 ms budget marked.">
+      <figcaption>Per-stage cost, as run vs optimised — the 100 ms budget marked</figcaption></figure>
+    <figure><img src="assets/fig_totals.jpg" alt="Totals against the budget: current 1736 ms, optimised with a one-prompt mask 124 ms, geometry only 21.3 ms.">
+      <figcaption>Totals — only the geometry-only route clears the budget</figcaption></figure>
+  </div>
+  <p class="footnote">A100-80GB, worker-node113 · 8 ep0 frames · wall clock, warm-up call discarded · VLA reference ≈100 ms end-to-end</p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): What was timed, and against what</h2>
+  <p class="thesis">Same frames, same GPU, one variable at a time.</p>
+  <ul>
+    <li>Latency is a sum, not throughput</li>
+    <li>Optimisations keep the points identical</li>
+    <li>Ground truth: the mask-based selection</li>
+  </ul>
+  <div class="band">
+    <figure>
+      <table>
+        <thead><tr><th>Stage</th><th>Variants timed</th><th>Compared against</th></tr></thead>
+        <tbody>
+          <tr><td>mask</td><td>1280·640·320 px, 1–12 prompts</td><td>stored full-res mask (IoU)</td></tr>
+          <tr><td>depth</td><td>VGGT 512/384/256 × fp32/bf16; SGBM 3 res</td><td>VGGT depth on the object mask</td></tr>
+          <tr><td>lift</td><td>CPU vs GPU unprojection</td><td>identical points</td></tr>
+          <tr><td>sample</td><td>numpy FPS, GPU FPS, block-FPS, voxel</td><td>true FPS (Hausdorff, radius)</td></tr>
+          <tr><td>selection</td><td>depth-only clustering + oracle sweep</td><td>217/217 reproduced cache</td></tr>
+        </tbody>
+      </table>
+      <figcaption>One variable at a time; every route ends in the same 2048-point cloud</figcaption></figure>
+    <figure><img src="assets/fig_depth.jpg" alt="Depth cost per frame for VGGT-Omega at 512, 384 and 256 input versus calibrated StereoSGBM at three resolutions, with SGBM's coverage of the object mask annotated.">
+      <figcaption>Depth: learned vs calibrated stereo — % = SGBM's coverage of the object mask</figcaption></figure>
+  <p class="footnote">block-FPS = 32 sequential top-k steps instead of a 2047-iteration Python loop; quality checked, not assumed</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">The budget, stage by stage
+      <ul><li>601 ms today, 21 ms for geometry alone</li>
+          <li>calibrated stereo beats learned depth here</li></ul></li>
+    <li>Why the mask cannot leave the loop</li>
+    <li>What SAM 3D adds</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/fig_stages.jpg" alt="Per-stage cost, as run versus optimised, log axis, 100 ms budget marked.">
+      <figcaption>Sampler 484→7 ms · lift 5.4→0.4 ms · depth 98→14 ms · mask stays ≥103 ms</figcaption></figure>
+    <figure><img src="assets/fig_totals.jpg" alt="Totals against the budget on a log axis.">
+      <figcaption>1736 ms today → 124 ms with a one-prompt mask → 21.3 ms without one</figcaption></figure>
+  </div>
+  <p class="etabar"><b>Caveat</b> · SGBM reads 7–8% farther than VGGT; the shards were built with VGGT depth, so switching needs re-preprocessing</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>The budget, stage by stage</li>
+    <li class="on">Why the mask cannot leave the loop
+      <ul><li>the object is not the nearest surface</li>
+          <li>even an oracle selector reaches IoU 0.5 on 41%</li></ul></li>
+    <li>What SAM 3D adds</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/fig_maskonly.jpg" alt="Depth-only selection: share of frames picking the same object versus share reaching mask IoU 0.5, with the oracle ceiling marked.">
+      <figcaption>Depth-only selection — and the oracle ceiling above it</figcaption></figure>
+    <figure><img src="assets/fig_staleness.jpg" alt="Mask IoU, fraction of the object covered, and cloud centroid error against mask staleness in milliseconds.">
+      <figcaption>Reusing a stale mask — one depth step already costs 31 mm</figcaption></figure>
+    <figure><img src="assets/fig_prompts.jpg" alt="Object coverage against SAM3 milliseconds per frame for one, two, three and twelve prompts.">
+      <figcaption>Extra prompts buy coverage, linearly in time</figcaption></figure>
+  </div>
+  <p class="footnote">hands and forearms are nearer than the object in 54 of 217 frames; where it is grasped, hand and object share a surface with no depth step</p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>The budget, stage by stage</li>
+    <li>Why the mask cannot leave the loop</li>
+    <li class="on">What SAM 3D adds
+      <ul><li>full surface, including unseen faces</li>
+          <li>quality and cost being measured now</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure class="phold"><div class="pbox">WILL UPDATE — SAM 3D Objects on our package<br>accuracy vs the VGGT cloud · invented surface · ICP scale<br>temporal consistency · seconds per object · turntable<br>8 ep0 frames, depths 0.45–0.84 m</div>
+      <figcaption>Access granted; the env build is queued behind the cluster</figcaption></figure>
+  </div>
+  <p class="etabar"><b>ETA</b> · SAM 3D env build queued (job 152092), benchmark ready · ~1 h GPU once it starts → same-day update</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">One blocker left, and two untested ways past it.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Depth source</b> — keep VGGT vs calibrated SGBM → SGBM, but only with re-preprocessed shards (owner)</li>
+    <li><b>Mask budget</b> — cap SAM3 to 1–2 tracked objects vs distil a small per-frame segmenter → try the cap first, it is free (owner)</li>
+    <li><b>Target</b> — is 100 ms the real requirement, or is a chunked policy allowed more? → confirm against the deployed BMW rate (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Ship the geometry optimisations, 601 → 21 ms (agent · ready)</li>
+    <li>SAM 3D quality and cost (agent · queued)</li>
+    <li>Cap SAM3 max_num_objects 16 → 2 and re-time (agent · after go)</li>
+    <li>Measure the deployed BMW policy-server rate (owner · reference)</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · evidence paths · references · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Timings</dt><dd class="mono">routeA_optimisation.json (jobs 152136) · routeA_sgbm_fps.json (152157) · routeA_sam3_resolution.json (152167) · sam3d_bench_routeA.json (152103)</dd>
+        <dt>Selection</dt><dd class="mono">viz/depth_only_select.py · depth_only_v2.py · depth_only_oracle.py · mask_staleness.py → viz/cache/depth_only_2a*.json, mask_staleness.json</dd>
+        <dt>Stereo</dt><dd class="mono">baseline 66.4388 mm (std 5e-5 mm over 866 rows), relative rotation 0.799° constant to 7e-8 → rectification is one-time. Intrinsics fx 863.8 fy 866.3 @1280² are owner-supplied</dd>
+        <dt>Sampler</dt><dd class="mono">numpy 484.5 → GPU loop 196.7 → block-FPS(64) 7.0 ms; 6.8 mm one-sided Hausdorff vs true FPS. Voxel is 0.5 ms but yields 679 points, not 2048 — not equivalent</dd>
+        <dt>Not measured</dt><dd class="mono">cv2.cuda StereoSGM (not in that build) · pytorch3d sample_farthest_points (not installed in the vggt env, though it is the production path in dex-point-policy/deployment/.../geometry.py)</dd>
+        <dt>Ignore</dt><dd class="mono">the per-frame timers inside routeA_sam3_resolution.json — SAM3's stream yields in bursts; the table uses wall time between its own propagation log lines</dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>Companion record: <a href="/experiments/dpp-bmw/decks/2026-09-02-all-objects-nearest/">all objects, nearest one</a> — where these masks and clouds come from</li>
+        <li>StereoSGBM (OpenCV) · VGGT-Omega · SAM 3.1 video propagation · farthest-point sampling</li>
+      </ul>
+      <p class="cut"><b>Cut:</b> pipelining as a latency fix (it lowers the period, never the critical path) · SAM3 every K frames with depth re-association (58.5% on-object at K=2) · voxel downsampling · GPU SGBM · a frame-convention bug found and fixed mid-run (base→camera is R.T·(X−p); it inflated the right-hand detection share and made the stored wrists look unusable).</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

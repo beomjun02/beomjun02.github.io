@@ -17,7 +17,7 @@
    "tagline": "Dexterous Point Policy on real human demonstrations, two tasks in one place. BMW assembly rig (4-view: MANO hand pose + VGGT-Omega object points + HaWoR contact) and Frontier Demo logistics (ego-stereo HMD: promptable segmentation + VGGT-Omega stereo depth). No sim, no residual RL.",
    "path": "dpp-bmw/",
    "now": {
-    "text": "Frontier logistics object pipeline fixed: all SAM3 instances kept, object chosen by metric depth (nearest to the ego camera) — coverage 81/217 → 217/217 frames. Hands from the ego video (MediaPipe + PnP + VGGT anchor); HaWoR MANO comparison queued. SAM 3D blocked on HF access. BMW: 7 base policies verified @100k, eval/rollout still next.",
+    "text": "Input generation profiled against a 100 ms policy budget: geometry reaches 21.3 ms (sampler 484->7, lift 5.4->0.4, depth 98->14 via calibrated stereo), but the semantic mask floor is 103 ms and cannot be removed - depth-only selection tops out at an oracle IoU-0.5 of 41%. SAM 3D benchmark queued. Objects: all instances kept, chosen by depth, 217/217 and 254/255 frames on ep0/ep1.",
     "status": "active",
     "updated": "2026-09-02"
    }
@@ -45,6 +45,27 @@
   }
  },
  "logs": [
+  {
+   "project": "dpp-bmw",
+   "date": "2026-09-02",
+   "slug": "policy-rate-and-sam3d",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-02",
+   "title": "Can input generation run at policy rate? Every stage timed against a 100 ms budget",
+   "tldr": "VLAs run end-to-end in about 100 ms, so DPP's RGB-D-to-points path was timed stage by stage on one A100. The current path is 601 ms of geometry (1736 ms including the 12-prompt mask), and almost all of it was my own post-processing: the farthest-point sampler alone was 484 ms as a Python loop and drops to 7.0 ms as a 32-step block-FPS, mask lift goes 5.4 to 0.4 ms on GPU, and depth drops from 98 ms (VGGT-Omega at 512) to 13.9 ms using calibrated StereoSGBM at 640x360 -- the rig's 66.4388 mm baseline is rigid to 5e-5 mm and its relative rotation constant to 7e-8, so per-frame self-calibration is redundant work. Geometry alone therefore lands at 21.3 ms, 4.7x inside the budget, or 77.8 ms if VGGT is kept. The semantic mask is the blocker and cannot be removed: depth-only selection agrees with the mask-based choice on only 77% of frames and an oracle selector over a parameter sweep still reaches IoU 0.5 on just 41%, because the operator's own hands are nearer than the object in 54 of 217 frames and share a surface with it while grasping. Reusing a stale mask decays fast (one depth step costs 31 mm of cloud centroid) and lowering SAM3's resolution buys 7% for 16x fewer pixels. So the floor with a one-prompt mask is 124-199 ms. Untested leads: capping SAM3 to 1-2 tracked objects, and distilling it into a small per-frame segmenter. SAM 3D quality and cost pending -- access is granted and the benchmark is queued.",
+   "path": "dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/",
+   "tags": [
+    "logistics",
+    "frontier-demo",
+    "latency",
+    "deployment",
+    "stereo",
+    "sampling",
+    "sam3d",
+    "profiling"
+   ]
+  },
   {
    "project": "dpp-bmw",
    "date": "2026-09-02",
