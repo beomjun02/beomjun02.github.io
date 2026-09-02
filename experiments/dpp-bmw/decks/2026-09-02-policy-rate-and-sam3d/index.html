@@ -34,7 +34,7 @@
   <p class="thesis"><b>[TL;DR]</b> Geometry fits in 21 ms; the semantic mask does not.</p>
   <ul>
     <li>Done: every stage timed, one GPU</li>
-    <li>Fixed: sampler was 96% of cost</li>
+    <li>SAM 3D: good shape, 9.3 s</li>
     <li>Blocker: mask floor is 103 ms</li>
   </ul>
   <div class="band">
@@ -120,20 +120,30 @@
     <li>The budget, stage by stage</li>
     <li>Why the mask cannot leave the loop</li>
     <li class="on">What SAM 3D adds
-      <ul><li>full surface, including unseen faces</li>
-          <li>quality and cost being measured now</li></ul></li>
+      <ul><li>the shape explains the observed surface</li>
+          <li>but it is not metric, and takes 9.3 s</li></ul></li>
   </ol>
   <div class="band">
-    <figure class="phold"><div class="pbox">WILL UPDATE — SAM 3D Objects on our package<br>accuracy vs the VGGT cloud · invented surface · ICP scale<br>temporal consistency · seconds per object · turntable<br>8 ep0 frames, depths 0.45–0.84 m</div>
-      <figcaption>Access granted; the env build is queued behind the cluster</figcaption></figure>
+    <figure><img src="assets/fig_sam3d_quality.jpg" alt="Per-frame accuracy from observed points to the generated surface with p90 whiskers and the 1.71 mm perfect-reconstruction floor, plus silhouette IoU per frame on a second axis.">
+      <figcaption>Per frame: observed→generated distance (bars, p90 ticks) · silhouette IoU (red)</figcaption></figure>
+    <figure><img src="assets/fig_sam3d_scale.jpg" alt="ICP scale needed per frame against the true object distance; metric would be 1.0, measured values run from 0.44 to 1.68.">
+      <figcaption>The scale correction it needs, vs true distance — metric would be 1.0</figcaption></figure>
+    <figure><video src="assets/sam3d_turntable.mp4" poster="assets/sam3d_turntable.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 frame 0 reconstruction, 1.21 M gaussians, orbited</figcaption></figure>
+    <figure><img src="assets/fig_sam3d_latency.jpg" alt="SAM 3D 9.33 s per object versus the current 601 ms per-frame path and the 21.3 ms optimised geometry, log axis, 100 ms budget marked.">
+      <figcaption>Cost: 9.33 s per object — 15.5× the entire current per-frame path</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · SAM 3D env build queued (job 152092), benchmark ready · ~1 h GPU once it starts → same-day update</p>
+  <p class="etabar"><b>Verdict</b> · offline only — 3.43 mm accuracy, 97 % explained, but 0.44–1.68× scale, 21.4 mm drift, 9.3 s/object</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
   <p class="thesis">One blocker left, and two untested ways past it.</p>
+  <p class="subhead">Decided:</p>
+  <ol>
+    <li><b>SAM 3D is offline-only</b> — good shape, but 0.44–1.68× scale, 21.4 mm drift, 9.3 s/object: reconstruct once, then track</li>
+  </ol>
   <p class="subhead">Discussion:</p>
   <ol>
     <li><b>Depth source</b> — keep VGGT vs calibrated SGBM → SGBM, but only with re-preprocessed shards (owner)</li>
@@ -143,7 +153,7 @@
   <p class="subhead">Action items:</p>
   <ol>
     <li>Ship the geometry optimisations, 601 → 21 ms (agent · ready)</li>
-    <li>SAM 3D quality and cost (agent · queued)</li>
+    <li>SAM 3D re-run is cheap now: env + weights persist (agent)</li>
     <li>Cap SAM3 max_num_objects 16 → 2 and re-time (agent · after go)</li>
     <li>Measure the deployed BMW policy-server rate (owner · reference)</li>
   </ol>
@@ -155,6 +165,7 @@
   <div class="cols">
     <div>
       <dl class="kv">
+        <dt>SAM 3D</dt><dd class="mono">job 152189 (2:10:27) → sam3d_bench/bench.json + per-frame PLY (837 MB, server); conda env `sam3d-objects` and checkpoints/hf are permanent. Quality floors validated on synthetic ground truth first: a perfect reconstruction scores 1.71 mm accuracy / 0 % invented, and an early metric bug (similarity ICP driven generated→observed) collapsed a full object into the visible patch — corrected to observed→generated with 24 rotation × 4 scale inits. Completeness is quoted camera-facing-only (8.11 mm, 27 % invented @20 mm); the all-points figure (23.2 mm) counts the unseen back by construction. Silhouette overruns the mask by 1.52×, with near-equal major PCA extents every frame — it tends to a square footprint.</dd>
         <dt>Timings</dt><dd class="mono">routeA_optimisation.json (jobs 152136) · routeA_sgbm_fps.json (152157) · routeA_sam3_resolution.json (152167) · sam3d_bench_routeA.json (152103)</dd>
         <dt>Selection</dt><dd class="mono">viz/depth_only_select.py · depth_only_v2.py · depth_only_oracle.py · mask_staleness.py → viz/cache/depth_only_2a*.json, mask_staleness.json</dd>
         <dt>Stereo</dt><dd class="mono">baseline 66.4388 mm (std 5e-5 mm over 866 rows), relative rotation 0.799° constant to 7e-8 → rectification is one-time. Intrinsics fx 863.8 fy 866.3 @1280² are owner-supplied</dd>
