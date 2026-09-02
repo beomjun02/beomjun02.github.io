@@ -36,7 +36,7 @@
   <p class="thesis"><b>[TL;DR]</b> Keeping every instance and picking the nearest fixes coverage.</p>
   <ul>
     <li>Done: twelve prompts screened, costed</li>
-    <li>Done: depth selection plus HaWoR comparison</li>
+    <li>Done: two episodes, both hand fixes</li>
     <li>Blocked: SAM 3D access not granted</li>
   </ul>
   <div class="band">
@@ -97,6 +97,8 @@
   <div class="band">
     <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
       <figcaption>ep0, full episode — right panel is pixel-aligned with the left by construction</figcaption></figure>
+    <figure><video src="assets/ep1_allobj.mp4" poster="assets/ep1_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep1, same pipeline unchanged — object found on 254 of 255 frames</figcaption></figure>
   </div>
   <p class="footnote">BMW's two-panel grammar (mano_run101_work/viz_handobj2.py), so the two rigs read side by side</p>
 </section>
@@ -108,14 +110,14 @@
     <li>Every candidate, and the one chosen</li>
     <li class="on">Hand and object together in 3D
       <ul><li>static base world frame, three episodes</li>
-          <li>ep0 now carries an object on every depth frame</li></ul></li>
+          <li>ep0 and ep1 both carry object clouds</li></ul></li>
     <li>Where the hand pose comes from</li>
   </ol>
   <div class="band">
     <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>ep0 · ep1 · ep2 — hands with wrist trails, ep0 also carrying its selected object cloud</figcaption></figure>
+      <figcaption>ep0 · ep1 · ep2 — hands with wrist trails; ep0 and ep1 also carry their selected object cloud</figcaption></figure>
   </div>
-  <p class="footnote">ep1/ep2 have no depth pass yet, so they show hands only — object lifting still needs a GPU run per episode</p>
+  <p class="footnote">ep2 has no depth pass yet, so it shows hands only — one GPU run per episode adds the object cloud</p>
 </section>
 
 <!-- SECTION: results (3) -->
@@ -124,17 +126,17 @@
   <ol class="agenda">
     <li>Every candidate, and the one chosen</li>
     <li>Hand and object together in 3D</li>
-    <li class="on">Where the hand pose comes from
-      <ul><li>seungjun's solver is MediaPipe-fed as well</li>
-          <li>HaWoR agrees on position, not orientation</li></ul></li>
+    <li class="on">Why a hand pointed the wrong way
+      <ul><li>our hands were silently flipping chirality</li>
+          <li>HaWoR's two hands are swapped</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/fig_hawor.jpg" alt="Three panels: HaWoR palm depth against the MediaPipe+VGGT depth, histograms of wrist and all-joint distance between the two methods, and the reprojection of HaWoR joints against MediaPipe 2D landmarks.">
-      <figcaption>HaWoR MANO vs MediaPipe+VGGT — depth agreement · wrist and joint distance · reprojection</figcaption></figure>
+    <figure><img src="assets/fig_hawor_diag.jpg" alt="Three panels: every hand detection by depth and box area showing two separate populations; chirality flips over the episode for each method; and HaWoR-to-MediaPipe wrist distance under the two possible slot pairings.">
+      <figcaption>Two people in frame · chirality flips per method · wrist distance as-run vs swapped</figcaption></figure>
     <figure><video src="assets/ep0_hawor_vs_mp.mp4" poster="assets/ep0_hawor_vs_mp.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>Both skeletons projected into the ego camera — purple MediaPipe, green HaWoR</figcaption></figure>
+      <figcaption>Both skeletons after both fixes — purple MediaPipe, green HaWoR</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · HaWoR ep0 hands: <b>done tonight</b> (job 151398) · ep1 end-to-end (frames → VGGT depth → SAM3 masks): queued as job 151419, ~30 min of GPU once the cluster frees · ep2–ep19: unestimated, needs the go</p>
+  <p class="etabar"><b>ETA</b> · ep1 end-to-end <b>done</b> (job 151419, 11 min) · depth-gated control run <b>done</b> (151722) · ep2–ep19: ~11 min GPU each, needs the go</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -144,15 +146,15 @@
   <p class="subhead">Discussion:</p>
   <ol>
     <li><b>Object slots</b> — package only vs package + conveyor → both, the conveyor is the destination (owner)</li>
-    <li><b>Hand source</b> — MediaPipe now vs HaWoR MANO → HaWoR if its format matches BMW's (owner)</li>
+    <li><b>Hand source</b> — both disagree on wrist rotation by ~90°; neither is verified → keep MediaPipe, re-check after a 2-view fit (owner)</li>
     <li><b>SAM 3D</b> — request HF access or drop → request it; mesh completion is the only remaining gap (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Confirm the selected object reads correctly (owner · today)</li>
+    <li>Confirm which hand is left (owner · one frame)</li>
     <li>Ask HF for facebook/sam-3d-objects access (owner · today)</li>
     <li>HaWoR vs MediaPipe hand comparison (agent · queued)</li>
-    <li>Collect ep1 when its job runs (agent · queued)</li>
+    <li>Object extraction ep2–ep19 (agent · after go)</li>
   </ol>
 </section>
 
@@ -165,6 +167,7 @@
         <dt>Masks</dt><dd class="mono">hmd_object_demo/sam3_multi.py → ep0/sam3_multi/{masks_multi.npz, screen.json, prompt_*.jpg} · job 151337, debug, 11.7 min, 7840 instances</dd>
         <dt>Selection</dt><dd class="mono">viz/object_select.py → viz/cache/ep0_objsel.npz (IoU 0.55 merge, depth rank, 5 cm continuity credit)</dd>
         <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py → hawor_out/ep0_hawor.npz (MANO trans/rot/pose/betas + joints + vertices, both hands, all 866 frames; job 151398) · viz/hawor_compare.py</dd>
+        <dt>Hand fixes</dt><dd class="mono">(1) MediaPipe emits world_landmarks in its per-frame handedness guess, which is a coin flip on a self-view — chirality flipped 27/88 and 60/188 times, impossible for a real hand; now forced to one chirality per slot (110 of 276 ep0 detections mirrored back, 0 flips after). (2) HaWoR's slots are swapped: wrist distance 11.7 cm swapped vs 31.6 cm as-run. (3) Two people in frame is real (10 % of detections ≥ 0.8 m, 5× smaller, higher in frame) but is NOT the cause — depth-gating the video changed nothing (98°→96°).</dd>
         <dt>HaWoR frame</dt><dd class="mono">its run_mano joints are canonical-space; `trans` IS the camera-space wrist (10.6 cm median from the MediaPipe wrists; a global similarity fit does not improve it, so no convention is being missed). Skeleton = root-relative joints placed at trans. Slots assigned per frame, not by its naming</dd>
         <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py · viz/deck_figs3.py</dd>
         <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — repo exists, 31 files, TRELLIS-style (slat/ss encoders+decoders); HF returns 403 GatedRepoError "not in the authorized list"</dd>
