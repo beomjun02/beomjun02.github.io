@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #9 · 2026-09-02 rev4: figures-first rewrite (8 slides). Two evaluation
+<!-- 3D-WAM deck #9 · 2026-09-02 rev5: figures-first rewrite (8 main slides) + the three
+     v5 viz-grid slides restored (captions only, OUTSIDE the <=8 cap). Two evaluation
      bases, never mixed: ieval stratified 576 chunks (zero 7.97 cm) and the Sharpa
      96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps x effective batch
      / 577,948 curated chunks. -->
@@ -9,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-02 · Scale-up, cross-embodiment, closed-loop, contact loss — 3D-WAM</title>
-<meta name="description" content="Deck #9 rev4. The 120M line at 10.00 effective epochs is the new project best (ADE 7.71 cm against a 7.97 zero predictor, cosine 0.295 = 72.8°); the contact auxiliary loss is null at every lambda; the 320M has no result and is queue-blocked; 10 % Sharpa co-training is free on human and worth +0.033 cosine on the robot hand.">
+<meta name="description" content="Deck #9 rev5. The 120M line at 10.00 effective epochs is the new project best (ADE 7.71 cm against a 7.97 zero predictor, cosine 0.295 = 72.8°); the contact auxiliary loss is null at every lambda; the 320M has no result and is queue-blocked; 10 % Sharpa co-training is free on human and worth +0.033 cosine on the robot hand.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
@@ -22,6 +23,22 @@
     padding:.7em;background:#FAFAFA}
   .deck .bandtop{flex:0 0 auto;margin-top:2.2em}
   .deck .bandtop>figure>img{flex:0 0 auto;height:auto;width:100%}
+  /* ---- v5 viz-grid slides: unlimited, OUTSIDE the <=8 cap, captions only ----
+     Fill model copied from deck.css .band>figure>img so a row can never overflow
+     the stage: the figure is a flex column, the img flexes into what is left. */
+  .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;
+    grid-template-columns:repeat(3,1fr);gap:.7em 1.1em;align-content:stretch}
+  .deck .vizgrid.two{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+  .deck .vizgrid.paircols{grid-template-rows:repeat(2,1fr);grid-auto-flow:column}
+  .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
+  .deck .vizgrid figure>img{flex:1 1 0;min-height:0;width:100%;height:100%;
+    object-fit:contain;border-radius:3px}
+  .deck .vizgrid.big figure>img{max-height:20em}
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.34em;font-size:1.06em;line-height:1.32;
+    font-style:normal;color:var(--cap,#595959);text-align:left}
+  .deck .vizgrid figure.phold .pbox{flex:1 1 auto;min-height:0;font-size:1.12em;line-height:1.4}
+  .deck .s-viz h2{margin-bottom:.4em}
+  .deck .epoch{font-weight:700;color:var(--acc,#0070C0)}
 </style>
 <script src="/experiments/assets/deck.js" defer></script>
 </head>
@@ -92,6 +109,42 @@
   <p class="footnote">effective epochs = steps × effective batch ÷ 577,948 curated chunks — 120M at batch 32, 320M at 256, so raw step counts never compare</p>
 </section>
 
+<!-- SECTION: viz A · single-chunk open-loop · captions only, no interpretation (v5 §4b D) -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; single-chunk open-loop</h2>
+  <div class="vizgrid two big">
+    <figure><img src="assets/grid_taco.gif" alt="Point-cloud rollout, taco chunk 29206: ground truth on the left, model prediction on the right, ten frames of one second. Orange object points, green right hand, purple left hand." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>taco, chunk 29206, "empty the cup"</figcaption></figure>
+    <figure><img src="assets/grid_arctic.gif" alt="Point-cloud rollout, arctic chunk 1988: ground truth on the left, model prediction on the right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>arctic, chunk 1988, "use the capsule machine"</figcaption></figure>
+    <figure><img src="assets/grid_oakink2.gif" alt="Point-cloud rollout, oakink2 chunk 18292: ground truth on the left, model prediction on the right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>oakink2, chunk 18292, "tidy up the table"</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 @ 10.00 eff ep<br>same chunks, rendering now (job 152592)</div></div>
+      <figcaption>placeholder &middot; the 6.09-epoch clips are not re-used as a stand-in</figcaption></figure>
+  </div>
+  <p class="footnote">same chunk, camera and seed across arms, so the comparison is by construction &middot; results/iviz/i5_110k/clips/</p>
+</section>
+
+<!-- SECTION: viz B · teacher-forced vs self-predicted · captions only, no conclusion stated -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; teacher-forced vs self-predicted</h2>
+  <div class="vizgrid paircols">
+    <figure><img src="assets/rollpair_taco_teacher.gif" alt="Full-episode rollout of taco episode 2488, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_taco_ar.gif" alt="Full-episode rollout of taco episode 2488, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_arctic_teacher.gif" alt="Full-episode rollout of arctic episode 56, teacher-forced: each one-second chunk restarts from ground truth." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_arctic_ar.gif" alt="Full-episode rollout of arctic episode 56, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_oakink2_teacher.gif" alt="Full-episode rollout of oakink2 episode 1486, teacher-forced: each one-second chunk restarts from ground truth." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+    <figure><img src="assets/rollpair_oakink2_ar.gif" alt="Full-episode rollout of oakink2 episode 1486, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+  </div>
+  <p class="footnote">identical episode, camera and seed in both modes &middot; the only difference is whether the previous chunk is ground truth or the model's own output</p>
+</section>
+
 <!-- SECTION: results (2) · cross-embodiment -->
 <section class="slide s-results">
   <h2>Results</h2>
@@ -109,6 +162,22 @@
   </div>
   <p class="etabar"><b>Verdict</b> · on human <b>Δcos −0.001 [−0.008, +0.005]</b> — free (ieval 576) · on the <b>Sharpa 96-TACO basis</b> ADE 7.04 → <b>6.00 cm</b>, that basis's own zero being 4.99. Control is <b>i0_ctl, not i5</b> — i5 also drops hot3d, confounding composition</p>
   <p class="footnote">pairing fixes sequence, chunk start, task, object and scene, so the measured gap is the hand alone · both arms matched at ~32k steps with hot3d in</p>
+</section>
+
+<!-- SECTION: viz C · cross-embodiment and model size · captions only, size caveat in the footnote -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; human vs Sharpa hand, two sizes</h2>
+  <div class="vizgrid two big">
+    <figure><img src="assets/b110k_taco_human.gif" alt="Point-cloud rollout, taco sequence s33 with the human MANO hand, 120M model at 110k steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+    <figure><img src="assets/grid_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 retargeted to the Sharpa robot hand, 120M model at 110k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
+    <figure><img src="assets/p320m_4k_taco_human_s33.gif" alt="Point-cloud rollout, taco sequence s33 with the human hand, 320M model at 4k steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>human hand &middot; run cancelled at 2.66 ep</figcaption></figure>
+    <figure><img src="assets/p320m_4k_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 on the Sharpa robot hand, 320M model at 4k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
+  </div>
+  <p class="footnote">same chunk, camera and seed &middot; <b>the 320M clips are at 1.77 eff epochs against the 120M's 6.09, so they are NOT a size comparison</b></p>
 </section>
 
 <!-- SECTION: results (3) · contact aux loss -->
