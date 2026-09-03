@@ -152,7 +152,7 @@
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 @ 7.75 eff ep (140k, the best ckpt)<br>these three chunks &middot; rendering now, job 152656</div></div>
       <figcaption>placeholder &middot; the 6.09-epoch clips are not re-used as a stand-in</figcaption></figure>
   </div>
-  <p class="footnote">same chunk, camera and seed across arms, so the comparison is by construction &middot; results/iviz/i5_110k/clips/</p>
+  <p class="footnote">same chunk, camera and seed across arms, so the comparison is by construction &middot; results/iviz/i5_110k/clips/ &middot; val = held-out <b>takes</b> (5 % sequence hash), same tasks &amp; objects as train</p>
 </section>
 
 <!-- SECTION: viz B1 · taco ep 2488, 6.09 vs 10.00 eff ep, both modes · captions only, no conclusion stated -->
@@ -168,7 +168,7 @@
     <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode rollout of the same taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
   </div>
-  <p class="footnote">same episode, camera and seed in all four &middot; columns differ only in training length, rows only in whether the previous chunk is ground truth or the model's own output</p>
+  <p class="footnote">same episode, camera and seed &middot; columns = training length, rows = previous chunk GT vs own output &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
 
 <!-- SECTION: viz B2 · the other two datasets at 6.09 eff ep · captions only, no conclusion stated -->
@@ -184,7 +184,7 @@
     <figure><img src="assets/rollpair_oakink2_ar.gif" alt="Full-episode rollout of oakink2 episode 1486, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
       <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
   </div>
-  <p class="footnote">same episode, camera and seed in both modes &middot; rows differ only in whether the previous chunk is ground truth or the model's own output &middot; 10.00-ep counterparts not rendered</p>
+  <p class="footnote">same episode, camera and seed &middot; rows = previous chunk GT vs own output &middot; 10.00-ep counterparts not rendered &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
 
 <!-- SECTION: results (2) · cross-embodiment -->
@@ -224,7 +224,7 @@
     <figure><img src="assets/p320m_4k_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 on the Sharpa robot hand, 320M model at 4k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
       <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot &middot; run cancelled at 2.66 ep</figcaption></figure>
   </div>
-  <p class="footnote">same chunk, camera and seed &middot; columns 1–2 differ only in training length &middot; <b>the 320M column is at 1.77 eff epochs, so it is NOT a size comparison</b></p>
+  <p class="footnote">same chunk, camera and seed &middot; columns 1–2 = training length &middot; 320M at 1.77 eff ep — NOT a size comparison &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
 
 <!-- SECTION: results (3) · GR-1 tabletop zero-shot closed loop · NEW in rev7 -->
