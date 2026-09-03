@@ -288,6 +288,22 @@
   <p class="footnote">same rendering as the previous slide &middot; predicted flow overlay updates every 8 steps</p>
 </section>
 
+<!-- SECTION: viz HOT3D · a dataset i5/p7 NEVER trained on (33 unseen objects, Aria capture, no instruction text) -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; HOT3D &middot; never trained on &middot; no language</h2>
+  <div class="vizgrid two big">
+    <figure><img src="assets/hot3d_p7_s0.gif" alt="Point-cloud rollout on a HOT3D chunk the model never trained on: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; HOT3D chunk 18360, start 0 &middot; motion pred <b>1.26</b> / GT <b>1.18</b> cm</figcaption></figure>
+    <figure><img src="assets/hot3d_p7_s30.gif" alt="Point-cloud rollout on a HOT3D chunk the model never trained on: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; HOT3D chunk 17541, start 30 &middot; motion pred <b>0.97</b> / GT <b>2.47</b> cm</figcaption></figure>
+    <figure><img src="assets/hot3d_p7_s60.gif" alt="Point-cloud rollout on a HOT3D chunk the model never trained on: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; HOT3D chunk 18387, start 60 &middot; motion pred <b>2.09</b> / GT <b>3.24</b> cm</figcaption></figure>
+    <figure><img src="assets/hot3d_p7_s90.gif" alt="Point-cloud rollout on a HOT3D chunk the model never trained on: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; HOT3D chunk 17601, start 90 &middot; motion pred <b>10.47</b> / GT <b>15.83</b> cm</figcaption></figure>
+  </div>
+  <p class="footnote">HOT3D never in training (33 objects, Aria); instructions empty &rarr; no language &middot; 4 val sequences &middot; 96 chunks: cos 0.207 vs 0.32, ADE 7.45 vs zero 6.90 cm</p>
+</section>
+
 <!-- SECTION: results (4) · contact aux loss (additive form, rev6 sweep) -->
 <section class="slide s-results">
   <h2>Results</h2>
