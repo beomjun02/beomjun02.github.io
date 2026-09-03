@@ -58,6 +58,10 @@
   .deck .vizgrid figure>img{flex:1 1 0;min-height:0;width:100%;height:100%;
     object-fit:contain;border-radius:3px}
   .deck .vizgrid.big figure>img{max-height:20em}
+  .deck .vizgrid.three{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr}
+  .deck .vizgrid figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain;background:#000}
+  .deck .vizgrid.big figure>video{max-height:22em}
+  .deck .band>figure>video{flex:0 1 auto;width:100%;height:auto;min-height:0;object-fit:contain;background:#000}
   .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.34em;font-size:1.06em;line-height:1.32;
     font-style:normal;color:var(--cap,#595959);text-align:left}
   .deck .vizgrid figure.phold .pbox{flex:1 1 auto;min-height:0;font-size:1.12em;line-height:1.4}
@@ -239,11 +243,25 @@
       <figcaption>Approaches, then <b>stalls 16 / 24 / 26 cm</b> from the apple (ep0 / 1 / 2) — <b>0/3</b></figcaption></figure>
     <figure><img src="assets/gr1_pred_vs_exec.png" alt="Line chart of hand displacement in centimetres against environment step for the same three episodes: solid lines are the hand motion the model predicts over each one-second chunk, dashed lines are what was executed in the four committed frames. Predicted motion averages 12 to 14 centimetres per chunk; executed motion stays a small fraction of it throughout.">
       <figcaption>Asks <b>12–14 cm</b>/chunk, execution error <b>5–7 cm</b> · arm-IK residual <b>24–35 mm</b>, palm fit <b>≤2 mm</b></figcaption></figure>
-    <figure class="phold slim"><div class="pbox"><b>AWAITING OWNER</b><div>rollout clips, ego view<br>not embedded until verified</div></div>
-      <figcaption>awaiting owner verification · <code>server-mirror/pull4/gr1_trial/r0903_1230_right_human/episode_0{0,1,2}.mp4</code></figcaption></figure>
+    <figure class="slim"><video src="assets/gr1_zeroshot_ep00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of episode 0: the GR-1 right hand approaches the apple and stalls short"></video>
+      <figcaption><b>episode 0</b> · ego view · 36 s · final <b>16 cm</b> · all three episodes on the next slide</figcaption></figure>
   </div>
   <p class="etabar"><b>Setup</b> · <b>PnPAppleToDrawerClose</b> · right Fourier hand · human tag · <b>120M p7 @ 10.00 eff ep</b> · 3 episodes × 720 steps · replan every 4 frames · <b>0/3</b></p>
   <p class="footnote">pipeline: scene + robot as ONE labeled point set (1024 pts) → total scene flow → per-link Procrustes → arm IK (7 joints) + hand IK (6-dim coupled controller) · ckpt 180,608</p>
+</section>
+
+<!-- SECTION: viz GR-1 · zero-shot closed loop, 3 episodes, ego view · the owner verifies by watching -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; GR-1 zero-shot closed loop &middot; ego view</h2>
+  <div class="vizgrid three big">
+    <figure><video src="assets/gr1_zeroshot_ep00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout, episode 0"></video>
+      <figcaption><b>episode 0</b> &middot; 720 steps &middot; 90 replans &middot; final hand&rarr;apple <b>16 cm</b> &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/gr1_zeroshot_ep01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout, episode 1"></video>
+      <figcaption><b>episode 1</b> &middot; 720 steps &middot; 90 replans &middot; final hand&rarr;apple <b>24 cm</b> &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/gr1_zeroshot_ep02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout, episode 2"></video>
+      <figcaption><b>episode 2</b> &middot; 720 steps &middot; 90 replans &middot; final hand&rarr;apple <b>26 cm</b> &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">PnPAppleToDrawerClose &middot; right Fourier hand &middot; human tag &middot; 120M p7 @ 10.00 eff ep, no fine-tuning &middot; 20 Hz sim, 36 s per clip &middot; 4 frames executed per 1 s plan</p>
 </section>
 
 <!-- SECTION: results (4) · contact aux loss (additive form, rev6 sweep) -->
@@ -279,7 +297,7 @@
         <tbody>
           <tr class="pend"><td>①</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · eff batch 256 · 9.76 ep = 22,576 steps</td><td>ran 1,880 steps (0.81 eff ep) → DDP ckpt deadlock 07:54, fixed · re-queued 12:40</td><td>pending · eval at 3 / 6 / 9 eff ep · ≈11.5 h after admission, admission unestimated</td></tr>
           <tr class="pend"><td>②</td><td><b>10 % Sharpa</b> x10_sharpa · 120M · 6.00 ep = 110,996 steps · 2×H100 · job 5469</td><td>RUNNING since 13:03 · 0.291 s/step</td><td>pending · ≈22:00 KST 09-03 (+8.7 h) · retarget is TACO-only → also more TACO (confound)</td></tr>
-          <tr><td>③</td><td><b>GR-1 zero-shot closed loop</b> · PnPAppleToDrawerClose · 120M p7 @ 10.00 ep</td><td>DONE · 3 episodes × 720 steps · human tag · no fine-tuning</td><td><b>0/3</b> · hand stalls <b>16–26 cm</b> short → Results ③ · clips await owner</td></tr>
+          <tr><td>③</td><td><b>GR-1 zero-shot closed loop</b> · PnPAppleToDrawerClose · 120M p7 @ 10.00 ep</td><td>DONE · 3 episodes × 720 steps · human tag · no fine-tuning</td><td><b>0/3</b> · hand stalls <b>16–26 cm</b> short → Results ③ · clips embedded (owner to verify)</td></tr>
           <tr class="pend"><td>④</td><td><b>Contact soft-IoU aux</b> · Dice on contact ≤1 cm · 2 frames · ≈0.1 % step cost</td><td>λ 0.1 (5470), λ 1.0 (5471) RUNNING · λ 0.001 (5472) queued, background QoS</td><td>pending · λ 0.1 ≈22:10 · λ 1.0 ≈22:30 KST 09-03 (preemptible) · λ 0.001 no start time</td></tr>
         </tbody>
       </table></figure>
