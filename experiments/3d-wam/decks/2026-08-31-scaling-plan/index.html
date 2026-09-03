@@ -95,7 +95,7 @@
   </ul>
   <div class="band">
     <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode point-cloud rollout of taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: ground truth on the left, prediction on the right, each one-second chunk starting from the model's own previous output. Orange object points, green right hand, purple left hand." loading="lazy">
-      <figcaption><b>120M p7 @ 10.00 eff ep</b> — taco ep 2488, self-predicted, 1 s chunks, full episode</figcaption></figure>
+      <figcaption><b>120M p7 @ 10.00 eff ep</b> — taco ep 2488 "brush the plate with the roller", self-predicted, 1 s chunks, full episode</figcaption></figure>
     <figure><img src="assets/gr1_zero_shot_dist.png" alt="Line chart of hand-to-apple distance in centimetres against environment step, 0 to 720, for three closed-loop GR-1 episodes with the 120M human-only model at 10 effective epochs, zero of three successes. All three curves fall steeply within the first 100 steps and then run flat for the rest of the episode, ending at 16, 24 and 26 cm.">
       <figcaption><b>GR-1 zero-shot closed loop</b> — hand→apple distance, 3 episodes × 720 steps: approaches, then <b>stalls 16–26 cm short</b></figcaption></figure>
   </div>
@@ -144,11 +144,11 @@
   <h2>Rollouts &middot; single-chunk open-loop</h2>
   <div class="vizgrid two big">
     <figure><img src="assets/grid_taco.gif" alt="Point-cloud rollout, taco chunk 29206: ground truth on the left, model prediction on the right, ten frames of one second. Orange object points, green right hand, purple left hand." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>taco, chunk 29206, "empty the cup"</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>taco, chunk 29206, "empty the cup with the kettle"</figcaption></figure>
     <figure><img src="assets/grid_arctic.gif" alt="Point-cloud rollout, arctic chunk 1988: ground truth on the left, model prediction on the right, ten frames of one second." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>arctic, chunk 1988, "use the capsule machine"</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>arctic, chunk 1988, "use the capsulemachine"</figcaption></figure>
     <figure><img src="assets/grid_oakink2.gif" alt="Point-cloud rollout, oakink2 chunk 18292: ground truth on the left, model prediction on the right, ten frames of one second." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>oakink2, chunk 18292, "tidy up the table"</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; single-chunk open-loop &middot; 10 frames = 1 s<br>oakink2, chunk 18292, "Tidy up the desktop after drawing."</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>p7 @ 7.75 eff ep (140k, the best ckpt)<br>these three chunks &middot; rendering now, job 152656</div></div>
       <figcaption>placeholder &middot; the 6.09-epoch clips are not re-used as a stand-in</figcaption></figure>
   </div>
@@ -160,13 +160,13 @@
   <h2>Rollouts &middot; taco ep 2488 &middot; 6.09 vs 10.00 eff ep</h2>
   <div class="vizgrid two big">
     <figure><img src="assets/rollpair_taco_teacher.gif" alt="Full-episode rollout of taco episode 2488 by the 120M model at 110k steps, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488 &middot; "brush the plate with the roller"<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/p7_10ep_roll_taco_teacher.gif" alt="Full-episode rollout of the same taco episode 2488 by the 120M p7 model at 180,608 steps, teacher-forced: each one-second chunk restarts from ground truth. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488 &middot; "brush the plate with the roller"<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/rollpair_taco_ar.gif" alt="Full-episode rollout of taco episode 2488 by the 120M model at 110k steps, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco ep 2488 &middot; "brush the plate with the roller"<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode rollout of the same taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: each one-second chunk starts from the model's own previous output. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco ep 2488 &middot; "brush the plate with the roller"<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
   </div>
   <p class="footnote">same episode, camera and seed &middot; columns = training length, rows = previous chunk GT vs own output &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
@@ -176,13 +176,13 @@
   <h2>Rollouts &middot; teacher-forced vs self-predicted &middot; arctic, oakink2</h2>
   <div class="vizgrid paircols">
     <figure><img src="assets/rollpair_arctic_teacher.gif" alt="Full-episode rollout of arctic episode 56, teacher-forced: each one-second chunk restarts from ground truth." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56 &middot; "use the mixer"<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/rollpair_arctic_ar.gif" alt="Full-episode rollout of arctic episode 56, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; arctic ep 56 &middot; "use the mixer"<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/rollpair_oakink2_teacher.gif" alt="Full-episode rollout of oakink2 episode 1486, teacher-forced: each one-second chunk restarts from ground truth." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486 &middot; "turn on the lamp, open laptop, power on the laptop" (text unseen in train)<br>teacher-forced &middot; 1 s chunks &middot; full episode</figcaption></figure>
     <figure><img src="assets/rollpair_oakink2_ar.gif" alt="Full-episode rollout of oakink2 episode 1486, self-predicted: each one-second chunk starts from the model's own previous output." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; oakink2 ep 1486 &middot; "turn on the lamp, open laptop, power on the laptop" (text unseen in train)<br>self-predicted &middot; 1 s chunks &middot; full episode</figcaption></figure>
   </div>
   <p class="footnote">same episode, camera and seed &middot; rows = previous chunk GT vs own output &middot; 10.00-ep counterparts not rendered &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
@@ -212,17 +212,17 @@
   <h2>Rollouts &middot; human vs Sharpa hand, two lengths, two sizes</h2>
   <div class="vizgrid rows2">
     <figure><img src="assets/b110k_taco_human.gif" alt="Point-cloud rollout, taco sequence s33 with the human MANO hand, 120M model at 110k steps. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>human hand</figcaption></figure>
     <figure><img src="assets/p7_10ep_taco_human.gif" alt="Point-cloud rollout, the same taco sequence s33 with the human MANO hand, 120M p7 model at 180,608 steps. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>human hand</figcaption></figure>
     <figure><img src="assets/p320m_4k_taco_human_s33.gif" alt="Point-cloud rollout, taco sequence s33 with the human hand, 320M model at 4k steps. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>human hand &middot; only 320M weights that exist</figcaption></figure>
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>human hand &middot; only 320M weights that exist</figcaption></figure>
     <figure><img src="assets/grid_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 retargeted to the Sharpa robot hand, 120M model at 110k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
+      <figcaption><b>120M @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>Sharpa hand, zero-shot</figcaption></figure>
     <figure><img src="assets/p7_10ep_taco_sharpa.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, 120M p7 model at 180,608 steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot</figcaption></figure>
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>Sharpa hand, zero-shot</figcaption></figure>
     <figure><img src="assets/p320m_4k_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 on the Sharpa robot hand, 320M model at 4k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
-      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33<br>Sharpa hand, zero-shot &middot; run cancelled at 2.66 ep</figcaption></figure>
+      <figcaption><b>320M p4b @4k</b> &middot; <span class="epoch">1.77 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>Sharpa hand, zero-shot &middot; run cancelled at 2.66 ep</figcaption></figure>
   </div>
   <p class="footnote">same chunk, camera and seed &middot; columns 1–2 = training length &middot; 320M at 1.77 eff ep — NOT a size comparison &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
