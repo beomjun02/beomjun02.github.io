@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #9 · 2026-09-03 rev7 (13:20 KST): the GR-1 tabletop zero-shot closed loop RAN
-     (0/3 on PnPAppleToDrawerClose — the loop closes end-to-end with a human-only model, the
-     hand stalls 16–26 cm short because the controller executes a fraction of the plan) and
-     gets its own results slide. NO numbers exist from the four arms that were due at 10:00:
-     two launcher/trainer bugs (staging without mtimes; per-rank checkpoint clock under DDP)
-     killed every arm overnight; both fixed, everything re-queued or running, dated on the
-     status slide with tr.pend rows. Corrections on the record replace rev6's list: the
-     "/s3data slowdown" was CPU starvation, the contact-workstream close is withdrawn (the
-     soft-IoU form is training), every pre-09-03 cross-embodiment CI was a 2/3-subsample
-     estimator, all evaluators now carry a zero-motion reference.
-     Structure: 8 main slides (title, overview, method, 4 results, status) + 4 v5 viz-grid
-     slides OUTSIDE the <=8 cap, captions only + 2 appendix slides. Two evaluation bases,
-     never mixed: ieval stratified 576 chunks (zero 7.97 cm) and the Sharpa 96-chunk TACO
-     basis (zero 4.99 cm). Effective epochs = steps x effective batch / 577,948 curated chunks. -->
+<!-- 3D-WAM deck #9 · 2026-09-03 rev8 (23:00 KST): the two ICLR27 arms that reached 6.00 eff ep
+     (x10_sharpa = 10 % Sharpa co-training; ciou_0p1 = soft-IoU contact aux loss, lambda 0.1) are
+     evaluated on the ICLR27 corpus' stratified human val (96 x 5 datasets = 480 chunks, zero
+     predictor 9.08 cm) and paired against the i5 base on the 288 chunks that index identically on
+     both clusters (arctic + dexycb + grab). Neither beats the zero-motion predictor; both sit below
+     the base (paired dcos -0.023 / -0.098); lambda 0.1 over-predicts contact 2.3x (17.3 % of hand
+     points vs 7.4 % GT); 10 % Sharpa does not close the Sharpa gap (-0.022, CI spans zero) and costs
+     a little human accuracy. GR-1: the 44-task zero-shot sweep (2/117 episodes) has its own deck
+     #10, so Results (3) is a pointer slide with the bimanual + two-object rerun (rlwrld job 155019)
+     as a pend row. 3-epoch intermediate evals were run and dropped by owner decision (6-epoch
+     only). Pending: ciou_1p0 / ciou_0p001 (background QoS), 320M (MLXP, suspended 10 h).
+     Structure: 8 main slides (title, overview, method, 4 results, status) + 10 v5 viz-grid
+     slides OUTSIDE the <=8 cap, captions only + 3 appendix slides. Three evaluation bases, never
+     mixed in one table: ieval stratified 576 (rlwrld corpus, zero 7.97 cm), ieval stratified 480
+     (ICLR27 corpus, 5 datasets, zero 9.08 cm; the i5 base's own 480-of-576 subset has zero 8.86 cm)
+     and the Sharpa 96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps x effective batch
+     / curated chunks (577,948 on rlwrld, 591,977 on ICLR27). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-03 · Scale-up, cross-embodiment, closed-loop, contact loss — 3D-WAM</title>
-<meta name="description" content="Deck #9 rev7, 2026-09-03 13:20 KST. The GR-1 tabletop zero-shot closed loop runs end-to-end with a human-only 120M model — 0/3 on PnPAppleToDrawerClose, the hand stalling 16–26 cm short of the apple because the controller executes a fraction of the predicted motion. No results yet from the four new arms (320M scale-up, 10 % Sharpa, contact soft-IoU λ sweep): two launcher/trainer bugs killed them overnight, both fixed, all re-running with dated ETAs. Corrections: the /s3data slowdown was CPU starvation; the contact-workstream close is withdrawn; every earlier cross-embodiment CI was a 2/3-subsample estimator; all evaluators now carry a zero-motion reference.">
+<meta name="description" content="Deck #9 rev8, 2026-09-03 23:00 KST. Six-epoch results for the two ICLR27 arms: 10 % Sharpa co-training (x10_sharpa) and the soft-IoU contact loss at λ 0.1 (ciou_0p1). On the stratified 480-chunk human val neither beats the zero-motion predictor (ADE 9.58 / 10.50 vs 9.08 cm) and both sit below the i5 base (paired Δcos −0.023 / −0.098); λ 0.1 over-predicts contact 2.3×; 10 % Sharpa does not close the Sharpa gap (−0.022, CI spans zero). GR-1: the 44-task zero-shot sweep (2/117 episodes) is deck #10; a rerun with both hands and the destination in the point set is running. Pending: contact λ 1.0 / 0.001, 320M. Corrections: scratch-staging race, GR-1 place target omitted, 3-epoch evals dropped, paired comparisons cover 288 of 480 chunks.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
@@ -87,22 +90,22 @@
   <p class="when">2026. 09. 03<br>Presented by 김범준 (beomjun)</p>
 </section>
 
-<!-- SECTION: overview · rev7 (09-03 13:20 KST) -->
+<!-- SECTION: overview · rev8 (09-03 23:00 KST) -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Zero-shot loop closes but stalls short; new arms land tonight.</p>
+  <p class="thesis"><b>[TL;DR]</b> Neither 6-epoch arm beats the zero predictor; GR-1 sweep is deck #10.</p>
   <ul>
-    <li>GR-1 closed loop: runs, no success</li>
-    <li>ADE flat past 2 effective epochs</li>
-    <li>320M, Sharpa-10 %, soft-IoU: land tonight</li>
+    <li>10 % Sharpa: −0.023 cos vs base, Sharpa gap not closed</li>
+    <li>Contact λ 0.1: −0.098 cos, contact over-predicted 2.3×</li>
+    <li>GR-1, 44 tasks: 2 / 117 episodes → deck #10</li>
   </ul>
   <div class="band">
     <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode point-cloud rollout of taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: ground truth on the left, prediction on the right, each one-second chunk starting from the model's own previous output. Orange object points, green right hand, purple left hand." loading="lazy">
       <figcaption><b>120M p7 @ 10.00 eff ep</b> — taco ep 2488 "brush the plate with the roller", self-predicted, 1 s chunks, full episode</figcaption></figure>
-    <figure><img src="assets/gr1_zero_shot_dist.png" alt="Line chart of hand-to-apple distance in centimetres against environment step, 0 to 720, for three closed-loop GR-1 episodes with the 120M human-only model at 10 effective epochs, zero of three successes. All three curves fall steeply within the first 100 steps and then run flat for the rest of the episode, ending at 16, 24 and 26 cm.">
-      <figcaption><b>GR-1 zero-shot closed loop</b> — hand→apple distance, 3 episodes × 720 steps: approaches, then <b>stalls 16–26 cm short</b></figcaption></figure>
+    <figure><img src="assets/fig_ep06_ade.png" alt="Grouped bar chart of ADE in centimetres at 6.0 effective epochs on 480 stratified chunks, per dataset and overall, for the i5 base in blue, x10_sharpa in green and ciou_0p1 in orange, with a dashed zero-motion-predictor line per group. Overall: i5 8.7 against its own zero 8.86, x10_sharpa 9.6 and ciou_0p1 10.5 against zero 9.08. Per dataset: taco 4.7 / 5.6 / 8.1 against 5.66, arctic 10.4 / 11.4 / 11.3 against 9.34, dexycb 9.0 / 8.9 / 10.3 against 10.04, oakink2 2.3 / 3.1 / 4.0 against 2.62, grab 17.4 / 18.9 / 18.9 against 17.75.">
+      <figcaption><b>6.00 eff ep</b>, ICLR27 480 chunks — x10_sharpa <b>9.58</b> / ciou_0p1 <b>10.50</b> vs zero <b>9.08 cm</b> · i5 base 8.74 vs its own 480-of-576 zero 8.86</figcaption></figure>
   </div>
-  <p class="footnote">two bases, never mixed — <b>ieval</b>: stratified 576 chunks (96 × 6 datasets), zero predictor 7.97 cm · <b>Sharpa</b>: 96 TACO chunks, zero 4.99 cm · record ~/3d-wam/P-SERIES.md</p>
+  <p class="footnote">three bases, never mixed — <b>ieval 576</b> (rlwrld, zero 7.97 cm) · <b>ieval 480</b> (ICLR27, 5 datasets, zero 9.08) · <b>Sharpa</b> 96 TACO, zero 4.99 · P-SERIES.md</p>
 </section>
 
 <!-- SECTION: method -->
@@ -196,18 +199,25 @@
   <ol class="agenda">
     <li>Scale-up and training length</li>
     <li class="on">Cross-embodiment transfer
-      <ul><li>10 % Sharpa is free on human, +0.033 cos on the robot</li></ul></li>
+      <ul><li>10 % Sharpa at 6 ep: −0.023 cos on human, Sharpa gap unchanged</li></ul></li>
     <li>GR-1 zero-shot closed loop</li>
     <li>Contact auxiliary loss</li>
   </ol>
   <div class="band">
-    <figure><img src="assets/fig_crossembod.png" alt="Grouped bar chart comparing i0_ctl human-only in blue against i9 with 10 percent Sharpa co-training in green. On human, evaluated on 576 stratified chunks, both reach cosine 0.208. On the Sharpa hand, evaluated on 96 TACO chunks, i0 reaches 0.130 and i9 reaches 0.163, an annotated gain of plus 0.033.">
-      <figcaption>Free on human (<b>0.208 both</b>, 78.0°), <b>+0.033 on the robot hand</b> (0.130 → 0.163, 82.5° → 80.6°)</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>x10_sharpa @ 6.00 eff ep<br>120M + 10 % Sharpa · ICLR27 job 5469, RUNNING</div></div>
-      <figcaption>Lands <b>≈ 22:00 KST 09-03</b> (+8.7 h from 13:20) · fixed paired estimator — not comparable to the CIs on this slide</figcaption></figure>
+    <figure style="flex:1 1 60%;min-width:0"><img src="assets/fig_ep06_paired.png" alt="Forest plot of paired differences in direction cosine against the i5 base at 6.0 effective epochs on 288 shared chunks from arctic, dexycb and grab, with 95 percent bootstrap intervals from 10k resamples. x10_sharpa: delta cos minus 0.023 [minus 0.035, minus 0.010] and delta cos hand minus 0.035 [minus 0.053, minus 0.016]. ciou_0p1: delta cos minus 0.098 [minus 0.119, minus 0.077] and delta cos hand minus 0.121 [minus 0.149, minus 0.092]. Bottom row, x10_sharpa Sharpa minus human hand cosine over 192 pairs: minus 0.022 [minus 0.066, plus 0.023], the only interval crossing zero.">
+      <figcaption>Paired vs the i5 base on <b>288 shared chunks</b>: x10_sharpa <b>Δcos −0.023 [−0.035, −0.010]</b> · Sharpa − human hand gap <b>−0.022 [−0.066, +0.023]</b>, 192 pairs</figcaption></figure>
+    <figure style="flex:0 0 35%;min-width:0">
+      <table class="compact dense" style="white-space:nowrap">
+        <thead><tr><th>Sharpa · 96 TACO</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE</th><th>Acc5 %</th></tr></thead>
+        <tbody>
+          <tr><td><b>x10_sharpa</b> <span class="epoch">6.00 ep</span></td><td>0.246</td><td>0.274</td><td>5.03</td><td>62.8</td></tr>
+          <tr><td>zero predictor</td><td>—</td><td>—</td><td>4.99</td><td>66.7</td></tr>
+        </tbody>
+      </table>
+      <figcaption>Sharpa hand, retargeted TACO · ADE in cm · ADE <b>equals the zero predictor</b></figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · on human <b>Δcos −0.001 [−0.008, +0.005]</b> (2/3-subsample estimator, see corrections) — free (ieval 576) · on the <b>Sharpa 96-TACO basis</b> ADE 7.04 → <b>6.00 cm</b>, that basis's own zero being 4.99. Control is <b>i0_ctl, not i5</b> — i5 also drops hot3d, confounding composition</p>
-  <p class="footnote">pairing fixes sequence, chunk start, task, object and scene, so the measured gap is the hand alone · both arms matched at ~32k steps with hot3d in</p>
+  <p class="etabar"><b>Verdict</b> · 10 % Sharpa <b>costs a little human accuracy</b> (paired Δcos −0.023, ΔADE +0.82 cm vs i5) and <b>does not close the Sharpa gap</b> (−0.022, CI spans zero) · 480 basis: ADE 9.58 vs zero 9.08, <b>below the zero predictor</b> · supersedes rev7's 32k-step "free on human" reading</p>
+  <p class="footnote">pairing fixes sequence, start, task, object, scene · paired set = arctic + dexycb + grab, see corrections · eff ep = steps × 32 ÷ 591,977</p>
 </section>
 
 <!-- SECTION: viz C · cross-embodiment and model size · captions only, size caveat in the footnote -->
@@ -230,25 +240,51 @@
   <p class="footnote">same chunk, camera and seed &middot; columns 1–2 = training length &middot; 320M at 1.77 eff ep — NOT a size comparison &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
 
-<!-- SECTION: results (3) · GR-1 tabletop zero-shot closed loop · rev7.9: full 44-task sweep -->
+<!-- SECTION: viz D · the two 6-epoch ICLR27 arms beside the i5 base on the same taco s33 chunk · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; human vs Sharpa hand &middot; the 6-epoch arms</h2>
+  <div class="vizgrid rows2">
+    <figure><img src="assets/b110k_taco_human.gif" alt="Point-cloud rollout, taco sequence s33 with the human MANO hand, i5 base 120M model at 110k steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M i5 base @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>human hand</figcaption></figure>
+    <figure><img src="assets/x10_sharpa_taco_human_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 with the human MANO hand, x10_sharpa model (10 percent Sharpa co-training) at 110,996 steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>x10_sharpa @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+    <figure><img src="assets/ciou_0p1_taco_human_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 with the human MANO hand, ciou_0p1 model (soft-IoU contact loss, lambda 0.1) at 110,996 steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>ciou_0p1 @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33<br>human hand</figcaption></figure>
+    <figure><img src="assets/grid_taco_sharpa.gif" alt="Point-cloud rollout, taco sequence s33 retargeted to the Sharpa robot hand, i5 base 120M model at 110k steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>120M i5 base @110k</b> &middot; <span class="epoch">6.09 eff ep</span> &middot; taco s33 "cut the bowl with the spatula"<br>Sharpa hand, zero-shot</figcaption></figure>
+    <figure><img src="assets/x10_sharpa_taco_sharpa_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, x10_sharpa model at 110,996 steps, which saw 10 percent Sharpa samples in training. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>x10_sharpa @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627<br>Sharpa hand, co-trained &middot; motion pred <b>6.80</b> / GT <b>11.99</b> cm &middot; ADE 6.63</figcaption></figure>
+    <figure><img src="assets/ciou_0p1_taco_sharpa_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, ciou_0p1 model at 110,996 steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>ciou_0p1 @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627<br>Sharpa hand, zero-shot &middot; motion pred <b>8.93</b> / GT <b>11.99</b> cm &middot; ADE 7.98</figcaption></figure>
+  </div>
+  <p class="footnote">same taco s33 chunk, camera and seed &middot; columns = arm at ≈6 eff ep &middot; pred / GT motion from the render report (Sharpa clips only) &middot; val = held-out takes</p>
+</section>
+
+<!-- SECTION: results (3) · GR-1 tabletop zero-shot · rev8: pointer slide to deck #10 (44-task sweep) + the bimanual rerun as a pend row -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Scale-up and training length</li>
     <li>Cross-embodiment transfer</li>
-    <li class="on">GR-1 zero-shot closed loop &middot; <b>44 tasks &times; 3 episodes</b>
+    <li class="on">GR-1 zero-shot closed loop &middot; <b>44 tasks &times; 3 episodes &rarr; deck #10</b>
       <ul><li><b>first successes with a human-only model — no fine-tuning, no retargeter</b></li>
-          <li>on most tasks the hand stops short: the controller executes a fraction of each plan</li></ul></li>
+          <li>rerun running: both hands, pick object AND destination pointed</li></ul></li>
     <li>Contact auxiliary loss</li>
   </ol>
   <div class="band snug">
-    <figure style="flex:1 1 76%;min-width:0"><img src="assets/gr1_sweep.png" alt="Bar chart over 44 GR-1 pick-and-place tasks sorted by the final hand-to-target distance, mean of three episodes, from 10 to over 60 centimetres; two bars are green marking the tasks with one success in three episodes, KettleToPlate and ObjectsTieredBasketToCounter; five hatched entries are sim-side failures with no episodes.">
-      <figcaption><b>2 / 117</b> episodes succeed (<b>KettleToPlate</b>, <b>ObjectsTieredBasketToCounter</b>, 1/3 each) &middot; median final distance <b>23 cm</b> &middot; 5 tasks fail in the simulator</figcaption></figure>
-    <figure class="slim"><img src="assets/gr1_pred_vs_exec.png" alt="Line chart of hand displacement in centimetres against environment step for three episodes of PnPAppleToDrawerClose: solid lines are the hand motion the model predicts over each one-second chunk, dashed lines are what was executed in the four committed frames. Predicted motion averages 12 to 14 centimetres per chunk; executed motion stays a small fraction of it throughout.">
-      <figcaption>Asks <b>12–14 cm</b>/chunk, executes <b>5–7 cm</b> less &middot; arm-IK residual <b>24–35 mm</b></figcaption></figure>
+    <figure style="flex:0 0 56%;min-width:0">
+      <table class="compact dense">
+        <thead><tr><th style="width:38%">Run &middot; setup</th><th style="width:22%">State</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><b>44-task sweep</b> &middot; right hand &middot; p7 @ <span class="epoch">10.00 eff ep</span></td><td>DONE &rarr; <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck #10</a></td><td><b>2 / 117</b> episodes &middot; median <b>23 cm</b> &middot; 5 sim-side failures</td></tr>
+          <tr class="pend"><td><b>Rerun</b> &middot; both hands &middot; pick + destination</td><td>RUNNING &middot; rlwrld job 155019</td><td>15 / 44 tasks at 22:55 KST &middot; pending</td></tr>
+        </tbody>
+      </table></figure>
+    <figure style="flex:1 1 42%;min-width:0"><img src="assets/gr1_sweep.png" alt="Bar chart over 44 GR-1 pick-and-place tasks sorted by the final hand-to-target distance, mean of three episodes, from 10 to over 60 centimetres; two bars are green marking the tasks with one success in three episodes, KettleToPlate and ObjectsTieredBasketToCounter; five hatched entries are sim-side failures with no episodes.">
+      <figcaption>green = <b>KettleToPlate</b>, <b>ObjectsTieredBasketToCounter</b> (1/3 each) &middot; hatched = sim-side failure</figcaption></figure>
   </div>
-  <p class="etabar"><b>Setup</b> &middot; 44 PnP tasks &middot; right Fourier hand &middot; human tag &middot; <b>120M p7 @ 10.00 eff ep</b> &middot; 3 eps &times; 720 steps &middot; replan every 4 frames &middot; benchmark success flag</p>
-  <p class="footnote">pipeline: scene + robot as ONE labeled point set (1024 pts) &rarr; total scene flow &rarr; per-link Procrustes &rarr; arm IK + hand IK &middot; ckpt 180,608 &middot; rate_arm 0.15 &middot; fixtures not pointed</p>
+  <p class="etabar"><b>Pointer</b> &middot; sweep, clips and setup live in <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/"><b>deck #10 &middot; GR-1 zero-shot</b></a> &middot; correction carried: the input <b>omitted the place target</b> — only the pick object was pointed while every instruction names a destination &rarr; the rerun adds it, and the left hand</p>
+  <p class="footnote">success = benchmark flag &middot; 3 eps &times; 720 steps &middot; replan every 4 frames &middot; ckpt 180,608 &middot; deck #10 = /experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/</p>
 </section>
 
 <!-- SECTION: viz GR-1 · zero-shot closed loop, 3 episodes, ego view · the owner verifies by watching -->
@@ -312,7 +348,7 @@
   <p class="footnote">HOT3D never in training, no language &middot; top 3 = most dynamic of 80 val candidates (median GT 5.3 cm) &middot; 96 chunks: cos 0.207, ADE 7.45 vs zero 6.90</p>
 </section>
 
-<!-- SECTION: results (4) · contact aux loss (additive form, rev6 sweep) -->
+<!-- SECTION: results (4) · contact aux loss · rev8: soft-IoU form, lambda 0.1 at 6.00 eff ep (the rev6 additive-form sweep moved to the appendix) -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
@@ -320,48 +356,69 @@
     <li>Cross-embodiment transfer</li>
     <li>GR-1 zero-shot closed loop</li>
     <li class="on">Contact auxiliary loss
-      <ul><li>three decades of λ swept, all null, ADE worse in λ</li></ul></li>
+      <ul><li>soft-IoU λ 0.1 at 6 ep: −0.098 cos, contact over-predicted 2.3×</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/fig_contact_lambda.png" alt="Forest plot of the paired change in cosine against the i5 baseline at 20k steps, with 95 percent confidence intervals over 576 chunks. Lambda 0.03 sits at minus 0.002, lambda 0.1 at minus 0.001, lambda 1.0 at minus 0.006; every interval crosses the vertical zero line marking the lambda equals zero baseline.">
-      <figcaption><b>Every CI spans zero</b> — Δcos −0.002 / −0.001 / −0.006 at λ 0.03 / 0.1 / 1.0</figcaption></figure>
-    <figure><img src="assets/fig_contact_curve.png" alt="Training loss on a log axis against effective epochs from 0 to 1.11 for the three contact arms and the i5 baseline in black. The lambda 1.0 arm in orange starts about 40 percent higher and stays above the baseline throughout; lambda 0.03 in green tracks slightly below it. All curves fall from above 1 to below 0.01.">
-      <figcaption>λ 1.0 starts <b>40 % higher</b> and never catches up — the aux term is dominating, not helping</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><div>λ 0.03 / 0.1 / 1.0 rollout clips<br>never visualised &middot; rendering now, job 152656</div></div>
-      <figcaption>The verdict above is numeric only — <b>no λ arm has been seen yet</b></figcaption></figure>
+    <figure style="flex:1 1 30%;min-width:0"><img src="assets/fig_ep06_contact.png" alt="Bar chart of contact-set overlap at 1 centimetre, mean over 10 frames and 480 chunks, ciou_0p1 in orange against the zero-motion predictor in grey: IoU 0.30 vs 0.51, precision 0.33 vs 0.72, recall 0.77 vs 0.64, predicted contact fraction 0.17 vs 0.07, with a dotted green line marking the ground-truth contact fraction 0.074.">
+      <figcaption>Contact @1 cm: IoU <b>0.30</b> vs zero <b>0.51</b> · precision 0.33 vs 0.72 · predicts contact on <b>17.3 %</b> of hand points vs <b>7.4 %</b> GT</figcaption></figure>
+    <figure style="flex:1 1 30%;min-width:0"><img src="assets/fig_ep06_cos.png" alt="Grouped bar chart of direction cosine at 6.0 effective epochs on 480 stratified chunks, overall and per dataset, for the i5 base in blue, x10_sharpa in green and ciou_0p1 in orange. Overall 0.30 / 0.27 / 0.18; taco 0.28 / 0.28 / 0.12; arctic 0.31 / 0.29 / 0.20; dexycb 0.29 / 0.28 / 0.22; oakink2 0.24 / 0.17 / 0.11; grab 0.38 / 0.34 / 0.27. ciou_0p1 is lowest in every group.">
+      <figcaption>Direction cosine per dataset: ciou_0p1 <b>lowest everywhere</b> — 0.18 overall vs i5 0.30, taco 0.12 vs 0.28</figcaption></figure>
+    <figure style="flex:0 0 37%;min-width:0">
+      <table class="compact dense" style="white-space:nowrap">
+        <thead><tr><th>human 480 · <span class="epoch">6 ep</span></th><th>cos</th><th>ADE</th><th>zero</th><th>Acc5</th><th>zAcc5</th></tr></thead>
+        <tbody>
+          <tr><td>i5 base †</td><td>0.301</td><td>8.74</td><td>8.86</td><td>58.9</td><td>—</td></tr>
+          <tr><td>x10_sharpa</td><td>0.273</td><td>9.58</td><td>9.08</td><td>54.9</td><td>59.8</td></tr>
+          <tr><td><b>ciou_0p1</b></td><td><b>0.182</b></td><td><b>10.50</b></td><td>9.08</td><td><b>47.8</b></td><td>59.8</td></tr>
+        </tbody>
+      </table>
+      <figcaption>ADE / zero in cm, Acc5 in % · one basis: 96 × 5 datasets · † i5's own 480-of-576 subset</figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · <s>close this workstream</s> → <b>withdrawn 09-03</b> (soft-IoU form training, see corrections). ieval 576 @ 1.11 eff ep: ADE <b>8.63 / 8.62 / 8.78 cm</b> vs the i5 baseline's <b>8.15</b> — monotonically worse in λ, and no interval clears zero. Ninth architecture addition falsified; the levers stay data composition and training length</p>
-  <p class="footnote">λ was picked by measured gradient share (0.1 → 0.73, rejected; 0.03 → 0.22), then swept anyway · harness check: one ckpt under two tags gave Δcos +0.000 [0, 0]</p>
+  <p class="etabar"><b>Verdict</b> · λ 0.1 soft-IoU is <b>harmful</b>: paired Δcos <b>−0.098 [−0.119, −0.077]</b> vs i5, ADE 10.50 vs zero 9.08, Acc5 47.8 vs 59.8 % · contact over-predicted <b>2.3×</b> (recall 0.77 vs 0.64, precision 0.33 vs 0.72) · λ 1.0 / 0.001 still training → then <b>promote or drop</b></p>
+  <p class="footnote">soft-IoU (Dice) on contact ≤1 cm, 2 frames · xcontact @1 cm, 480 chunks, mean over 10 frames · rev6 additive-form λ sweep (null @1.11 ep) → appendix</p>
 </section>
 
-<!-- SECTION: status · closing summary (v5 G: running / due / decisions) · 2026-09-03 13:20 KST -->
+<!-- SECTION: status · closing summary (v5 G: landed / pending / decisions) · 2026-09-03 23:00 KST -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-03 14:20 KST</h2>
-  <p class="thesis">Nothing landed by 10:00 — three bugs, all fixed; three arms running, one queued.</p>
+  <h2>Status · 2026-09-03 23:00 KST</h2>
+  <p class="thesis">Two arms landed at 6 ep: neither beats zero, λ 0.1 harmful; GR-1 → deck #10.</p>
   <div class="band">
     <figure>
       <table class="compact dense status">
-        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 14:20 KST</th><th>Result / ETA</th></tr></thead>
+        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 23:00 KST</th><th>Result / ETA</th></tr></thead>
         <tbody>
-          <tr class="pend"><td>①</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · eff batch 256 · 9.76 ep = 22,576 steps</td><td>ran 1,880 steps (0.81 eff ep) → DDP ckpt deadlock 07:54, fixed · re-queued 12:40</td><td>pending · eval at 3 / 6 / 9 eff ep · ≈11.5 h after admission, admission unestimated</td></tr>
-          <tr class="pend"><td>②</td><td><b>10 % Sharpa</b> x10_sharpa · 120M · 6.00 ep = 110,996 steps · 2×H100 · job 5469</td><td>RUNNING since 13:03 · 0.291 s/step</td><td>pending · ≈22:00 KST 09-03 (+8.7 h) · retarget is TACO-only → also more TACO (confound)</td></tr>
-          <tr><td>③</td><td><b>GR-1 zero-shot closed loop</b> · PnPAppleToDrawerClose · 120M p7 @ 10.00 ep</td><td>DONE · 3 episodes × 720 steps · human tag · no fine-tuning</td><td><b>0/3</b> · hand stalls <b>16–26 cm</b> short → Results ③ · clips embedded (owner to verify)</td></tr>
-          <tr class="pend"><td>④</td><td><b>Contact soft-IoU aux</b> · Dice on contact ≤1 cm · 2 frames · ≈0.1 % step cost</td><td>λ 0.1 (5470), λ 1.0 (5471) RUNNING · λ 0.001 (5472) queued, background QoS</td><td>pending · λ 0.1 ≈22:10 · λ 1.0 ≈22:30 KST 09-03 (preemptible) · λ 0.001 no start time</td></tr>
+          <tr class="pend"><td>①</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · 9.76 ep</td><td>Suspended 10 h · never admitted</td><td>pending · no ETA</td></tr>
+          <tr><td>②</td><td><b>10 % Sharpa</b> x10_sharpa · 120M · <span class="epoch">6.00 eff ep</span> · job 5469</td><td>DONE · ieval 480 + Sharpa 96 + paired (288)</td><td>cos <b>0.273</b> · ADE <b>9.58</b> vs 9.08 · Sharpa 5.03 vs 4.99 · vs i5 Δcos <b>−0.023</b>, ΔADE +0.82 cm</td></tr>
+          <tr><td>③</td><td><b>GR-1 44-task sweep</b> · right hand · p7 @ 10.00 ep</td><td>DONE → <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck #10</a></td><td><b>2 / 117</b> episodes · median <b>23 cm</b> · 5 sim failures</td></tr>
+          <tr class="pend"><td>④</td><td><b>GR-1 rerun</b> · both hands · pick + destination</td><td>RUNNING · rlwrld job 155019</td><td>15 / 44 tasks at 22:55 · pending</td></tr>
+          <tr><td>⑤</td><td><b>Contact λ 0.1</b> ciou_0p1 · 120M · <span class="epoch">6.00 eff ep</span> · job 5470</td><td>DONE · ieval 480 + xcontact @1 cm + paired</td><td>cos <b>0.182</b> · ADE <b>10.50</b> vs 9.08 · Δcos <b>−0.098</b> · IoU 0.30 vs z 0.51 · contact 17.3 vs GT 7.4 %</td></tr>
+          <tr class="pend"><td>⑥</td><td><b>Contact λ 1.0</b> (5471) · <b>λ 0.001</b> (5648)</td><td>~48k / ~28k of 110,996 steps at 22:45</td><td>pending · background QoS, preemptible · no ETA</td></tr>
         </tbody>
       </table></figure>
   </div>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
-    <li><b>GR-1 stall</b> — controller delivers a fraction of the plan → controller first, model later</li>
-    <li><b>Sharpa confound</b> — TACO-only data → TACO-matched control before any robot claim</li>
-    <li><b>λ 0.001</b> — no start time on background QoS → wait for λ 0.1 / 1.0 (≈22:10 / 22:30), then promote or drop</li>
+    <li><b>Contact λ</b> — 0.1 harmful → wait for 1.0 / 0.001, then drop unless one clears the base</li>
+    <li><b>Sharpa co-training</b> — no gain at 6 ep; TACO-only retarget confound remains → control still owed</li>
+    <li><b>Next lever</b> — training length and data composition; the base @110k is the only arm under zero</li>
   </ol>
-  <p class="footnote">grey italic rows = not landed · no numbers from the four arms due at 10:00 — see corrections (appendix) · GR-1 clip verification: owner · evals as each arm lands (agent)</p>
+  <p class="footnote">grey italic rows = not landed · 6-ep numbers on the ICLR27 480 basis (zero 9.08 cm) · 3-ep intermediate evals dropped (owner) · clips: owner verifies</p>
 </section>
 
-<!-- SECTION: appendix (1) · corrections on the record · rev7 -->
+<!-- SECTION: appendix (1a) · corrections on the record · rev8 additions -->
 <section class="slide s-appendix">
-  <h2>Appendix · corrections on the record (rev7, 2026-09-03)</h2>
+  <h2>Appendix · corrections on the record (rev8, 2026-09-03 23:00)</h2>
+  <ol class="corr">
+    <li><b>ICLR27 job 5472 (λ 0.001) crashed 2 min in</b> — two arms staged the corpus into the same node-local scratch at once (cp "File exists" storm). Staging now takes a node-local flock; resubmitted as job 5648.</li>
+    <li><b>The GR-1 input omitted the place target</b> — only the pick object entered the point set while every instruction names a destination (container or fixture). The rerun (job 155019) adds it, and the left hand.</li>
+    <li><b>3-epoch intermediate evals</b> were run for x10_sharpa and ciou_0p1 but dropped from the deck by owner decision — 6-epoch numbers only.</li>
+    <li><b>Paired comparisons vs the i5 base cover 288 of 480 chunks</b> — taco and oakink2 chunk indices differ between the rlwrld and ICLR27 corpora (taco zero 4.47 vs 5.66 cm), so only arctic + dexycb + grab pair. Unpaired means still use all 480.</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix (1b) · corrections on the record · rev7, kept -->
+<section class="slide s-appendix">
+  <h2>Appendix · corrections on the record (rev7, 2026-09-03 13:20)</h2>
   <ol class="corr">
     <li><b>The "/s3data 10× slowdown" was CPU starvation, not storage</b> — the launcher requested no CPUs → 1 core per 2-GPU job → 3.1 s/step at 13–29 % GPU util; with 48 cores it is 0.29 s/step at 100 %. S3 was never the bottleneck.</li>
     <li><b>Two launcher/trainer bugs cost the night</b> — /scratch staging without preserved mtimes (manifest newer than its motion_valid cache → every arm crashed at start) and a per-rank wall-clock checkpoint decision under DDP (rank barrier vs gradient all-reduce → NCCL abort). Both fixed and verified; no 09-03-morning results exist.</li>
@@ -378,22 +435,21 @@
     <div>
       <dl class="kv">
         <dt>Ladder</dt><dd class="mono">19 ckpts, one basis (ieval 576), job 152593 · 7.75 ep (140k): Acc5 64.1 / Acc10 77.7 / ADE 7.46 / cos 0.293 / motion 65 % · 10.00 ep (180,608): 63.3 / 76.9 / 7.71 / 0.295 / 70 %.</dd>
-        <dt>MLXP 320M</dt><dd class="mono">4×H200, eff batch 256, 9.76 ep = 22,576 steps · 1,880 steps (0.81 ep, 2.01 s/step) → DDP ckpt deadlock 07:54 KST 09-03, fixed · re-queued 12:40 from step 1,000 · weights_ep03/06/09.</dd>
-        <dt>ICLR27</dt><dd class="mono">x10_sharpa = job 5469 (2×H100, 0.291 s/step) · contact soft-IoU λ 0.1 / 1.0 / 0.001 = jobs 5470 / 5471 / 5472 (last two: background QoS).</dd>
-        <dt>Bases</dt><dd class="mono">ieval stratified 576 (96 × 6 datasets), zero 7.97 cm · Sharpa 96 TACO, zero 4.99 cm. Never combined.</dd>
-        <dt>Evidence</dt><dd class="mono">review/train/{ieval,ipaired,xeval,iroll,xcontact,ifeas} · results/iviz/{i5_110k,p7_180k,p4b_4k}/clips/ · server-mirror/pull4/{figs, gr1_trial/r0903_1230_right_human}/</dd>
+        <dt>MLXP 320M</dt><dd class="mono">4×H200, eff batch 256, 9.76 ep = 22,576 steps · DDP ckpt deadlock 07:54 KST 09-03 fixed, re-queued 12:40 · Suspended 10 h at 23:00, never admitted.</dd>
+        <dt>ICLR27</dt><dd class="mono">x10_sharpa 5469 DONE · ciou_0p1 5470 DONE (both 110,996 steps = 6.00 ep) · ciou_1p0 5471 ~48k · ciou_0p001 5648 ~28k, background QoS · 3-ep evals run, dropped.</dd>
+        <dt>Bases</dt><dd class="mono">ieval 576 (rlwrld) zero 7.97 cm · ieval 480 (ICLR27, no hot3d) zero 9.08, i5's own 480 subset 8.86 · Sharpa 96 TACO zero 4.99 · paired vs i5 = 288 chunks.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
-        <dt>GR-1 run</dt><dd class="mono">PnPAppleToDrawerClose (robocasa GR-1 tabletop) · right Fourier hand · human tag · 120M p7 @ 10.00 eff ep (ckpt 180,608) · no fine-tuning, no retargeter · 3 episodes × 720 steps · replan every 4 frames (90 replans) · 0/3.</dd>
+        <dt>GR-1 sweep</dt><dd class="mono">44 tasks × 3 eps × 720 steps · right Fourier hand · human tag · 120M p7 @ 10.00 eff ep · no fine-tuning · 2/117 · median 23 cm · 5 sim-side failures → deck #10 · rerun 155019 (both hands + destination) 15/44 at 22:55.</dd>
         <dt>Pipeline</dt><dd class="mono">scene + robot as ONE labeled point set (1024 pts) → predicted total scene flow → per-link Procrustes → arm IK (7 joints) + hand IK (6-dim coupled controller).</dd>
-        <dt>Numbers</dt><dd class="mono">per-chunk predicted hand motion 12–14 cm vs 5–7 cm execution error · arm-IK residual 24–35 mm · palm fit ≤2 mm · final hand→apple 16 / 24 / 26 cm (ep0 / 1 / 2).</dd>
-        <dt>Clips</dt><dd class="mono">episode_0{0,1,2}.mp4, ego view, NOT embedded — awaiting owner verification.</dd>
+        <dt>Pilot</dt><dd class="mono">PnPAppleToDrawerClose, 3 eps: predicted 12–14 cm/chunk vs 5–7 cm execution error · arm-IK residual 24–35 mm · final hand→apple 16 / 24 / 26 cm.</dd>
+        <dt>Evidence</dt><dd class="mono">review/train/{ieval,ipaired,xeval,iroll,xcontact,ifeas} · assets/README_ep06.md + harvest_ep06.json · server-mirror/pull4/{ieval,figs,iviz_ep06}/</dd>
       </dl>
     </div>
   </div>
-  <p class="cut"><b>Cut:</b> the full 19-row ladder dump · per-clip ADE tables · the 24-task split dump · H200 sizing charts · MLXP pod-spec iterations · the rev6 corrections list (7.75-ep best, the 110k dip, Out% dropped as ≈100 % by construction, bf16 live — in git history) · the GR-1 ego clips until the owner has seen them · per-episode GR-1 step logs · the ang° note (mean per-point angle ≠ arccos mean cos).</p>
+  <p class="cut"><b>Cut:</b> 19-row ladder dump · per-clip ADE tables · 24-task split dump · H200 sizing charts · MLXP pod-spec iterations · rev6 corrections list (git history) · rev7's fig_crossembod (i0 vs i9 @32k, 2/3-subsample CI) + additive-form λ figures (Δcos −0.002 / −0.001 / −0.006 @1.11 ep; git history) · 3-ep intermediate evals · per-dataset 6-ep rows (README_ep06.md) · GR-1 step logs · ang° note.</p>
 </section>
 
 </main>

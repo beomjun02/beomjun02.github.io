@@ -1,0 +1,39 @@
+{
+ "taco": {
+  "frames_rendered": 10,
+  "bbox_center": [
+   0.051600001752376556,
+   0.030700000002980232,
+   -0.05900000035762787
+  ],
+  "bbox_half_m": 0.2754,
+  "marker_s_pt2": 3.75,
+  "gif_width": 1200,
+  "gif_height": 600,
+  "gif_n_frames": 10,
+  "gif_fps": 10,
+  "gif_colors": 128,
+  "gif_bytes": 240386,
+  "mp4_codec": "h264",
+  "mp4_pix_fmt": "yuv420p",
+  "mp4_width": 1200,
+  "mp4_height": 600,
+  "mp4_n_frames": 10,
+  "mp4_fps": "10/1",
+  "mp4_bytes": 104351,
+  "mp4_meta": "from frames (no ffprobe)",
+  "poster_bytes": 42314,
+  "poster_quality": 85,
+  "poster_size": [
+   1200,
+   600
+  ],
+  "render_sec": 1.6,
+  "dataset": "taco",
+  "chunk": 27627,
+  "ade_cm": 7.98,
+  "motion_pred_cm": 8.93,
+  "motion_gt_cm": 11.99,
+  "text": "cut the bowl with the spatula"
+ }
+}
