@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- 3D-WAM deck #10 · 2026-09-03 · GR-1 tabletop zero-shot: the full 44-task sweep (3 episodes each, 117
      episodes, 2 successes) with EVERY ego-view clip embedded on one slide per task (owner verifies by
-     watching). Structure: 6 main slides (title, overview, method, results x2, status) + viz slides
+     watching). Structure: 7 main slides (title, overview, method x2, results x2, status) + viz slides
      OUTSIDE the <=8 cap (model view x2, 39 task slides, 1 sim-side-failure slide) + 1 appendix. -->
 <html lang="en">
 <head>
@@ -85,6 +85,29 @@
       <figcaption>what the model sees: <b>1,024 points</b> (object <b style="color:#eb6834">orange</b>, hand <b style="color:#1baf7a">green</b>) + its predicted 1 s flow, every 4 frames</figcaption></figure>
   </div>
   <p class="footnote">MuJoCo &middot; robosuite 1.5.1 &middot; GR1ArmsAndWaistFourierHands &middot; arm IK 7 joints + hand IK 6-dim coupled &middot; 20 Hz sim, model at 10 Hz, 1 s horizon</p>
+</section>
+
+<!-- SECTION: method (2) · input curation and output translation -->
+<section class="slide s-method">
+  <h2>Method: what goes in, what comes out</h2>
+  <p class="thesis">Training sampler on the sim meshes in; per-link rigid fit → IK → joint targets out.</p>
+  <div class="band snug">
+    <figure>
+      <table class="compact dense" style="table-layout:fixed;width:100%"><colgroup><col style="width:15%"><col style="width:55%"><col style="width:30%"></colgroup>
+        <thead><tr><th>Stage</th><th>How</th><th>Numbers</th></tr></thead>
+        <tbody>
+          <tr><td><b>① Object points</b></td><td>target object body read off the env; visual mesh sampled ONCE at reset with the training sampler (face, barycentric), re-posed each step</td><td><b>512</b> pts · one object · distractors, fixtures NOT in the set</td></tr>
+          <tr><td><b>② Hand points</b></td><td>right Fourier hand = one entity, vertices posed per link (MuJoCo FK); MANO 16-part labels via a link→part map, fused link split so no label is missing</td><td><b>512</b> pts · tag <b>human</b> · left hand, waist held, excluded</td></tr>
+          <tr><td><b>③ Context</b></td><td>re-centred on the hand centroid as in training; history = the same points 0.1 / 0.2 s ago; text = the task instruction through frozen T5</td><td>1,024 pts · H = 2 · 10 Hz · k = 8 patches</td></tr>
+          <tr><td><b>④ Predict</b></td><td>video-DiT samples the next 1 s of every point; object flow logged, not used for control</td><td>T = 10 frames · 16 steps · cfg 1.0 · 4 frames executed</td></tr>
+          <tr><td><b>⑤ Hand → link poses</b></td><td>per link: Kabsch from current to predicted points (rest pose composed in) = target pose; links with &lt; 4 points masked</td><td>palm fit <b>&le; 2 mm</b> · fused fingertips carry the articulation loss</td></tr>
+          <tr><td><b>⑥ IK → joints</b></td><td>arm: damped least squares on MuJoCo's kinematics, palm pose as target; hand: same solver in the 6-D coupled space (11 joints, 6 controls)</td><td>arm <b>7</b> joints, residual <b>24–35 mm</b> · hand <b>6</b> · 30 iters · gate 25 mm</td></tr>
+          <tr><td><b>⑦ Act</b></td><td>absolute joint-position targets, interpolated to 20 Hz, rate-limited; other parts held at reset</td><td>rate_arm <b>0.15</b> rad/step · rate_hand 0.4 · replan every 0.4 s</td></tr>
+        </tbody>
+      </table>
+      </figure>
+  </div>
+  <p class="footnote">gr1_obs.py (①–③) · gr1_policy_server.py (④) · hand_remap.py + gr1_loop.py (⑤–⑦) · IK on the compiled model · success flag, ego video from the env</p>
 </section>
 
 <!-- SECTION: results (1) · the sweep -->
