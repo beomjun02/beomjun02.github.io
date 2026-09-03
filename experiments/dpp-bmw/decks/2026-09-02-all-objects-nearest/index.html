@@ -37,7 +37,7 @@
   <ul>
     <li>Done: twelve prompts screened, costed</li>
     <li>Done: two episodes, both hand fixes</li>
-    <li>Blocked: SAM 3D access not granted</li>
+    <li>Open: which hand source to trust</li>
   </ul>
   <div class="band">
     <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
@@ -126,17 +126,19 @@
   <ol class="agenda">
     <li>Every candidate, and the one chosen</li>
     <li>Hand and object together in 3D</li>
-    <li class="on">Why a hand pointed the wrong way
-      <ul><li>our hands were silently flipping chirality</li>
-          <li>HaWoR's hand slots are inverted</li></ul></li>
+    <li class="on">Which hand source to trust
+      <ul><li>the stored wrist is the robot's, not yours</li>
+          <li>four candidates; the best two untried</li></ul></li>
   </ol>
   <div class="band">
-    <figure><img src="assets/fig_hawor_diag.jpg" alt="Three panels: every hand detection by depth and box area showing two separate populations; chirality flips over the episode for each method; and HaWoR-to-MediaPipe wrist distance under the two possible slot pairings.">
-      <figcaption>Two people in frame · chirality flips per method · wrist distance as-run vs swapped</figcaption></figure>
-    <figure><video src="assets/ep0_hawor_vs_mp.mp4" poster="assets/ep0_hawor_vs_mp.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>Both skeletons after both fixes — purple MediaPipe, green HaWoR</figcaption></figure>
+    <figure><img src="assets/fig_wristlag.jpg" alt="Wrist error in the image against a temporal shift of the joint stream from minus twenty to plus twenty frames, for left and right, with MediaPipe's own 7 px fit marked as a dashed line.">
+      <figcaption>The stored wrist misses the image by ~135 px at every time shift — not a sync bug</figcaption></figure>
+    <figure><img src="assets/fig_egofilter.jpg" alt="Share of each detection box surviving a 0.9 metre depth gate: your own hands versus the person opposite.">
+      <figcaption>Ego-side filter: your hands survive intact, the person opposite does not</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE — by morning<br>A MediaPipe · B HaWoR<br>C stereo · D seungjun's solver<br>same frames, overlaid</div>
+      <figcaption>Four hand sources, so the pick is by eye</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · ep1 end-to-end <b>done</b> (job 151419, 11 min) · depth-gated control run <b>done</b> (151722) · ep2–ep19: ~11 min GPU each, needs the go</p>
+  <p class="etabar"><b>ETA</b> · C stereo: local, ~1 h · D solver: unestimated · already fixed: chirality, frame convention, slot inversion</p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -146,7 +148,7 @@
   <p class="subhead">Discussion:</p>
   <ol>
     <li><b>Object slots</b> — package only vs package + conveyor → both, the conveyor is the destination (owner)</li>
-    <li><b>Hand source</b> — both disagree on wrist rotation by ~90°; neither is verified → keep MediaPipe, re-check after a 2-view fit (owner)</li>
+    <li><b>Hand source</b> — A MediaPipe+VGGT · B HaWoR · C stereo triangulation · D seungjun's MANO solver → D, it adds a shape prior the 66 mm baseline needs (owner picks from the overlay)</li>
     <li><b>SAM 3D</b> — request HF access or drop → request it; mesh completion is the only remaining gap (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
@@ -167,6 +169,9 @@
         <dt>Masks</dt><dd class="mono">hmd_object_demo/sam3_multi.py → ep0/sam3_multi/{masks_multi.npz, screen.json, prompt_*.jpg} · job 151337, debug, 11.7 min, 7840 instances</dd>
         <dt>Selection</dt><dd class="mono">viz/object_select.py → viz/cache/ep0_objsel.npz (IoU 0.55 merge, depth rank, 5 cm continuity credit)</dd>
         <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py → hawor_out/ep0_hawor.npz (MANO trans/rot/pose/betas + joints + vertices, both hands, all 866 frames; job 151398) · viz/hawor_compare.py</dd>
+        <dt>Stored wrist</dt><dd class="mono">NOT the human wrist: it projects 149/129 px (L/R) from MediaPipe's detected 2D wrist, 14–17 cm in 3D, while MediaPipe's own fit sits at 7 px. Not intrinsics (Quest calib fx 863.8 gives 144/123 px; fx 950 gives 155/139) and not sync (a ±20-frame sweep bottoms out at −1 frame, 135 px). The offset is NOT constant in the wrist frame either (residual 134/147 mm), which is the signature of retargeting IK — so what is stored is the <b>allex</b> wrist, and it cannot anchor or validate a video estimate.</dd>
+        <dt>Ego filter</dt><dd class="mono">0.9 m depth gate + 25 px dilation keeps 100% of your own hand boxes (n=1162) and 6% of the person opposite (n=137); box area 65,980 vs 12,221 px², box centre y 465 vs 298. Best insertion point for D is between his stages 1 and 2, or (cleaner on a stereo rig) reject by triangulated depth so no VGGT is involved.</dd>
+        <dt>Option D</dt><dd class="mono">seungjun's solver IS available and untried — pull/MANO-pipeline/scripts/run_standalone_session.py → scripts_optimization/{hand_detection,generate_kpt3d_auto,mano_pose_solver}.py; losses in rlwrld_annotation/loss/. Loader is view-count agnostic (num_cameras=len(serials)) and `--optimize_beta` fits per-subject bone lengths — the shape prior our 66 mm baseline needs. Server original /rlwrld3/home/seungjun/MANO-pipeline (venv + MANO models there).</dd>
         <dt>Frame bug</dt><dd class="mono">Found 2026-09-02 by the rigid-stereo unit test: with rot6d decoded as rows=(b1,b2,b1×b2), the base→camera map is <b>R.T·(X−p)</b>, not R·(X−p) — only the former makes the 66.4388 mm stereo offset constant ([66.3665,−2.0523,2.3220] mm, std 2e−5 mm vs 9–12 mm). My viz used the wrong form; corrected in to_cam/to_base and everything re-rendered. It had inflated the right-hand detection share (88/188 → 130/146) and made the stored wrists look unusable as a handedness reference (L:41/R:1258 → L:689/R:610).</dd>
         <dt>Hand fixes</dt><dd class="mono">(1) MediaPipe emits world_landmarks in its per-frame handedness guess, which is a coin flip on a self-view — chirality flipped 27/88 and 60/188 times, impossible for a real hand; now forced to one chirality per slot (110 of 276 ep0 detections mirrored back, 0 flips after). (2) HaWoR's output slots are inverted — confirmed against two independent references after the frame fix: vs our MediaPipe hands 11.0 cm swapped vs 35.6 cm as-run, and vs the dataset's own Quest-derived wrists 19.7 cm vs 38.7 cm. Its per-detection handedness label is actually GOOD (86% agreement with the stored-wrist geometry, mapping label 0 = left), so the inversion is in its label→slot convention, not its detector. (3) Two people in frame is real (10 % of detections ≥ 0.8 m, 5× smaller, higher in frame) but is NOT the cause — depth-gating the video changed nothing (98°→96°).</dd>
         <dt>HaWoR frame</dt><dd class="mono">its run_mano joints are canonical-space; `trans` IS the camera-space wrist (10.6 cm median from the MediaPipe wrists; a global similarity fit does not improve it, so no convention is being missed). Skeleton = root-relative joints placed at trans. Slots assigned per frame, not by its naming</dd>
