@@ -59,6 +59,11 @@
     <p>Newest first. Each log is one question, ended by a verdict.</p>
   </div>
   <div class="road reveal">
+    <div class="item"><span class="badge done">done</span><div>
+      <h3><a href="decks/2026-09-03-gr1-zero-shot/">GR-1 tabletop zero-shot: 44 tasks, no fine-tuning</a></h3>
+      <p><code>2026-09-03 · done</code> — <b>A human-only 120M 3D-WAM model drives the GR-1 humanoid in closed loop on all 44 RoboCasa pick-and-place tasks, 3 episodes each</b>: the loop closes end-to-end with no robot data and no retargeter, <b>2 of 117 episodes succeed</b> (KettleToPlate, ObjectsTieredBasketToCounter), the hand ends a median 23&nbsp;cm from the object because the controller executes a fraction of each plan; 5 tasks failed inside the simulator before step 0. Every ego-view clip is embedded, one slide per task.</p>
+    </div></div>
+
     <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-08-31-scaling-plan/">The base model is finished; the 320M generation is training</a></h3>
       <p><code>2026-08-31 → 09-01 · running</code> — <b>The 120M curated base finished 110,000 steps as the project's best model</b>: cos 0.279 vs the previous best's 0.248, ADE 7.94 beating the 7.97 zero predictor — and the split verdict that direction improves to the very end while <b>magnitude calibration peaked at 50k (7.71)</b>. Two 320M models at <b>π0.5 action-expert dims</b> (d1024 × 18L, canonical DiT recipe: lr 1e-4, effective batch 256) train on — at 0.51M samples they trail the 120M trajectory (colder LR, 4× fewer updates) but already calibrate magnitude at 93–96&nbsp;%, which the 120M never did. First closed-loop groundwork, measured: <b>chunk-chained rollouts stay bounded when replanning from ground truth but break in ~1&nbsp;s from their own predictions</b>; contact lands within 2.8&nbsp;cm of the true region (IoU 0.44, 94&nbsp;% hit); <b>the predicted hand's parts fit rigid to 0.17&nbsp;cm vs GT 0.08 — decodable to joints</b>. Closed-loop arena: GR00T's own open-source GR-1 tabletop benchmark, for directly comparable success rates.</p>
