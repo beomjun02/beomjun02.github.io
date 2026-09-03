@@ -109,15 +109,15 @@
   <ol class="agenda">
     <li>Every candidate, and the one chosen</li>
     <li class="on">Hand and object together in 3D
-      <ul><li>static base world frame, three episodes</li>
-          <li>ep0 and ep1 both carry object clouds</li></ul></li>
+      <ul><li>camera follows the hands, orbits them</li>
+          <li>ends on one grasp, fully turned</li></ul></li>
     <li>Where the hand pose comes from</li>
   </ol>
   <div class="band">
     <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>ep0 · ep1 · ep2 — hands with wrist trails; ep0 and ep1 also carry their selected object cloud</figcaption></figure>
+      <figcaption>ep0 · ep1 · ep2 — a 46 cm following box, one turn every 16 s, then a revolution of the grasp instant (hand 1.2 cm off the package face)</figcaption></figure>
   </div>
-  <p class="footnote">ep2 has no depth pass yet, so it shows hands only — one GPU run per episode adds the object cloud</p>
+  <p class="footnote">the first cut framed one 179 cm box for every episode, so the action filled a quarter of the panel; a reach gate now drops wrists past 90 cm</p>
 </section>
 
 <!-- SECTION: results (3) -->
