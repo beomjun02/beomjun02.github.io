@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-03 · Hand source adjudicated — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Deck: seungjun's MANO solver run on the ego-stereo rig, gated by its own triangulation diagnostics, and adjudicated against every other hand source by two-eye reprojection.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<style>
+  .deck .etabar{margin:.6em 0 0;padding:.45em .8em;border-left:3px solid #0070C0;
+    background:#F2F6FA;font-size:1.5em;color:#333}
+  .deck tr.pend td{color:#595959;font-style:italic}
+  .deck td.good{color:#0B7A3B;font-weight:600}
+  .deck td.bad{color:#B3261E;font-weight:600}
+</style>
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="hand source adjudicated" data-date="2026-09-03">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Frontier hands: seungjun's solver, run and adjudicated</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · his multi-view MANO pipeline on the ego-stereo rig</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 03<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> His solver is the most accurate source, on a third of frames.</p>
+  <ul>
+    <li>Done: his pipeline ran, three episodes</li>
+    <li>Done: both eyes adjudicate every source</li>
+    <li>Open: accuracy or coverage — one ruling</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_AvsD.jpg" alt="Two rows of three ego frames. Top row: MediaPipe skeletons in violet on the operator's hands. Bottom row: seungjun's MANO solver skeletons in orange on the same frames.">
+      <figcaption>same three frames — top: MediaPipe + VGGT depth · bottom: his MANO solver, after its own quality gate</figcaption></figure>
+  </div>
+  <p class="footnote">both sit on real hands; they disagree on which hand, and on depth — the next slides measure which is right</p>
+</section>
+
+<!-- SECTION: method (1) -->
+<section class="slide s-method">
+  <h2>Method (1): His pipeline, on two eyes</h2>
+  <ul>
+    <li>Two eyes are a calibrated rig</li>
+    <li>Left eye is the world frame</li>
+    <li>Licence-gated models needed a mirror</li>
+  </ul>
+  <div class="band">
+    <table>
+      <tr><th>What his loader needs</th><th>What the rig gives</th></tr>
+      <tr><td>stereo baseline</td><td>66.4388 mm, per-axis std 5×10⁻⁶ mm</td></tr>
+      <tr><td>relative rotation</td><td>0.7992°, std 1×10⁻⁶ — rigid, all three episodes</td></tr>
+      <tr><td>intrinsics, both eyes</td><td>fx 732.96 · fy 736.70 · cx 640 · cy 360</td></tr>
+      <tr><td>views × frames</td><td>2 × 866 · 1020 · 895</td></tr>
+      <tr><td>MANO models</td><td>mode 700 in his checkout → mirrored tree, our own copies</td></tr>
+      <tr><td>run</td><td>job 154938 · 14 min 14 s · rc 0 on all three</td></tr>
+    </table>
+  </div>
+  <p class="footnote">session built to the schema in his own convert_bmw_to_hoi.py — world→view quaternion + mm, dataset-tier intrinsic.yaml</p>
+</section>
+
+<!-- SECTION: method (2) -->
+<section class="slide s-method">
+  <h2>Method (2): Both eyes adjudicate</h2>
+  <ul>
+    <li>Fitted views cannot judge themselves</li>
+    <li>Right eye exposes a depth error</li>
+    <li>Stereo closes it, so calibration holds</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/fig_twoeye.jpg" alt="Three grouped bar charts, one per episode, comparing left-eye and right-eye median reprojection error for sources A, C and D.">
+      <figcaption>a 3D hand must land in both eyes — the gap between the pair of bars is a depth error, not a detection error</figcaption></figure>
+  </div>
+  <p class="footnote">C is triangulated from the two eyes, so its 5.8 px in BOTH eyes certifies the extrinsic and the intrinsics themselves</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">His pipeline grades its own work
+      <ul><li>accurate where both eyes agree</li>
+          <li>ungated, it invents the rest</li></ul></li>
+    <li>Every source, measured</li>
+    <li>What the clips look like</li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/fig_hisgate.jpg" alt="Two bar charts: fraction of hand-frames where both eyes contributed, and the triangulation reprojection error where they did.">
+      <figcaption>two-camera support is a minority of frames — but where it exists, his triangulation is inside his own 10 px bar</figcaption></figure>
+    <figure><img src="assets/fig_ungated.jpg" alt="Six ego frames with cyan MediaPipe skeletons on the visible hands and orange solver skeletons in background clutter away from any hand.">
+      <figcaption>ungated: cyan = detected hands, orange = his pose on frames with no two-eye support</figcaption></figure>
+  </div>
+  <p class="footnote">poses_m flags nothing absent, so the solver emits a pose for every frame and hand; the validity lives in his triangulation diagnostic</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>His pipeline grades its own work</li>
+    <li class="on">Every source, measured
+      <ul><li>his is the most accurate one</li>
+          <li>it is also the sparsest one</li></ul></li>
+    <li>What the clips look like</li>
+  </ol>
+  <div class="band">
+    <table>
+      <tr><th>source</th><th>span</th><th>left eye</th><th>right eye</th><th>on a hand</th><th>any-hand frames</th></tr>
+      <tr><td>A MediaPipe + VGGT</td><td>8.56 cm</td><td>20.3 px</td><td class="bad">31.1 px</td><td>92%</td><td class="good">88%</td></tr>
+      <tr><td>C stereo, 66 mm</td><td>7.51 cm</td><td class="good">5.8 px</td><td class="good">5.8 px</td><td>—</td><td>96%</td></tr>
+      <tr><td>D seungjun, gated</td><td class="good">9.44 cm</td><td>16.0 px</td><td class="good">13.8 px</td><td>89%</td><td class="bad">61%</td></tr>
+    </table>
+  </div>
+  <p class="footnote">C is not a usable source on its own: independent per-landmark detections give 5.1 mm of depth noise per pixel of disparity error, and its rigid-palm shape residual never falls below 9 mm</p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>His pipeline grades its own work</li>
+    <li>Every source, measured</li>
+    <li class="on">What the clips look like
+      <ul><li>his hands are fewer, truer</li>
+          <li>same scene, same camera, same gate</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/train3d_A.mp4" poster="assets/train3d_A.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>A — MediaPipe + VGGT depth, on every frame it detects</figcaption></figure>
+    <figure><video src="assets/train3d_D.mp4" poster="assets/train3d_D.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>D — his solver, only where both eyes supported it</figcaption></figure>
+  </div>
+  <p class="footnote">identical camera, follow box and reach gate; the object clouds are untouched — only the hand source differs</p>
+</section>
+
+<!-- SECTION: discussion-actions -->
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">One ruling: switch now, or lift his coverage first.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Hand source</b> — A dense but depth-biased vs D accurate but sparse → <b>fix D's coverage first</b>, then go all-D (owner rules)</li>
+    <li><b>Why D is sparse</b> — two people in frame break his cross-view hand pairing; our ego-side filter keeps every own hand and 6% of the person opposite (agent, one job)</li>
+    <li><b>MANO models</b> — keep the mirrored tree, or ask for group-read on his copies (owner, one minute)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Re-run his pipeline behind the ego filter (agent · one job)</li>
+    <li>Rule on the hand source for the training h5 (owner)</li>
+    <li>Object extraction ep2–ep19 (agent · still awaiting go)</li>
+  </ol>
+  <p class="etabar">Re-run + re-measure: 1 job, ~15 min compute, same day as the ruling</p>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · evidence paths · references · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Session</dt><dd class="mono">hmd_object_demo/mano_sessions/frontier/ep{0,1,2}/ — cam_0.mp4 (ego-left) · cam_1.mp4 (ego-right) · extrinsic.yaml (world→view, mm) · ../intrinsic.yaml. Extrinsic derived from observation.cam_frame_{left,right}_wrt_base: R_10 = R_R<sup>T</sup>R_L, t_10 = R_R<sup>T</sup>(p_L−p_R) → quat wxyz [0.99997568, −0.00520583, 0.00456592, −0.00082914], t [−66.381568, 2.141234, −1.737732] mm.</dd>
+        <dt>Mirror</dt><dd class="mono">hmd_object_demo/mano_mirror/ — real copies of his scripts (PROJ_ROOT resolves from the script path), symlinks for rlwrld_annotation and config/checkpoints, our MANO_{RIGHT,LEFT}.pkl in wilor/mano_data, hamer/_DATA/data/mano and config/mano_models. First attempt (154936) died on PermissionError './mano_data/MANO_RIGHT.pkl' — his copy is mode 700, ours mode 750 and the same size.</dd>
+        <dt>Gate</dt><dd class="mono">processed/hand_detection/ensemble_triangulation_diag.npz — `used` (hand, frame, cam, joint) and `reproj_err`. Keep a hand-frame when BOTH cams contributed and the median error is under 10 px: 38% / 28% / 30% of hand-frames at 5.5 / 5.4 / 5.5 px median (p90 8.0 / 7.2 / 7.4). Ungated, 50% / 40% / 45% of his hands sit &gt;120 px from every detected hand and one reprojects at 2×10⁸ px (near-zero depth).</dd>
+        <dt>Joint order</dt><dd class="mono">his joints_m comes back in the <b>MediaPipe/OpenPose 21 layout</b>, not raw MANO order — its 3D loss target is in that layout. Verified by correlating the per-joint wrist-distance profile against our MediaPipe hands: 0.995 vs 0.439 for raw MANO. Reading MANO's index 4 as the middle MCP reports a "12 cm hand" for both his solver and HaWoR; both are really 9.4 and 9.2 cm.</dd>
+        <dt>Slots</dt><dd class="mono">diag `mano_sides` = ['right', 'left'] confirms his index 0 = right, so our slot 0 (left) takes his index 1 — the swap is from his metadata, not inferred.</dd>
+        <dt>Losses</dt><dd class="mono">final kpt_3d dominates kpt_2d everywhere (ep0 2.29 vs 0.13, ep1 1.30 vs 0.13, ep2 22986.8 vs 0.04). The ep2 blow-up is outliers in the triangulated target, not the fit — gated, ep2's output is the most two-eye consistent of the three (14.8 / 13.6 px).</dd>
+        <dt>Two-eye test</dt><dd class="mono">viz/two_eye_check.py — project each 3D hand into the left eye, pair to the nearest stereo-matched detection, then project through R_10/t_10 into the right eye. A ep0/1/2: 20.3/31.1 · 17.9/29.0 · 21.5/36.5 px (asymmetric = depth too far; predicted disparity 103.8 vs 109.1 observed). D gated: 16.0/13.8 · 16.3/16.9 · 14.8/13.6 px.</dd>
+        <dt>Four sources</dt><dd class="mono">coverage, span and wrist-vs-detected-2D for all four, including HaWoR: <a href="assets/fig_handsources.jpg">fig_handsources.jpg</a></dd>
+        <dt>Option B</dt><dd class="mono">HaWoR span 9.22 cm (not the 12 cm a MANO-ordered index reports) but 150 px from the detected 2D wrist — its placement, not its shape, is what fails. Unchanged from the 09-02 deck.</dd>
+        <dt>Clips</dt><dd class="mono">ep0 two-panel on each source: <a href="assets/ep0_allobj_A.mp4">A</a> · <a href="assets/ep0_allobj_D.mp4">D</a>. Renders: viz/run_mano_render.sh (pull → convert → clips → 3D → figure), viz/mano_hands.py, viz/hands3d_multi.py --hands-suffix.</dd>
+        <dt>Stereo C</dt><dd class="mono">viz/stereo_hands.py — MediaPipe both eyes, epipolar match, DLT. fx cannot be recovered this way: the residual falls monotonically to the sweep floor (8.7 mm at 440 px, 10.8 at 733, 13.0 at 1000) because per-landmark depth noise swamps the shape term. Lateral extent is fx-free and reads 7.5 cm against MediaPipe's 9.2 cm model.</dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>His pipeline, unmodified: <code>scripts/run_standalone_session.py</code> → hand_detection (YOLO → WiLoR + HaMeR) → generate_kpt3d_auto (ensemble, bbox_track, triangulate) → mano_pose_solver (<code>--optimize_beta</code>)</li>
+        <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-02-all-objects-nearest/">all objects, nearest one</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/">policy rate &amp; SAM 3D</a></li>
+      </ul>
+      <p class="cut"><b>Cut:</b> his monocular path (tools_monocular/02b–02e absent from the readable checkout, though his own guide calls it the only correct path for single-camera sequences) · per-frame extrinsics for a moving head (the hoi schema carries one per session, so his smoothness loss acts in the moving ego frame) · the absolute-scale question (A, C and D span ±12% around 8.5 cm and nothing in the data settles it) · ep2's object cloud (no depth pass yet) · the coverage fix for A (stride 1, conf 0.1: both-hands 44%→52%) · fx from stereo hand shape · the second person's own hands as a training signal.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
