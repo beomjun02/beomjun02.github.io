@@ -158,7 +158,7 @@
 
 <!-- SECTION: status -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-03 20:40 KST</h2>
+  <h2>Status · 2026-09-03 21:10 KST</h2>
   <p class="thesis">Sweep complete; the next run changes the controller, not the model.</p>
   <div class="band">
     <figure>
@@ -169,14 +169,14 @@
           <tr class="pend"><td>②</td><td><b>5 tasks failed before step 0</b> · registry ×2, mesh ×1, version ×1, our obs builder ×1</td><td>see the "Not rendered" slide</td><td>pending · fix, rerun the 5 (≈30 min)</td></tr>
           <tr class="pend"><td>③</td><td><b>Controller sweep</b> · rate_arm 0.15 → 0.3 / 0.5 · execute 4 → 8 frames</td><td>not started</td><td>pending · same 44 tasks, same seeds · one variable per arm</td></tr>
           <tr class="pend"><td>④</td><td><b>Sharpa co-trained model</b> · x10_sharpa @ 6 ep (job 5469)</td><td>training, lands ≈22:00 KST</td><td>pending · rerun the sweep with it → does robot data help the robot?</td></tr>
+          <tr class="pend"><td>⑤</td><td><b>Bimanual</b> · left hand in the point set and under control</td><td>not started (owner request 21:05)</td><td>pending · after the controller sweep</td></tr>
         </tbody>
       </table></figure>
   </div>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
     <li><b>Controller first</b> — the plan reaches the object, the arm does not → rate_arm / executed frames before any model change</li>
-    <li><b>Fixtures</b> — drawer / cabinet / microwave tasks cannot succeed while fixtures are never pointed → decide: add fixture points or drop those 15 tasks from the headline</li>
-    <li><b>Claim wording</b> — "zero-shot closes the loop" is supported; "zero-shot succeeds" is 2/117</li>
+    <li><b>Fixtures</b> — 15 drawer / cabinet / microwave tasks cannot succeed while fixtures are never pointed → add fixture points or drop them from the headline</li>
   </ol>
   <p class="footnote">grey italic rows = not landed &middot; job 154163 on rlwrld debug &middot; clips: results/gr1_trial/sweep_0903/&lt;Task&gt;/episode_0N.mp4</p>
 </section>
@@ -205,14 +205,14 @@
 <!-- SECTION: viz task 1/39 · PnPKettleToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 1/39 &middot; KettleToPlate &middot; <span class="ok">1/3</span></h2>
-  <p class="instr"><b>PnPKettleToPlate</b> &middot; &ldquo;pick the kettle non electric from the counter and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPKettleToPlate</b> &middot; &ldquo;pick the kettle non electric from the counter and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPKettleToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPKettleToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>13.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>kettle non electric</b> &middot; final hand&rarr;object <b>13.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPKettleToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPKettleToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>14.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>kettle non electric</b> &middot; final hand&rarr;object <b>14.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPKettleToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPKettleToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>16.9 cm</b> &middot; success <b>YES</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>kettle non electric</b> &middot; final hand&rarr;object <b>16.9 cm</b> &middot; success <b>YES</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -220,14 +220,14 @@
 <!-- SECTION: viz task 2/39 · PnPObjectsTieredBasketToCounter -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 2/39 &middot; ObjectsTieredBasketToCounter &middot; <span class="ok">1/3</span></h2>
-  <p class="instr"><b>PnPObjectsTieredBasketToCounter</b> &middot; &ldquo;pick the eggplant from the tiered basket and place it in the counter&rdquo;</p>
+  <p class="instr"><b>PnPObjectsTieredBasketToCounter</b> &middot; &ldquo;pick the eggplant from the tiered basket and place it in the counter&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsTieredBasketToCounter_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketToCounter, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>14.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>eggplant</b> &middot; final hand&rarr;object <b>14.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsTieredBasketToCounter_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketToCounter, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>45.4 cm</b> &middot; success <b>YES</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>carrot</b> &middot; final hand&rarr;object <b>45.4 cm</b> &middot; success <b>YES</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsTieredBasketToCounter_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketToCounter, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>7.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>lime</b> &middot; final hand&rarr;object <b>7.6 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -235,14 +235,14 @@
 <!-- SECTION: viz task 3/39 · PnPCanToBowl -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 3/39 &middot; CanToBowl &middot; 0/3</h2>
-  <p class="instr"><b>PnPCanToBowl</b> &middot; &ldquo;pick the can from the counter and place it in the bowl&rdquo;</p>
+  <p class="instr"><b>PnPCanToBowl</b> &middot; &ldquo;pick the can from the counter and place it in the bowl&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCanToBowl_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToBowl_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>9.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>9.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToBowl_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>10.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>10.6 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -250,14 +250,14 @@
 <!-- SECTION: viz task 4/39 · PnPPlateToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 4/39 &middot; PlateToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPPlateToPlate</b> &middot; &ldquo;pick the potato from the plate and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPPlateToPlate</b> &middot; &ldquo;pick the potato from the plate and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPPlateToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPlateToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>10.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>potato</b> &middot; final hand&rarr;object <b>10.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPPlateToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPlateToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>11.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>pear</b> &middot; final hand&rarr;object <b>11.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPPlateToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPlateToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>9.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>mushroom</b> &middot; final hand&rarr;object <b>9.0 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -265,14 +265,14 @@
 <!-- SECTION: viz task 5/39 · PnPCounterToCuttingBoard -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 5/39 &middot; CounterToCuttingBoard &middot; 0/3</h2>
-  <p class="instr"><b>PnPCounterToCuttingBoard</b> &middot; &ldquo;pick the condiment bottle from the counter and place it in the cutting board&rdquo;</p>
+  <p class="instr"><b>PnPCounterToCuttingBoard</b> &middot; &ldquo;pick the condiment bottle from the counter and place it in the cutting board&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCounterToCuttingBoard_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToCuttingBoard, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>12.4 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>condiment bottle</b> &middot; final hand&rarr;object <b>12.4 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToCuttingBoard_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToCuttingBoard, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>tomato</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToCuttingBoard_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToCuttingBoard, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>liquor</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -280,14 +280,14 @@
 <!-- SECTION: viz task 6/39 · PnPFruitToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 6/39 &middot; FruitToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPFruitToPlate</b> &middot; &ldquo;pick the squash from the counter and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPFruitToPlate</b> &middot; &ldquo;pick the squash from the counter and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPFruitToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>10.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>squash</b> &middot; final hand&rarr;object <b>10.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPFruitToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>13.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>tomato</b> &middot; final hand&rarr;object <b>13.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPFruitToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>corn</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -295,14 +295,14 @@
 <!-- SECTION: viz task 7/39 · PnPMilkToMicrowaveClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 7/39 &middot; MilkToMicrowaveClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPMilkToMicrowaveClose</b> &middot; &ldquo;pick up the milk, place it into the microwave and close the microwave&rdquo;</p>
+  <p class="instr"><b>PnPMilkToMicrowaveClose</b> &middot; &ldquo;pick up the milk, place it into the microwave and close the microwave&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPMilkToMicrowaveClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToMicrowaveClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>13.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>13.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkToMicrowaveClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToMicrowaveClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkToMicrowaveClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToMicrowaveClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -310,14 +310,14 @@
 <!-- SECTION: viz task 8/39 · PnPCounterToPan -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 8/39 &middot; CounterToPan &middot; 0/3</h2>
-  <p class="instr"><b>PnPCounterToPan</b> &middot; &ldquo;pick the egg from the counter and place it in the pan&rdquo;</p>
+  <p class="instr"><b>PnPCounterToPan</b> &middot; &ldquo;pick the egg from the counter and place it in the pan&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCounterToPan_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPan, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>11.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>egg</b> &middot; final hand&rarr;object <b>11.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPan_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPan, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>13.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>croissant</b> &middot; final hand&rarr;object <b>13.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPan_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPan, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>11.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cucumber</b> &middot; final hand&rarr;object <b>11.5 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -325,14 +325,14 @@
 <!-- SECTION: viz task 9/39 · PnPPotatoToMicrowaveClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 9/39 &middot; PotatoToMicrowaveClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPPotatoToMicrowaveClose</b> &middot; &ldquo;pick up the potato, place it into the microwave and close the microwave&rdquo;</p>
+  <p class="instr"><b>PnPPotatoToMicrowaveClose</b> &middot; &ldquo;pick up the potato, place it into the microwave and close the microwave&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPPotatoToMicrowaveClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPotatoToMicrowaveClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>13.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>potato</b> &middot; final hand&rarr;object <b>13.1 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPPotatoToMicrowaveClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPotatoToMicrowaveClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>13.4 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>potato</b> &middot; final hand&rarr;object <b>13.4 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPPotatoToMicrowaveClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPPotatoToMicrowaveClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>11.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>potato</b> &middot; final hand&rarr;object <b>11.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -340,14 +340,14 @@
 <!-- SECTION: viz task 10/39 · PnPObjectsToTieredBasketLevel -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 10/39 &middot; ObjectsToTieredBasketLevel &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsToTieredBasketLevel</b> &middot; &ldquo;pick the eggplant from the counter and place it on the level #2 of the the tiered basket&rdquo;</p>
+  <p class="instr"><b>PnPObjectsToTieredBasketLevel</b> &middot; &ldquo;pick the eggplant from the counter and place it on the level #2 of the the tiered basket&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsToTieredBasketLevel_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasketLevel, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>eggplant</b> &middot; final hand&rarr;object <b>9.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToTieredBasketLevel_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasketLevel, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>18.4 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>banana</b> &middot; final hand&rarr;object <b>18.4 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToTieredBasketLevel_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasketLevel, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>12.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cheese</b> &middot; final hand&rarr;object <b>12.3 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -355,14 +355,14 @@
 <!-- SECTION: viz task 11/39 · PnPEggplantToMicrowaveClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 11/39 &middot; EggplantToMicrowaveClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPEggplantToMicrowaveClose</b> &middot; &ldquo;pick up the eggplant, place it into the microwave and close the microwave&rdquo;</p>
+  <p class="instr"><b>PnPEggplantToMicrowaveClose</b> &middot; &ldquo;pick up the eggplant, place it into the microwave and close the microwave&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPEggplantToMicrowaveClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPEggplantToMicrowaveClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>14.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>eggplant</b> &middot; final hand&rarr;object <b>14.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPEggplantToMicrowaveClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPEggplantToMicrowaveClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>13.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>eggplant</b> &middot; final hand&rarr;object <b>13.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPEggplantToMicrowaveClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPEggplantToMicrowaveClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>13.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>eggplant</b> &middot; final hand&rarr;object <b>13.7 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -370,14 +370,14 @@
 <!-- SECTION: viz task 12/39 · PnPMilkPlateToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 12/39 &middot; MilkPlateToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPMilkPlateToPlate</b> &middot; &ldquo;pick the milk from the plate and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPMilkPlateToPlate</b> &middot; &ldquo;pick the milk from the plate and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPMilkPlateToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkPlateToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>15.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>15.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkPlateToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkPlateToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>15.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>15.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkPlateToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkPlateToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>18.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>18.3 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -385,14 +385,14 @@
 <!-- SECTION: viz task 13/39 · PnPBottleToCabinetClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 13/39 &middot; BottleToCabinetClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPBottleToCabinetClose</b> &middot; &ldquo;pick up the bottled water, place it into the cabinet and close the cabinet&rdquo;</p>
+  <p class="instr"><b>PnPBottleToCabinetClose</b> &middot; &ldquo;pick up the bottled water, place it into the cabinet and close the cabinet&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPBottleToCabinetClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToCabinetClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>16.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>16.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPBottleToCabinetClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToCabinetClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>23.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>23.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPBottleToCabinetClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToCabinetClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>15.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>15.7 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -400,14 +400,14 @@
 <!-- SECTION: viz task 14/39 · PnPWineToCabinetClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 14/39 &middot; WineToCabinetClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPWineToCabinetClose</b> &middot; &ldquo;pick up the wine, place it into the cabinet and close the cabinet&rdquo;</p>
+  <p class="instr"><b>PnPWineToCabinetClose</b> &middot; &ldquo;pick up the wine, place it into the cabinet and close the cabinet&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPWineToCabinetClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToCabinetClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>20.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>20.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPWineToCabinetClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToCabinetClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>16.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>16.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPWineToCabinetClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToCabinetClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>19.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>19.5 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -415,14 +415,14 @@
 <!-- SECTION: viz task 15/39 · PnPAppleToDrawerClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 15/39 &middot; AppleToDrawerClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPAppleToDrawerClose</b> &middot; &ldquo;pick up the apple, place it into the drawer and close the drawer&rdquo;</p>
+  <p class="instr"><b>PnPAppleToDrawerClose</b> &middot; &ldquo;pick up the apple, place it into the drawer and close the drawer&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPAppleToDrawerClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToDrawerClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>17.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>17.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPAppleToDrawerClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToDrawerClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>22.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>22.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPAppleToDrawerClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToDrawerClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>21.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>21.7 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -430,14 +430,14 @@
 <!-- SECTION: viz task 16/39 · PnPWineToDrawerClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 16/39 &middot; WineToDrawerClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPWineToDrawerClose</b> &middot; &ldquo;pick up the wine, place it into the drawer and close the drawer&rdquo;</p>
+  <p class="instr"><b>PnPWineToDrawerClose</b> &middot; &ldquo;pick up the wine, place it into the drawer and close the drawer&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPWineToDrawerClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToDrawerClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>17.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>17.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPWineToDrawerClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToDrawerClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>29.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>29.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPWineToDrawerClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPWineToDrawerClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>17.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>wine</b> &middot; final hand&rarr;object <b>17.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -445,14 +445,14 @@
 <!-- SECTION: viz task 17/39 · PnPCanToDrawerClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 17/39 &middot; CanToDrawerClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCanToDrawerClose</b> &middot; &ldquo;pick up the can, place it into the drawer and close the drawer&rdquo;</p>
+  <p class="instr"><b>PnPCanToDrawerClose</b> &middot; &ldquo;pick up the can, place it into the drawer and close the drawer&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCanToDrawerClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToDrawerClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>20.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>20.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToDrawerClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToDrawerClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>21.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>21.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToDrawerClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToDrawerClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>23.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>23.2 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -460,14 +460,14 @@
 <!-- SECTION: viz task 18/39 · PnPAppleToCabinetClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 18/39 &middot; AppleToCabinetClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPAppleToCabinetClose</b> &middot; &ldquo;pick up the apple, place it into the cabinet and close the cabinet&rdquo;</p>
+  <p class="instr"><b>PnPAppleToCabinetClose</b> &middot; &ldquo;pick up the apple, place it into the cabinet and close the cabinet&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPAppleToCabinetClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToCabinetClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>20.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>20.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPAppleToCabinetClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToCabinetClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>24.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>24.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPAppleToCabinetClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPAppleToCabinetClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>22.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>22.3 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -475,14 +475,14 @@
 <!-- SECTION: viz task 19/39 · PnPCanToCabinetClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 19/39 &middot; CanToCabinetClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCanToCabinetClose</b> &middot; &ldquo;pick up the can, place it into the cabinet and close the cabinet&rdquo;</p>
+  <p class="instr"><b>PnPCanToCabinetClose</b> &middot; &ldquo;pick up the can, place it into the cabinet and close the cabinet&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCanToCabinetClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToCabinetClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>19.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>19.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToCabinetClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToCabinetClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>24.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>24.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCanToCabinetClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToCabinetClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>23.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>23.7 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -490,14 +490,14 @@
 <!-- SECTION: viz task 20/39 · PnPCupToDrawerClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 20/39 &middot; CupToDrawerClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCupToDrawerClose</b> &middot; &ldquo;pick up the cup, place it into the drawer and close the drawer&rdquo;</p>
+  <p class="instr"><b>PnPCupToDrawerClose</b> &middot; &ldquo;pick up the cup, place it into the drawer and close the drawer&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCupToDrawerClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToDrawerClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>18.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>18.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToDrawerClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToDrawerClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>28.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>28.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToDrawerClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToDrawerClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>23.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>23.0 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -505,14 +505,14 @@
 <!-- SECTION: viz task 21/39 · PnPCupToCabinetClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 21/39 &middot; CupToCabinetClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCupToCabinetClose</b> &middot; &ldquo;pick up the cup, place it into the cabinet and close the cabinet&rdquo;</p>
+  <p class="instr"><b>PnPCupToCabinetClose</b> &middot; &ldquo;pick up the cup, place it into the cabinet and close the cabinet&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCupToCabinetClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToCabinetClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>20.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>20.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToCabinetClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToCabinetClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>34.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>34.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToCabinetClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToCabinetClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>18.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>18.8 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -520,14 +520,14 @@
 <!-- SECTION: viz task 22/39 · PnPBottleToDrawerClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 22/39 &middot; BottleToDrawerClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPBottleToDrawerClose</b> &middot; &ldquo;pick up the bottled water, place it into the drawer and close the drawer&rdquo;</p>
+  <p class="instr"><b>PnPBottleToDrawerClose</b> &middot; &ldquo;pick up the bottled water, place it into the drawer and close the drawer&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPBottleToDrawerClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToDrawerClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>20.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>20.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPBottleToDrawerClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToDrawerClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>30.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>30.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPBottleToDrawerClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPBottleToDrawerClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>24.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>24.3 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -535,14 +535,14 @@
 <!-- SECTION: viz task 23/39 · PnPCornToMicrowaveClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 23/39 &middot; CornToMicrowaveClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCornToMicrowaveClose</b> &middot; &ldquo;pick up the corn, place it into the microwave and close the microwave&rdquo;</p>
+  <p class="instr"><b>PnPCornToMicrowaveClose</b> &middot; &ldquo;pick up the corn, place it into the microwave and close the microwave&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCornToMicrowaveClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCornToMicrowaveClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>55.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>corn</b> &middot; final hand&rarr;object <b>55.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCornToMicrowaveClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCornToMicrowaveClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>14.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>corn</b> &middot; final hand&rarr;object <b>14.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCornToMicrowaveClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCornToMicrowaveClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>11.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>corn</b> &middot; final hand&rarr;object <b>11.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -550,14 +550,14 @@
 <!-- SECTION: viz task 24/39 · PnPObjectsTieredBasketLevelToLevel -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 24/39 &middot; ObjectsTieredBasketLevelToLevel &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsTieredBasketLevelToLevel</b> &middot; &ldquo;pick the corn from the tiered basket and place it on the level #1 of the the tiered basket&rdquo;</p>
+  <p class="instr"><b>PnPObjectsTieredBasketLevelToLevel</b> &middot; &ldquo;pick the corn from the tiered basket and place it on the level #1 of the the tiered basket&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketLevelToLevel, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>19.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>corn</b> &middot; final hand&rarr;object <b>19.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketLevelToLevel, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>13.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>kiwi</b> &middot; final hand&rarr;object <b>13.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsTieredBasketLevelToLevel, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>53.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>53.3 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -565,14 +565,14 @@
 <!-- SECTION: viz task 25/39 · PnPRubixCubeBasketToCounter -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 25/39 &middot; RubixCubeBasketToCounter &middot; 0/3</h2>
-  <p class="instr"><b>PnPRubixCubeBasketToCounter</b> &middot; &ldquo;pick the rubix cube from the basket and place it in the counter&rdquo;</p>
+  <p class="instr"><b>PnPRubixCubeBasketToCounter</b> &middot; &ldquo;pick the rubix cube from the basket and place it in the counter&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPRubixCubeBasketToCounter_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPRubixCubeBasketToCounter, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>25.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>rubix cube</b> &middot; final hand&rarr;object <b>25.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPRubixCubeBasketToCounter_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPRubixCubeBasketToCounter, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>38.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>rubix cube</b> &middot; final hand&rarr;object <b>38.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPRubixCubeBasketToCounter_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPRubixCubeBasketToCounter, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>24.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>rubix cube</b> &middot; final hand&rarr;object <b>24.9 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -580,14 +580,14 @@
 <!-- SECTION: viz task 26/39 · PnPObjectsToTieredBasket -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 26/39 &middot; ObjectsToTieredBasket &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsToTieredBasket</b> &middot; &ldquo;pick the sweet potato from the counter and place it in the tiered basket&rdquo;</p>
+  <p class="instr"><b>PnPObjectsToTieredBasket</b> &middot; &ldquo;pick the sweet potato from the counter and place it in the tiered basket&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsToTieredBasket_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasket, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>10.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>sweet potato</b> &middot; final hand&rarr;object <b>10.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToTieredBasket_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasket, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>79.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>mushroom</b> &middot; final hand&rarr;object <b>79.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToTieredBasket_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToTieredBasket, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>6.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>kiwi</b> &middot; final hand&rarr;object <b>6.9 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -595,14 +595,14 @@
 <!-- SECTION: viz task 27/39 · PnPCounterToBowl -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 27/39 &middot; CounterToBowl &middot; 0/3</h2>
-  <p class="instr"><b>PnPCounterToBowl</b> &middot; &ldquo;pick the spray from the counter and place it in the bowl&rdquo;</p>
+  <p class="instr"><b>PnPCounterToBowl</b> &middot; &ldquo;pick the spray from the counter and place it in the bowl&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCounterToBowl_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToBowl, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>12.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>spray</b> &middot; final hand&rarr;object <b>12.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToBowl_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToBowl, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>76.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>coffee cup</b> &middot; final hand&rarr;object <b>76.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToBowl_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToBowl, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>8.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>8.6 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -610,14 +610,14 @@
 <!-- SECTION: viz task 28/39 · PnPCounterToPot -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 28/39 &middot; CounterToPot &middot; 0/3</h2>
-  <p class="instr"><b>PnPCounterToPot</b> &middot; &ldquo;pick the bottled drink from the counter and place it in the pot&rdquo;</p>
+  <p class="instr"><b>PnPCounterToPot</b> &middot; &ldquo;pick the bottled drink from the counter and place it in the pot&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCounterToPot_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPot, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>11.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>bottled drink</b> &middot; final hand&rarr;object <b>11.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPot_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPot, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>78.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>apple</b> &middot; final hand&rarr;object <b>78.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPot_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPot, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>9.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>peach</b> &middot; final hand&rarr;object <b>9.6 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -625,14 +625,14 @@
 <!-- SECTION: viz task 29/39 · PnPCupToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 29/39 &middot; CupToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPCupToPlate</b> &middot; &ldquo;pick the cup from the counter and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPCupToPlate</b> &middot; &ldquo;pick the cup from the counter and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCupToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>12.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>12.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>77.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>77.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>14.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>14.8 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -640,14 +640,14 @@
 <!-- SECTION: viz task 30/39 · PnPCounterToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 30/39 &middot; CounterToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPCounterToPlate</b> &middot; &ldquo;pick the onion from the counter and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPCounterToPlate</b> &middot; &ldquo;pick the onion from the counter and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCounterToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>19.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>19.2 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>10.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>tomato</b> &middot; final hand&rarr;object <b>10.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCounterToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>77.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>mushroom</b> &middot; final hand&rarr;object <b>77.6 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -655,14 +655,14 @@
 <!-- SECTION: viz task 31/39 · PnPObjectsToShelf -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 31/39 &middot; ObjectsToShelf &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsToShelf</b> &middot; &ldquo;pick the cheese from the counter and place it in the tiered shelf&rdquo;</p>
+  <p class="instr"><b>PnPObjectsToShelf</b> &middot; &ldquo;pick the cheese from the counter and place it in the tiered shelf&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsToShelf_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelf, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>10.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>cheese</b> &middot; final hand&rarr;object <b>10.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToShelf_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelf, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>9.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>broccoli</b> &middot; final hand&rarr;object <b>9.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToShelf_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelf, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>98.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>tangerine</b> &middot; final hand&rarr;object <b>98.0 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -670,14 +670,14 @@
 <!-- SECTION: viz task 32/39 · PnPCupToMicrowaveClose -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 32/39 &middot; CupToMicrowaveClose &middot; 0/3</h2>
-  <p class="instr"><b>PnPCupToMicrowaveClose</b> &middot; &ldquo;pick up the cup, place it into the microwave and close the microwave&rdquo;</p>
+  <p class="instr"><b>PnPCupToMicrowaveClose</b> &middot; &ldquo;pick up the cup, place it into the microwave and close the microwave&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCupToMicrowaveClose_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToMicrowaveClose, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>15.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>15.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToMicrowaveClose_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToMicrowaveClose, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>96.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>96.8 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCupToMicrowaveClose_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCupToMicrowaveClose, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>cup</b> &middot; final hand&rarr;object <b>9.8 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -685,14 +685,14 @@
 <!-- SECTION: viz task 33/39 · PnPOnionToBowl -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 33/39 &middot; OnionToBowl &middot; 0/3</h2>
-  <p class="instr"><b>PnPOnionToBowl</b> &middot; &ldquo;pick the onion from the counter and place it in the bowl&rdquo;</p>
+  <p class="instr"><b>PnPOnionToBowl</b> &middot; &ldquo;pick the onion from the counter and place it in the bowl&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPOnionToBowl_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPOnionToBowl, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>61.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>61.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPOnionToBowl_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPOnionToBowl, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>79.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>79.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPOnionToBowl_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPOnionToBowl, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>11.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>onion</b> &middot; final hand&rarr;object <b>11.5 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -700,14 +700,14 @@
 <!-- SECTION: viz task 34/39 · PnPFruitToPlacemat -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 34/39 &middot; FruitToPlacemat &middot; 0/3</h2>
-  <p class="instr"><b>PnPFruitToPlacemat</b> &middot; &ldquo;pick the peach from the counter and place it in the placemat&rdquo;</p>
+  <p class="instr"><b>PnPFruitToPlacemat</b> &middot; &ldquo;pick the peach from the counter and place it in the placemat&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPFruitToPlacemat_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlacemat, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>12.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>peach</b> &middot; final hand&rarr;object <b>12.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPFruitToPlacemat_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlacemat, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>77.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>tangerine</b> &middot; final hand&rarr;object <b>77.1 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPFruitToPlacemat_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPFruitToPlacemat, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>80.2 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>tangerine</b> &middot; final hand&rarr;object <b>80.2 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -715,14 +715,14 @@
 <!-- SECTION: viz task 35/39 · PnPObjectsToShelfLevel -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 35/39 &middot; ObjectsToShelfLevel &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsToShelfLevel</b> &middot; &ldquo;pick the lemon from the counter and place it on the level #1 of the the tiered shelf&rdquo;</p>
+  <p class="instr"><b>PnPObjectsToShelfLevel</b> &middot; &ldquo;pick the lemon from the counter and place it on the level #1 of the the tiered shelf&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsToShelfLevel_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelfLevel, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>8.6 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>lemon</b> &middot; final hand&rarr;object <b>8.6 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToShelfLevel_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelfLevel, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>82.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>cucumber</b> &middot; final hand&rarr;object <b>82.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsToShelfLevel_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsToShelfLevel, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>81.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>mushroom</b> &middot; final hand&rarr;object <b>81.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -730,14 +730,14 @@
 <!-- SECTION: viz task 36/39 · PnPMilkToBasket -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 36/39 &middot; MilkToBasket &middot; 0/3</h2>
-  <p class="instr"><b>PnPMilkToBasket</b> &middot; &ldquo;pick the milk from the counter and place it in the basket&rdquo;</p>
+  <p class="instr"><b>PnPMilkToBasket</b> &middot; &ldquo;pick the milk from the counter and place it in the basket&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPMilkToBasket_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToBasket, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>10.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>10.1 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkToBasket_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToBasket, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>246.5 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>246.5 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPMilkToBasket_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPMilkToBasket, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>milk</b> &middot; final hand&rarr;object <b>12.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -745,14 +745,14 @@
 <!-- SECTION: viz task 37/39 · PnPObjectsShelfToCounter -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 37/39 &middot; ObjectsShelfToCounter &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsShelfToCounter</b> &middot; &ldquo;pick the peach from the tiered shelf and place it in the counter&rdquo;</p>
+  <p class="instr"><b>PnPObjectsShelfToCounter</b> &middot; &ldquo;pick the peach from the tiered shelf and place it in the counter&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsShelfToCounter_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfToCounter, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>29.3 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>peach</b> &middot; final hand&rarr;object <b>29.3 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsShelfToCounter_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfToCounter, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>17.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>garlic</b> &middot; final hand&rarr;object <b>17.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsShelfToCounter_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfToCounter, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>257.8 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>lemon</b> &middot; final hand&rarr;object <b>257.8 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -760,14 +760,14 @@
 <!-- SECTION: viz task 38/39 · PnPCylindricalToPlate -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 38/39 &middot; CylindricalToPlate &middot; 0/3</h2>
-  <p class="instr"><b>PnPCylindricalToPlate</b> &middot; &ldquo;pick the can from the counter and place it in the plate&rdquo;</p>
+  <p class="instr"><b>PnPCylindricalToPlate</b> &middot; &ldquo;pick the can from the counter and place it in the plate&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPCylindricalToPlate_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCylindricalToPlate, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>93.0 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>can</b> &middot; final hand&rarr;object <b>93.0 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCylindricalToPlate_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCylindricalToPlate, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>305.7 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>bottled water</b> &middot; final hand&rarr;object <b>305.7 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPCylindricalToPlate_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCylindricalToPlate, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>14.4 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>bottled drink</b> &middot; final hand&rarr;object <b>14.4 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
@@ -775,14 +775,14 @@
 <!-- SECTION: viz task 39/39 · PnPObjectsShelfLevelToLevel -->
 <section class="slide s-viz">
   <h2>Rollouts &middot; 39/39 &middot; ObjectsShelfLevelToLevel &middot; 0/3</h2>
-  <p class="instr"><b>PnPObjectsShelfLevelToLevel</b> &middot; &ldquo;pick the mushroom from the tiered shelf and place it on the level #1 of the the tiered shelf&rdquo;</p>
+  <p class="instr"><b>PnPObjectsShelfLevelToLevel</b> &middot; &ldquo;pick the mushroom from the tiered shelf and place it on the level #1 of the the tiered shelf&rdquo; &middot; point set = right hand + the task&rsquo;s target object (<b>obj_main</b>), query phrase per episode below</p>
   <div class="vizgrid three eps">
     <figure><video src="assets/PnPObjectsShelfLevelToLevel_episode_00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfLevelToLevel, episode 0"></video>
-      <figcaption><b>episode 0</b> &middot; final hand&rarr;object <b>14.9 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 0</b> &middot; query <b>mushroom</b> &middot; final hand&rarr;object <b>14.9 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsShelfLevelToLevel_episode_01.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfLevelToLevel, episode 1"></video>
-      <figcaption><b>episode 1</b> &middot; final hand&rarr;object <b>1048.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 1</b> &middot; query <b>lemon</b> &middot; final hand&rarr;object <b>1048.1 cm</b> &middot; success <b>no</b></figcaption></figure>
     <figure><video src="assets/PnPObjectsShelfLevelToLevel_episode_02.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPObjectsShelfLevelToLevel, episode 2"></video>
-      <figcaption><b>episode 2</b> &middot; final hand&rarr;object <b>26.1 cm</b> &middot; success <b>no</b></figcaption></figure>
+      <figcaption><b>episode 2</b> &middot; query <b>pear</b> &middot; final hand&rarr;object <b>26.1 cm</b> &middot; success <b>no</b></figcaption></figure>
   </div>
   <p class="footnote">ego view &middot; 720 steps = 36 s &middot; 120M p7 @ 10.00 eff ep, human tag, no fine-tuning &middot; success = benchmark flag &middot; distance = final hand&rarr;target object</p>
 </section>
