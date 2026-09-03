@@ -230,27 +230,25 @@
   <p class="footnote">same chunk, camera and seed &middot; columns 1–2 = training length &middot; 320M at 1.77 eff ep — NOT a size comparison &middot; val = held-out takes, tasks &amp; objects seen in train</p>
 </section>
 
-<!-- SECTION: results (3) · GR-1 tabletop zero-shot closed loop · NEW in rev7 -->
+<!-- SECTION: results (3) · GR-1 tabletop zero-shot closed loop · rev7.9: full 44-task sweep -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Scale-up and training length</li>
     <li>Cross-embodiment transfer</li>
-    <li class="on">GR-1 zero-shot closed loop
-      <ul><li><b>the loop closes end-to-end with a human-only model — no fine-tuning, no retargeter</b></li>
-          <li>the hand stalls 16–26 cm short of the apple: the controller executes a fraction of the plan</li></ul></li>
+    <li class="on">GR-1 zero-shot closed loop &middot; <b>44 tasks &times; 3 episodes</b>
+      <ul><li><b>first successes with a human-only model — no fine-tuning, no retargeter</b></li>
+          <li>on most tasks the hand stops short: the controller executes a fraction of each plan</li></ul></li>
     <li>Contact auxiliary loss</li>
   </ol>
   <div class="band snug">
-    <figure><img src="assets/gr1_zero_shot_dist.png" alt="Line chart of hand-to-apple distance in centimetres against environment step, 0 to 720, for three closed-loop episodes of PnPAppleToDrawerClose with the 120M human-only model at 10 effective epochs. All three curves fall steeply within the first 100 steps, then run flat: episode 0 ends at 16 cm, episode 1 at 24 cm, episode 2 at 26 cm. Zero of three successes.">
-      <figcaption>Approaches, then <b>stalls 16 / 24 / 26 cm</b> from the apple (ep0 / 1 / 2) — <b>0/3</b></figcaption></figure>
-    <figure><img src="assets/gr1_pred_vs_exec.png" alt="Line chart of hand displacement in centimetres against environment step for the same three episodes: solid lines are the hand motion the model predicts over each one-second chunk, dashed lines are what was executed in the four committed frames. Predicted motion averages 12 to 14 centimetres per chunk; executed motion stays a small fraction of it throughout.">
-      <figcaption>Asks <b>12–14 cm</b>/chunk, execution error <b>5–7 cm</b> · arm-IK residual <b>24–35 mm</b>, palm fit <b>≤2 mm</b></figcaption></figure>
-    <figure class="slim"><video src="assets/gr1_zeroshot_ep00.mp4" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of episode 0: the GR-1 right hand approaches the apple and stalls short"></video>
-      <figcaption><b>episode 0</b> · ego view · 36 s · final <b>16 cm</b> · all three episodes on the next slide</figcaption></figure>
+    <figure style="flex:1 1 76%;min-width:0"><img src="assets/gr1_sweep.png" alt="Bar chart over 44 GR-1 pick-and-place tasks sorted by the final hand-to-target distance, mean of three episodes, from 10 to over 60 centimetres; two bars are green marking the tasks with one success in three episodes, KettleToPlate and ObjectsTieredBasketToCounter; five hatched entries are sim-side failures with no episodes.">
+      <figcaption><b>2 / 117</b> episodes succeed (<b>KettleToPlate</b>, <b>ObjectsTieredBasketToCounter</b>, 1/3 each) &middot; median final distance <b>23 cm</b> &middot; 5 tasks fail in the simulator</figcaption></figure>
+    <figure class="slim"><img src="assets/gr1_pred_vs_exec.png" alt="Line chart of hand displacement in centimetres against environment step for three episodes of PnPAppleToDrawerClose: solid lines are the hand motion the model predicts over each one-second chunk, dashed lines are what was executed in the four committed frames. Predicted motion averages 12 to 14 centimetres per chunk; executed motion stays a small fraction of it throughout.">
+      <figcaption>Asks <b>12–14 cm</b>/chunk, executes <b>5–7 cm</b> less &middot; arm-IK residual <b>24–35 mm</b></figcaption></figure>
   </div>
-  <p class="etabar"><b>Setup</b> · <b>PnPAppleToDrawerClose</b> · right Fourier hand · human tag · <b>120M p7 @ 10.00 eff ep</b> · 3 episodes × 720 steps · replan every 4 frames · <b>0/3</b></p>
-  <p class="footnote">pipeline: scene + robot as ONE labeled point set (1024 pts) → total scene flow → per-link Procrustes → arm IK (7 joints) + hand IK (6-dim coupled controller) · ckpt 180,608</p>
+  <p class="etabar"><b>Setup</b> &middot; 44 PnP tasks &middot; right Fourier hand &middot; human tag &middot; <b>120M p7 @ 10.00 eff ep</b> &middot; 3 eps &times; 720 steps &middot; replan every 4 frames &middot; benchmark success flag</p>
+  <p class="footnote">pipeline: scene + robot as ONE labeled point set (1024 pts) &rarr; total scene flow &rarr; per-link Procrustes &rarr; arm IK + hand IK &middot; ckpt 180,608 &middot; rate_arm 0.15 &middot; fixtures not pointed</p>
 </section>
 
 <!-- SECTION: viz GR-1 · zero-shot closed loop, 3 episodes, ego view · the owner verifies by watching -->
@@ -286,6 +284,16 @@
       <figcaption><b>episode 2</b> &middot; final hand&rarr;apple <b>26 cm</b></figcaption></figure>
   </div>
   <p class="footnote">same rendering as the previous slide &middot; predicted flow overlay updates every 8 steps</p>
+</section>
+
+<!-- SECTION: viz GR-1 · the 44-task sweep, readable size (outside the cap) -->
+<section class="slide s-viz">
+  <h2>GR-1 zero-shot &middot; 44 tasks &times; 3 episodes &middot; per-task outcome</h2>
+  <div class="vizgrid one">
+    <figure><img src="assets/gr1_sweep_tall.png" alt="Horizontal bar chart of the 44 GR-1 pick-and-place tasks sorted by mean final hand-to-target distance; two green bars mark the tasks with one success in three episodes; five hatched rows are sim-side failures." loading="lazy">
+      <figcaption><b>120M p7 @180,608</b> &middot; <span class="epoch">10.00 eff ep</span> &middot; human tag, no fine-tuning &middot; green = task with a success &middot; ticks = single episodes</figcaption></figure>
+  </div>
+  <p class="footnote">same data as the Results slide &middot; success = benchmark flag &middot; sim-side failures: registry / mesh / object_utils errors before the first step</p>
 </section>
 
 <!-- SECTION: viz HOT3D · a dataset i5/p7 NEVER trained on (33 unseen objects, Aria capture, no instruction text) -->
