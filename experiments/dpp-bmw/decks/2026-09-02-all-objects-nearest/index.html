@@ -37,7 +37,7 @@
   <ul>
     <li>Done: twelve prompts screened, costed</li>
     <li>Done: two episodes, both hand fixes</li>
-    <li>Open: which hand source to trust</li>
+    <li>Open: hand coverage versus accuracy</li>
   </ul>
   <div class="band">
     <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
@@ -128,17 +128,17 @@
     <li>Hand and object together in 3D</li>
     <li class="on">Which hand source to trust
       <ul><li>the stored wrist is the robot's, not yours</li>
-          <li>four candidates; the best two untried</li></ul></li>
+          <li>all four now measured, not guessed</li></ul></li>
   </ol>
   <div class="band">
     <figure><img src="assets/fig_wristlag.jpg" alt="Wrist error in the image against a temporal shift of the joint stream from minus twenty to plus twenty frames, for left and right, with MediaPipe's own 7 px fit marked as a dashed line.">
       <figcaption>The stored wrist misses the image by ~135 px at every time shift — not a sync bug</figcaption></figure>
     <figure><img src="assets/fig_egofilter.jpg" alt="Share of each detection box surviving a 0.9 metre depth gate: your own hands versus the person opposite.">
       <figcaption>Ego-side filter: your hands survive intact, the person opposite does not</figcaption></figure>
-    <figure class="phold"><div class="pbox">WILL UPDATE — by morning<br>A MediaPipe · B HaWoR<br>C stereo · D seungjun's solver<br>same frames, overlaid</div>
-      <figcaption>Four hand sources, so the pick is by eye</figcaption></figure>
+    <figure><img src="assets/fig_handsources.jpg" alt="Three bar charts comparing four hand sources on both-hand coverage, wrist to middle MCP span, and wrist reprojection against detected 2D landmarks.">
+      <figcaption>All four, measured — coverage · hand span · wrist vs the detected 2D wrist</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · C stereo: local, ~1 h · D solver: unestimated · already fixed: chirality, frame convention, slot inversion</p>
+  <p class="etabar"><b>RESOLVED 09-03</b> · C built and D run; the adjudication and the pending ruling are in <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">hand source adjudicated</a></p>
 </section>
 
 <!-- SECTION: discussion-actions -->
@@ -148,14 +148,14 @@
   <p class="subhead">Discussion:</p>
   <ol>
     <li><b>Object slots</b> — package only vs package + conveyor → both, the conveyor is the destination (owner)</li>
-    <li><b>Hand source</b> — A MediaPipe+VGGT · B HaWoR · C stereo triangulation · D seungjun's MANO solver → D, it adds a shape prior the 66 mm baseline needs (owner picks from the overlay)</li>
-    <li><b>SAM 3D</b> — request HF access or drop → request it; mesh completion is the only remaining gap (owner)</li>
+    <li><b>Hand source</b> — all four now measured (09-03): D is the most accurate and the sparsest, A the densest and depth-biased → lift D's coverage first, then go all-D (owner rules)</li>
+    <li><b>SAM 3D</b> — benchmarked 09-02: good shape, not metric (0.44–1.68×), 9.33 s/object → offline only, never in the policy loop (decided)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
     <li>Confirm the selected object reads right (owner · one look)</li>
-    <li>Ask HF for facebook/sam-3d-objects access (owner · today)</li>
-    <li>HaWoR vs MediaPipe hand comparison (agent · queued)</li>
+    <li>SAM 3D access + benchmark (done 09-02)</li>
+    <li>HaWoR vs MediaPipe comparison (agent · done 09-03)</li>
     <li>Object extraction ep2–ep19 (agent · after go)</li>
   </ol>
 </section>
@@ -171,12 +171,14 @@
         <dt>Hands</dt><dd class="mono">viz/hand_from_video.py (MediaPipe 21 kp → SQPnP → VGGT anchor) · hmd_object_demo/hawor_hands.py → hawor_out/ep0_hawor.npz (MANO trans/rot/pose/betas + joints + vertices, both hands, all 866 frames; job 151398) · viz/hawor_compare.py</dd>
         <dt>Stored wrist</dt><dd class="mono">NOT the human wrist: it projects 149/129 px (L/R) from MediaPipe's detected 2D wrist, 14–17 cm in 3D, while MediaPipe's own fit sits at 7 px. Not intrinsics (Quest calib fx 863.8 gives 144/123 px; fx 950 gives 155/139) and not sync (a ±20-frame sweep bottoms out at −1 frame, 135 px). The offset is NOT constant in the wrist frame either (residual 134/147 mm), which is the signature of retargeting IK — so what is stored is the <b>allex</b> wrist, and it cannot anchor or validate a video estimate.</dd>
         <dt>Ego filter</dt><dd class="mono">0.9 m depth gate + 25 px dilation keeps 100% of your own hand boxes (n=1162) and 6% of the person opposite (n=137); box area 65,980 vs 12,221 px², box centre y 465 vs 298. Best insertion point for D is between his stages 1 and 2, or (cleaner on a stereo rig) reject by triangulated depth so no VGGT is involved.</dd>
-        <dt>Option D</dt><dd class="mono">seungjun's solver IS available and untried — pull/MANO-pipeline/scripts/run_standalone_session.py → scripts_optimization/{hand_detection,generate_kpt3d_auto,mano_pose_solver}.py; losses in rlwrld_annotation/loss/. Loader is view-count agnostic (num_cameras=len(serials)) and `--optimize_beta` fits per-subject bone lengths — the shape prior our 66 mm baseline needs. Server original /rlwrld3/home/seungjun/MANO-pipeline (venv + MANO models there).</dd>
+        <dt>Option D</dt><dd class="mono"><b>RAN 09-03</b> (job 154938, 14 min, rc 0 on all three episodes) — the two eyes as a 2-view hoi session, left eye as the world frame. Its own triangulation diagnostic closes at 5.4–5.8 px where both eyes contribute, which certifies our extrinsic, but that support covers only 28–38% of hand-frames and <code>poses_m</code> flags nothing absent, so ungated 40–50% of its hands sit &gt;120 px from any detected hand. Gated on <code>used</code>/<code>reproj_err</code> it lands on a real hand 82–93% of the time at 61% any-hand coverage. Full write-up: <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">hand source adjudicated</a>. Paths — pull/MANO-pipeline/scripts/run_standalone_session.py → scripts_optimization/{hand_detection,generate_kpt3d_auto,mano_pose_solver}.py; losses in rlwrld_annotation/loss/. Loader is view-count agnostic (num_cameras=len(serials)) and `--optimize_beta` fits per-subject bone lengths — the shape prior our 66 mm baseline needs. Server original /rlwrld3/home/seungjun/MANO-pipeline (venv + MANO models there).</dd>
         <dt>Frame bug</dt><dd class="mono">Found 2026-09-02 by the rigid-stereo unit test: with rot6d decoded as rows=(b1,b2,b1×b2), the base→camera map is <b>R.T·(X−p)</b>, not R·(X−p) — only the former makes the 66.4388 mm stereo offset constant ([66.3665,−2.0523,2.3220] mm, std 2e−5 mm vs 9–12 mm). My viz used the wrong form; corrected in to_cam/to_base and everything re-rendered. It had inflated the right-hand detection share (88/188 → 130/146) and made the stored wrists look unusable as a handedness reference (L:41/R:1258 → L:689/R:610).</dd>
         <dt>Hand fixes</dt><dd class="mono">(1) MediaPipe emits world_landmarks in its per-frame handedness guess, which is a coin flip on a self-view — chirality flipped 27/88 and 60/188 times, impossible for a real hand; now forced to one chirality per slot (110 of 276 ep0 detections mirrored back, 0 flips after). (2) HaWoR's output slots are inverted — confirmed against two independent references after the frame fix: vs our MediaPipe hands 11.0 cm swapped vs 35.6 cm as-run, and vs the dataset's own Quest-derived wrists 19.7 cm vs 38.7 cm. Its per-detection handedness label is actually GOOD (86% agreement with the stored-wrist geometry, mapping label 0 = left), so the inversion is in its label→slot convention, not its detector. (3) Two people in frame is real (10 % of detections ≥ 0.8 m, 5× smaller, higher in frame) but is NOT the cause — depth-gating the video changed nothing (98°→96°).</dd>
         <dt>HaWoR frame</dt><dd class="mono">its run_mano joints are canonical-space; `trans` IS the camera-space wrist (10.6 cm median from the MediaPipe wrists; a global similarity fit does not improve it, so no convention is being missed). Skeleton = root-relative joints placed at trans. Slots assigned per frame, not by its naming</dd>
+        <dt>Joint order</dt><dd class="mono">CORRECTION 09-03: both HaWoR's and seungjun's solver return joints in the <b>MediaPipe/OpenPose 21 layout</b>, not raw MANO order (per-joint wrist-distance profile correlates 0.995 with our MediaPipe hands vs 0.439 for MANO order). Reading MANO's index 4 as the middle MCP reports a "12 cm hand" for both — a thumb-tip distance. Real spans: A 8.56 · B 9.22 · C 7.51 · D 9.44 cm.</dd>
+        <dt>Two-eye test</dt><dd class="mono">A 3D hand must reproject into BOTH eyes (viz/two_eye_check.py). A is 20.3 px left but 31.1 px right — asymmetry = depth too far; D gated is 16.0/13.8; C triangulated is 5.8/5.8 and so certifies the calibration itself. C is nonetheless unusable as a source: 5.1 mm of depth noise per pixel of disparity error at a 66 mm baseline.</dd>
         <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py · viz/deck_figs3.py</dd>
-        <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — repo exists, 31 files, TRELLIS-style (slat/ss encoders+decoders); HF returns 403 GatedRepoError "not in the authorized list"</dd>
+        <dt>SAM 3D</dt><dd class="mono">facebook/sam-3d-objects — access granted and benchmarked 09-02: 3.43 mm observed→generated against a 1.71 mm perfect-reconstruction floor, 97.2% of points within 10 mm, but non-metric (0.44–1.68× scale), 21.4 mm frame-to-frame drift, 9.33 s per object. Offline only — see <a href="/experiments/dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/">policy rate &amp; SAM 3D</a></dd>
         <dt>Rig</dt><dd class="mono">human Quest capture retargeted into allex's 48-dim schema; no external camera in 79 datasets or 30 raw sessions</dd>
       </dl>
     </div>
@@ -185,7 +187,7 @@
         <li>seungjun's MANO-pipeline: 2D/3D front end is MediaPipe (<code>mp_joints_3d_interpolated.npy</code>, <code>03_mp_3d_joints_generation.py</code>); monocular path ensembles WiLoR + HaMeR 3D then fits MANO with 2D+3D+fingertip+barrier losses</li>
         <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-01-train-data-3d/">train data in 3D</a> · <a href="/experiments/dpp-bmw/decks/2026-09-01-logistics-rig-frame/">logistics rig &amp; frame</a></li>
       </ul>
-      <p class="cut"><b>Cut:</b> HaWoR contact/force heads (`--vis_contact`, `--vis_force`) · WiLoR+HaMeR 3D ensemble (tools_monocular absent from the readable checkout) · temporal accumulation for full object surface (waiting on the SAM 3D decision) · conveyor as a second DPP slot · per-instance mask storage format details · the 63.5 mm Quest calibration vs 66.4 mm measured baseline · allex FK hand keypoints (superseded by the video route) · intrinsics disagreement VGGT 709 px vs Quest 863 px.</p>
+      <p class="cut"><b>Cut:</b> HaWoR contact/force heads (`--vis_contact`, `--vis_force`) · WiLoR+HaMeR 3D ensemble (tools_monocular absent from the readable checkout) · temporal accumulation for full object surface (waiting on the SAM 3D decision) · the four-way overlay as a single figure (superseded by the two-eye measurement) · conveyor as a second DPP slot · per-instance mask storage format details · the 63.5 mm Quest calibration vs 66.4 mm measured baseline · allex FK hand keypoints (superseded by the video route) · intrinsics disagreement VGGT 709 px vs Quest 863 px.</p>
     </div>
   </div>
 </section>
