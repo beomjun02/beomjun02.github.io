@@ -270,17 +270,17 @@
 
 <!-- SECTION: status · closing summary (v5 G: running / due / decisions) · 2026-09-03 13:20 KST -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-03 13:20 KST</h2>
-  <p class="thesis">Nothing landed by 10:00 — two bugs, both fixed; all arms re-running.</p>
+  <h2>Status · 2026-09-03 14:20 KST</h2>
+  <p class="thesis">Nothing landed by 10:00 — three bugs, all fixed; three arms running, one queued.</p>
   <div class="band">
     <figure>
       <table class="compact dense status">
-        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 13:20 KST</th><th>Result / ETA</th></tr></thead>
+        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 14:20 KST</th><th>Result / ETA</th></tr></thead>
         <tbody>
           <tr class="pend"><td>①</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · eff batch 256 · 9.76 ep = 22,576 steps</td><td>ran 1,880 steps (0.81 eff ep) → DDP ckpt deadlock 07:54, fixed · re-queued 12:40</td><td>pending · eval at 3 / 6 / 9 eff ep · ≈11.5 h after admission, admission unestimated</td></tr>
           <tr class="pend"><td>②</td><td><b>10 % Sharpa</b> x10_sharpa · 120M · 6.00 ep = 110,996 steps · 2×H100 · job 5469</td><td>RUNNING since 13:03 · 0.291 s/step</td><td>pending · ≈22:00 KST 09-03 (+8.7 h) · retarget is TACO-only → also more TACO (confound)</td></tr>
           <tr><td>③</td><td><b>GR-1 zero-shot closed loop</b> · PnPAppleToDrawerClose · 120M p7 @ 10.00 ep</td><td>DONE · 3 episodes × 720 steps · human tag · no fine-tuning</td><td><b>0/3</b> · hand stalls <b>16–26 cm</b> short → Results ③ · clips await owner</td></tr>
-          <tr class="pend"><td>④</td><td><b>Contact soft-IoU aux</b> · Dice on contact ≤1 cm · 2 frames · ≈0.1 % step cost</td><td>λ 0.1 (5470) RUNNING · λ 1.0 (5471), λ 0.001 (5472) queued, background QoS</td><td>pending · λ 0.1 ≈22:10 KST 09-03 (+8.8 h) · λ 1.0 / 0.001 no start time — unestimated</td></tr>
+          <tr class="pend"><td>④</td><td><b>Contact soft-IoU aux</b> · Dice on contact ≤1 cm · 2 frames · ≈0.1 % step cost</td><td>λ 0.1 (5470), λ 1.0 (5471) RUNNING · λ 0.001 (5472) queued, background QoS</td><td>pending · λ 0.1 ≈22:10 · λ 1.0 ≈22:30 KST 09-03 (preemptible) · λ 0.001 no start time</td></tr>
         </tbody>
       </table></figure>
   </div>
@@ -288,7 +288,7 @@
   <ol>
     <li><b>GR-1 stall</b> — controller delivers a fraction of the plan → controller first, model later</li>
     <li><b>Sharpa confound</b> — TACO-only data → TACO-matched control before any robot claim</li>
-    <li><b>λ 1.0 / 0.001</b> — no start time on background QoS → wait for λ 0.1 (22:10), then promote or drop</li>
+    <li><b>λ 0.001</b> — no start time on background QoS → wait for λ 0.1 / 1.0 (≈22:10 / 22:30), then promote or drop</li>
   </ol>
   <p class="footnote">grey italic rows = not landed · no numbers from the four arms due at 10:00 — see corrections (appendix) · GR-1 clip verification: owner · evals as each arm lands (agent)</p>
 </section>
