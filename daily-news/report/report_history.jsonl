@@ -1,3 +1,4 @@
+{"date": "2026-09-05", "n_users": 21, "n_ok": 12, "n_errors": 9, "n_new": 0, "avg_duration": 121}
 {"date": "2026-09-04", "n_users": 21, "n_ok": 12, "n_errors": 9, "n_new": 0, "avg_duration": 96}
 {"date": "2026-09-03", "n_users": 21, "n_ok": 16, "n_errors": 5, "n_new": 0, "avg_duration": 149}
 {"date": "2026-09-02", "n_users": 21, "n_ok": 21, "n_errors": 0, "n_new": 0, "avg_duration": 199}
@@ -5,4 +6,3 @@
 {"date": "2026-08-31", "n_users": 21, "n_ok": 14, "n_errors": 7, "n_new": 0, "avg_duration": 137}
 {"date": "2026-08-30", "n_users": 21, "n_ok": 16, "n_errors": 5, "n_new": 0, "avg_duration": 146}
 {"date": "2026-08-29", "n_users": 21, "n_ok": 12, "n_errors": 9, "n_new": 0, "avg_duration": 138}
-{"date": "2026-08-28", "n_users": 21, "n_ok": 14, "n_errors": 7, "n_new": 0, "avg_duration": 141}
