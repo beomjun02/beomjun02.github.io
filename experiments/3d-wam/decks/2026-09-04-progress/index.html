@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-04 · Progress: contact loss, data mix, coordinate jitter, mirror — 3D-WAM</title>
-<meta name="description" content="Deck #11, 2026-09-04. Same-cluster baseline set on ICLR27 (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm). Contact λ 0.1 harmful (paired Δcos −0.088, ΔADE +1.40 cm); episode-weighted data mix a null (Δcos +0.000); coordinate jitter and left-right mirror land tonight; GR-1 6-ep sweeps in flight. Per-arm autoregressive 5-chunk rollouts and single-chunk clips for the owner to verify.">
+<meta name="description" content="Deck #11, 2026-09-04. Same-cluster baseline set on ICLR27 (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm). Contact λ 0.1 harmful (paired Δcos −0.088, ΔADE +1.40 cm); episode-weighted data mix a null (Δcos +0.000); coordinate jitter and left-right mirror land tonight; GR-1 6-ep sweeps landed: ctl 0/107, w_ep 1/117 successes, median 18.6 vs 17.4 cm. Per-arm autoregressive 5-chunk rollouts and single-chunk clips for the owner to verify.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
@@ -60,6 +60,11 @@
   .deck .vizgrid.big figure>img{max-height:20em}
   .deck .vizgrid.four figure>img,.deck .vizgrid.five figure>img{max-height:16em;object-position:center bottom}
   .deck .vizgrid.three{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr}
+  .deck .vizgrid.three.eps figure>video{max-height:15.5em}
+  .deck .vizgrid.three.eps2{margin-top:.5em}
+  .deck .vizgrid.three.eps2 figure>video{max-height:15.5em}
+  .deck .vizgrid.three figure.phold .pbox{min-height:9em}
+  .deck .vizgrid.one figure.phold .pbox{flex:0 0 auto;min-height:7em;max-height:9em}
   .deck .vizgrid.one{grid-template-columns:1fr}
   .deck .vizgrid figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain}
   .deck .band>figure>video{flex:0 1 auto;width:100%;height:auto;min-height:0;object-fit:contain}
@@ -238,12 +243,12 @@
           <tr><td>cos · cos<sub>mov</sub></td><td>0.270 · 0.381</td><td>0.270 · 0.380</td><td>+0.000 [−0.007, +0.007]</td></tr>
           <tr><td>ADE cm</td><td>9.10</td><td>9.13</td><td>+0.04 [−0.08, +0.16]</td></tr>
           <tr><td>Acc5 %</td><td>56.9</td><td>57.1</td><td>+0.2 pp</td></tr>
-          <tr class="pend"><td>GR-1 SR · 6-ep</td><td>TBD ≈16:30</td><td>TBD ≈16:30</td><td>rlwrld 155808 / 155809</td></tr>
+          <tr><td>GR-1 SR · 6-ep</td><td><b>0</b> / 107 eps</td><td><b>1</b> / 117 eps</td><td>median 18.6 → 17.4 cm</td></tr>
         </tbody>
       </table>
       <figcaption>zero 9.08 cm · zAcc5 59.8 % · paired on all 480 chunks, 10k bootstrap 95 % CI</figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · episode-weighted mix = <b>null</b> at 6 ep: Δcos <b>+0.000</b>, ΔADE <b>+0.04 cm</b>, ΔAcc5 +0.2 pp · no per-dataset CI clears zero · GR-1 SR ≈16:30</p>
+  <p class="etabar"><b>Verdict</b> · episode-weighted mix = <b>null</b> at 6 ep: Δcos <b>+0.000</b>, ΔADE <b>+0.04 cm</b>, ΔAcc5 +0.2 pp · no per-dataset CI clears zero · GR-1 SR <b>0 vs 1</b> success</p>
   <p class="footnote">w_ep mass = episode share taco 42 / grab 25 / dexycb 19 / oakink2 9 / arctic 5 % vs chunk share 16.5 / 21 / 2.5 / 49 / 11 · same seed, same index</p>
 </section>
 
@@ -443,12 +448,892 @@
           <tr><td>successes</td><td>2</td><td><b>1</b></td></tr>
           <tr><td>median final distance</td><td>23.3 cm</td><td><b>18.0 cm</b></td></tr>
           <tr><td>paired &Delta;, 38 tasks</td><td colspan="2"><b>&minus;6.8 cm</b> median &middot; &minus;17.4 mean</td></tr>
-          <tr class="pend"><td>6-ep ctl / w_ep · bimanual</td><td colspan="2">6-ep GR-1 SR: TBD ≈16:30 · 155808 / 155809 · 15/44 tasks at 13:45</td></tr>
+          <tr><td>6-ep ctl / w_ep · bimanual</td><td colspan="2">SR <b>0 / 107</b> · <b>1 / 117</b> · median 18.6 / 17.4 cm → next slide</td></tr>
         </tbody>
       </table>
       <figcaption>destination = container 20 &middot; fixture 15 &middot; source container 5</figcaption></figure>
   </div>
   <p class="footnote">all 44-task clips: <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck 2026-09-03-gr1-zero-shot</a> · success = benchmark flag · 3 eps × 720 steps · IK unchanged</p>
+</section>
+
+<!-- SECTION: results · GR-1 6-ep sweeps ctl vs w_ep · bimanual + destination · clips on the following slides -->
+<section class="slide s-viz">
+  <h2>GR-1 6-ep sweeps · ctl vs w_ep · bimanual + destination</h2>
+  <div class="band snug">
+    <figure style="flex:1 1 58%;min-width:0"><img src="assets/gr1_sweep_ctl_vs_wep.png" alt="Paired dot plot over 36 tasks: mean final hand-to-target distance for the ctl model (hollow) versus the w_ep model (blue) at 6 effective epochs, with the p7 10-epoch rerun as crosses; 17 tasks move closer under w_ep, 19 farther; paired difference plus 0.1 centimetre median, plus 3.1 mean.">
+      <figcaption>paired per task: ctl (hollow) &rarr; w_ep (blue), p7 10-ep rerun ×&nbsp;&middot; green = w_ep closer, orange = farther &middot; 36 tasks ran in both</figcaption></figure>
+    <figure class="tb" style="flex:0 0 38%">
+      <table class="compact dense">
+        <thead><tr><th>Quantity</th><th>p7 rerun</th><th>ctl</th><th>w_ep</th></tr></thead>
+        <tbody>
+          <tr><td>model · epochs</td><td>rlwrld · <span class="epoch">10.00</span></td><td>ICLR27 · <span class="epoch">6.00</span></td><td>ICLR27 · <span class="epoch">6.00</span></td></tr>
+          <tr><td>input</td><td colspan="3">L+R hand + pick object + destination · same controller, IK, seeds</td></tr>
+          <tr><td>tasks ran / episodes</td><td>40 / 116</td><td>37 / 107</td><td>39 / 117</td></tr>
+          <tr><td>successes</td><td>1</td><td><b>0</b></td><td><b>1</b></td></tr>
+          <tr><td>median task distance</td><td>18.0 cm</td><td><b>18.6 cm</b></td><td><b>17.4 cm</b></td></tr>
+          <tr><td>paired Δ w_ep − ctl, 36 tasks</td><td colspan="3"><b>+0.1 cm</b> median · +3.1 mean · 17 closer / 19 farther</td></tr>
+          <tr><td>sim-side failures</td><td>4 tasks</td><td>7 tasks</td><td>5 tasks</td></tr>
+        </tbody>
+      </table>
+      <figcaption>success = benchmark flag &middot; distance = nearer hand &rarr; target object at step 720 &middot; sim-side = registry / mesh-volume / no-geom errors</figcaption></figure>
+  </div>
+  <p class="footnote">rlwrld 155808 / 155809 · 3 eps × 720 steps · rate_arm 0.15 · per-task clips: next slides (ctl top row, w_ep bottom) · owner verifies clips</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPAppleToCabinetClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 1/40 · AppleToCabinetClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPAppleToCabinetClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToCabinetClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>apple</b> &middot; final <b>13.5 cm</b> &middot; R 29 / L 14 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToCabinetClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToCabinetClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>apple</b> &middot; final <b>16.6 cm</b> &middot; R 28 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToCabinetClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToCabinetClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>apple</b> &middot; final <b>6.5 cm</b> &middot; R 27 / L 7 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPAppleToCabinetClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToCabinetClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>apple</b> &middot; final <b>11.6 cm</b> &middot; R 24 / L 12 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToCabinetClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToCabinetClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>apple</b> &middot; final <b>15.1 cm</b> &middot; R 34 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToCabinetClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToCabinetClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>apple</b> &middot; final <b>13.7 cm</b> &middot; R 22 / L 14 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the apple, place it into the cabinet and close the cabinet” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPAppleToDrawerClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 2/40 · AppleToDrawerClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPAppleToDrawerClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToDrawerClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>apple</b> &middot; final <b>7.4 cm</b> &middot; R 26 / L 7 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToDrawerClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToDrawerClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>apple</b> &middot; final <b>17.3 cm</b> &middot; R 47 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToDrawerClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPAppleToDrawerClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>apple</b> &middot; final <b>15.9 cm</b> &middot; R 30 / L 16 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPAppleToDrawerClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToDrawerClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>apple</b> &middot; final <b>11.1 cm</b> &middot; R 15 / L 11 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToDrawerClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToDrawerClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>apple</b> &middot; final <b>14.9 cm</b> &middot; R 28 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPAppleToDrawerClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPAppleToDrawerClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>apple</b> &middot; final <b>11.6 cm</b> &middot; R 33 / L 12 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the apple, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPBottleToCabinetClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 3/40 · BottleToCabinetClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPBottleToCabinetClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToCabinetClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>bottled water</b> &middot; final <b>16.5 cm</b> &middot; R 33 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToCabinetClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToCabinetClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bottled water</b> &middot; final <b>20.2 cm</b> &middot; R 40 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToCabinetClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToCabinetClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>bottled water</b> &middot; final <b>8.7 cm</b> &middot; R 35 / L 9 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPBottleToCabinetClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToCabinetClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>bottled water</b> &middot; final <b>10.5 cm</b> &middot; R 39 / L 11 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToCabinetClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToCabinetClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>bottled water</b> &middot; final <b>16.7 cm</b> &middot; R 37 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToCabinetClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToCabinetClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bottled water</b> &middot; final <b>13.3 cm</b> &middot; R 17 / L 13 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the bottled water, place it into the cabinet and close the cabinet” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPBottleToDrawerClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 4/40 · BottleToDrawerClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPBottleToDrawerClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToDrawerClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>bottled water</b> &middot; final <b>11.9 cm</b> &middot; R 32 / L 12 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToDrawerClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToDrawerClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bottled water</b> &middot; final <b>25.0 cm</b> &middot; R 48 / L 25 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToDrawerClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBottleToDrawerClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>bottled water</b> &middot; final <b>11.8 cm</b> &middot; R 21 / L 12 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPBottleToDrawerClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToDrawerClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>bottled water</b> &middot; final <b>11.7 cm</b> &middot; R 17 / L 12 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToDrawerClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToDrawerClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>bottled water</b> &middot; final <b>111.2 cm</b> &middot; R 117 / L 111 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBottleToDrawerClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBottleToDrawerClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bottled water</b> &middot; final <b>13.2 cm</b> &middot; R 13 / L 19 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the bottled water, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPBreadBasketToBowl · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 5/40 · BreadBasketToBowl</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPBreadBasketToBowl_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBreadBasketToBowl, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bread</b> &middot; final <b>22.9 cm</b> &middot; R 37 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBreadBasketToBowl_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPBreadBasketToBowl, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>bread</b> &middot; final <b>23.5 cm</b> &middot; R 23 / L 42 &middot; success <b>no</b></figcaption></figure>
+    <figure class="phold"><div class="pbox">episode errored<div>sim-side</div></div><figcaption>&nbsp;</figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPBreadBasketToBowl_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBreadBasketToBowl, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>bread</b> &middot; final <b>41.2 cm</b> &middot; R 41 / L 63 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBreadBasketToBowl_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBreadBasketToBowl, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>bread</b> &middot; final <b>23.7 cm</b> &middot; R 24 / L 35 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPBreadBasketToBowl_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPBreadBasketToBowl, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bread</b> &middot; final <b>27.7 cm</b> &middot; R 43 / L 28 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the bread from the basket and place it in the bowl” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCanToBowl · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 6/40 · CanToBowl</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCanToBowl_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToBowl, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>9.4 cm</b> &middot; R 9 / L 22 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToBowl_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToBowl, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>12.4 cm</b> &middot; R 12 / L 18 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToBowl_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToBowl, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>103.1 cm</b> &middot; R 103 / L 111 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCanToBowl_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToBowl, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>15.1 cm</b> &middot; R 15 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToBowl_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToBowl, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>27.5 cm</b> &middot; R 31 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToBowl_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToBowl, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>12.1 cm</b> &middot; R 13 / L 12 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the can from the counter and place it in the bowl” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCanToCabinetClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 7/40 · CanToCabinetClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCanToCabinetClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToCabinetClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>7.3 cm</b> &middot; R 31 / L 7 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToCabinetClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToCabinetClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>18.4 cm</b> &middot; R 37 / L 18 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToCabinetClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToCabinetClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>8.9 cm</b> &middot; R 15 / L 9 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCanToCabinetClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToCabinetClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>16.2 cm</b> &middot; R 21 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToCabinetClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToCabinetClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>14.5 cm</b> &middot; R 36 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToCabinetClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToCabinetClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>10.8 cm</b> &middot; R 24 / L 11 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the can, place it into the cabinet and close the cabinet” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCanToDrawerClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 8/40 · CanToDrawerClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCanToDrawerClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToDrawerClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>12.0 cm</b> &middot; R 26 / L 12 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToDrawerClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToDrawerClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>23.3 cm</b> &middot; R 49 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToDrawerClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCanToDrawerClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>13.6 cm</b> &middot; R 18 / L 14 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCanToDrawerClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToDrawerClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>can</b> &middot; final <b>14.0 cm</b> &middot; R 14 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToDrawerClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToDrawerClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>can</b> &middot; final <b>20.0 cm</b> &middot; R 32 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCanToDrawerClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCanToDrawerClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>can</b> &middot; final <b>13.2 cm</b> &middot; R 33 / L 13 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the can, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCornToMicrowaveClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 9/40 · CornToMicrowaveClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCornToMicrowaveClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCornToMicrowaveClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>corn</b> &middot; final <b>33.6 cm</b> &middot; R 34 / L 43 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCornToMicrowaveClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCornToMicrowaveClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>corn</b> &middot; final <b>15.3 cm</b> &middot; R 15 / L 30 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCornToMicrowaveClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCornToMicrowaveClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>corn</b> &middot; final <b>35.3 cm</b> &middot; R 35 / L 46 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCornToMicrowaveClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCornToMicrowaveClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>corn</b> &middot; final <b>40.3 cm</b> &middot; R 40 / L 51 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCornToMicrowaveClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCornToMicrowaveClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>corn</b> &middot; final <b>13.9 cm</b> &middot; R 14 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCornToMicrowaveClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCornToMicrowaveClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>corn</b> &middot; final <b>31.2 cm</b> &middot; R 31 / L 42 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the corn, place it into the microwave and close the microwave” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCounterToBowl · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 10/40 · CounterToBowl</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCounterToBowl_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToBowl, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>water bottle</b> &middot; final <b>43.5 cm</b> &middot; R 43 / L 55 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToBowl_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToBowl, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bell pepper</b> &middot; final <b>11.7 cm</b> &middot; R 12 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToBowl_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToBowl, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>bottled drink</b> &middot; final <b>15.6 cm</b> &middot; R 16 / L 19 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCounterToBowl_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToBowl, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>yogurt</b> &middot; final <b>10.1 cm</b> &middot; R 10 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToBowl_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToBowl, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cheese</b> &middot; final <b>21.1 cm</b> &middot; R 25 / L 21 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToBowl_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToBowl, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>garlic</b> &middot; final <b>97.8 cm</b> &middot; R 98 / L 108 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the water bottle from the counter and place it in the bowl” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCounterToCuttingBoard · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 11/40 · CounterToCuttingBoard</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCounterToCuttingBoard_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToCuttingBoard, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>bar soap</b> &middot; final <b>12.0 cm</b> &middot; R 12 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToCuttingBoard_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToCuttingBoard, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>shaker</b> &middot; final <b>14.5 cm</b> &middot; R 14 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToCuttingBoard_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToCuttingBoard, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>garlic</b> &middot; final <b>10.4 cm</b> &middot; R 10 / L 20 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCounterToCuttingBoard_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToCuttingBoard, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>candle</b> &middot; final <b>10.0 cm</b> &middot; R 10 / L 25 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToCuttingBoard_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToCuttingBoard, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>peach</b> &middot; final <b>24.2 cm</b> &middot; R 24 / L 29 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToCuttingBoard_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToCuttingBoard, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>cake</b> &middot; final <b>16.9 cm</b> &middot; R 17 / L 31 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the bar soap from the counter and place it in the cutting board” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCounterToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 12/40 · CounterToPlate</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCounterToPlate_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToPlate, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>lemon</b> &middot; final <b>9.1 cm</b> &middot; R 9 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPlate_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToPlate, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bottled drink</b> &middot; final <b>16.5 cm</b> &middot; R 16 / L 21 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPlate_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToPlate, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>yogurt</b> &middot; final <b>103.8 cm</b> &middot; R 104 / L 115 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCounterToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>potato</b> &middot; final <b>18.7 cm</b> &middot; R 23 / L 19 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>garlic</b> &middot; final <b>25.0 cm</b> &middot; R 25 / L 26 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>wine</b> &middot; final <b>12.6 cm</b> &middot; R 13 / L 21 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the lemon from the counter and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCounterToPot · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 13/40 · CounterToPot</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCounterToPot_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCounterToPot, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>donut</b> &middot; final <b>22.2 cm</b> &middot; R 22 / L 42 &middot; success <b>no</b></figcaption></figure>
+    <figure class="phold"><div class="pbox">episode errored<div>sim-side</div></div><figcaption>&nbsp;</figcaption></figure>
+    <figure class="phold"><div class="pbox">episode errored<div>sim-side</div></div><figcaption>&nbsp;</figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCounterToPot_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPot, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>mushroom</b> &middot; final <b>36.9 cm</b> &middot; R 37 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPot_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPot, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>boxed drink</b> &middot; final <b>21.8 cm</b> &middot; R 30 / L 22 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCounterToPot_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCounterToPot, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>avocado</b> &middot; final <b>8.3 cm</b> &middot; R 8 / L 30 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the donut from the counter and place it in the pot” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCupToCabinetClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 14/40 · CupToCabinetClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCupToCabinetClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToCabinetClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>16.4 cm</b> &middot; R 40 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToCabinetClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToCabinetClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>18.2 cm</b> &middot; R 37 / L 18 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToCabinetClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToCabinetClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>13.2 cm</b> &middot; R 35 / L 13 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCupToCabinetClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToCabinetClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>111.3 cm</b> &middot; R 120 / L 111 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToCabinetClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToCabinetClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>16.1 cm</b> &middot; R 29 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToCabinetClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToCabinetClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>14.2 cm</b> &middot; R 17 / L 14 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the cup, place it into the cabinet and close the cabinet” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCupToDrawerClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 15/40 · CupToDrawerClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCupToDrawerClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToDrawerClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>12.6 cm</b> &middot; R 37 / L 13 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToDrawerClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToDrawerClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>20.1 cm</b> &middot; R 47 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToDrawerClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToDrawerClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>17.7 cm</b> &middot; R 32 / L 18 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCupToDrawerClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToDrawerClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>13.7 cm</b> &middot; R 14 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToDrawerClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToDrawerClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>16.1 cm</b> &middot; R 32 / L 16 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToDrawerClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToDrawerClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>10.5 cm</b> &middot; R 24 / L 10 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the cup, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCupToMicrowaveClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 16/40 · CupToMicrowaveClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCupToMicrowaveClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToMicrowaveClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>32.8 cm</b> &middot; R 33 / L 44 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToMicrowaveClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToMicrowaveClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>13.5 cm</b> &middot; R 13 / L 24 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToMicrowaveClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToMicrowaveClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>22.2 cm</b> &middot; R 22 / L 36 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCupToMicrowaveClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToMicrowaveClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>14.1 cm</b> &middot; R 14 / L 36 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToMicrowaveClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToMicrowaveClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>11.3 cm</b> &middot; R 11 / L 35 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToMicrowaveClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToMicrowaveClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>17.8 cm</b> &middot; R 18 / L 32 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the cup, place it into the microwave and close the microwave” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCupToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 17/40 · CupToPlate</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCupToPlate_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToPlate, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>11.1 cm</b> &middot; R 11 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToPlate_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToPlate, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>16.0 cm</b> &middot; R 16 / L 21 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToPlate_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCupToPlate, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>8.4 cm</b> &middot; R 8 / L 13 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCupToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>cup</b> &middot; final <b>14.7 cm</b> &middot; R 15 / L 27 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cup</b> &middot; final <b>14.3 cm</b> &middot; R 14 / L 25 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCupToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCupToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>cup</b> &middot; final <b>14.3 cm</b> &middot; R 19 / L 14 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the cup from the counter and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPCylindricalToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 18/40 · CylindricalToPlate</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPCylindricalToPlate_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCylindricalToPlate, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>bottled water</b> &middot; final <b>11.5 cm</b> &middot; R 11 / L 18 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCylindricalToPlate_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCylindricalToPlate, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>bottled drink</b> &middot; final <b>14.2 cm</b> &middot; R 14 / L 24 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCylindricalToPlate_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPCylindricalToPlate, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>bottled drink</b> &middot; final <b>12.1 cm</b> &middot; R 12 / L 15 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPCylindricalToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCylindricalToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>boxed drink</b> &middot; final <b>9.1 cm</b> &middot; R 9 / L 32 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCylindricalToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCylindricalToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>bottled drink</b> &middot; final <b>11.5 cm</b> &middot; R 11 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPCylindricalToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPCylindricalToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bottled drink</b> &middot; final <b>17.4 cm</b> &middot; R 17 / L 17 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the bottled water from the counter and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPEggplantToMicrowaveClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 19/40 · EggplantToMicrowaveClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPEggplantToMicrowaveClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>eggplant</b> &middot; final <b>29.1 cm</b> &middot; R 29 / L 39 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPEggplantToMicrowaveClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>eggplant</b> &middot; final <b>15.6 cm</b> &middot; R 16 / L 33 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPEggplantToMicrowaveClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>eggplant</b> &middot; final <b>28.4 cm</b> &middot; R 28 / L 45 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPEggplantToMicrowaveClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>eggplant</b> &middot; final <b>36.5 cm</b> &middot; R 37 / L 46 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPEggplantToMicrowaveClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>eggplant</b> &middot; final <b>101.6 cm</b> &middot; R 102 / L 110 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPEggplantToMicrowaveClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPEggplantToMicrowaveClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>eggplant</b> &middot; final <b>24.8 cm</b> &middot; R 25 / L 42 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the eggplant, place it into the microwave and close the microwave” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPFruitToPlacemat · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 20/40 · FruitToPlacemat</h2>
+  <div class="vizgrid one eps">
+    <figure class="phold"><div class="pbox"><b>ctl</b> · sim-side failure<div>no episodes ran</div></div><figcaption><b>ctl</b> &middot; task did not start</figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPFruitToPlacemat_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlacemat, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>peach</b> &middot; final <b>7.9 cm</b> &middot; R 8 / L 24 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPFruitToPlacemat_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlacemat, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>mango</b> &middot; final <b>19.4 cm</b> &middot; R 19 / L 25 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPFruitToPlacemat_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlacemat, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>tangerine</b> &middot; final <b>11.4 cm</b> &middot; R 11 / L 21 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the peach from the counter and place it in the placemat” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPFruitToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 21/40 · FruitToPlate</h2>
+  <div class="vizgrid one eps">
+    <figure class="phold"><div class="pbox"><b>ctl</b> · sim-side failure<div>no episodes ran</div></div><figcaption><b>ctl</b> &middot; task did not start</figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPFruitToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>lime</b> &middot; final <b>9.4 cm</b> &middot; R 9 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPFruitToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>kiwi</b> &middot; final <b>12.1 cm</b> &middot; R 12 / L 42 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPFruitToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPFruitToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>mushroom</b> &middot; final <b>9.1 cm</b> &middot; R 9 / L 24 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the lime from the counter and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPKettleToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 22/40 · KettleToPlate</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPKettleToPlate_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPKettleToPlate, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>kettle non electric</b> &middot; final <b>19.1 cm</b> &middot; R 19 / L 24 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPKettleToPlate_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPKettleToPlate, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>kettle non electric</b> &middot; final <b>16.7 cm</b> &middot; R 17 / L 18 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPKettleToPlate_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPKettleToPlate, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>kettle non electric</b> &middot; final <b>15.7 cm</b> &middot; R 16 / L 17 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPKettleToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPKettleToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>kettle non electric</b> &middot; final <b>20.3 cm</b> &middot; R 20 / L 49 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPKettleToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPKettleToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>kettle non electric</b> &middot; final <b>85.9 cm</b> &middot; R 86 / L 100 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPKettleToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPKettleToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>kettle non electric</b> &middot; final <b>14.3 cm</b> &middot; R 16 / L 14 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the kettle non electric from the counter and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPMilkPlateToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 23/40 · MilkPlateToPlate</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPMilkPlateToPlate_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkPlateToPlate, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>13.4 cm</b> &middot; R 13 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkPlateToPlate_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkPlateToPlate, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>milk</b> &middot; final <b>16.5 cm</b> &middot; R 24 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkPlateToPlate_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkPlateToPlate, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>milk</b> &middot; final <b>11.5 cm</b> &middot; R 12 / L 17 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPMilkPlateToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkPlateToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>127.8 cm</b> &middot; R 128 / L 134 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkPlateToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkPlateToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>milk</b> &middot; final <b>10.9 cm</b> &middot; R 11 / L 34 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkPlateToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkPlateToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>milk</b> &middot; final <b>17.5 cm</b> &middot; R 18 / L 22 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the milk from the plate and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPMilkToBasket · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 24/40 · MilkToBasket</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPMilkToBasket_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkToBasket, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>13.1 cm</b> &middot; R 15 / L 13 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkToBasket_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkToBasket, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>milk</b> &middot; final <b>13.3 cm</b> &middot; R 24 / L 13 &middot; success <b>no</b></figcaption></figure>
+    <figure class="phold"><div class="pbox">episode errored<div>sim-side</div></div><figcaption>&nbsp;</figcaption></figure>
+  </div>
+  <div class="vizgrid one eps2">
+    <figure class="phold"><div class="pbox"><b>w_ep</b> · sim-side failure<div>no episodes ran</div></div><figcaption><b>w_ep</b> &middot; task did not start</figcaption></figure>
+  </div>
+  <p class="footnote">“pick the milk from the counter and place it in the basket” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPMilkToMicrowaveClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 25/40 · MilkToMicrowaveClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPMilkToMicrowaveClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkToMicrowaveClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>31.7 cm</b> &middot; R 32 / L 44 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkToMicrowaveClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkToMicrowaveClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>milk</b> &middot; final <b>17.7 cm</b> &middot; R 18 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkToMicrowaveClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPMilkToMicrowaveClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>milk</b> &middot; final <b>19.3 cm</b> &middot; R 19 / L 38 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPMilkToMicrowaveClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkToMicrowaveClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>22.3 cm</b> &middot; R 22 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkToMicrowaveClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkToMicrowaveClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>milk</b> &middot; final <b>15.3 cm</b> &middot; R 15 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPMilkToMicrowaveClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPMilkToMicrowaveClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>milk</b> &middot; final <b>22.9 cm</b> &middot; R 23 / L 42 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the milk, place it into the microwave and close the microwave” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsShelfLevelToLevel · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 26/40 · ObjectsShelfLevelToLevel</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfLevelToLevel, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>banana</b> &middot; final <b>25.9 cm</b> &middot; R 26 / L 36 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfLevelToLevel, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>kiwi</b> &middot; final <b>17.1 cm</b> &middot; R 17 / L 32 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfLevelToLevel, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>lime</b> &middot; final <b>16.2 cm</b> &middot; R 20 / L 16 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfLevelToLevel, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>banana</b> &middot; final <b>18.7 cm</b> &middot; R 19 / L 29 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfLevelToLevel, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>peach</b> &middot; final <b>22.9 cm</b> &middot; R 23 / L 30 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfLevelToLevel_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfLevelToLevel, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bell pepper</b> &middot; final <b>20.0 cm</b> &middot; R 20 / L 26 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the banana from the tiered shelf and place it on the level #2 of the the ti” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsShelfToCounter · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 27/40 · ObjectsShelfToCounter</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsShelfToCounter_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfToCounter, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>tangerine</b> &middot; final <b>14.9 cm</b> &middot; R 15 / L 27 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfToCounter_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfToCounter, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>lemon</b> &middot; final <b>13.8 cm</b> &middot; R 14 / L 26 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfToCounter_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsShelfToCounter, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>garlic</b> &middot; final <b>27.1 cm</b> &middot; R 27 / L 40 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsShelfToCounter_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfToCounter, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>apple</b> &middot; final <b>15.3 cm</b> &middot; R 15 / L 27 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfToCounter_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfToCounter, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>squash</b> &middot; final <b>23.0 cm</b> &middot; R 23 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsShelfToCounter_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsShelfToCounter, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>sweet potato</b> &middot; final <b>29.0 cm</b> &middot; R 29 / L 32 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the tangerine from the tiered shelf and place it in the counter” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsTieredBasketLevelToLevel · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 28/40 · ObjectsTieredBasketLevelToLevel</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketLevelToLevel, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>garlic</b> &middot; final <b>15.0 cm</b> &middot; R 15 / L 22 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketLevelToLevel, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>orange</b> &middot; final <b>19.2 cm</b> &middot; R 19 / L 30 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketLevelToLevel, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>kiwi</b> &middot; final <b>25.9 cm</b> &middot; R 26 / L 28 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketLevelToLevel, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>sweet potato</b> &middot; final <b>10.9 cm</b> &middot; R 11 / L 19 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketLevelToLevel, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>bell pepper</b> &middot; final <b>16.9 cm</b> &middot; R 17 / L 30 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketLevelToLevel_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketLevelToLevel, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>kiwi</b> &middot; final <b>27.9 cm</b> &middot; R 28 / L 30 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the garlic from the tiered basket and place it on the level #1 of the the t” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsTieredBasketToCounter · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 29/40 · ObjectsTieredBasketToCounter</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketToCounter, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>mushroom</b> &middot; final <b>9.8 cm</b> &middot; R 13 / L 10 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketToCounter, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>carrot</b> &middot; final <b>18.1 cm</b> &middot; R 18 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsTieredBasketToCounter, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>mushroom</b> &middot; final <b>14.3 cm</b> &middot; R 14 / L 22 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketToCounter, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>banana</b> &middot; final <b>14.6 cm</b> &middot; R 15 / L 26 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketToCounter, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>eggplant</b> &middot; final <b>18.9 cm</b> &middot; R 19 / L 41 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsTieredBasketToCounter_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsTieredBasketToCounter, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>bell pepper</b> &middot; final <b>17.8 cm</b> &middot; R 21 / L 18 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the mushroom from the tiered basket and place it in the counter” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsToShelf · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 30/40 · ObjectsToShelf</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsToShelf_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelf, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>garlic</b> &middot; final <b>29.5 cm</b> &middot; R 29 / L 38 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelf_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelf, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>cucumber</b> &middot; final <b>9.8 cm</b> &middot; R 10 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelf_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelf, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>apple</b> &middot; final <b>8.9 cm</b> &middot; R 9 / L 24 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsToShelf_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelf, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>tomato</b> &middot; final <b>12.5 cm</b> &middot; R 16 / L 12 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelf_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelf, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>peach</b> &middot; final <b>18.2 cm</b> &middot; R 18 / L 34 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelf_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelf, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>eggplant</b> &middot; final <b>12.6 cm</b> &middot; R 13 / L 18 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the garlic from the counter and place it in the tiered shelf” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsToShelfLevel · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 31/40 · ObjectsToShelfLevel</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsToShelfLevel_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelfLevel, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>milk</b> &middot; final <b>18.9 cm</b> &middot; R 19 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelfLevel_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelfLevel, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>eggplant</b> &middot; final <b>14.1 cm</b> &middot; R 14 / L 22 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelfLevel_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToShelfLevel, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>onion</b> &middot; final <b>27.7 cm</b> &middot; R 28 / L 42 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsToShelfLevel_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelfLevel, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>garlic</b> &middot; final <b>20.3 cm</b> &middot; R 20 / L 37 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelfLevel_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelfLevel, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>cucumber</b> &middot; final <b>11.3 cm</b> &middot; R 11 / L 23 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToShelfLevel_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToShelfLevel, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>orange</b> &middot; final <b>7.1 cm</b> &middot; R 7 / L 28 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the milk from the counter and place it on the level #1 of the the tiered sh” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsToTieredBasket · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 32/40 · ObjectsToTieredBasket</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsToTieredBasket_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasket, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>egg</b> &middot; final <b>119.9 cm</b> &middot; R 124 / L 120 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasket_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasket, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>sweet potato</b> &middot; final <b>11.6 cm</b> &middot; R 12 / L 33 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasket_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasket, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>cheese</b> &middot; final <b>23.0 cm</b> &middot; R 23 / L 41 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsToTieredBasket_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasket, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>pear</b> &middot; final <b>18.3 cm</b> &middot; R 18 / L 38 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasket_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasket, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>squash</b> &middot; final <b>17.9 cm</b> &middot; R 18 / L 46 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasket_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasket, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>squash</b> &middot; final <b>15.9 cm</b> &middot; R 16 / L 36 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the egg from the counter and place it in the tiered basket” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPObjectsToTieredBasketLevel · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 33/40 · ObjectsToTieredBasketLevel</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasketLevel, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>yogurt</b> &middot; final <b>14.2 cm</b> &middot; R 14 / L 25 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasketLevel, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>tangerine</b> &middot; final <b>35.8 cm</b> &middot; R 36 / L 43 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPObjectsToTieredBasketLevel, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>lime</b> &middot; final <b>14.1 cm</b> &middot; R 14 / L 40 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasketLevel, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>sweet potato</b> &middot; final <b>16.6 cm</b> &middot; R 17 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasketLevel, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>mushroom</b> &middot; final <b>13.8 cm</b> &middot; R 14 / L 28 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPObjectsToTieredBasketLevel_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPObjectsToTieredBasketLevel, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>mushroom</b> &middot; final <b>12.8 cm</b> &middot; R 13 / L 20 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the yogurt from the counter and place it on the level #1 of the the tiered ” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPOnionToBowl · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 34/40 · OnionToBowl</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPOnionToBowl_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPOnionToBowl, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>onion</b> &middot; final <b>11.0 cm</b> &middot; R 11 / L 22 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPOnionToBowl_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPOnionToBowl, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>onion</b> &middot; final <b>17.3 cm</b> &middot; R 22 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPOnionToBowl_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPOnionToBowl, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>onion</b> &middot; final <b>11.6 cm</b> &middot; R 12 / L 15 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPOnionToBowl_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPOnionToBowl, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>onion</b> &middot; final <b>8.6 cm</b> &middot; R 9 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPOnionToBowl_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPOnionToBowl, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>onion</b> &middot; final <b>20.9 cm</b> &middot; R 26 / L 21 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPOnionToBowl_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPOnionToBowl, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>onion</b> &middot; final <b>11.2 cm</b> &middot; R 11 / L 22 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the onion from the counter and place it in the bowl” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPPlateToPlate · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 35/40 · PlateToPlate</h2>
+  <div class="vizgrid one eps">
+    <figure class="phold"><div class="pbox"><b>ctl</b> · sim-side failure<div>no episodes ran</div></div><figcaption><b>ctl</b> &middot; task did not start</figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPPlateToPlate_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPlateToPlate, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>banana</b> &middot; final <b>16.7 cm</b> &middot; R 17 / L 17 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPlateToPlate_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPlateToPlate, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>carrot</b> &middot; final <b>30.4 cm</b> &middot; R 33 / L 30 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPlateToPlate_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPlateToPlate, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>kiwi</b> &middot; final <b>18.3 cm</b> &middot; R 18 / L 44 &middot; success <b>YES</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the banana from the plate and place it in the plate” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPPotatoToMicrowaveClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 36/40 · PotatoToMicrowaveClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPotatoToMicrowaveClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>potato</b> &middot; final <b>18.9 cm</b> &middot; R 19 / L 44 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPotatoToMicrowaveClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>potato</b> &middot; final <b>15.9 cm</b> &middot; R 16 / L 29 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPotatoToMicrowaveClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>potato</b> &middot; final <b>42.5 cm</b> &middot; R 42 / L 51 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPotatoToMicrowaveClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>potato</b> &middot; final <b>23.1 cm</b> &middot; R 23 / L 31 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPotatoToMicrowaveClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>potato</b> &middot; final <b>17.6 cm</b> &middot; R 18 / L 36 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPotatoToMicrowaveClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPotatoToMicrowaveClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>potato</b> &middot; final <b>24.7 cm</b> &middot; R 25 / L 35 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the potato, place it into the microwave and close the microwave” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPPouring · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 37/40 · Pouring</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPPouring_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPouring, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>primitive</b> &middot; final <b>178.5 cm</b> &middot; R 179 / L 188 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPouring_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPouring, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>primitive</b> &middot; final <b>282.8 cm</b> &middot; R 283 / L 306 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPouring_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPPouring, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>primitive</b> &middot; final <b>13.3 cm</b> &middot; R 16 / L 13 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPPouring_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPouring, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>primitive</b> &middot; final <b>398.7 cm</b> &middot; R 403 / L 399 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPouring_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPouring, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>primitive</b> &middot; final <b>127.1 cm</b> &middot; R 127 / L 137 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPPouring_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPPouring, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>primitive</b> &middot; final <b>205.8 cm</b> &middot; R 222 / L 206 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the primitive from the cup and place it in the bowl” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPRubixCubeBasketToCounter · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 38/40 · RubixCubeBasketToCounter</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPRubixCubeBasketToCounter, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>rubix cube</b> &middot; final <b>131.3 cm</b> &middot; R 133 / L 131 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPRubixCubeBasketToCounter, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>rubix cube</b> &middot; final <b>30.8 cm</b> &middot; R 31 / L 31 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPRubixCubeBasketToCounter, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>rubix cube</b> &middot; final <b>20.2 cm</b> &middot; R 20 / L 34 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPRubixCubeBasketToCounter, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>rubix cube</b> &middot; final <b>19.1 cm</b> &middot; R 19 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPRubixCubeBasketToCounter, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>rubix cube</b> &middot; final <b>20.0 cm</b> &middot; R 20 / L 41 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPRubixCubeBasketToCounter_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPRubixCubeBasketToCounter, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>rubix cube</b> &middot; final <b>14.2 cm</b> &middot; R 14 / L 25 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick the rubix cube from the basket and place it in the counter” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPWineToCabinetClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 39/40 · WineToCabinetClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPWineToCabinetClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToCabinetClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>wine</b> &middot; final <b>13.6 cm</b> &middot; R 39 / L 14 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToCabinetClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToCabinetClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>wine</b> &middot; final <b>20.9 cm</b> &middot; R 44 / L 21 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToCabinetClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToCabinetClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>wine</b> &middot; final <b>23.1 cm</b> &middot; R 45 / L 23 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPWineToCabinetClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToCabinetClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>wine</b> &middot; final <b>14.5 cm</b> &middot; R 42 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToCabinetClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToCabinetClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>wine</b> &middot; final <b>20.4 cm</b> &middot; R 37 / L 20 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToCabinetClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToCabinetClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>wine</b> &middot; final <b>5.9 cm</b> &middot; R 15 / L 6 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the wine, place it into the cabinet and close the cabinet” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
+</section>
+
+<!-- SECTION: viz · GR-1 6-ep rollouts · PnPWineToDrawerClose · ctl top, w_ep bottom · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts · 6 ep · 40/40 · WineToDrawerClose</h2>
+  <div class="vizgrid three eps">
+    <figure><video src="assets/PnPWineToDrawerClose_ctl_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToDrawerClose, episode 0"></video>
+      <figcaption><b>ctl</b> &middot; ep 0 &middot; query <b>wine</b> &middot; final <b>9.9 cm</b> &middot; R 29 / L 10 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToDrawerClose_ctl_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToDrawerClose, episode 1"></video>
+      <figcaption><b>ctl</b> &middot; ep 1 &middot; query <b>wine</b> &middot; final <b>33.4 cm</b> &middot; R 57 / L 33 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToDrawerClose_ctl_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, ctl model, PnPWineToDrawerClose, episode 2"></video>
+      <figcaption><b>ctl</b> &middot; ep 2 &middot; query <b>wine</b> &middot; final <b>11.0 cm</b> &middot; R 25 / L 11 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <div class="vizgrid three eps2">
+    <figure><video src="assets/PnPWineToDrawerClose_w_ep_episode_00.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToDrawerClose, episode 0"></video>
+      <figcaption><b>w_ep</b> &middot; ep 0 &middot; query <b>wine</b> &middot; final <b>14.6 cm</b> &middot; R 34 / L 15 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToDrawerClose_w_ep_episode_01.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToDrawerClose, episode 1"></video>
+      <figcaption><b>w_ep</b> &middot; ep 1 &middot; query <b>wine</b> &middot; final <b>27.1 cm</b> &middot; R 37 / L 27 &middot; success <b>no</b></figcaption></figure>
+    <figure><video src="assets/PnPWineToDrawerClose_w_ep_episode_02.mp4" autoplay muted loop playsinline preload="none" aria-label="Ego-view GR-1 rollout, w_ep model, PnPWineToDrawerClose, episode 2"></video>
+      <figcaption><b>w_ep</b> &middot; ep 2 &middot; query <b>wine</b> &middot; final <b>9.7 cm</b> &middot; R 16 / L 10 &middot; success <b>no</b></figcaption></figure>
+  </div>
+  <p class="footnote">“pick up the wine, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
 </section>
 
 <!-- SECTION: results (3) · random coordinate · TBD ≈20:30 KST -->
@@ -517,12 +1402,12 @@
 
 <!-- SECTION: status · 2026-09-04 13:45 KST -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-04 13:45 KST</h2>
-  <p class="thesis">Baseline set; λ 0.1 harmful, mix null; jitter, mirror and GR-1 6-ep sweeps in flight.</p>
+  <h2>Status · 2026-09-04 16:30 KST</h2>
+  <p class="thesis">Baseline set; λ 0.1 harmful, mix null on metrics and on GR-1; jitter and mirror in flight.</p>
   <div class="band">
     <figure>
       <table class="compact dense status">
-        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 13:45 KST</th><th>Result / ETA</th></tr></thead>
+        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 16:30 KST</th><th>Result / ETA</th></tr></thead>
         <tbody>
           <tr><td>①</td><td><b>Baseline</b> ctl · uniform chunks · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + rollouts</td><td>cos <b>0.270</b> · ADE <b>9.10</b> vs 9.08 · Acc5 56.9 %</td></tr>
           <tr><td>②</td><td><b>Contact λ 0.1</b> ciou_0p1 · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + xcontact + paired</td><td>vs ctl Δcos <b>−0.088</b> · ΔADE +1.40 cm → <b>harmful</b></td></tr>
@@ -531,14 +1416,14 @@
           <tr class="pend"><td>⑤</td><td><b>Random coordinate</b> jit1m · ICLR27 6043</td><td>RUNNING since 11:34</td><td>≈20:30 KST</td></tr>
           <tr class="pend"><td>⑥</td><td><b>Left-right mirror</b> · ICLR27 6044</td><td>RUNNING since 11:40</td><td>≈20:40 KST</td></tr>
           <tr class="pend"><td>⑦</td><td><b>Contact λ 1.0</b> (5471) · <b>λ 0.001</b> (5648)</td><td>preempted twice · background QoS</td><td>pending · no ETA</td></tr>
-          <tr class="pend"><td>⑧</td><td><b>GR-1 6-ep sweeps</b> · ctl / w_ep · bimanual</td><td>RUNNING · rlwrld 155808 / 155809</td><td>6-ep GR-1 SR: TBD ≈16:30</td></tr>
+          <tr><td>⑧</td><td><b>GR-1 6-ep sweeps</b> · ctl / w_ep · bimanual</td><td>DONE 16:08 · 37 / 39 tasks ran · 155808 / 155809</td><td>SR <b>0 / 107</b> vs <b>1 / 117</b> · median 18.6 / 17.4 cm</td></tr>
         </tbody>
       </table></figure>
   </div>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
     <li><b>Contact loss</b> — λ 0.1 is harmful; keep or drop the workstream once λ 1.0 / 0.001 land</li>
-    <li><b>Composition</b> — w_ep = ctl at 6 ep → not the lever at this length; GR-1 SR at 16:30 decides</li>
+    <li><b>Composition</b> — w_ep = ctl at 6 ep on metrics and GR-1 (0 vs 1 success) → not the lever at this length</li>
     <li><b>Augmentation</b> — no claim before jit1m / mirror land tonight (≈20:30 / 20:40)</li>
   </ol>
   <p class="footnote">grey italic rows = not landed · 6-ep numbers on the ICLR27 480 basis (zero 9.08 cm) · cross-cluster offset vs i5 → appendix · clips: owner verifies</p>
@@ -546,7 +1431,7 @@
 
 <!-- SECTION: appendix (1) · corrections / notes -->
 <section class="slide s-appendix">
-  <h2>Appendix · notes on the record (2026-09-04 13:45)</h2>
+  <h2>Appendix · notes on the record (2026-09-04 16:30)</h2>
   <ol class="corr">
     <li><b>Cross-cluster offset</b> — the same recipe trained on ICLR27 (ctl) vs rlwrld (i5 base, 1×A100) differs by paired Δcos <b>−0.026 [−0.045, −0.006]</b> on the 288 shared arctic / dexycb / grab chunks (taco and oakink2 index differently on the two corpora). i5's cos 0.301 / ADE 8.74 vs zero 8.86 are on its own 480-of-576 subset. Arms are compared <b>within one cluster only</b>: every ICLR27 arm pairs against ctl on all 480 chunks.</li>
     <li><b>λ 1.0 / λ 0.001 preempted twice</b> — background-QoS jobs 5471 / 5648 were preempted at 03:54 and again after 11:34, when jit1m and mirror took the freed GPUs. They wait for the next idle slot; no ETA. The contact verdict rests on λ 0.1 alone.</li>
@@ -562,21 +1447,21 @@
     <div>
       <dl class="kv">
         <dt>Metrics</dt><dd class="mono">pull4/ieval/README_ep06.md + harvest_ep06.json — ieval 480 per arm and per dataset, paired vs ctl (480) and vs i5 (288), xcontact @1 cm, Sharpa 96 basis.</dd>
-        <dt>Figures</dt><dd class="mono">pull4/figs/fig_ep06_{cos,ade,paired,contact,wep_vs_ctl}.png · deck #10 assets gr1_sweep_compare.png, gr1_sweep_bi2.png.</dd>
+        <dt>Figures</dt><dd class="mono">pull4/figs/fig_ep06_{cos,ade,paired,contact,wep_vs_ctl}.png · pull4/figs/gr1_sweep_{ctl,wep,ctl_vs_wep}.png · deck #10 assets gr1_sweep_compare.png, gr1_sweep_bi2.png.</dd>
         <dt>AR rollouts</dt><dd class="mono">pull4/iroll_ar5/&lt;arm&gt;/ — 8 GIFs (&lt;dataset&gt;_&lt;episode&gt;_ar.gif) + drift.json (cos[5], ade[5]) · hot3d/ for ctl, w_ep.</dd>
         <dt>Single chunk</dt><dd class="mono">pull4/iviz_d6/&lt;arm&gt;/ — 10 GIFs (&lt;arm&gt;_&lt;dataset&gt;_human_s&lt;start&gt;_c&lt;chunk&gt;_k8.gif) + &lt;arm&gt;_report.json · hot3d/ for ctl, w_ep.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
-        <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/* — sweep_0903 (2/117, median 23.3 cm), sweep_0903_bi2 (1/116, median 18.0), results.json, gr1_two_objects.md.</dd>
+        <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/* — sweep_0903 (2/117, median 23.3 cm), sweep_0903_bi2 (1/116, median 18.0), sweep_0904_ctl (0/107, 18.6), sweep_0904_w_ep (1/117, 17.4) + sweep_table.json each, gr1_two_objects.md.</dd>
         <dt>ICLR27 jobs</dt><dd class="mono">ctl · w_ep · x10_sharpa 5469 · ciou_0p1 5470 DONE (110,996 steps = 6.00 ep, 2×H100) · jit1m 6043 (11:34) · mirror 6044 (11:40) RUNNING · ciou_1p0 5471 / ciou_0p001 5648 preempted ×2.</dd>
-        <dt>rlwrld jobs</dt><dd class="mono">GR-1 6-ep sweeps ctl 155808 / w_ep 155809 (15/44 tasks at 13:45, ≈16:30) · first sweep p7 @ 10 ep · rerun 155019.</dd>
+        <dt>rlwrld jobs</dt><dd class="mono">GR-1 6-ep sweeps ctl 155808 / w_ep 155809 DONE 16:08 (37 / 39 tasks ran; ctl 7, w_ep 5 sim-side failures) · first sweep p7 @ 10 ep · rerun 155019.</dd>
         <dt>Bases</dt><dd class="mono">ieval 480 (ICLR27, 5 datasets) zero 9.08 cm, zAcc5 59.8 % · i5's own 480-of-576 subset zero 8.86 · paired vs ctl = all 480 · vs i5 = 288 shared.</dd>
       </dl>
     </div>
   </div>
-  <p class="cut"><b>Cut:</b> per-dataset 6-ep rows for every arm (README_ep06.md) · w_ep − ctl per-dataset ΔADE table · 3-ep intermediate evals · mp4 twins of every GIF (only GIFs shipped) · per-chunk drift tables (drift.json) · i5 / rlwrld rows outside the offset note · GR-1 per-task clips (deck #10).</p>
+  <p class="cut"><b>Cut:</b> per-dataset 6-ep rows for every arm (README_ep06.md) · w_ep − ctl per-dataset ΔADE table · 3-ep intermediate evals · mp4 twins of every GIF (only GIFs shipped) · per-chunk drift tables (drift.json) · i5 / rlwrld rows outside the offset note · GR-1 per-task clips of the p7 sweeps (deck #10) · per-episode IK diagnostics (diag_mean in results.json).</p>
 </section>
 
 </main>
