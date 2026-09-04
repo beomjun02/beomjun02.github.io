@@ -170,12 +170,12 @@
   <p class="subhead">Discussion:</p>
   <ol>
     <li><b>Hand source</b> — A dense but depth-biased vs D accurate but sparse → <b>fix D's coverage first</b>, then go all-D (owner rules)</li>
-    <li><b>Why D is sparse</b> — two people in frame break his cross-view hand pairing; our ego-side filter keeps every own hand and 6% of the person opposite (agent, one job)</li>
+    <li><b>Why D is sparse</b> — measured 09-04: his <code>--bbox_track</code> assumes a hand cannot teleport between frames, which a head-mounted camera breaks; it causes 93–97% of his exclusions → re-run stage 2 without it (agent, one job)</li>
     <li><b>MANO models</b> — keep the mirrored tree, or ask for group-read on his copies (owner, one minute)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Re-run his pipeline behind the ego filter (agent · one job)</li>
+    <li>Re-run his stage 2 without <code>--bbox_track</code> (agent · one job)</li>
     <li>Rule on the hand source for the training h5 (owner)</li>
     <li>Object extraction ep2–ep19 (agent · still awaiting go)</li>
   </ol>
@@ -190,6 +190,8 @@
       <dl class="kv">
         <dt>Session</dt><dd class="mono">hmd_object_demo/mano_sessions/frontier/ep{0,1,2}/ — cam_0.mp4 (ego-left) · cam_1.mp4 (ego-right) · extrinsic.yaml (world→view, mm) · ../intrinsic.yaml. Extrinsic derived from observation.cam_frame_{left,right}_wrt_base: R_10 = R_R<sup>T</sup>R_L, t_10 = R_R<sup>T</sup>(p_L−p_R) → quat wxyz [0.99997568, −0.00520583, 0.00456592, −0.00082914], t [−66.381568, 2.141234, −1.737732] mm.</dd>
         <dt>Mirror</dt><dd class="mono">hmd_object_demo/mano_mirror/ — real copies of his scripts (PROJ_ROOT resolves from the script path), symlinks for rlwrld_annotation and config/checkpoints, our MANO_{RIGHT,LEFT}.pkl in wilor/mano_data, hamer/_DATA/data/mano and config/mano_models. First attempt (154936) died on PermissionError './mano_data/MANO_RIGHT.pkl' — his copy is mode 700, ours mode 750 and the same size.</dd>
+        <dt>Why it is sparse</dt><dd class="mono">CORRECTED 09-04 — not cross-view pairing, which never fails here ("one camera only" is 0% of hand-frames, and triangulation rejects 1–2%). <code>run_standalone_session.py</code> passes <code>--bbox_track</code> unconditionally: it anchors each (camera, hand) track on the FIRST detection of that YOLO class ("assumed clean") and then requires the box to <b>intersect</b> between adjacent frames ("a hand cannot teleport"), coasting at most 50%. True for a static rig, false for a head-mounted one. It is 93–97% of all exclusions (ep0 1117 tracker vs 81 out-of-frame; ep1 1763/116; ep2 1898/61) and <b>which side collapses flips per episode with the seed</b> — ep0 right flagged 544/324 per camera vs left 128/121, ep2 the reverse. In 32–46% of the frames a side is missing, MediaPipe sees two hands stereo-matched, so the hand was visible. Fix is a parameter, not a patch: drop <code>--bbox_track</code> and re-run stage 2 + the solver.</dd>
+        <dt>Held hands</dt><dd class="mono">viz/hold_hands.py carries a hand forward in the BASE frame while it is out of view (a camera-frame hold would slide it across the room as the head turns) and marks it <code>held</code>; renderers draw held poses faint. ep0 any-hand 61→73%, both hands 8→27% at a 1 s horizon.</dd>
         <dt>Gate</dt><dd class="mono">processed/hand_detection/ensemble_triangulation_diag.npz — `used` (hand, frame, cam, joint) and `reproj_err`. Keep a hand-frame when BOTH cams contributed and the median error is under 10 px: 38% / 28% / 30% of hand-frames at 5.5 / 5.4 / 5.5 px median (p90 8.0 / 7.2 / 7.4). Ungated, 50% / 40% / 45% of his hands sit &gt;120 px from every detected hand and one reprojects at 2×10⁸ px (near-zero depth).</dd>
         <dt>Joint order</dt><dd class="mono">his joints_m comes back in the <b>MediaPipe/OpenPose 21 layout</b>, not raw MANO order — its 3D loss target is in that layout. Verified by correlating the per-joint wrist-distance profile against our MediaPipe hands: 0.995 vs 0.439 for raw MANO. Reading MANO's index 4 as the middle MCP reports a "12 cm hand" for both his solver and HaWoR; both are really 9.4 and 9.2 cm.</dd>
         <dt>Slots</dt><dd class="mono">diag `mano_sides` = ['right', 'left'] confirms his index 0 = right, so our slot 0 (left) takes his index 1 — the swap is from his metadata, not inferred.</dd>
