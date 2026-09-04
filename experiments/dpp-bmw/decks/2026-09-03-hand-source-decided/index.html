@@ -89,7 +89,8 @@
       <ul><li>accurate where both eyes agree</li>
           <li>ungated, it invents the rest</li></ul></li>
     <li>Every source, measured</li>
-    <li>What the clips look like</li>
+    <li>The episode clip, both sources</li>
+    <li>The 3D scene, both sources</li>
   </ol>
   <div class="band">
     <figure><img src="assets/fig_hisgate.jpg" alt="Two bar charts: fraction of hand-frames where both eyes contributed, and the triangulation reprojection error where they did.">
@@ -108,7 +109,8 @@
     <li class="on">Every source, measured
       <ul><li>his is the most accurate one</li>
           <li>it is also the sparsest one</li></ul></li>
-    <li>What the clips look like</li>
+    <li>The episode clip, both sources</li>
+    <li>The 3D scene, both sources</li>
   </ol>
   <div class="band">
     <table>
@@ -127,9 +129,30 @@
   <ol class="agenda">
     <li>His pipeline grades its own work</li>
     <li>Every source, measured</li>
-    <li class="on">What the clips look like
+    <li class="on">The episode clip, both sources
+      <ul><li>skeleton on the actual hand</li>
+          <li>same objects, same frames</li></ul></li>
+    <li>The 3D scene, both sources</li>
+  </ol>
+  <div class="band">
+    <figure><video src="assets/ep0_allobj_A.mp4" poster="assets/ep0_allobj_A.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>A — MediaPipe + VGGT depth</figcaption></figure>
+    <figure><video src="assets/ep0_allobj_D.mp4" poster="assets/ep0_allobj_D.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>D — his solver, gated by its own diagnostic</figcaption></figure>
+  </div>
+  <p class="footnote">ep0, full episode, BMW's two-panel grammar — left: ego RGB · right: the same viewpoint in points, object orange, rejected slate; only the hand source differs</p>
+</section>
+
+<!-- SECTION: results (4) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>His pipeline grades its own work</li>
+    <li>Every source, measured</li>
+    <li>The episode clip, both sources</li>
+    <li class="on">The 3D scene, both sources
       <ul><li>his hands are fewer, truer</li>
-          <li>same scene, same camera, same gate</li></ul></li>
+          <li>same camera, box and gate</li></ul></li>
   </ol>
   <div class="band">
     <figure><video src="assets/train3d_A.mp4" poster="assets/train3d_A.jpg" autoplay loop muted playsinline preload="metadata"></video>
@@ -174,7 +197,7 @@
         <dt>Two-eye test</dt><dd class="mono">viz/two_eye_check.py — project each 3D hand into the left eye, pair to the nearest stereo-matched detection, then project through R_10/t_10 into the right eye. A ep0/1/2: 20.3/31.1 · 17.9/29.0 · 21.5/36.5 px (asymmetric = depth too far; predicted disparity 103.8 vs 109.1 observed). D gated: 16.0/13.8 · 16.3/16.9 · 14.8/13.6 px.</dd>
         <dt>Four sources</dt><dd class="mono">coverage, span and wrist-vs-detected-2D for all four, including HaWoR: <a href="assets/fig_handsources.jpg">fig_handsources.jpg</a></dd>
         <dt>Option B</dt><dd class="mono">HaWoR span 9.22 cm (not the 12 cm a MANO-ordered index reports) but 150 px from the detected 2D wrist — its placement, not its shape, is what fails. Unchanged from the 09-02 deck.</dd>
-        <dt>Clips</dt><dd class="mono">ep0 two-panel on each source: <a href="assets/ep0_allobj_A.mp4">A</a> · <a href="assets/ep0_allobj_D.mp4">D</a>. Renders: viz/run_mano_render.sh (pull → convert → clips → 3D → figure), viz/mano_hands.py, viz/hands3d_multi.py --hands-suffix.</dd>
+        <dt>Clips</dt><dd class="mono">ep0 two-panel on each source is on the results slide; ep1 renders the same way. Renders: viz/run_mano_render.sh (pull → convert → clips → 3D → figure), viz/mano_hands.py, viz/hands3d_multi.py --hands-suffix.</dd>
         <dt>Stereo C</dt><dd class="mono">viz/stereo_hands.py — MediaPipe both eyes, epipolar match, DLT. fx cannot be recovered this way: the residual falls monotonically to the sweep floor (8.7 mm at 440 px, 10.8 at 733, 13.0 at 1000) because per-landmark depth noise swamps the shape term. Lateral extent is fx-free and reads 7.5 cm against MediaPipe's 9.2 cm model.</dd>
       </dl>
     </div>
