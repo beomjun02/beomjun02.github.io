@@ -1,28 +1,32 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #9 · 2026-09-03 rev8 (23:00 KST): the two ICLR27 arms that reached 6.00 eff ep
-     (x10_sharpa = 10 % Sharpa co-training; ciou_0p1 = soft-IoU contact aux loss, lambda 0.1) are
-     evaluated on the ICLR27 corpus' stratified human val (96 x 5 datasets = 480 chunks, zero
-     predictor 9.08 cm) and paired against the i5 base on the 288 chunks that index identically on
-     both clusters (arctic + dexycb + grab). Neither beats the zero-motion predictor; both sit below
-     the base (paired dcos -0.023 / -0.098); lambda 0.1 over-predicts contact 2.3x (17.3 % of hand
-     points vs 7.4 % GT); 10 % Sharpa does not close the Sharpa gap (-0.022, CI spans zero) and costs
-     a little human accuracy. GR-1: the 44-task zero-shot sweep (2/117 episodes) has its own deck
-     #10, so Results (3) is a pointer slide with the bimanual + two-object rerun (rlwrld job 155019)
-     as a pend row. 3-epoch intermediate evals were run and dropped by owner decision (6-epoch
-     only). Pending: ciou_1p0 / ciou_0p001 (background QoS), 320M (MLXP, suspended 10 h).
-     Structure: 8 main slides (title, overview, method, 4 results, status) + 10 v5 viz-grid
-     slides OUTSIDE the <=8 cap, captions only + 3 appendix slides. Three evaluation bases, never
-     mixed in one table: ieval stratified 576 (rlwrld corpus, zero 7.97 cm), ieval stratified 480
-     (ICLR27 corpus, 5 datasets, zero 9.08 cm; the i5 base's own 480-of-576 subset has zero 8.86 cm)
-     and the Sharpa 96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps x effective batch
-     / curated chunks (577,948 on rlwrld, 591,977 on ICLR27). -->
+<!-- 3D-WAM deck #9 · 2026-09-04 rev9 (12:15 KST): two more ICLR27 arms reached 6.00 eff ep
+     (110,996 steps, 2xH100, same seed): ctl = the same-cluster baseline (human only, uniform chunk
+     sampling, no contact loss, no Sharpa) and w_ep = identical recipe with dataset_weights set to
+     the EPISODE share (taco 42 / grab 25 / dexycb 19 / oakink2 9 / arctic 5 % of samples instead of
+     the chunk share oakink2 49 / grab 21 / taco 16.5 / arctic 11 / dexycb 2.5). On the stratified
+     480-chunk human val (96 x 5 datasets, zero 9.08 cm): ctl cos 0.270, ADE 9.10 vs zero 9.08,
+     Acc5 56.9 vs 59.8 %; w_ep cos 0.270, ADE 9.13, Acc5 57.1 %; paired w_ep - ctl on all 480
+     chunks dcos +0.000 [-0.007, +0.007], dADE +0.04 cm [-0.08, +0.16] = a null result at 6 ep.
+     Every ICLR27 arm is now paired against ctl on all 480 chunks (same index): x10_sharpa dcos
+     +0.002 [-0.012, +0.017] but dADE +0.48 cm [+0.22, +0.75]; ciou_0p1 dcos -0.088, dADE +1.40.
+     Cross-cluster offset: ctl vs the rlwrld i5 base on the 288 shared arctic/dexycb/grab chunks
+     dcos -0.026 [-0.045, -0.006] - same recipe, different cluster/seed/data order - so rev8's
+     "x10_sharpa sits below i5" was mostly this offset (correction on the record). Pending: jit1m
+     (6043, ~20:30 KST) and mirror (6044, ~20:40); ciou_1p0 / ciou_0p001 preempted twice, waiting;
+     320M (MLXP suspended); GR-1 6-ep sweeps with ctl and w_ep (rlwrld 155808 / 155809, ~15:15) ->
+     deck #10. Structure: 8 main slides (title, overview, method, 4 results, status) + 11 v5
+     viz-grid slides OUTSIDE the <=8 cap, captions only + 4 appendix slides. Three evaluation
+     bases, never mixed in one table: ieval stratified 576 (rlwrld corpus, zero 7.97 cm), ieval
+     stratified 480 (ICLR27 corpus, 5 datasets, zero 9.08 cm; the i5 base's own 480-of-576 subset
+     has zero 8.86 cm) and the Sharpa 96-chunk TACO basis (zero 4.99 cm). Effective epochs = steps
+     x effective batch / curated chunks (577,948 on rlwrld, 591,977 on ICLR27). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-03 · Scale-up, cross-embodiment, closed-loop, contact loss — 3D-WAM</title>
-<meta name="description" content="Deck #9 rev8, 2026-09-03 23:00 KST. Six-epoch results for the two ICLR27 arms: 10 % Sharpa co-training (x10_sharpa) and the soft-IoU contact loss at λ 0.1 (ciou_0p1). On the stratified 480-chunk human val neither beats the zero-motion predictor (ADE 9.58 / 10.50 vs 9.08 cm) and both sit below the i5 base (paired Δcos −0.023 / −0.098); λ 0.1 over-predicts contact 2.3×; 10 % Sharpa does not close the Sharpa gap (−0.022, CI spans zero). GR-1: the 44-task zero-shot sweep (2/117 episodes) is deck #10; a rerun with both hands and the destination in the point set is running. Pending: contact λ 1.0 / 0.001, 320M. Corrections: scratch-staging race, GR-1 place target omitted, 3-epoch evals dropped, paired comparisons cover 288 of 480 chunks.">
+<meta name="description" content="Deck #9 rev9, 2026-09-04 12:15 KST. Same-cluster baseline in place on ICLR27: ctl (uniform chunk sampling) and w_ep (episode-weighted data mix) at 6.00 eff ep — cos 0.270 both, ADE 9.10 / 9.13 vs zero 9.08 cm; paired w_ep − ctl Δcos +0.000 [−0.007, +0.007], a null. Re-based against ctl on all 480 chunks: 10 % Sharpa is neutral on direction (Δcos +0.002) and slightly worse on ADE (+0.48 cm); contact λ 0.1 is harmful (Δcos −0.088, ΔADE +1.40). Correction: ctl vs the rlwrld i5 base differs by −0.026 cos on 288 shared chunks — a cross-cluster offset, so rev8's x10-below-i5 reading is revised. Pending: jit1m, mirror, λ 1.0 / 0.001, 320M, GR-1 6-ep sweeps (deck #10).">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
@@ -90,20 +94,20 @@
   <p class="when">2026. 09. 03<br>Presented by 김범준 (beomjun)</p>
 </section>
 
-<!-- SECTION: overview · rev8 (09-03 23:00 KST) -->
+<!-- SECTION: overview · rev9 (09-04 12:15 KST) -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Neither 6-epoch arm beats the zero predictor; GR-1 sweep is deck #10.</p>
+  <p class="thesis"><b>[TL;DR]</b> Same-cluster baseline: mix null, λ 0.1 harmful, Sharpa neutral; none beats zero.</p>
   <ul>
-    <li>10 % Sharpa: −0.023 cos vs base, Sharpa gap not closed</li>
-    <li>Contact λ 0.1: −0.098 cos, contact over-predicted 2.3×</li>
-    <li>GR-1, 44 tasks: 2 / 117 episodes → deck #10</li>
+    <li>Data mix w_ep vs ctl: Δcos +0.000, ΔADE +0.04 cm — null at 6 ep</li>
+    <li>Contact λ 0.1: Δcos −0.088 vs ctl, contact over-predicted 2.3×</li>
+    <li>10 % Sharpa: Δcos +0.002, ΔADE +0.48 cm vs ctl; Sharpa gap unchanged</li>
   </ul>
   <div class="band">
     <figure><img src="assets/p7_10ep_roll_taco_ar.gif" alt="Full-episode point-cloud rollout of taco episode 2488 by the 120M p7 model at 180,608 steps, self-predicted: ground truth on the left, prediction on the right, each one-second chunk starting from the model's own previous output. Orange object points, green right hand, purple left hand." loading="lazy">
       <figcaption><b>120M p7 @ 10.00 eff ep</b> — taco ep 2488 "brush the plate with the roller", self-predicted, 1 s chunks, full episode</figcaption></figure>
-    <figure><img src="assets/fig_ep06_ade.png" alt="Grouped bar chart of ADE in centimetres at 6.0 effective epochs on 480 stratified chunks, per dataset and overall, for the i5 base in blue, x10_sharpa in green and ciou_0p1 in orange, with a dashed zero-motion-predictor line per group. Overall: i5 8.7 against its own zero 8.86, x10_sharpa 9.6 and ciou_0p1 10.5 against zero 9.08. Per dataset: taco 4.7 / 5.6 / 8.1 against 5.66, arctic 10.4 / 11.4 / 11.3 against 9.34, dexycb 9.0 / 8.9 / 10.3 against 10.04, oakink2 2.3 / 3.1 / 4.0 against 2.62, grab 17.4 / 18.9 / 18.9 against 17.75.">
-      <figcaption><b>6.00 eff ep</b>, ICLR27 480 chunks — x10_sharpa <b>9.58</b> / ciou_0p1 <b>10.50</b> vs zero <b>9.08 cm</b> · i5 base 8.74 vs its own 480-of-576 zero 8.86</figcaption></figure>
+    <figure><img src="assets/fig_ep06_ade.png" alt="Grouped bar chart of ADE in centimetres at 6.0 effective epochs on 480 stratified chunks, per dataset and overall, for five arms: the i5 base in blue, ctl in dark green, w_ep in yellow, x10_sharpa in teal and ciou_0p1 in orange, with a dashed zero-motion-predictor line per group. Overall: i5 8.7 against its own zero 8.86; ctl 9.1, w_ep 9.1, x10_sharpa 9.6 and ciou_0p1 10.5 against zero 9.08. Per dataset: taco 4.7 / 5.6 / 5.6 / 5.6 / 8.1 against 5.66, arctic 10.4 / 10.2 / 10.3 / 11.4 / 11.3 against 9.34, dexycb 9.0 / 9.5 / 9.4 / 8.9 / 10.3 against 10.04, oakink2 2.3 / 2.8 / 2.8 / 3.1 / 4.0 against 2.62, grab 17.4 / 17.4 / 17.5 / 18.9 / 18.9 against 17.75.">
+      <figcaption><b>6.00 eff ep</b>, ICLR27 480 chunks — ctl <b>9.10</b> / w_ep <b>9.13</b> / x10_sharpa 9.58 / ciou_0p1 10.50 vs zero <b>9.08 cm</b> · i5 base 8.74 vs its own 480-of-576 zero 8.86</figcaption></figure>
   </div>
   <p class="footnote">three bases, never mixed — <b>ieval 576</b> (rlwrld, zero 7.97 cm) · <b>ieval 480</b> (ICLR27, 5 datasets, zero 9.08) · <b>Sharpa</b> 96 TACO, zero 4.99 · P-SERIES.md</p>
 </section>
@@ -129,20 +133,30 @@
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
-    <li class="on">Scale-up and training length
-      <ul><li>19 checkpoints: direction improves, placement does not</li></ul></li>
+    <li class="on">Scale-up, training length, data mix
+      <ul><li>19 ckpts: epochs buy direction, not placement · w_ep mix: no change vs ctl at 6 ep</li></ul></li>
     <li>Cross-embodiment transfer</li>
     <li>GR-1 zero-shot closed loop</li>
     <li>Contact auxiliary loss</li>
   </ol>
-  <div class="band tight">
-    <figure><img src="assets/fig_ladder_ade.png" alt="Line chart of ADE in centimetres against effective epochs across 19 checkpoints of the 120M p7 run, from 0.28 to 10.00 epochs. ADE falls steeply from 8.58 to about 7.55 by 2.2 epochs, then wanders flat between 7.46 and 7.94 with no trend. A dashed horizontal line marks the zero predictor at 7.97 cm; a labelled dip at 5.5 to 6.1 epochs rises back above it to 7.93 and 7.94. The minimum, 7.46 cm at 7.75 epochs, is marked with a green dot; the endpoint at 10.00 epochs reads 7.71.">
-      <figcaption>Flat from <b>2.21 eff ep</b> — 7.46–7.94 cm, non-monotone · best <b>7.46 @ 7.75</b>, endpoint <b>7.71 @ 10.00</b></figcaption></figure>
-    <figure><img src="assets/fig_ladder_acc.png" alt="Line chart of scene-flow accuracy in percent of points against effective epochs over the same 19 checkpoints. Acc10 in green rises from 73.8 to about 77 percent by 2.2 epochs then stays flat, peaking at 77.7. Acc5 in blue rises from 59.3 to about 63 percent by 2.2 epochs then stays flat, with a marked peak of 64.1 percent at 7.75 epochs and 63.3 at the 10.00-epoch endpoint.">
-      <figcaption>Acc5 peaks at the same point — <b>64.1 % @ 7.75</b> vs <b>63.3 %</b> at 10.00 · Acc10 <b>77.7 → 76.9 %</b></figcaption></figure>
+  <div class="band snug">
+    <figure style="flex:1 1 29%;min-width:0"><img src="assets/fig_ladder_ade.png" alt="Line chart of ADE in centimetres against effective epochs across 19 checkpoints of the 120M p7 run, from 0.28 to 10.00 epochs. ADE falls steeply from 8.58 to about 7.55 by 2.2 epochs, then wanders flat between 7.46 and 7.94 with no trend. A dashed horizontal line marks the zero predictor at 7.97 cm; a labelled dip at 5.5 to 6.1 epochs rises back above it to 7.93 and 7.94. The minimum, 7.46 cm at 7.75 epochs, is marked with a green dot; the endpoint at 10.00 epochs reads 7.71.">
+      <figcaption><b>ieval 576</b> · flat from <b>2.21 eff ep</b> · best <b>7.46 cm @ 7.75</b>, endpoint <b>7.71 @ 10.00</b></figcaption></figure>
+    <figure style="flex:1 1 41%;min-width:0"><img src="assets/fig_ep06_wep_vs_ctl.png" alt="Two forest plots of the paired difference w_ep minus ctl per dataset, 96 chunks each, with 95 percent bootstrap intervals; each label shows how the sampling mass changed from uniform to episode-weighted. Left, delta direction cosine: taco up 16 to 42 percent, minus 0.015 [minus 0.029, plus 0.002]; arctic down 11 to 5, plus 0.006; dexycb up 2.5 to 19, plus 0.012 [minus 0.000, plus 0.024]; oakink2 down 49 to 9, minus 0.003; grab up 21 to 25, plus 0.000. Right, delta ADE in centimetres: taco plus 0.04, arctic plus 0.09, dexycb minus 0.02, oakink2 minus 0.01, grab plus 0.08 — every interval crosses zero.">
+      <figcaption><b>w_ep − ctl per dataset</b> · <span class="epoch">6.00 eff ep</span> · 96 chunks each · every ΔADE CI spans zero</figcaption></figure>
+    <figure style="flex:0 0 26%;min-width:0">
+      <table class="compact dense" style="white-space:nowrap">
+        <thead><tr><th>480 · <span class="epoch">6 ep</span></th><th>cos</th><th>ADE</th><th>zero</th><th>Acc5</th></tr></thead>
+        <tbody>
+          <tr><td><b>ctl</b></td><td>0.270</td><td>9.10</td><td>9.08</td><td>56.9</td></tr>
+          <tr><td><b>w_ep</b></td><td>0.270</td><td>9.13</td><td>9.08</td><td>57.1</td></tr>
+          <tr><td>i5 †</td><td>0.301</td><td>8.74</td><td>8.86</td><td>58.9</td></tr>
+        </tbody>
+      </table>
+      <figcaption>ADE / zero cm · Acc5 % (zAcc5 59.8) · † rlwrld i5, its own 480-of-576 subset</figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · <b>ieval 576</b> (zero 7.97 cm): best is <b>140k = 7.75 eff ep</b>, not the endpoint — Acc5 <b>64.1 %</b> / ADE <b>7.46 cm</b> vs 63.3 % / 7.71 @10.00. Over 2.21 → 10.00 ep cos <b>0.234 = 76.5° → 0.295 = 72.8°</b>, motion <b>53 → 70 %</b>, ADE flat: <b>epochs buy direction, not placement</b></p>
-  <p class="footnote">eff ep = steps × effective batch ÷ 577,948 curated chunks · degrees are arccos(cos); the ladder's own mean-angle column reads 68.4–68.8° over the same span</p>
+  <p class="etabar"><b>Verdict</b> · <b>ieval 576</b>: best is <b>140k = 7.75 eff ep</b>, not the endpoint — cos 0.234 → 0.295, ADE flat: <b>epochs buy direction, not placement</b> · <b>ieval 480</b>: <b>episode-weighted mix: no change at 6 ep</b> — paired w_ep − ctl Δcos <b>+0.000 [−0.007, +0.007]</b>, ΔADE <b>+0.04 cm [−0.08, +0.16]</b></p>
+  <p class="footnote">eff ep = steps × 32 ÷ 577,948 (rlwrld) or 591,977 (ICLR27) · w_ep mass = episode share: taco 42 / grab 25 / dexycb 19 / oakink2 9 / arctic 5 %</p>
 </section>
 
 <!-- SECTION: viz A · single-chunk open-loop · captions only, no interpretation (v5 §4b D) -->
@@ -199,13 +213,13 @@
   <ol class="agenda">
     <li>Scale-up and training length</li>
     <li class="on">Cross-embodiment transfer
-      <ul><li>10 % Sharpa at 6 ep: −0.023 cos on human, Sharpa gap unchanged</li></ul></li>
+      <ul><li>10 % Sharpa at 6 ep vs ctl: Δcos +0.002, ΔADE +0.48 cm; Sharpa gap unchanged</li></ul></li>
     <li>GR-1 zero-shot closed loop</li>
     <li>Contact auxiliary loss</li>
   </ol>
   <div class="band">
-    <figure style="flex:1 1 60%;min-width:0"><img src="assets/fig_ep06_paired.png" alt="Forest plot of paired differences in direction cosine against the i5 base at 6.0 effective epochs on 288 shared chunks from arctic, dexycb and grab, with 95 percent bootstrap intervals from 10k resamples. x10_sharpa: delta cos minus 0.023 [minus 0.035, minus 0.010] and delta cos hand minus 0.035 [minus 0.053, minus 0.016]. ciou_0p1: delta cos minus 0.098 [minus 0.119, minus 0.077] and delta cos hand minus 0.121 [minus 0.149, minus 0.092]. Bottom row, x10_sharpa Sharpa minus human hand cosine over 192 pairs: minus 0.022 [minus 0.066, plus 0.023], the only interval crossing zero.">
-      <figcaption>Paired vs the i5 base on <b>288 shared chunks</b>: x10_sharpa <b>Δcos −0.023 [−0.035, −0.010]</b> · Sharpa − human hand gap <b>−0.022 [−0.066, +0.023]</b>, 192 pairs</figcaption></figure>
+    <figure style="flex:1 1 60%;min-width:0"><img src="assets/fig_ep06_paired.png" alt="Forest plot titled every ICLR27 arm vs its same-cluster baseline ctl at 6.0 epochs: paired differences on all 480 chunks with 95 percent bootstrap intervals from 10k resamples. w_ep: delta cos plus 0.000 [minus 0.007, plus 0.007], delta ADE plus 0.036 cm [minus 0.084, plus 0.158]. x10_sharpa: delta cos plus 0.002 [minus 0.012, plus 0.017], delta ADE plus 0.483 cm [plus 0.223, plus 0.749]. ciou_0p1: delta cos minus 0.088 [minus 0.107, minus 0.069], delta ADE plus 1.400 cm [plus 1.100, plus 1.686].">
+      <figcaption>Paired vs the same-cluster <b>ctl</b> on <b>all 480 chunks</b>: x10_sharpa <b>Δcos +0.002 [−0.012, +0.017]</b>, <b>ΔADE +0.48 cm [+0.22, +0.75]</b>, ΔAcc5 −2.0 pp</figcaption></figure>
     <figure style="flex:0 0 35%;min-width:0">
       <table class="compact dense" style="white-space:nowrap">
         <thead><tr><th>Sharpa · 96 TACO</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE</th><th>Acc5 %</th></tr></thead>
@@ -214,10 +228,10 @@
           <tr><td>zero predictor</td><td>—</td><td>—</td><td>4.99</td><td>66.7</td></tr>
         </tbody>
       </table>
-      <figcaption>Sharpa hand, retargeted TACO · ADE in cm · ADE <b>equals the zero predictor</b></figcaption></figure>
+      <figcaption>Sharpa hand, retargeted TACO · ADE in cm · ADE <b>equals the zero predictor</b> · human → Sharpa hand gap <b>−0.022 [−0.066, +0.023]</b>, 192 pairs</figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · 10 % Sharpa <b>costs a little human accuracy</b> (paired Δcos −0.023, ΔADE +0.82 cm vs i5) and <b>does not close the Sharpa gap</b> (−0.022, CI spans zero) · 480 basis: ADE 9.58 vs zero 9.08, <b>below the zero predictor</b> · supersedes rev7's 32k-step "free on human" reading</p>
-  <p class="footnote">pairing fixes sequence, start, task, object, scene · paired set = arctic + dexycb + grab, see corrections · eff ep = steps × 32 ÷ 591,977</p>
+  <p class="etabar"><b>Verdict</b> · against its own baseline, 10 % Sharpa is <b>neutral on direction</b> (Δcos +0.002) and <b>slightly worse on placement</b> (ΔADE +0.48 cm, Acc5 −2.0 pp) · <b>does not close the Sharpa gap</b> (−0.022, CI spans zero) · <b>corrects rev8</b>: "below i5" was the cross-cluster offset (ctl − i5 = −0.026)</p>
+  <p class="footnote">pairing fixes sequence, start, task, object · same corpus index → all 480 chunks pair · Sharpa gap: xeval, 192 pairs · eff ep = steps × 32 ÷ 591,977</p>
 </section>
 
 <!-- SECTION: viz C · cross-embodiment and model size · captions only, size caveat in the footnote -->
@@ -260,7 +274,23 @@
   <p class="footnote">same taco s33 chunk, camera and seed &middot; columns = arm at ≈6 eff ep &middot; pred / GT motion from the render report (Sharpa clips only) &middot; val = held-out takes</p>
 </section>
 
-<!-- SECTION: results (3) · GR-1 tabletop zero-shot · rev8: pointer slide to deck #10 (44-task sweep) + the bimanual rerun as a pend row -->
+<!-- SECTION: viz D2 · rev9: the two new 6-epoch ICLR27 arms (ctl baseline, w_ep data mix) on the same taco s33 chunk · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts &middot; human vs Sharpa hand &middot; ctl and w_ep</h2>
+  <div class="vizgrid two big">
+    <figure><img src="assets/ctl_taco_human_s33_k8.gif" alt="Point-cloud rollout, taco sequence s33 with the human MANO hand, ctl model (ICLR27 baseline, uniform chunk sampling) at 110,996 steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>ctl @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627 "cut the bowl with the spatula"<br>human hand &middot; uniform chunk sampling</figcaption></figure>
+    <figure><img src="assets/w_ep_taco_human_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 with the human MANO hand, w_ep model (episode-weighted data mix) at 110,996 steps. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>w_ep @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627 "cut the bowl with the spatula"<br>human hand &middot; episode-weighted mix</figcaption></figure>
+    <figure><img src="assets/ctl_taco_sharpa_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, ctl model at 110,996 steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>ctl @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627<br>Sharpa hand, zero-shot &middot; motion pred <b>9.17</b> / GT <b>11.99</b> cm &middot; ADE 5.37</figcaption></figure>
+    <figure><img src="assets/w_ep_taco_sharpa_s33_k8.gif" alt="Point-cloud rollout, the same taco sequence s33 retargeted to the Sharpa robot hand, w_ep model at 110,996 steps, evaluated zero-shot. Ground truth left, prediction right." loading="lazy">
+      <figcaption><b>w_ep @110,996</b> &middot; <span class="epoch">6.00 eff ep</span> &middot; taco s33, ICLR27 chunk 27627<br>Sharpa hand, zero-shot &middot; motion pred <b>10.01</b> / GT <b>11.99</b> cm &middot; ADE 4.41</figcaption></figure>
+  </div>
+  <p class="footnote">same taco s33 chunk, camera and seed as viz D &middot; columns = arm &middot; pred / GT motion from the render report (Sharpa clips only) &middot; val = held-out takes</p>
+</section>
+
+<!-- SECTION: results (3) · GR-1 tabletop zero-shot · pointer slide to deck #10 (44-task sweep + bimanual rerun) · rev9: 6-ep sweeps with ctl / w_ep as a pend row -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
@@ -268,7 +298,7 @@
     <li>Cross-embodiment transfer</li>
     <li class="on">GR-1 zero-shot closed loop &middot; <b>44 tasks &times; 3 episodes &rarr; deck #10</b>
       <ul><li><b>first successes with a human-only model — no fine-tuning, no retargeter</b></li>
-          <li>rerun running: both hands, pick object AND destination pointed</li></ul></li>
+          <li>rerun (both hands + destination): 1 / 116, median 18 cm · 6-ep sweeps running</li></ul></li>
     <li>Contact auxiliary loss</li>
   </ol>
   <div class="band snug">
@@ -277,13 +307,14 @@
         <thead><tr><th style="width:38%">Run &middot; setup</th><th style="width:22%">State</th><th>Result</th></tr></thead>
         <tbody>
           <tr><td><b>44-task sweep</b> &middot; right hand &middot; p7 @ <span class="epoch">10.00 eff ep</span></td><td>DONE &rarr; <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck #10</a></td><td><b>2 / 117</b> episodes &middot; median <b>23 cm</b> &middot; 5 sim-side failures</td></tr>
-          <tr class="pend"><td><b>Rerun</b> &middot; both hands &middot; pick + destination</td><td>RUNNING &middot; rlwrld job 155019</td><td>15 / 44 tasks at 22:55 KST &middot; pending</td></tr>
+          <tr><td><b>Rerun</b> &middot; both hands + destination &middot; p7</td><td>DONE &rarr; <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck #10</a></td><td><b>1 / 116</b> &middot; median <b>18.0 cm</b> (was 23.3) &middot; 27 / 38 tasks closer</td></tr>
+          <tr class="pend"><td><b>6-ep sweeps</b> &middot; ctl / w_ep &middot; bimanual</td><td>RUNNING &middot; rlwrld 155808/9</td><td>since 11:57 &middot; &asymp;15:15 KST &rarr; deck #10</td></tr>
         </tbody>
       </table></figure>
     <figure style="flex:1 1 42%;min-width:0"><img src="assets/gr1_sweep.png" alt="Bar chart over 44 GR-1 pick-and-place tasks sorted by the final hand-to-target distance, mean of three episodes, from 10 to over 60 centimetres; two bars are green marking the tasks with one success in three episodes, KettleToPlate and ObjectsTieredBasketToCounter; five hatched entries are sim-side failures with no episodes.">
       <figcaption>green = <b>KettleToPlate</b>, <b>ObjectsTieredBasketToCounter</b> (1/3 each) &middot; hatched = sim-side failure</figcaption></figure>
   </div>
-  <p class="etabar"><b>Pointer</b> &middot; sweep, clips and setup live in <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/"><b>deck #10 &middot; GR-1 zero-shot</b></a> &middot; correction carried: the input <b>omitted the place target</b> — only the pick object was pointed while every instruction names a destination &rarr; the rerun adds it, and the left hand</p>
+  <p class="etabar"><b>Pointer</b> &middot; sweeps, clips and setup live in <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/"><b>deck #10 &middot; GR-1 zero-shot</b></a> &middot; correction carried: the first input <b>omitted the place target</b>; the rerun adds it and the left hand &middot; the 6-ep sweeps use the same bimanual input with the ctl and w_ep checkpoints</p>
   <p class="footnote">success = benchmark flag &middot; 3 eps &times; 720 steps &middot; replan every 4 frames &middot; ckpt 180,608 &middot; deck #10 = /experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/</p>
 </section>
 
@@ -356,61 +387,72 @@
     <li>Cross-embodiment transfer</li>
     <li>GR-1 zero-shot closed loop</li>
     <li class="on">Contact auxiliary loss
-      <ul><li>soft-IoU λ 0.1 at 6 ep: −0.098 cos, contact over-predicted 2.3×</li></ul></li>
+      <ul><li>soft-IoU λ 0.1 at 6 ep: Δcos −0.088 vs ctl, contact over-predicted 2.3×</li></ul></li>
   </ol>
   <div class="band">
     <figure style="flex:1 1 30%;min-width:0"><img src="assets/fig_ep06_contact.png" alt="Bar chart of contact-set overlap at 1 centimetre, mean over 10 frames and 480 chunks, ciou_0p1 in orange against the zero-motion predictor in grey: IoU 0.30 vs 0.51, precision 0.33 vs 0.72, recall 0.77 vs 0.64, predicted contact fraction 0.17 vs 0.07, with a dotted green line marking the ground-truth contact fraction 0.074.">
       <figcaption>Contact @1 cm: IoU <b>0.30</b> vs zero <b>0.51</b> · precision 0.33 vs 0.72 · predicts contact on <b>17.3 %</b> of hand points vs <b>7.4 %</b> GT</figcaption></figure>
-    <figure style="flex:1 1 30%;min-width:0"><img src="assets/fig_ep06_cos.png" alt="Grouped bar chart of direction cosine at 6.0 effective epochs on 480 stratified chunks, overall and per dataset, for the i5 base in blue, x10_sharpa in green and ciou_0p1 in orange. Overall 0.30 / 0.27 / 0.18; taco 0.28 / 0.28 / 0.12; arctic 0.31 / 0.29 / 0.20; dexycb 0.29 / 0.28 / 0.22; oakink2 0.24 / 0.17 / 0.11; grab 0.38 / 0.34 / 0.27. ciou_0p1 is lowest in every group.">
-      <figcaption>Direction cosine per dataset: ciou_0p1 <b>lowest everywhere</b> — 0.18 overall vs i5 0.30, taco 0.12 vs 0.28</figcaption></figure>
+    <figure style="flex:1 1 30%;min-width:0"><img src="assets/fig_ep06_cos.png" alt="Grouped bar chart of direction cosine at 6.0 effective epochs on 480 stratified chunks, overall and per dataset, for five arms: the i5 base in blue, ctl in dark green, w_ep in yellow, x10_sharpa in teal and ciou_0p1 in orange. Overall 0.30 / 0.27 / 0.27 / 0.27 / 0.18; taco 0.28 / 0.27 / 0.25 / 0.28 / 0.12; arctic 0.31 / 0.29 / 0.30 / 0.29 / 0.20; dexycb 0.29 / 0.26 / 0.27 / 0.28 / 0.22; oakink2 0.24 / 0.18 / 0.18 / 0.17 / 0.11; grab 0.38 / 0.35 / 0.35 / 0.34 / 0.27. ciou_0p1 is lowest in every group.">
+      <figcaption>Direction cosine per dataset: ciou_0p1 <b>lowest everywhere</b> — 0.18 overall vs ctl 0.27, taco 0.12 vs 0.27</figcaption></figure>
     <figure style="flex:0 0 37%;min-width:0">
       <table class="compact dense" style="white-space:nowrap">
         <thead><tr><th>human 480 · <span class="epoch">6 ep</span></th><th>cos</th><th>ADE</th><th>zero</th><th>Acc5</th><th>zAcc5</th></tr></thead>
         <tbody>
-          <tr><td>i5 base †</td><td>0.301</td><td>8.74</td><td>8.86</td><td>58.9</td><td>—</td></tr>
+          <tr><td>ctl (baseline)</td><td>0.270</td><td>9.10</td><td>9.08</td><td>56.9</td><td>59.8</td></tr>
           <tr><td>x10_sharpa</td><td>0.273</td><td>9.58</td><td>9.08</td><td>54.9</td><td>59.8</td></tr>
           <tr><td><b>ciou_0p1</b></td><td><b>0.182</b></td><td><b>10.50</b></td><td>9.08</td><td><b>47.8</b></td><td>59.8</td></tr>
         </tbody>
       </table>
-      <figcaption>ADE / zero in cm, Acc5 in % · one basis: 96 × 5 datasets · † i5's own 480-of-576 subset</figcaption></figure>
+      <figcaption>ADE / zero in cm, Acc5 in % · one basis: 96 × 5 datasets, ICLR27, all arms same cluster and seed</figcaption></figure>
   </div>
-  <p class="etabar"><b>Verdict</b> · λ 0.1 soft-IoU is <b>harmful</b>: paired Δcos <b>−0.098 [−0.119, −0.077]</b> vs i5, ADE 10.50 vs zero 9.08, Acc5 47.8 vs 59.8 % · contact over-predicted <b>2.3×</b> (recall 0.77 vs 0.64, precision 0.33 vs 0.72) · λ 1.0 / 0.001 still training → then <b>promote or drop</b></p>
+  <p class="etabar"><b>Verdict</b> · λ 0.1 soft-IoU is <b>harmful</b>: paired vs ctl Δcos <b>−0.088 [−0.107, −0.069]</b>, ΔADE <b>+1.40 cm [+1.10, +1.69]</b>, ΔAcc5 −9.1 pp · ADE 10.50 vs zero 9.08 · contact over-predicted <b>2.3×</b> (recall 0.77 vs 0.64, precision 0.33 vs 0.72) · λ 1.0 / 0.001 preempted, waiting → then <b>promote or drop</b></p>
   <p class="footnote">soft-IoU (Dice) on contact ≤1 cm, 2 frames · xcontact @1 cm, 480 chunks, mean over 10 frames · rev6 additive-form λ sweep (null @1.11 ep) → appendix</p>
 </section>
 
-<!-- SECTION: status · closing summary (v5 G: landed / pending / decisions) · 2026-09-03 23:00 KST -->
+<!-- SECTION: status · closing summary (v5 G: landed / pending / decisions) · 2026-09-04 12:15 KST -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-03 23:00 KST</h2>
-  <p class="thesis">Two arms landed at 6 ep: neither beats zero, λ 0.1 harmful; GR-1 → deck #10.</p>
+  <h2>Status · 2026-09-04 12:15 KST</h2>
+  <p class="thesis">ctl baseline landed: mix null, λ 0.1 harmful, Sharpa neutral; jit1m / mirror tonight.</p>
   <div class="band">
     <figure>
       <table class="compact dense status">
-        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 23:00 KST</th><th>Result / ETA</th></tr></thead>
+        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 12:15 KST</th><th>Result / ETA</th></tr></thead>
         <tbody>
-          <tr class="pend"><td>①</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · 9.76 ep</td><td>Suspended 10 h · never admitted</td><td>pending · no ETA</td></tr>
-          <tr><td>②</td><td><b>10 % Sharpa</b> x10_sharpa · 120M · <span class="epoch">6.00 eff ep</span> · job 5469</td><td>DONE · ieval 480 + Sharpa 96 + paired (288)</td><td>cos <b>0.273</b> · ADE <b>9.58</b> vs 9.08 · Sharpa 5.03 vs 4.99 · vs i5 Δcos <b>−0.023</b>, ΔADE +0.82 cm</td></tr>
-          <tr><td>③</td><td><b>GR-1 44-task sweep</b> · right hand · p7 @ 10.00 ep</td><td>DONE → <a href="/experiments/3d-wam/decks/2026-09-03-gr1-zero-shot/">deck #10</a></td><td><b>2 / 117</b> episodes · median <b>23 cm</b> · 5 sim failures</td></tr>
-          <tr class="pend"><td>④</td><td><b>GR-1 rerun</b> · both hands · pick + destination</td><td>RUNNING · rlwrld job 155019</td><td>15 / 44 tasks at 22:55 · pending</td></tr>
-          <tr><td>⑤</td><td><b>Contact λ 0.1</b> ciou_0p1 · 120M · <span class="epoch">6.00 eff ep</span> · job 5470</td><td>DONE · ieval 480 + xcontact @1 cm + paired</td><td>cos <b>0.182</b> · ADE <b>10.50</b> vs 9.08 · Δcos <b>−0.098</b> · IoU 0.30 vs z 0.51 · contact 17.3 vs GT 7.4 %</td></tr>
-          <tr class="pend"><td>⑥</td><td><b>Contact λ 1.0</b> (5471) · <b>λ 0.001</b> (5648)</td><td>~48k / ~28k of 110,996 steps at 22:45</td><td>pending · background QoS, preemptible · no ETA</td></tr>
+          <tr><td>①</td><td><b>Baseline</b> ctl · uniform chunks · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + paired vs i5 (288)</td><td>cos <b>0.270</b> · ADE <b>9.10</b> vs 9.08 · vs i5 Δcos <b>−0.026</b></td></tr>
+          <tr><td>②</td><td><b>Data mix</b> w_ep · episode share · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + paired vs ctl (480)</td><td>ADE 9.13 · vs ctl Δcos <b>+0.000</b> · ΔADE +0.04 → <b>null</b></td></tr>
+          <tr><td>③</td><td><b>10 % Sharpa</b> x10_sharpa · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + Sharpa 96 + paired</td><td>ADE 9.58 · vs ctl Δcos <b>+0.002</b> · ΔADE <b>+0.48 cm</b></td></tr>
+          <tr><td>④</td><td><b>Contact λ 0.1</b> ciou_0p1 · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + xcontact + paired</td><td>ADE 10.50 · vs ctl Δcos <b>−0.088</b> · ΔADE +1.40 cm</td></tr>
+          <tr class="pend"><td>⑤</td><td><b>Augmentation</b> · jit1m 6043 · mirror 6044</td><td>RUNNING since 11:34 / 11:40</td><td>≈20:30 / ≈20:40 KST</td></tr>
+          <tr class="pend"><td>⑥</td><td><b>Contact λ 1.0</b> (5471) · <b>λ 0.001</b> (5648)</td><td>preempted twice · waiting</td><td>pending · no ETA</td></tr>
+          <tr class="pend"><td>⑦</td><td><b>Scale-up 320M</b> · MLXP 4×H200 · 9.76 ep</td><td>Suspended · never admitted</td><td>pending · no ETA</td></tr>
+          <tr class="pend"><td>⑧</td><td><b>GR-1 6-ep sweeps</b> · ctl / w_ep · bimanual</td><td>RUNNING · rlwrld 155808 / 155809</td><td>≈15:15 KST → deck #10</td></tr>
         </tbody>
       </table></figure>
   </div>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
-    <li><b>Contact λ</b> — 0.1 harmful → wait for 1.0 / 0.001, then drop unless one clears the base</li>
-    <li><b>Sharpa co-training</b> — no gain at 6 ep; TACO-only retarget confound remains → control still owed</li>
-    <li><b>Next lever</b> — training length and data composition; the base @110k is the only arm under zero</li>
+    <li><b>Data mix</b> — w_ep = ctl at 6 ep → composition is not the lever at this length</li>
+    <li><b>Cross-cluster offset</b> — ctl vs i5 −0.026 on 288 chunks → compare within one cluster only</li>
+    <li><b>Augmentation</b> — no claim before jit1m / mirror land tonight (≈20:30 / 20:40)</li>
   </ol>
-  <p class="footnote">grey italic rows = not landed · 6-ep numbers on the ICLR27 480 basis (zero 9.08 cm) · 3-ep intermediate evals dropped (owner) · clips: owner verifies</p>
+  <p class="footnote">grey italic rows = not landed · 6-ep numbers on the ICLR27 480 basis (zero 9.08 cm) · GR-1 6-ep sweeps report in deck #10 · clips: owner verifies</p>
 </section>
 
-<!-- SECTION: appendix (1a) · corrections on the record · rev8 additions -->
+<!-- SECTION: appendix (1) · corrections on the record · rev9 additions -->
+<section class="slide s-appendix">
+  <h2>Appendix · corrections on the record (rev9, 2026-09-04 12:15)</h2>
+  <ol class="corr">
+    <li><b>Cross-cluster offset</b> — the same recipe trained on ICLR27 (ctl) vs rlwrld (i5) differs by paired Δcos <b>−0.026 [−0.045, −0.006]</b> on the 288 shared chunks (ΔADE +0.12 cm [−0.25, +0.51]): different cluster, seed and data order. Rev8's "x10_sharpa sits below i5 (Δcos −0.023)" was mostly this offset — against its own baseline ctl, x10_sharpa is <b>neutral on direction</b> (+0.002 [−0.012, +0.017]) and slightly worse on ADE (+0.48 cm). ICLR27 arms are compared to ctl from here on; i5 numbers stay as the rlwrld reference only.</li>
+    <li><b>λ 1.0 / λ 0.001 preempted twice</b> — background-QoS jobs 5471 / 5648 were preempted at 03:54 and again after 11:34, when the owner's arms 3 / 4 (jit1m, mirror) took the freed GPUs. They wait for the next idle slot; no ETA.</li>
+  </ol>
+</section>
+
+<!-- SECTION: appendix (1a) · corrections on the record · rev8, kept -->
 <section class="slide s-appendix">
   <h2>Appendix · corrections on the record (rev8, 2026-09-03 23:00)</h2>
   <ol class="corr">
     <li><b>ICLR27 job 5472 (λ 0.001) crashed 2 min in</b> — two arms staged the corpus into the same node-local scratch at once (cp "File exists" storm). Staging now takes a node-local flock; resubmitted as job 5648.</li>
-    <li><b>The GR-1 input omitted the place target</b> — only the pick object entered the point set while every instruction names a destination (container or fixture). The rerun (job 155019) adds it, and the left hand.</li>
+    <li><b>The GR-1 input omitted the place target</b> — only the pick object entered the point set while every instruction names a destination (container or fixture). The rerun (job 155019, done 09-04 00:20) adds it, and the left hand.</li>
     <li><b>3-epoch intermediate evals</b> were run for x10_sharpa and ciou_0p1 but dropped from the deck by owner decision — 6-epoch numbers only.</li>
     <li><b>Paired comparisons vs the i5 base cover 288 of 480 chunks</b> — taco and oakink2 chunk indices differ between the rlwrld and ICLR27 corpora (taco zero 4.47 vs 5.66 cm), so only arctic + dexycb + grab pair. Unpaired means still use all 480.</li>
   </ol>
@@ -435,21 +477,21 @@
     <div>
       <dl class="kv">
         <dt>Ladder</dt><dd class="mono">19 ckpts, one basis (ieval 576), job 152593 · 7.75 ep (140k): Acc5 64.1 / Acc10 77.7 / ADE 7.46 / cos 0.293 / motion 65 % · 10.00 ep (180,608): 63.3 / 76.9 / 7.71 / 0.295 / 70 %.</dd>
-        <dt>MLXP 320M</dt><dd class="mono">4×H200, eff batch 256, 9.76 ep = 22,576 steps · DDP ckpt deadlock 07:54 KST 09-03 fixed, re-queued 12:40 · Suspended 10 h at 23:00, never admitted.</dd>
-        <dt>ICLR27</dt><dd class="mono">x10_sharpa 5469 DONE · ciou_0p1 5470 DONE (both 110,996 steps = 6.00 ep) · ciou_1p0 5471 ~48k · ciou_0p001 5648 ~28k, background QoS · 3-ep evals run, dropped.</dd>
-        <dt>Bases</dt><dd class="mono">ieval 576 (rlwrld) zero 7.97 cm · ieval 480 (ICLR27, no hot3d) zero 9.08, i5's own 480 subset 8.86 · Sharpa 96 TACO zero 4.99 · paired vs i5 = 288 chunks.</dd>
+        <dt>MLXP 320M</dt><dd class="mono">4×H200, eff batch 256, 9.76 ep = 22,576 steps · DDP ckpt deadlock 09-03 07:54 fixed, re-queued 12:40 · Suspended at 12:15 09-04, never admitted.</dd>
+        <dt>ICLR27</dt><dd class="mono">ctl · w_ep · x10_sharpa 5469 · ciou_0p1 5470 DONE (110,996 steps = 6.00 ep, 2×H100) · jit1m 6043 · mirror 6044 RUNNING · ciou_1p0 5471 / ciou_0p001 5648 preempted ×2.</dd>
+        <dt>Bases</dt><dd class="mono">ieval 576 (rlwrld) zero 7.97 cm · ieval 480 (ICLR27, no hot3d) zero 9.08, i5's own 480 subset 8.86 · Sharpa 96 TACO zero 4.99 · paired vs ctl = all 480 · vs i5 = 288.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
-        <dt>GR-1 sweep</dt><dd class="mono">44 tasks × 3 eps × 720 steps · right Fourier hand · human tag · 120M p7 @ 10.00 eff ep · no fine-tuning · 2/117 · median 23 cm · 5 sim-side failures → deck #10 · rerun 155019 (both hands + destination) 15/44 at 22:55.</dd>
+        <dt>GR-1 sweep</dt><dd class="mono">44 tasks × 3 eps · p7 @ 10.00 eff ep · 2/117, median 23 cm → deck #10 · rerun 155019 (bimanual + destination) 1/116, median 18.0 · 6-ep sweeps ctl / w_ep 155808 / 155809 running.</dd>
         <dt>Pipeline</dt><dd class="mono">scene + robot as ONE labeled point set (1024 pts) → predicted total scene flow → per-link Procrustes → arm IK (7 joints) + hand IK (6-dim coupled controller).</dd>
-        <dt>Pilot</dt><dd class="mono">PnPAppleToDrawerClose, 3 eps: predicted 12–14 cm/chunk vs 5–7 cm execution error · arm-IK residual 24–35 mm · final hand→apple 16 / 24 / 26 cm.</dd>
-        <dt>Evidence</dt><dd class="mono">review/train/{ieval,ipaired,xeval,iroll,xcontact,ifeas} · assets/README_ep06.md + harvest_ep06.json · server-mirror/pull4/{ieval,figs,iviz_ep06}/</dd>
+        <dt>Pilot</dt><dd class="mono">PnPAppleToDrawerClose, 3 eps: predicted 12–14 cm/chunk vs 5–7 cm execution error · arm-IK residual 24–35 mm · final 16 / 24 / 26 cm.</dd>
+        <dt>Evidence</dt><dd class="mono">review/train/{ieval,ipaired,xeval,iroll,xcontact,ifeas} · assets/README_ep06.md + harvest_ep06.json · pull4/{ieval,figs,iviz_ep06}/</dd>
       </dl>
     </div>
   </div>
-  <p class="cut"><b>Cut:</b> 19-row ladder dump · per-clip ADE tables · 24-task split dump · H200 sizing charts · MLXP pod-spec iterations · rev6 corrections list (git history) · rev7's fig_crossembod (i0 vs i9 @32k, 2/3-subsample CI) + additive-form λ figures (Δcos −0.002 / −0.001 / −0.006 @1.11 ep; git history) · 3-ep intermediate evals · per-dataset 6-ep rows (README_ep06.md) · GR-1 step logs · ang° note.</p>
+  <p class="cut"><b>Cut:</b> 19-row ladder dump · per-clip ADE tables · 24-task split dump · H200 sizing charts · MLXP pod-spec iterations · rev6 corrections list (git history) · rev7's fig_crossembod (i0 vs i9 @32k, 2/3-subsample CI) + additive-form λ figures (Δcos −0.002 / −0.001 / −0.006 @1.11 ep; git history) · 3-ep intermediate evals · per-dataset 6-ep rows and w_ep − ctl per-dataset ΔADE table (README_ep06.md) · GR-1 step logs · ang° note.</p>
 </section>
 
 </main>
