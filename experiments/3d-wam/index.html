@@ -59,6 +59,11 @@
     <p>Newest first. Each log is one question, ended by a verdict.</p>
   </div>
   <div class="road reveal">
+    <div class="item"><span class="badge wip">running</span><div>
+      <h3><a href="decks/2026-09-04-progress/">Progress: contact loss, data mix, coordinate jitter, mirror</a></h3>
+      <p><code>2026-09-04 · running</code> — <b>The same-cluster baseline is set (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm); the soft-IoU contact loss at λ 0.1 is harmful (paired Δcos −0.088, ΔADE +1.40 cm); the episode-weighted data mix is a null (Δcos +0.000 [−0.007, +0.007]); coordinate jitter and left-right mirror land tonight (≈20:30 / 20:40 KST); the GR-1 6-ep success-rate sweeps for ctl and w_ep are in flight (≈16:30).</b> Per arm: autoregressive 5-chunk rollouts and single-chunk clips for the owner to verify.</p>
+    </div></div>
+
     <div class="item"><span class="badge done">done</span><div>
       <h3><a href="decks/2026-09-03-gr1-zero-shot/">GR-1 tabletop zero-shot: 44 tasks, no fine-tuning</a></h3>
       <p><code>2026-09-03 · done</code> — <b>A human-only 120M 3D-WAM model drives the GR-1 humanoid in closed loop on all 44 RoboCasa pick-and-place tasks, 3 episodes each</b>: the loop closes end-to-end with no robot data and no retargeter, <b>2 of 117 episodes succeed</b> (KettleToPlate, ObjectsTieredBasketToCounter), the hand ends a median 23&nbsp;cm from the object because the controller executes a fraction of each plan; 5 tasks failed inside the simulator before step 0. Every ego-view clip is embedded, one slide per task.</p>
