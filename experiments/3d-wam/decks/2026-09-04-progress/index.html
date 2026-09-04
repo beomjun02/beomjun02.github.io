@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-04 · Progress: contact loss, data mix, coordinate jitter, mirror — 3D-WAM</title>
-<meta name="description" content="Deck #11, 2026-09-04. Same-cluster baseline on ICLR27 (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm). Contact λ ladder closed (Δcos +0.002 / −0.088 / −0.124 for λ 0.001 / 0.1 / 1.0); episode-weighted mix null (Δcos +0.000); 320M at eff 256 worse (Δcos −0.053 at 6 ep, −0.038 at 9 ep); GR-1 6-ep sweeps ctl 0/107, w_ep 1/117; jit1m lands ≈23:30; new base allobj (all objects, HOT3D 5 %, flag validity, parts×8, no history) running. Per-arm rollouts and single-chunk clips for the owner to verify.">
+<meta name="description" content="Deck #11, 2026-09-04. Same-cluster baseline on ICLR27 (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm). Contact λ ladder closed (Δcos +0.002 / −0.088 / −0.124 for λ 0.001 / 0.1 / 1.0); episode-weighted mix null (Δcos +0.000); 320M at eff 256 worse (Δcos −0.053 at 6 ep, −0.038 at 9 ep); GR-1 6-ep sweeps ctl 0/107, w_ep 1/117; jit1m (random origin within 1 m) is the first positive lever (Δcos +0.038, ΔADE −0.74 cm, all datasets); new base allobj (all objects, HOT3D 5 %, flag validity, parts×8, no history, origin jitter 1 m) running; camera-pose sidecars complete. Per-arm rollouts and single-chunk clips for the owner to verify.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <style>
@@ -97,11 +97,11 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Contact loss, episode mix and 320M closed without a gain; new base <b>allobj</b> training.</p>
+  <p class="thesis"><b>[TL;DR]</b> λ, mix, 320M closed; <b>jit1m (random origin) is the first positive lever</b>.</p>
   <ul>
     <li>ctl, the same-cluster baseline at <span class="epoch">6.00 eff ep</span>: cos 0.270, ADE 9.10 vs zero 9.08 cm</li>
     <li>Contact λ 0.001 / 0.1 / 1.0 vs ctl: Δcos +0.002 / −0.088 / −0.124 · predicted contact 8.8 / 17.3 / 34.5 % vs 7.4 % GT</li>
-    <li>Episode mix Δcos +0.000 · 320M ep06 / ep09 Δcos −0.053 / −0.038 · jit1m ≈23:30 KST · mirror cancelled</li>
+    <li>Mix Δcos +0.000 · 320M −0.053 / −0.038 · <b>jit1m +0.038 cos, −0.74 cm ADE</b> · mirror cancelled</li>
   </ul>
   <div class="band">
     <figure style="flex:1 1 60%;min-width:0"><img src="assets/fig_ep06_ade.png" alt="Grouped bar chart of ADE in centimetres at 6.0 effective epochs on 480 stratified chunks, per dataset and overall, for five arms: the i5 base in blue, ctl in dark green, w_ep in yellow, x10_sharpa in teal and ciou_0p1 in orange, with a dashed zero-motion-predictor line per group. Overall: i5 8.7 against its own zero 8.86; ctl 9.1, w_ep 9.1, x10_sharpa 9.6 and ciou_0p1 10.5 against zero 9.08.">
@@ -151,7 +151,7 @@
     <li class="on">Contact auxiliary loss · soft-IoU λ 0.001 / 0.1 / 1.0
       <ul><li><b>λ ladder closed: null at 0.001 (Δcos +0.002), monotonically worse above (−0.088, −0.124)</b></li></ul></li>
     <li>Data mixing</li>
-    <li>Random coordinate (jit1m, ≈23:30) · mirror (cancelled)</li>
+    <li>Random coordinate · jit1m <b>Δcos +0.038</b> · mirror (cancelled)</li>
     <li>Scale · 320M (MLXP)</li>
   </ol>
   <div class="band snug">
@@ -246,6 +246,30 @@
       <figcaption><b>oakink2</b> · 2023-04-20-16-46-22<br>cos k0 +0.09 → k4 −0.30<br>ADE 1.7 → 7.4 cm</figcaption></figure>
     <figure><img src="assets/ciou_0p001_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_0p001 model, grab episode 2219: ground truth left, prediction right, chunk counter top-left." loading="lazy">
       <figcaption><b>grab</b> · s7_camera_browse_1<br>cos k0 −0.34 → k4 +0.09<br>ADE 14.8 → 84.8 cm</figcaption></figure>
+  </div>
+  <p class="footnote">autoregressive: each chunk starts from the previous prediction · 5 chunks · counter top-left · DexYCB episodes &lt; 5 chunks, none</p>
+</section>
+
+<!-- SECTION: viz · autoregressive 5-chunk rollouts · ciou_1p0 · captions only -->
+<section class="slide s-viz">
+  <h2>AR rollouts · 5 chunks · ciou_1p0 (contact λ 1.0) · <span class="epoch">6.00 eff ep</span></h2>
+  <div class="vizgrid four">
+    <figure><img src="assets/ciou_1p0_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, taco episode 5552: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>taco</b> · kettle_20231031_013<br>cos k0 −0.12 → k4 +0.08<br>ADE 5.3 → 24.1 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, arctic episode 212: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>arctic</b> · s08_notebook_use_02<br>cos k0 −0.06 → k4 +0.33<br>ADE 33.7 → 55.8 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, oakink2 episode 3035: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>oakink2</b> · 2023-04-20-14-36-16<br>cos k0 +0.28 → k4 +0.18<br>ADE 6.0 → 21.4 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, grab episode 1434: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>grab</b> · grab_s1_banana_lift_0<br>cos k0 +0.38 → k4 +0.08<br>ADE 32.3 → 52.5 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, taco episode 6147: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>taco</b> · plate_20231024_052<br>cos k0 −0.08 → k4 −0.31<br>ADE 8.4 → 21.2 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, arctic episode 236: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>arctic</b> · s09_laptop_use_02<br>cos k0 +0.29 → k4 +0.00<br>ADE 21.8 → 40.0 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, oakink2 episode 3059: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>oakink2</b> · 2023-04-20-16-46-22<br>cos k0 −0.07 → k4 −0.05<br>ADE 2.9 → 19.5 cm</figcaption></figure>
+    <figure><img src="assets/ciou_1p0_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, ciou_1p0 model, grab episode 2219: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>grab</b> · s7_camera_browse_1<br>cos k0 −0.18 → k4 −0.22<br>ADE 21.9 → 106.7 cm</figcaption></figure>
   </div>
   <p class="footnote">autoregressive: each chunk starts from the previous prediction · 5 chunks · counter top-left · DexYCB episodes &lt; 5 chunks, none</p>
 </section>
@@ -361,7 +385,7 @@
     <li>Contact auxiliary loss · λ ladder</li>
     <li class="on">Data mixing · episode-weighted (w_ep) vs uniform (ctl)
       <ul><li><b>null at 6 ep: Δcos +0.000 [−0.007, +0.007], ΔADE +0.04 cm [−0.08, +0.16]</b></li></ul></li>
-    <li>Random coordinate (jit1m, ≈23:30) · mirror (cancelled)</li>
+    <li>Random coordinate · jit1m <b>Δcos +0.038</b> · mirror (cancelled)</li>
     <li>Scale · 320M (MLXP)</li>
   </ol>
   <div class="band snug">
@@ -1467,36 +1491,140 @@
   <p class="footnote">“pick up the wine, place it into the drawer and close the drawer” · 720 steps · final = nearer hand → target object · R / L = per hand · success = benchmark flag</p>
 </section>
 
-<!-- SECTION: results (3) · random coordinate (jit1m, lands ≈23:30 KST) · left-right mirror cancelled by owner -->
+<!-- SECTION: results (3) · random coordinate (jit1m) = first positive lever · left-right mirror cancelled by owner -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Contact auxiliary loss · λ ladder</li>
     <li>Data mixing</li>
-    <li class="on">Random coordinate · jit1m · <b>lands ≈23:30 KST</b> · left-right mirror · <b>cancelled</b>
-      <ul><li>jit1m: origin uniform in a 1 m ball around the hand centre · ICLR27 6634, resumed at step 80k</li></ul></li>
+    <li class="on">Random coordinate · jit1m (origin uniform in a 1 m ball) · left-right mirror <b>cancelled</b>
+      <ul><li><b>first positive lever: Δcos +0.038 [+0.026, +0.051] · ΔADE −0.74 cm · all 5 datasets</b></li></ul></li>
     <li>Scale · 320M (MLXP)</li>
   </ol>
   <div class="band snug">
-    <figure class="tb" style="flex:0 0 60%;min-width:0">
-      <table class="compact dense cfg" style="white-space:nowrap">
-        <thead><tr><th>Config</th><th>ctl</th><th>jit1m</th><th>mirror</th></tr></thead>
+    <figure class="tb" style="flex:0 0 46%;min-width:0">
+      <table class="compact dense cfg">
+        <thead><tr><th>480 chunks</th><th>ctl</th><th>jit1m</th><th>Δ [95 % CI]</th></tr></thead>
         <tbody>
-          <tr><td>training origin</td><td>hand centre</td><td><b>uniform, 1 m ball</b></td><td>hand centre</td></tr>
-          <tr><td>yaw · reflection</td><td>random · none</td><td>random · none</td><td>random · <b>x → −x, p 0.5</b></td></tr>
-          <tr><td>job · state</td><td>done</td><td><b>6634</b> · step 92k / 111k</td><td>6044 <b>cancelled</b> at 72k</td></tr>
-          <tr class="pend"><td>cos · ADE · Acc5 vs ctl</td><td colspan="3">jit1m TBD ≈00:00 KST · paired, 480 chunks · mirror: none</td></tr>
-          <tr class="pend"><td>AR rollouts · GR-1 SR</td><td colspan="3">jit1m after landing · mirror: none</td></tr>
+          <tr><td>train origin</td><td>hand centre</td><td><b>1 m ball</b></td><td>—</td></tr>
+          <tr><td>cosine</td><td>0.270</td><td><b>0.308</b></td><td><b>+0.038</b> [+0.026, +0.051]</td></tr>
+          <tr><td>cosine · hand</td><td>0.354</td><td><b>0.406</b></td><td><b>+0.052</b> [+0.036, +0.071]</td></tr>
+          <tr><td>ADE cm · zero 9.08</td><td>9.10</td><td><b>8.36</b></td><td><b>−0.74</b> [−0.99, −0.50]</td></tr>
         </tbody>
-      </table>
-      <figcaption>training frame only · eval frame unchanged</figcaption></figure>
-    <figure class="phold" style="flex:1 1 19%;min-width:0"><div class="pbox"><b>TBD ≈00:00 KST</b><div>paired jit1m − ctl, 480 chunks<br>Δcos · ΔADE · ΔAcc5</div></div>
-      <figcaption>placeholder · fig_ep06_paired with the jit1m row</figcaption></figure>
-    <figure class="phold" style="flex:1 1 19%;min-width:0"><div class="pbox"><b>TBD ≈00:00 KST</b><div>AR rollouts · 5 chunks<br>2 episodes × 4 datasets</div></div>
-      <figcaption>placeholder · iroll_ar5/jit1m/</figcaption></figure>
+      </table></figure>
+    <figure style="flex:1 1 52%;min-width:0"><img src="assets/fig_ep06_jit1m_paired.png" alt="Bar chart: jit1m minus ctl, paired on identical chunks, per dataset and overall. Left: delta direction cosine, all bars positive, overall +0.038. Right: delta ADE in cm, all bars negative, overall −0.74." loading="lazy">
+      <figcaption>paired jit1m − ctl · 96 chunks per dataset · 5k bootstrap 95 % CI</figcaption></figure>
   </div>
-  <p class="etabar"><b>Hypothesis</b> · relative geometry only → jit1m = ctl (<b>translation-invariant</b>) · also decides whether an ego-camera origin costs anything</p>
-  <p class="footnote">same recipe, seed and corpus index as ctl · 110,996 steps = 6.00 eff ep · 2×H100 · mirror: restart or drop is the owner's call</p>
+  <p class="etabar"><b>Read</b> · "translation-invariant, jit1m = ctl" rejected upward: a random origin helps · first ADE clearly below zero · <b>in the new base</b></p>
+  <p class="footnote">same recipe, seed, corpus as ctl · eval frame hand-centred · Acc5 56.9 → 59.6 % · preempted 3×, ≈5.6k steps re-done · mirror cancelled at 72k</p>
+</section>
+
+<!-- SECTION: viz · autoregressive 5-chunk rollouts · jit1m · captions only -->
+<section class="slide s-viz">
+  <h2>AR rollouts · 5 chunks · jit1m (origin jitter 1 m) · <span class="epoch">6.00 eff ep</span></h2>
+  <div class="vizgrid four">
+    <figure><img src="assets/jit1m_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, taco episode 5552: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>taco</b> · kettle_20231031_013<br>cos k0 −0.05 → k4 −0.15<br>ADE 3.2 → 14.0 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, arctic episode 212: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>arctic</b> · s08_notebook_use_02<br>cos k0 −0.22 → k4 +0.28<br>ADE 31.6 → 25.5 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, oakink2 episode 3035: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>oakink2</b> · 2023-04-20-14-36-16<br>cos k0 +0.50 → k4 +0.19<br>ADE 10.9 → 6.5 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, grab episode 1434: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>grab</b> · grab_s1_banana_lift_0<br>cos k0 +0.16 → k4 +0.17<br>ADE 30.3 → 43.2 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, taco episode 6147: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>taco</b> · plate_20231024_052<br>cos k0 +0.25 → k4 −0.74<br>ADE 3.5 → 13.0 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, arctic episode 236: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>arctic</b> · s09_laptop_use_02<br>cos k0 +0.55 → k4 +0.22<br>ADE 13.7 → 12.4 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, oakink2 episode 3059: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>oakink2</b> · 2023-04-20-16-46-22<br>cos k0 −0.07 → k4 −0.30<br>ADE 4.2 → 9.4 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, jit1m model, grab episode 2219: ground truth left, prediction right, chunk counter top-left." loading="lazy">
+      <figcaption><b>grab</b> · s7_camera_browse_1<br>cos k0 −0.16 → k4 +0.21<br>ADE 15.2 → 84.6 cm</figcaption></figure>
+  </div>
+  <p class="footnote">autoregressive: each chunk starts from the previous prediction · 5 chunks · counter top-left · DexYCB episodes &lt; 5 chunks, none</p>
+</section>
+
+<!-- SECTION: viz · single-chunk open-loop · jit1m · captions only -->
+<section class="slide s-viz">
+  <h2>Single chunk · 1 s · jit1m (origin jitter 1 m) · <span class="epoch">6.00 eff ep</span></h2>
+  <div class="vizgrid five">
+    <figure><img src="assets/jit1m_taco_human_s21_c28014_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, taco chunk 28014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>taco</b> · chunk 28014<br>motion pred 4.15 / GT 13.97 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, arctic chunk 407: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 407<br>motion pred 4.45 / GT 28.75 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_dexycb_human_s0_c3977_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, dexycb chunk 3977: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 3977<br>motion pred 5.05 / GT 28.67 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_human_s16_c22644_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, oakink2 chunk 22644: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 22644<br>motion pred 11.50 / GT 11.60 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_human_s19_c5730_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, grab chunk 5730: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>grab</b> · chunk 5730<br>motion pred 9.36 / GT 43.54 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_taco_human_s59_c29263_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, taco chunk 29263: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>taco</b> · chunk 29263<br>motion pred 5.63 / GT 13.44 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, arctic chunk 3772: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 3772<br>motion pred 3.06 / GT 45.09 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_dexycb_human_s0_c4014_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, dexycb chunk 4014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 4014<br>motion pred 3.43 / GT 28.83 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_human_s264_c24733_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, oakink2 chunk 24733: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 24733<br>motion pred 0.20 / GT 5.69 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_human_s82_c6992_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, grab chunk 6992: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>grab</b> · chunk 6992<br>motion pred 9.03 / GT 41.21 cm</figcaption></figure>
+  </div>
+  <p class="footnote">2 most dynamic of 40 val chunks per dataset · k = 8 averaged samples · cfg 1.0 · 6.00 eff ep</p>
+</section>
+
+<!-- SECTION: viz · single-chunk comparison · ctl vs jit1m · chunk row 0 · captions only -->
+<section class="slide s-viz">
+  <h2>Single chunk · same chunks · ctl (top) / jit1m (bottom) · set 1 of 2</h2>
+  <div class="vizgrid five">
+    <figure><img src="assets/ctl_taco_human_s21_c28014_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, taco chunk 28014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · taco · chunk 28014<br>motion pred 4.75 / GT 13.97 cm</figcaption></figure>
+    <figure><img src="assets/ctl_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, arctic chunk 407: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · arctic · chunk 407<br>motion pred 13.32 / GT 28.75 cm</figcaption></figure>
+    <figure><img src="assets/ctl_dexycb_human_s0_c3977_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, dexycb chunk 3977: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · dexycb · chunk 3977<br>motion pred 1.53 / GT 28.67 cm</figcaption></figure>
+    <figure><img src="assets/ctl_oakink2_human_s16_c22644_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, oakink2 chunk 22644: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · oakink2 · chunk 22644<br>motion pred 10.78 / GT 11.60 cm</figcaption></figure>
+    <figure><img src="assets/ctl_grab_human_s19_c5730_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, grab chunk 5730: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · grab · chunk 5730<br>motion pred 15.50 / GT 43.54 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_taco_human_s21_c28014_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, taco chunk 28014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · taco · chunk 28014<br>motion pred 4.15 / GT 13.97 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, arctic chunk 407: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · arctic · chunk 407<br>motion pred 4.45 / GT 28.75 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_dexycb_human_s0_c3977_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, dexycb chunk 3977: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · dexycb · chunk 3977<br>motion pred 5.05 / GT 28.67 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_human_s16_c22644_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, oakink2 chunk 22644: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · oakink2 · chunk 22644<br>motion pred 11.50 / GT 11.60 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_human_s19_c5730_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, grab chunk 5730: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · grab · chunk 5730<br>motion pred 9.36 / GT 43.54 cm</figcaption></figure>
+  </div>
+  <p class="footnote">rows = arm, columns = dataset · identical chunks and seed · k = 8 averaged samples · cfg 1.0 · both at 6.00 eff ep</p>
+</section>
+
+<!-- SECTION: viz · single-chunk comparison · ctl vs jit1m · chunk row 1 · captions only -->
+<section class="slide s-viz">
+  <h2>Single chunk · same chunks · ctl (top) / jit1m (bottom) · set 2 of 2</h2>
+  <div class="vizgrid five">
+    <figure><img src="assets/ctl_taco_human_s59_c29263_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, taco chunk 29263: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · taco · chunk 29263<br>motion pred 5.97 / GT 13.44 cm</figcaption></figure>
+    <figure><img src="assets/ctl_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, arctic chunk 3772: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · arctic · chunk 3772<br>motion pred 2.73 / GT 45.09 cm</figcaption></figure>
+    <figure><img src="assets/ctl_dexycb_human_s0_c4014_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, dexycb chunk 4014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · dexycb · chunk 4014<br>motion pred 3.46 / GT 28.83 cm</figcaption></figure>
+    <figure><img src="assets/ctl_oakink2_human_s264_c24733_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, oakink2 chunk 24733: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · oakink2 · chunk 24733<br>motion pred 0.43 / GT 5.69 cm</figcaption></figure>
+    <figure><img src="assets/ctl_grab_human_s82_c6992_k8.gif" alt="Single-chunk point-cloud rollout, ctl model, grab chunk 6992: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>ctl</b> · grab · chunk 6992<br>motion pred 7.46 / GT 41.21 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_taco_human_s59_c29263_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, taco chunk 29263: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · taco · chunk 29263<br>motion pred 5.63 / GT 13.44 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, arctic chunk 3772: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · arctic · chunk 3772<br>motion pred 3.06 / GT 45.09 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_dexycb_human_s0_c4014_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, dexycb chunk 4014: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · dexycb · chunk 4014<br>motion pred 3.43 / GT 28.83 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_oakink2_human_s264_c24733_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, oakink2 chunk 24733: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · oakink2 · chunk 24733<br>motion pred 0.20 / GT 5.69 cm</figcaption></figure>
+    <figure><img src="assets/jit1m_grab_human_s82_c6992_k8.gif" alt="Single-chunk point-cloud rollout, jit1m model, grab chunk 6992: ground truth left, prediction right, ten frames of one second." loading="lazy">
+      <figcaption><b>jit1m</b> · grab · chunk 6992<br>motion pred 9.03 / GT 41.21 cm</figcaption></figure>
+  </div>
+  <p class="footnote">rows = arm, columns = dataset · identical chunks and seed · k = 8 averaged samples · cfg 1.0 · both at 6.00 eff ep</p>
 </section>
 
 <!-- SECTION: results (4) · scale · 320M (MLXP 4xH200) vs 120M ctl -->
@@ -1505,7 +1633,7 @@
   <ol class="agenda">
     <li>Contact auxiliary loss · λ ladder</li>
     <li>Data mixing</li>
-    <li>Random coordinate (jit1m, ≈23:30) · mirror (cancelled)</li>
+    <li>Random coordinate · jit1m <b>Δcos +0.038</b> · mirror (cancelled)</li>
     <li class="on">Scale · 320M (d 1024 × 18, MLXP 4×H200, eff 256, lr 1e-4) vs 120M ctl
       <ul><li><b>worse on every dataset at matched epochs: Δcos −0.053 (6 ep), −0.038 (9 ep) · ΔADE +0.7 / +0.8 cm</b></li></ul></li>
   </ol>
@@ -1553,45 +1681,44 @@
   <p class="footnote">autoregressive: each chunk starts from the previous prediction · 5 chunks · counter top-left · DexYCB episodes &lt; 5 chunks, none</p>
 </section>
 
-<!-- SECTION: status · 2026-09-04 22:15 KST -->
+<!-- SECTION: status · 2026-09-05 02:10 KST -->
 <section class="slide s-discuss s-status">
-  <h2>Status · 2026-09-04 22:15 KST</h2>
-  <p class="thesis">λ ladder closed and 320M read; new base <b>allobj</b> running; jit1m lands ≈23:30.</p>
+  <h2>Status · 2026-09-05 02:10 KST</h2>
+  <p class="thesis">jit1m positive → into the base; <b>allobj</b> running on the finite corpus; camera sidecars complete.</p>
   <div class="band">
     <figure>
       <table class="compact dense status">
-        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 22:15 KST</th><th>Result / ETA</th></tr></thead>
+        <thead><tr><th>#</th><th>Workstream · setup</th><th>State at 02:10 KST Sep 5</th><th>Result / ETA</th></tr></thead>
         <tbody>
           <tr><td>①</td><td><b>Baseline</b> ctl · uniform chunks · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + rollouts</td><td>cos <b>0.270</b> · ADE <b>9.10</b> vs 9.08</td></tr>
           <tr><td>②</td><td><b>Contact λ</b> 0.001 / 0.1 / 1.0 · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval 480 + xcontact, paired</td><td>Δcos <b>+0.002 / −0.088 / −0.124</b> → <b>closed</b></td></tr>
           <tr><td>③</td><td><b>Data mix</b> w_ep · episode share · <span class="epoch">6.00 eff ep</span></td><td>DONE · ieval + GR-1 sweep</td><td>Δcos <b>+0.000</b> · GR-1 SR 1 / 117 → <b>null</b></td></tr>
           <tr><td>④</td><td><b>Scale</b> 320M · MLXP 4×H200 · eff 256</td><td>DONE 05:42 · ep06 / ep09 evaluated · ep10 lost</td><td>Δcos <b>−0.053 / −0.038</b> · ΔADE +0.7 / +0.8 → <b>worse</b></td></tr>
-          <tr class="pend"><td>⑤</td><td><b>Random coordinate</b> jit1m · ICLR27 6634</td><td>RUNNING · step 92k / 111k · resumed from 80k</td><td>≈23:30 KST · eval ≈00:00</td></tr>
-          <tr><td>⑥</td><td><b>Left-right mirror</b> 6044 · <b>parts×8</b> p8x 6635</td><td>CANCELLED by owner 21:00 (72k · not started)</td><td>parts×8 folded into the new base</td></tr>
-          <tr class="pend"><td>⑦</td><td><b>New base</b> allobj · ICLR27 6655 · 2×H100</td><td>RUNNING since 22:00 · 116,838 steps</td><td>≈15 h → <b>≈13:00 KST Sep 5</b></td></tr>
-          <tr><td>⑧</td><td><b>GR-1 6-ep sweeps</b> ctl / w_ep · bimanual</td><td>DONE 16:08 · 37 / 39 tasks · 155808 / 155809</td><td>SR <b>0 / 107</b> vs <b>1 / 117</b> · median 18.6 / 17.4 cm</td></tr>
+          <tr><td>⑤</td><td><b>Random coordinate</b> jit1m · ICLR27 6634 · <span class="epoch">6.00 eff ep</span></td><td>DONE 23:14 · ieval 480 + AR + clips</td><td>Δcos <b>+0.038</b> [+0.026, +0.051] · ΔADE <b>−0.74</b> cm → <b>positive, in base</b></td></tr>
+          <tr class="pend"><td>⑥</td><td><b>New base</b> allobj + jitter 1 m · ICLR27 6780 · 2×H100</td><td>RUNNING since 02:03 Sep 5 · 116,838 steps · 0.79 s/step</td><td>≈26 h → <b>≈03:40 KST Sep 6</b></td></tr>
+          <tr><td>⑦</td><td><b>GR-1 6-ep sweeps</b> ctl / w_ep · bimanual</td><td>DONE 16:08 · 37 / 39 tasks · 155808 / 155809</td><td>SR <b>0 / 107</b> vs <b>1 / 117</b> · median 18.6 / 17.4 cm</td></tr>
+          <tr><td>⑧</td><td><b>Camera-pose sidecars</b> · six datasets · rlwrld 156798–156803</td><td>DONE 01:52 · v2/&lt;ds&gt;/cameras.npz on S3</td><td>TACO 12+ego · DexYCB 8 · OakInk2 3+ego · ARCTIC, HOT3D ego · GRAB head</td></tr>
         </tbody>
       </table>
       </figure>
   </div>
   <p class="subhead">Discussion — owner only:</p>
   <ol>
-    <li><b>Closed</b> — contact loss (monotone harm), episode mix (null), 320M at eff 256 (worse)</li>
-    <li><b>allobj</b> — all objects · HOT3D 5 % · flag validity · parts×8 · no history; ablate only if it moves</li>
-    <li><b>Frame</b> — camera-pose sidecars (ARCTIC, DexYCB, OakInk2, HOT3D, GRAB; TACO pending) after jit1m</li>
+    <li><b>Closed</b> — contact loss, episode mix, 320M at eff 256 · <b>positive</b> — random origin (now in allobj)</li>
+    <li><b>Next</b> — camera-frame arm (stats recompute) · allobj read ≈ 04:00 KST Sep 6</li>
   </ol>
-  <p class="footnote">grey italic rows = not landed · ICLR27 480 basis (zero 9.08 cm) · DexYCB flags: 784 eps / 3,342 frames untracked · clips: owner verifies</p>
+  <p class="footnote">grey italic = not landed · 480 basis (zero 9.08 cm) · mirror 6044 / p8x 6635 cancelled by owner · allobj restarted twice (NaN origin bug, fixed)</p>
 </section>
 
 <!-- SECTION: appendix (1) · corrections / notes -->
 <section class="slide s-appendix">
-  <h2>Appendix · notes on the record (2026-09-04 22:15)</h2>
+  <h2>Appendix · notes on the record (2026-09-05 02:10)</h2>
   <ol class="corr">
     <li><b>Cross-cluster offset</b> — ctl (ICLR27) vs the i5 base (rlwrld) differs by paired Δcos <b>−0.026 [−0.045, −0.006]</b> on 288 shared chunks; arms are compared within one cluster only, every ICLR27 arm against ctl on all 480 chunks.</li>
     <li><b>320M ep10 lost</b> — the run reached 22,576 steps (10 ep) but the final checkpoint was removed after the run and no ep10 snapshot exists (rounding at the boundary); ep09 is the best surviving. The trainer now writes <span class="mono">weights_final.pt</span>. Recipe eff 256 / lr 1e-4 = epochs matched, steps 8× fewer.</li>
     <li><b>Validity from tracking flags</b> — for the new corpus the jump / parked-hand heuristics are replaced by DexYCB's own <span class="mono">pose_m = 0</span> flag: 784 / 1,000 episodes, 3,342 frames untracked (heuristic: 3,472); flagged frames are NaN, chunks starting on them dropped (23 % of DexYCB, 0 % elsewhere). Old arms keep the heuristic via a config switch.</li>
-    <li><b>Owner cancellations</b> — mirror (6044, step 72k, preempted 3×) and p8x (never started) cancelled at 21:00; parts×8 enters the new base without an isolated read. jit1m preempted 3×, resumed from 80k (6634).</li>
-    <li><b>DexYCB has no 5-chunk episodes</b> — AR grids cover taco, arctic, oakink2, grab. hot3d AR for ctl / w_ep only. ciou_1p0 AR rendered on ICLR27, not pulled.</li>
+    <li><b>allobj false starts</b> — 6655 / 6665 went NaN from step 20: DexYCB episodes whose hand is untracked at frame 0 got a NaN origin (mean of an empty set) and became NaN entirely; fixed in the preprocessor, DexYCB re-published to v2, 6780 verified finite. jit1m preempted 3×, resumed from 5k-step checkpoints. Owner cancelled mirror (72k) and p8x (never started) at 21:00.</li>
+    <li><b>DexYCB has no 5-chunk episodes</b> — AR grids cover taco, arctic, oakink2, grab. hot3d AR for ctl / w_ep only.</li>
   </ol>
 </section>
 
@@ -1601,17 +1728,17 @@
   <div class="cols">
     <div>
       <dl class="kv">
-        <dt>Metrics</dt><dd class="mono">pull4/ieval/README_ep06.md + harvest_ep06.json — ieval 480 per arm/dataset (ctl, w_ep, x10_sharpa, ciou ×3, 320M ep06/09), paired vs ctl, xcontact per λ.</dd>
-        <dt>Figures</dt><dd class="mono">pull4/figs/fig_ep06_{cos,ade,paired,contact,wep_vs_ctl,lambda_ladder,320m_paired,320m_table}.png · pull4/figs/gr1_sweep_{ctl,wep,ctl_vs_wep}.png.</dd>
-        <dt>AR rollouts</dt><dd class="mono">pull4/iroll_ar5/&lt;arm&gt;/ — 8 GIFs + drift.json · ctl, w_ep, x10_sharpa, ciou_0p1, ciou_0p001, p8c_320m_ep09.</dd>
-        <dt>Single chunk</dt><dd class="mono">pull4/iviz_d6/&lt;arm&gt;/ — 10 GIFs + report.json · + ciou_1p0, p8c_320m_ep06/ep09 · hot3d/ for ctl, w_ep.</dd>
+        <dt>Metrics</dt><dd class="mono">pull4/ieval/README_ep06.md + harvest_ep06.json — ieval 480 per arm/dataset (ctl, w_ep, x10_sharpa, ciou ×3, 320M ep06/09, jit1m), paired vs ctl, xcontact per λ.</dd>
+        <dt>Figures</dt><dd class="mono">pull4/figs/fig_ep06_{cos,ade,paired,contact,wep_vs_ctl,lambda_ladder,320m_paired,320m_table,jit1m_paired}.png · pull4/figs/gr1_sweep_{ctl,wep,ctl_vs_wep}.png.</dd>
+        <dt>AR rollouts</dt><dd class="mono">pull4/iroll_ar5/&lt;arm&gt;/ — 8 GIFs + drift.json · ctl, w_ep, x10_sharpa, ciou_0p1, ciou_0p001, ciou_1p0, p8c_320m_ep09, jit1m.</dd>
+        <dt>Single chunk</dt><dd class="mono">pull4/iviz_d6/&lt;arm&gt;/ — 10 GIFs + report.json · + ciou_1p0, p8c_320m_ep06/ep09, jit1m · hot3d/ for ctl, w_ep.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
         <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/* — sweep_0903 (2/117), sweep_0903_bi2 (1/116), sweep_0904_ctl (0/107, 18.6 cm), sweep_0904_w_ep (1/117, 17.4 cm) + sweep_table.json each.</dd>
-        <dt>ICLR27 jobs</dt><dd class="mono">ctl · w_ep · x10_sharpa 5469 · ciou_0p1 5470 · ciou_1p0 5471 · ciou_0p001 5648 DONE · jit1m 6634, allobj 6655 RUNNING · mirror 6044 / p8x 6635 cancelled · evals 6611 / 6642 / 6637 / 6638.</dd>
-        <dt>MLXP · rlwrld</dt><dd class="mono">MLXP p8c_320m_10ep_4gpu DONE 05:42 · rlwrld GR-1 sweeps 155808 / 155809 · all-objects preprocess 156261 / 156262 / 156540 / 156692 · caches 156693.</dd>
+        <dt>ICLR27 jobs</dt><dd class="mono">ctl · w_ep · x10_sharpa 5469 · ciou_0p1 5470 · ciou_1p0 5471 · ciou_0p001 5648 · jit1m 6634 DONE · allobj 6780 RUNNING (6655 / 6665 NaN) · mirror 6044 / p8x 6635 cancelled · evals 6611 / 6642 / 6637 / 6638 / 6692.</dd>
+        <dt>MLXP · rlwrld</dt><dd class="mono">MLXP p8c_320m_10ep_4gpu DONE 05:42 · rlwrld GR-1 sweeps 155808 / 155809 · all-objects preprocess 156261 / 156262 / 156540 / 156692 / 156830 · caches 156831 · cameras 156798–156803.</dd>
         <dt>Bases</dt><dd class="mono">ieval 480 (ICLR27 v1) zero 9.08 cm, zAcc5 59.8 % · v2 = all objects + hot3d, 901,728 chunks after validity, s3 …/3dwam-10hz-n1024/v2.</dd>
       </dl>
     </div>
