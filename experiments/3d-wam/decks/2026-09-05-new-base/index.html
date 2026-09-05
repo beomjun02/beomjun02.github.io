@@ -142,8 +142,8 @@
         </tbody>
       </table>
       <figcaption><b>Recipe</b> per base — 120M video-DiT, flow matching, T = 10 @ 10 Hz throughout; eff ep = steps × eff batch ÷ corpus</figcaption></figure>
-    <figure style="flex:1 1 0;min-width:0"><img src="assets/arch_variable_objects.png" alt="Architecture schematic: token groups per entity (left and right hand, active objects dense, further objects sparse), one DiT block with intra-entity, dense-group and summary-exchange attention paths followed by text cross-attention and MLP, and a cost table for 2 hands plus 8 objects.">
-      <figcaption><b>Architecture schematic</b> with variable object sets — per-entity token groups, set-transformer summary tokens, k = 8 part-major Hilbert patches (tokenizer unchanged)</figcaption></figure>
+    <figure style="flex:1 1 0;min-width:0"><img src="assets/arch_main.png" alt="Architecture of the trained base: scene and hands as one labelled 3-D point set (512 points per hand, 256 per object, up to 16 objects), k=8 part-major Hilbert patches, a video-DiT with full attention over all patch tokens and time, text cross-attention, flow matching on future positions over ten frames at 10 Hz.">
+      <figcaption><b>Trained architecture</b> — one labelled point set (hands 512 pts, objects 256 pts, ≤ 16), k = 8 part-major Hilbert patches, full-attention video-DiT, flow matching, T = 10 @ 10 Hz</figcaption></figure>
   </div>
   <p class="footnote">base_v2 / base_v3 configs: pull4/code configs · v2 corpus = all tracked objects + HOT3D, 901,728 chunks after validity · I-SERIES record: history for 3,400 steps beats no-history for 110,000</p>
 </section>
@@ -359,7 +359,7 @@
       <dl class="kv">
         <dt>Metrics</dt><dd class="mono">pull4/ieval/harvest_ep06.json (rows + paired_vs_ctl) · ieval_ctl.json · ieval_base_v2.json (per_chunk; 224-key table computed on (dataset, key) matches) · README_ep06.md.</dd>
         <dt>Curves</dt><dd class="mono">trainer val: jobs/98e98703/tmp/valcurves.txt (ctl, jit1m, w_ep, ciou_0p1, base_v2, base_v2_ct, base_v2_po05) + base_v3 points from the 7487 log → assets/fig_valcurves.png.</dd>
-        <dt>Figures</dt><dd class="mono">assets/fig_paired_forest.png · fig_gr1_sweeps.png (new) · pull4/figs/fig_ep06_base_v2.png · arch_variable_objects.png.</dd>
+        <dt>Figures</dt><dd class="mono">assets/fig_paired_forest.png · fig_gr1_sweeps.png (new) · pull4/figs/fig_ep06_base_v2.png · arch_main.png.</dd>
         <dt>Clips</dt><dd class="mono">pull4/iroll_ar5/base_v2/ (8 GIFs + drift.json) · pull4/iviz_d6/base_v2/ (10 GIFs + base_v2_report.json).</dd>
       </dl>
     </div>
