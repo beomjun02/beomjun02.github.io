@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #12 · 2026-09-05 · New baseline: what broke, what fixed it. base_v2 (eleven changes at once,
-     no history) landed AT CHANCE on the v2 basis; paired vs ctl on the 224 shared chunk keys dcos -0.218, dADE
-     +6.2 cm; diagnosis = the removed history conditioning (I-SERIES: history for 3,400 steps beats no-history
-     for 110,000). base_v3 = base_v2 + history H=2 (ONE variable) is training (ICLR27 7487, 4xH100, lands ~22:40
-     KST Sep 5). Closed on the ctl basis: contact lambda ladder, episode mix, 320M at eff 256; positive: jit1m.
-     GR-1 zero-shot sweeps ctl / w_ep / jit1m. Structure: 7 main slides (title, overview, method, results x3,
-     summary) + 2 viz-grid slides OUTSIDE the <=8 cap (captions only) + 2 appendix slides. Clips are never
-     described - the owner verifies renders. -->
+<!-- 3D-WAM deck #12 · 2026-09-05 (rev 2, 23:30 KST) · New baseline: what broke, what fixed it. base_v2 (eleven
+     changes at once, no history) landed AT CHANCE on the v2 basis; diagnosis = the removed history conditioning.
+     base_v3 = base_v2 + history H=2 (ONE variable; ICLR27 7487, 4xH100, 8.6 h, 110,996 steps = 4.14 eff ep)
+     FINISHED 22:38 KST and was evaluated: 528 chunks cos 0.279 / ADE 9.04 vs zero 8.66; paired vs base_v2
+     dcos +0.186, vs C2 (rlwrld best, re-evaluated on the v2 loader) +0.045; on the 224 keys shared with ctl
+     dcos +0.026 [-0.011,+0.062] = parity at 4.14 vs 6.0 eff ep. Dataset inspection (approach / retreat): GRAB,
+     ARCTIC, OakInk2 start and end far from the object. GR-1 sweep for base_v3 running on rlwrld (array 158806,
+     since 22:55 KST). Closed on the ctl basis: contact lambda ladder, episode mix, 320M; positive: jit1m.
+     Structure: 8 main slides (title, overview, method x2 incl. data, results x3, summary) + 5 viz-grid slides
+     OUTSIDE the <=8 cap (captions only) + 2 appendix slides. Clips are never described - the owner verifies
+     renders. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-05 · New baseline: what broke, what fixed it — 3D-WAM</title>
-<meta name="description" content="Deck #12, 2026-09-05. The new base base_v2 (corpus v2, 16 objects x 256 pts, flag validity, origin jitter, NO history) landed at chance: cos 0.092, ADE 11.83 vs zero 8.66 cm on 528 chunks; paired vs ctl on 224 shared keys dcos -0.218 [-0.267,-0.169], dADE +6.2 cm. Cause: the removed history conditioning. base_v3 = base_v2 + history H=2 is training (ICLR27 7487) and its trainer val crosses the zero predictor at 32.5k steps. Closed on the ctl basis: contact lambda ladder, episode-weighted mix, 320M at eff 256; jit1m positive (dcos +0.038). GR-1 zero-shot sweeps: ctl 0/107, w_ep 1/117, jit1m 1/117.">
+<meta name="description" content="Deck #12, 2026-09-05 (rev 2). The new base base_v2 (corpus v2, 16 objects x 256 pts, flag validity, origin jitter, NO history) landed at chance: cos 0.092, ADE 11.83 vs zero 8.66 cm on 528 chunks. base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: cos 0.279, ADE 9.04; paired dcos +0.186 vs base_v2, +0.045 vs C2 (the rlwrld best model re-evaluated on the v2 loader), +0.026 [-0.011,+0.062] vs ctl on the 224 shared keys = parity at 4.14 vs 6.0 eff ep. Dataset inspection: GRAB, ARCTIC, OakInk2 episodes start and end far from the object (d0 120 / 84 / 59 cm). GR-1 base_v3 sweep running on rlwrld (158806). Closed on the ctl basis: contact lambda ladder, episode-weighted mix, 320M at eff 256; jit1m positive. GR-1 zero-shot sweeps: ctl 0/107, w_ep 1/117, jit1m 1/117.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -95,6 +98,17 @@
   .deck table.recipe td{vertical-align:top}
   .deck .s-status table.status.dec th:nth-child(2),.deck .s-status table.status.dec td:nth-child(2){width:52%}
   .deck .s-status table.status.dec th:nth-child(3),.deck .s-status table.status.dec td:nth-child(3){width:auto}
+  /* ---- rev 2 (base_v3 landed) ---- */
+  .deck .vizgrid.eps6{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:.5em 1.1em}
+  .deck .vizgrid.eps6 figure>video{max-height:14.5em;background:#FAFAFA;border-radius:3px}
+  .deck .vizgrid.four.pair figure>img,.deck .vizgrid.five.pair figure>img{max-height:15em}
+  .deck .vizgrid.five.pair figcaption{font-size:.95em;line-height:1.28}
+  .deck .s-appendix ol.corr.tight{font-size:1.3em;line-height:1.36}
+  .deck .s-appendix ol.corr.tight>li{margin:.3em 0}
+  .deck table.dense.ci td:first-child,.deck table.nw td:first-child{white-space:nowrap}
+  .deck table.dense.ci th{white-space:nowrap}
+  .deck table.dense.ci td.d{white-space:normal}
+  .deck table.data th,.deck table.data td{padding:.2em .4em}
 </style>
 </head>
 <body class="deck-page">
@@ -111,17 +125,17 @@
 <!-- SECTION: overview · TL;DR + hero figure -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Removing history zeroed the new base; restoring it recovers ctl</p>
+  <p class="thesis"><b>[TL;DR]</b> Restoring history recovers the base: parity with ctl, above C2</p>
   <ul>
-    <li>Closed: contact λ · mix · 320M</li>
-    <li>Positive: random origin jit1m</li>
+    <li>Fixed: history back, base_v3 = ctl parity</li>
+    <li>Data: GRAB, ARCTIC, OakInk2 start far</li>
     <li>Decide: ct · po05 · GR-1 object set</li>
   </ul>
   <div class="band snug">
-    <figure><img src="assets/fig_valcurves.png" alt="Two line charts of trainer validation versus training step for five arms. Left: direction cosine. ctl and jit1m rise from about 0.24 and 0.17 at 2,500 steps to 0.51 and 0.48 at 110,996; base_v2 stays between 0.00 and 0.13 for the whole run; base_v2_po05 tracks base_v2 up to 37,500 steps; base_v3, dashed and live, rises from 0.17 at 2,500 to 0.30 at 32,500. Right: ADE divided by the zero-predictor ADE with a dotted line at 1.0. ctl and jit1m fall from 1.07 to 0.84 and 0.81; base_v2 rises from 1.10 to 1.21; base_v3 sits at 0.998 at 32,500 steps.">
-      <figcaption><b>Trainer validation</b> vs step — direction cosine (left) · ADE ÷ zero-predictor ADE (right, 1.0 = zero predictor) · ctl / jit1m: v1 corpus, <span class="epoch">6.00 eff ep</span> at 110,996 steps · base_v2 / base_v3: v2 corpus, <span class="epoch">4.14 eff ep</span> at 110,996 · base_v3 dashed = live, last point step 32,500</figcaption></figure>
+    <figure><img src="assets/fig_valcurves.png" alt="Two line charts of trainer validation versus training step for five arms, all complete to 110,996 steps. Left: direction cosine. ctl and jit1m rise from about 0.24 and 0.17 at 2,500 steps to 0.51 and 0.48 at 110,996; base_v3 rises from 0.17 to 0.44; base_v2 stays between 0.00 and 0.13 for the whole run; base_v2_po05 tracks base_v2 up to 37,500 steps. Right: ADE divided by the zero-predictor ADE with a dotted line at 1.0. ctl and jit1m fall from 1.07 to 0.84 and 0.81; base_v3 falls from 1.04 to 0.98 at the end; base_v2 rises from 1.10 to 1.21.">
+      <figcaption><b>Trainer validation</b> vs step — direction cosine (left) · ADE ÷ zero-predictor ADE (right, 1.0 = zero predictor) · ctl / jit1m: v1 corpus, <span class="epoch">6.00 eff ep</span> at 110,996 steps · base_v2 / base_v3: v2 corpus, <span class="epoch">4.14 eff ep</span> at 110,996 · all runs complete</figcaption></figure>
   </div>
-  <p class="footnote">trainer val = in-training val loader, one basis per corpus (v1 zero 0.1306 m · v2 zero 0.1242 m) · final numbers on slides 4–5 come from ieval on stratified chunks, not from these curves</p>
+  <p class="footnote">trainer val = in-training val loader, one basis per corpus (v1 zero 0.1306 m · v2 zero 0.1242 m) · the Results numbers come from ieval on stratified chunks, not from these curves</p>
 </section>
 
 <!-- SECTION: method (1) · the recipe table -->
@@ -138,7 +152,7 @@
           <tr><td>validity</td><td>motion heuristic</td><td>dataset tracking flags</td><td>= base_v2</td></tr>
           <tr><td>origin</td><td>hand centre</td><td>random within 1 m (jit1m)</td><td>= base_v2</td></tr>
           <tr><td>history</td><td><b>H = 2</b> (0.1 / 0.2 s)</td><td><b>none</b></td><td><b>H = 2 — the one change</b></td></tr>
-          <tr><td>compute</td><td>16 × 2 H100 · 110,996 st = <span class="epoch">6.00 ep</span></td><td>token-budget 8 × 4 H100 · 110,996 st = <span class="epoch">4.14 ep</span></td><td>= base_v2 · job 7487</td></tr>
+          <tr><td>compute</td><td>16 × 2 H100 · 110,996 st = <span class="epoch">6.00 ep</span></td><td>token-budget 8 × 4 H100 · 110,996 st = <span class="epoch">4.14 ep</span></td><td>= base_v2 · job 7487 · 8.6 h</td></tr>
         </tbody>
       </table>
       <figcaption><b>Recipe</b> per base — 120M video-DiT, flow matching, T = 10 @ 10 Hz throughout; eff ep = steps × eff batch ÷ corpus</figcaption></figure>
@@ -148,6 +162,56 @@
   <p class="footnote">base_v2 / base_v3 configs: pull4/code configs · v2 corpus = all tracked objects + HOT3D, 901,728 chunks after validity · I-SERIES record: history for 3,400 steps beats no-history for 110,000</p>
 </section>
 
+<!-- SECTION: method (2) · data · approach / retreat inspection (owner's request) -->
+<section class="slide s-method">
+  <h2>Method (2): data — approach / retreat per dataset</h2>
+  <p class="thesis">GRAB, ARCTIC and OakInk2 begin and end far from the object</p>
+  <ul>
+    <li>GRAB: most far-start chunks</li>
+    <li>TACO, HOT3D: contact throughout</li>
+    <li>DexYCB: approach only, no retreat</li>
+  </ul>
+  <div class="band snug">
+    <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_approach.png" alt="Three panels. Left: median hand-to-nearest-object distance versus normalised episode time per dataset with an interquartile band; grab starts near 120 cm, arctic 84, oakink2 59, dexycb 25, hot3d 15, taco 7; grab, arctic and oakink2 return to a similar distance at the end, dexycb ends at 3 cm. Middle: violin of the start distance d0 per dataset with the median marked. Right: stacked share of tracked frames per phase, approach / manipulation / retreat / never near, per dataset.">
+      <figcaption><b>Hand → nearest-object distance</b> over normalised episode time (median, IQR) · start distance d<sub>0</sub> per episode · share of frames per phase · all six datasets of the v2 corpus</figcaption></figure>
+    <figure class="tb" style="flex:0 0 46%;min-width:0">
+      <table class="compact dense data">
+        <thead><tr><th>dataset</th><th>eps</th><th>d<sub>0</sub> cm</th><th>d<sub>end</sub> cm</th><th>appr / manip / retreat %</th><th>far-start chunks %</th><th>no-contact chunks %</th></tr></thead>
+        <tbody>
+          <tr><td><b>grab</b></td><td>1,332</td><td>120</td><td>120</td><td>18 / 56 / 23</td><td><b>24.3</b></td><td><b>13.6</b></td></tr>
+          <tr><td><b>arctic</b></td><td>277</td><td>84</td><td>88</td><td>6 / 86 / 9</td><td>8.2</td><td>4.0</td></tr>
+          <tr><td><b>oakink2</b></td><td>492</td><td>59</td><td>62</td><td>13 / 75 / 11</td><td>12.9</td><td>10.4</td></tr>
+          <tr><td><b>dexycb</b></td><td>1,000</td><td>25</td><td>3</td><td>30 / 66 / 2</td><td>13.5</td><td>0.1</td></tr>
+          <tr><td><b>hot3d</b></td><td>294</td><td>15</td><td>9</td><td>3 / 94 / 3</td><td>5.1</td><td>2.7</td></tr>
+          <tr><td><b>taco</b></td><td>3,398</td><td>7</td><td>7</td><td>12 / 78 / 10</td><td>0.0</td><td>0.0</td></tr>
+        </tbody>
+      </table>
+      <figcaption>medians over episodes · phase shares pooled over frames · chunk shares over all training chunks</figcaption></figure>
+  </div>
+  <p class="etabar"><b>Decision pending</b> · far-start chunks: <b>keep / down-weight / re-cut</b> (owner) · no compute spent until ruled · a re-cut arm on base_v3 would be a one-variable run</p>
+  <p class="footnote">d = hand centroid → nearest object point (min over hands) · near &lt; 5 cm · far &gt; 20 cm · chunk = 11 frames @ 10 Hz · rlwrld 158449 · data_inspect_0905/inspect.md</p>
+</section>
+
+<!-- SECTION: viz · full episodes · one per dataset · captions only (outside the ≤8 cap) -->
+<section class="slide s-viz">
+  <h2>Full episodes · ground truth · one per dataset · 10 Hz</h2>
+  <div class="vizgrid eps6">
+    <figure><video controls preload="none" playsinline poster="assets/ep_grab_s2_flute_pass_1__human.jpg" src="assets/ep_grab_s2_flute_pass_1__human.mp4"></video>
+      <figcaption>full episode · <b>grab</b> · s2_flute_pass_1 · ground truth · 10 Hz</figcaption></figure>
+    <figure><video controls preload="none" playsinline poster="assets/ep_arctic_dataset_s05_espressomachine_use_01__human.jpg" src="assets/ep_arctic_dataset_s05_espressomachine_use_01__human.mp4"></video>
+      <figcaption>full episode · <b>arctic</b> · s05_espressomachine_use_01 · ground truth · 10 Hz</figcaption></figure>
+    <figure><video controls preload="none" playsinline poster="assets/ep_oakink2_scene_03__A004_seq__a779dab47a0fea5af26e__2023-04-22-20-16-22__human.jpg" src="assets/ep_oakink2_scene_03__A004_seq__a779dab47a0fea5af26e__2023-04-22-20-16-22__human.mp4"></video>
+      <figcaption>full episode · <b>oakink2</b> · scene_03 · A004 · a779dab4 · 2023-04-22-20-16-22 · ground truth · 10 Hz</figcaption></figure>
+    <figure><video controls preload="none" playsinline poster="assets/ep_dexycb_20200709-subject-01_20200709_151335_932122062010__human.jpg" src="assets/ep_dexycb_20200709-subject-01_20200709_151335_932122062010__human.mp4"></video>
+      <figcaption>full episode · <b>dexycb</b> · 20200709-subject-01 · 151335 · cam 932122062010 · ground truth · 10 Hz</figcaption></figure>
+    <figure><video controls preload="none" playsinline poster="assets/ep_hot3d_P0012_ca1f6626__human.jpg" src="assets/ep_hot3d_P0012_ca1f6626__human.mp4"></video>
+      <figcaption>full episode · <b>hot3d</b> · P0012_ca1f6626 · ground truth · 10 Hz</figcaption></figure>
+    <figure><video controls preload="none" playsinline poster="assets/ep_taco_empty__kettle__plate_20231031_060__human.jpg" src="assets/ep_taco_empty__kettle__plate_20231031_060__human.mp4"></video>
+      <figcaption>full episode · <b>taco</b> · empty__kettle__plate_20231031_060 · ground truth · 10 Hz</figcaption></figure>
+  </div>
+  <p class="footnote">objects orange · R hand green · L hand purple · click to play · 18 clips in pull4/data_inspect_0905/clips, 3 per dataset (two TACO clips are Sharpa-retargeted; the one shown is human)</p>
+</section>
+
 <!-- SECTION: results · 1 · closed levers on the ctl basis -->
 <section class="slide s-results">
   <h2>Results</h2>
@@ -155,7 +219,7 @@
     <li class="on">Closed levers on the ctl basis
       <ul><li>480 stratified chunks · every arm paired against ctl · 10k bootstrap</li>
           <li>one positive lever (jit1m); contact λ, mix, 320M closed</li></ul></li>
-    <li>New base: base_v2 at chance, base_v3 restores history</li>
+    <li>New base: base_v3 restores history — above C2, parity with ctl</li>
     <li>GR-1 zero-shot closed loop</li>
   </ol>
   <div class="band snug">
@@ -184,28 +248,40 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li class="on">New base: base_v2 at chance, base_v3 restores history
-      <ul><li>one basis: the 224 chunk keys shared by both bases (arctic 96 · grab 96 · dexycb 32)</li>
-          <li>not an evaluator bug: trainer val agrees at every step; local weights give coherent fields</li></ul></li>
+    <li class="on">New base: base_v3 restores history — above C2, parity with ctl
+      <ul><li>v2 basis: 528 chunks (96 × 6) · C2 = rlwrld best (hist_long, H = 2) queried with the v2 loader</li>
+          <li>ctl basis: the 224 chunk keys shared by both bases (arctic 96 · grab 96 · dexycb 32)</li></ul></li>
     <li>GR-1 zero-shot closed loop</li>
   </ol>
   <div class="band snug">
-    <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_ep06_base_v2.png" alt="Two grouped bar charts, ctl in green and base_v2 in red, per dataset and overall. Left: direction cosine, 96 chunks per dataset; ctl 0.27 to 0.35 on five datasets, base_v2 0.02 to 0.16, hot3d base_v2 only 0.04. Right: ADE in centimetres with a black tick for each arm's own zero predictor; base_v2 above its zero on arctic, grab, ALL and hot3d.">
-      <figcaption><b>ctl vs base_v2</b> per dataset — cosine (left) · ADE vs each arm's own zero predictor (right) · 96 chunks per dataset, each on its own basis</figcaption></figure>
-    <figure class="tb" style="flex:0 0 54%;min-width:0">
-      <table class="compact dense">
-        <thead><tr><th>224 shared keys</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>zero cm</th></tr></thead>
+    <figure class="tb" style="flex:1 1 0;min-width:0">
+      <table class="compact dense ci">
+        <thead><tr><th>v2 basis · 528 · zero 8.66 cm</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>Acc5 %</th></tr></thead>
         <tbody>
-          <tr><td><b>ctl</b> · H = 2 · <span class="epoch">6.00 ep</span></td><td>0.317</td><td>0.381</td><td>12.96</td><td>12.84</td></tr>
-          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td><b>0.099</b></td><td><b>0.135</b></td><td><b>19.18</b></td><td>13.56</td></tr>
-          <tr><td>paired Δ base_v2 − ctl</td><td colspan="2"><b>−0.218</b> [−0.267, −0.169]</td><td colspan="2">ΔADE <b>+6.2</b> [+4.9, +7.7]</td></tr>
-          <tr class="pend"><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td colspan="4">Sep 5 ≈23:00 KST · target: ctl row</td></tr>
+          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td>0.092</td><td>0.144</td><td>11.83</td><td>50.2</td></tr>
+          <tr><td><b>C2</b> · rlwrld · H = 2 · <span class="epoch">4.1 ep</span></td><td>0.234</td><td>0.337</td><td>10.05</td><td>54.0</td></tr>
+          <tr><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td><b>0.279</b></td><td><b>0.390</b></td><td><b>9.04</b></td><td><b>58.5</b></td></tr>
+          <tr><td colspan="5" class="d">Δ base_v3 − base_v2: cos <b>+0.186</b> [+0.163, +0.210] · ADE <b>−2.79</b> [−3.34, −2.27]</td></tr>
+          <tr><td colspan="5" class="d">Δ base_v3 − C2: cos <b>+0.045</b> [+0.028, +0.063] · ADE <b>−1.01</b> [−1.41, −0.60]</td></tr>
         </tbody>
       </table>
-      <figcaption>same (dataset, key) chunks in both evals · zero = each base's own zero predictor on those keys</figcaption></figure>
+      <figcaption>v2 points · zero Acc5 61.8 % · dexycb 88 / oakink2 56 scored</figcaption></figure>
+    <figure class="tb" style="flex:1 1 0;min-width:0">
+      <table class="compact dense ci">
+        <thead><tr><th>224 shared keys</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>zero cm</th></tr></thead>
+        <tbody>
+          <tr><td><b>ctl</b> · H = 2 · <span class="epoch">6.00 ep</span> · v1 pts</td><td>0.317</td><td>0.381</td><td>12.96</td><td>12.84</td></tr>
+          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td>0.099</td><td>0.135</td><td>19.18</td><td>13.56</td></tr>
+          <tr><td><b>C2</b> · H = 2 · <span class="epoch">4.1 ep</span></td><td>0.285</td><td>0.346</td><td>15.08</td><td>13.56</td></tr>
+          <tr><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td><b>0.343</b></td><td><b>0.398</b></td><td><b>13.73</b></td><td>13.56</td></tr>
+          <tr><td colspan="5" class="d">Δ base_v3 − ctl: cos <b>+0.026</b> [−0.011, +0.062] · ADE <b>+0.77</b> [−0.05, +1.63]</td></tr>
+          <tr><td colspan="5" class="d">Δ base_v2 − ctl: cos <b>−0.218</b> [−0.267, −0.169] · ADE <b>+6.2</b> [+4.9, +7.7]</td></tr>
+        </tbody>
+      </table>
+      <figcaption>same chunks · ctl on v1 points, the rest on v2 · zero moves +0.73 cm</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · base_v3 · 7487 · 4×H100 · 0.278 s/step · <b>+4.5 h compute → Sat 09-05 ≈22:40 KST</b> · ieval + paired <b>+20 min → ≈23:00</b></p>
-  <p class="footnote">base_v2 on 528 (96 × 6): cos 0.092, ADE 11.83 vs zero 8.66 · 432 (5 ds): 0.104, 12.65 vs 9.37 · hot3d: 0.041, 8.14 vs 5.49 · local check: NN cosine ≈ 1.0, magnitude 95–106 %</p>
+  <p class="etabar"><b>GR-1 sweep running</b> · base_v3 · rlwrld 158806 · 44 tasks × 3 · since 22:55 KST · <b>≈+5 h compute → Sun 09-06 ≈04:00–09:00 KST</b> (queue)</p>
+  <p class="footnote">per-chunk means · Δ = paired, 10k bootstrap, 95 % CI · trainer val at the final step: base_v3 0.435 · base_v2 0.116 · ctl 0.506 (v1 loader) · per-dataset rows: appendix</p>
 </section>
 
 <!-- SECTION: results · 3 · GR-1 -->
@@ -213,7 +289,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li>New base: base_v2 at chance, base_v3 restores history</li>
+    <li>New base: base_v3 restores history — above C2, parity with ctl</li>
     <li class="on">GR-1 zero-shot closed loop
       <ul><li>rlwrld · robocasa tabletop · 44 tasks × 3 eps · both hands · two objects (pick + target)</li>
           <li>base_v2 not swept (chance-level); its 256-pt object path verified in MuJoCo (157980)</li></ul></li>
@@ -222,104 +298,146 @@
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_gr1_sweeps.png" alt="Strip chart of final hand-to-target distance per task, mean of three episodes, for three sweeps: ctl 37 of 44 tasks, 0 of 107 episodes succeed, median 18.6 cm; w_ep 39 tasks, 1 of 117, median 17.4 cm; jit1m 39 tasks, 1 of 117, median 21.7 cm. Values above 60 cm are capped and counted.">
       <figcaption><b>GR-1 sweeps</b> — final hand → target per task (mean of 3 eps), bar = median · only the model varies</figcaption></figure>
     <figure class="tb" style="flex:0 0 52%;min-width:0">
-      <table class="compact dense">
+      <table class="compact dense nw">
         <thead><tr><th>sweep · model</th><th>tasks ran</th><th>episodes</th><th>successes</th><th>median cm</th></tr></thead>
         <tbody>
           <tr><td>0904 · <b>ctl</b> · <span class="epoch">6.00 ep</span></td><td>37 / 44</td><td>107</td><td><b>0</b></td><td>18.6</td></tr>
           <tr><td>0904 · <b>w_ep</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>17.4</td></tr>
           <tr><td>0905 · <b>jit1m</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>21.7</td></tr>
           <tr><td>— · <b>base_v2</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">not swept · MuJoCo smoke (P = 1,536 · 90 replans · rc 0)</td></tr>
-          <tr class="pend"><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">Sun 09-06 morning · target: beat 1 / 117</td></tr>
+          <tr class="pend"><td>0905 · <b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">Sun 09-06 morning · 158806 running since 22:55 KST · ≈+5 h · target: beat 1 / 117</td></tr>
         </tbody>
       </table>
       <figcaption>median over tasks of the per-task mean · sim-fail tasks excluded (appendix)</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · base_v3 weights → rlwrld → 44 tasks × 3 · <b>≈+5 h compute after 23:00 KST</b> · queue <b>unestimated</b> → <b>Sun 09-06 morning</b></p>
+  <p class="etabar"><b>ETA</b> · base_v3 sweep · rlwrld 158806 · 44 × 3 · since <b>22:55 KST</b> · <b>≈+5 h compute</b> · queue → <b>Sun 09-06 ≈04:00–09:00 KST</b></p>
   <p class="footnote">sweep_table.json per sweep · success = robocasa task flag · PnPAppleToPlate never ran (coffee_pod error, appendix) · per-task clips: decks #10 / #11</p>
 </section>
 
-<!-- SECTION: viz · AR rollouts · base_v2 · captions only (outside the ≤8 cap) -->
+<!-- SECTION: viz · AR rollouts · base_v2 (top) vs base_v3 (bottom) · set 1 · captions only (outside the ≤8 cap) -->
 <section class="slide s-viz">
-  <h2>AR rollouts · 5 chunks · 5 s · base_v2 · step 110,996 · <span class="epoch">4.14 eff ep</span></h2>
-  <div class="vizgrid four rows3">
+  <h2>AR rollouts · 5 chunks · 5 s · base_v2 top · base_v3 bottom · 1 / 2</h2>
+  <div class="vizgrid four pair">
     <figure><img src="assets/base_v2_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, taco episode 5552: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.22 → k4 0.32</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.22 → k4 0.32</figcaption></figure>
     <figure><img src="assets/base_v2_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, arctic episode 212: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>arctic</b> ep 212 · “use the notebook” · cos k0 0.67 → k4 0.05</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.67 → k4 0.05</figcaption></figure>
     <figure><img src="assets/base_v2_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after heating.” · cos k0 0.23 → k4 0.16</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.23 → k4 0.16</figcaption></figure>
     <figure><img src="assets/base_v2_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, grab episode 1434: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>grab</b> ep 1434 · “lift the banana” · cos k0 0.64 → k4 −0.34</figcaption></figure>
-    <figure><img src="assets/base_v2_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, taco episode 6147: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.61 → k4 0.29</figcaption></figure>
-    <figure><img src="assets/base_v2_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, arctic episode 236: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>arctic</b> ep 236 · “use the laptop” · cos k0 0.43 → k4 −0.09</figcaption></figure>
-    <figure><img src="assets/base_v2_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, and stir …” · cos k0 0.11 → k4 −0.05</figcaption></figure>
-    <figure><img src="assets/base_v2_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, grab episode 2219: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>grab</b> ep 2219 · “browse the camera” · cos k0 0.49 → k4 −0.26</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same episode · taco 5552</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same episode · arctic 212</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same episode · oakink2 3035</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same episode · grab 1434</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · cos k0 0.64 → k4 −0.34</figcaption></figure>
+    <figure><img src="assets/base_v3_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 5552: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.25 → k4 0.42</figcaption></figure>
+    <figure><img src="assets/base_v3_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 212: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.57 → k4 0.16</figcaption></figure>
+    <figure><img src="assets/base_v3_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.20 → k4 0.16</figcaption></figure>
+    <figure><img src="assets/base_v3_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 1434: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · cos k0 0.54 → k4 −0.35</figcaption></figure>
   </div>
-  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · comparisons by construction (same episodes) · DexYCB: no 5-chunk eps</p>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · same episodes, seed, camera in both rows · DexYCB: no 5-chunk eps</p>
 </section>
 
-<!-- SECTION: viz · single chunk · base_v2 · captions only (outside the ≤8 cap) -->
+<!-- SECTION: viz · AR rollouts · base_v2 (top) vs base_v3 (bottom) · set 2 · captions only (outside the ≤8 cap) -->
 <section class="slide s-viz">
-  <h2>Single chunk · 1 s · base_v2 · step 110,996 · <span class="epoch">4.14 eff ep</span></h2>
-  <div class="vizgrid five rows3">
-    <figure><img src="assets/base_v2_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, taco chunk 40693: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>taco</b> chunk 40693 · “dust the kettle with the roller” · ADE 13.0 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, arctic chunk 3772: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>arctic</b> chunk 3772 · “use the ketchup” · ADE 54.5 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>dexycb</b> chunk 4142 · “grasp the tomato soup can” · ADE 15.4 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_oakink2_human_s16_c35323_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, oakink2 chunk 35323: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>oakink2</b> chunk 35323 · “Place the asbestos mesh for heating, ignite the alco…” · ADE 2.0 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_grab_human_s82_c6998_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, grab chunk 6998: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>grab</b> chunk 6998 · “inspect the elephant” · ADE 69.4 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_taco_human_s59_c41942_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, taco chunk 41942: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>taco</b> chunk 41942 · “empty the cup with the kettle” · ADE 13.3 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, arctic chunk 407: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>arctic</b> chunk 407 · “use the microwave” · ADE 55.5 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_dexycb_human_s7_c4320_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, dexycb chunk 4320: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>dexycb</b> chunk 4320 · “grasp the bleach cleanser” · ADE 12.3 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_oakink2_human_s264_c37412_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, oakink2 chunk 37412: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>oakink2</b> chunk 37412 · “Ignite the alcohol burner.” · ADE 7.8 cm</figcaption></figure>
-    <figure><img src="assets/base_v2_grab_human_s5_c9342_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, grab chunk 9342: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>grab</b> chunk 9342 · “shake the water bottle” · ADE 26.3 cm</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same chunks · taco</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same chunks · arctic</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same chunks · dexycb</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same chunks · oakink2</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b>base_v3 · same chunks · grab</div><figcaption>Sep 5 ≈23:30 KST</figcaption></figure>
+  <h2>AR rollouts · 5 chunks · 5 s · base_v2 top · base_v3 bottom · 2 / 2</h2>
+  <div class="vizgrid four pair">
+    <figure><img src="assets/base_v2_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, taco episode 6147: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.61 → k4 0.29</figcaption></figure>
+    <figure><img src="assets/base_v2_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, arctic episode 236: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.43 → k4 −0.09</figcaption></figure>
+    <figure><img src="assets/base_v2_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.11 → k4 −0.05</figcaption></figure>
+    <figure><img src="assets/base_v2_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, grab episode 2219: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · cos k0 0.49 → k4 −0.26</figcaption></figure>
+    <figure><img src="assets/base_v3_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 6147: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.50 → k4 −0.13</figcaption></figure>
+    <figure><img src="assets/base_v3_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 236: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.44 → k4 −0.13</figcaption></figure>
+    <figure><img src="assets/base_v3_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.16 → k4 −0.10</figcaption></figure>
+    <figure><img src="assets/base_v3_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 2219: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · cos k0 0.29 → k4 −0.12</figcaption></figure>
   </div>
-  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · 2 most dynamic of 40 val chunks per dataset · k = 8 samples · cfg 1.0 · comparisons by construction (same chunks)</p>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · same episodes, seed, camera in both rows · drift.json per arm</p>
+</section>
+
+<!-- SECTION: viz · single chunk · base_v2 (top) vs base_v3 (bottom) · set 1 · captions only (outside the ≤8 cap) -->
+<section class="slide s-viz">
+  <h2>Single chunk · 1 s · base_v2 top · base_v3 bottom · 1 / 2</h2>
+  <div class="vizgrid five pair">
+    <figure><img src="assets/base_v2_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, taco chunk 40693: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> chunk 40693 · “dust the kettle with the roller” · ADE 13.0 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, arctic chunk 3772: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> chunk 3772 · “use the ketchup” · ADE 54.5 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>dexycb</b> chunk 4142 · “grasp the tomato soup can” · ADE 15.4 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_oakink2_human_s16_c35323_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, oakink2 chunk 35323: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> chunk 35323 · “Place the asbestos mesh for heating, ignite the alco…” · ADE 2.0 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_grab_human_s82_c6998_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, grab chunk 6998: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> chunk 6998 · “inspect the elephant” · ADE 69.4 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, taco chunk 40693: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> chunk 40693 · “dust the kettle with the roller” · ADE 12.6 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_arctic_human_s188_c3772_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, arctic chunk 3772: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> chunk 3772 · “use the ketchup” · ADE 53.4 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>dexycb</b> chunk 4142 · “grasp the tomato soup can” · ADE 15.4 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_oakink2_human_s16_c35323_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, oakink2 chunk 35323: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> chunk 35323 · “Place the asbestos mesh for heating, ignite the alco…” · ADE 1.7 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_grab_human_s82_c6998_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, grab chunk 6998: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> chunk 6998 · “inspect the elephant” · ADE 45.5 cm</figcaption></figure>
+  </div>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · 2 most dynamic of 40 val chunks per dataset · k = 8 samples · cfg 1.0 · same chunks, seed, camera in both rows</p>
+</section>
+
+<!-- SECTION: viz · single chunk · base_v2 (top) vs base_v3 (bottom) · set 2 · captions only (outside the ≤8 cap) -->
+<section class="slide s-viz">
+  <h2>Single chunk · 1 s · base_v2 top · base_v3 bottom · 2 / 2</h2>
+  <div class="vizgrid five pair">
+    <figure><img src="assets/base_v2_taco_human_s59_c41942_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, taco chunk 41942: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> chunk 41942 · “empty the cup with the kettle” · ADE 13.3 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, arctic chunk 407: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> chunk 407 · “use the microwave” · ADE 55.5 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_dexycb_human_s7_c4320_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, dexycb chunk 4320: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>dexycb</b> chunk 4320 · “grasp the bleach cleanser” · ADE 12.3 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_oakink2_human_s264_c37412_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, oakink2 chunk 37412: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> chunk 37412 · “Ignite the alcohol burner.” · ADE 7.8 cm</figcaption></figure>
+    <figure><img src="assets/base_v2_grab_human_s5_c9342_k8.gif" alt="Single-chunk point-cloud rollout, base_v2, grab chunk 9342: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v2</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> chunk 9342 · “shake the water bottle” · ADE 26.3 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_taco_human_s59_c41942_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, taco chunk 41942: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> chunk 41942 · “empty the cup with the kettle” · ADE 9.0 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_arctic_human_s199_c407_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, arctic chunk 407: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> chunk 407 · “use the microwave” · ADE 34.2 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_dexycb_human_s7_c4320_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, dexycb chunk 4320: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>dexycb</b> chunk 4320 · “grasp the bleach cleanser” · ADE 12.8 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_oakink2_human_s264_c37412_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, oakink2 chunk 37412: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> chunk 37412 · “Ignite the alcohol burner.” · ADE 6.7 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_grab_human_s5_c9342_k8.gif" alt="Single-chunk point-cloud rollout, base_v3, grab chunk 9342: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3</b> · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> chunk 9342 · “shake the water bottle” · ADE 18.9 cm</figcaption></figure>
+  </div>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · 2 most dynamic of 40 val chunks per dataset · k = 8 samples · cfg 1.0 · same chunks, seed, camera in both rows</p>
 </section>
 
 <!-- SECTION: summary · LAST MAIN SLIDE · running / due / decisions -->
 <section class="slide s-discuss s-status">
   <h2>Summary · running / due / your decisions · 2026-09-05</h2>
-  <p class="thesis">base_v3 lands tonight; two arms and one sweep wait on your call.</p>
+  <p class="thesis">base_v3 is the base; GR-1 lands Sunday; four calls are yours.</p>
   <div class="band">
     <figure class="tb" style="flex:1 1 50%;min-width:0">
       <table class="compact dense status wrap">
         <thead><tr><th>A · running</th><th>progress · target</th><th>lands</th></tr></thead>
         <tbody>
-          <tr><td><b>base_v3</b> 7487 · 4×H100</td><td>≈40k / 110,996 · val cos 0.304 @32.5k</td><td>+4.5 h → <b>Sat ≈22:40</b></td></tr>
-          <tr><td><b>base_v2_ct</b> 7353 · λ 0.1</td><td>budget ≈17:15 KST · no history</td><td>eval for record</td></tr>
-          <tr class="pend"><td><b>base_v2_po05</b> 7354 · p 0.5</td><td>queued · no history</td><td>unestimated</td></tr>
+          <tr><td><b>GR-1 sweep</b> 158806 · rlwrld</td><td>base_v3 · 44 × 3 eps · %3 · target: beat 1 / 117</td><td>≈+5 h → <b>Sun ≈04:00–09:00</b></td></tr>
+          <tr class="pend"><td><b>base_v2_ct</b> 7353 · λ 0.1</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
+          <tr class="pend"><td><b>base_v2_po05</b> 7354 · p 0.5</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
         </tbody>
       </table></figure>
     <figure class="tb" style="flex:1 1 50%;min-width:0">
       <table class="compact dense status wrap">
         <thead><tr><th>B · due, no input</th><th>work</th><th>when</th></tr></thead>
         <tbody>
-          <tr class="pend"><td><b>base_v3</b> ieval + paired + deck</td><td>+20 min</td><td>Sat ≈23:00 KST</td></tr>
-          <tr class="pend"><td><b>base_v3</b> AR + single-chunk clips</td><td>+30 min</td><td>Sat ≈23:30 KST</td></tr>
-          <tr class="pend"><td><b>GR-1</b> base_v3 · 44 × 3 · rlwrld</td><td>≈+5 h · queue unestimated</td><td>Sun 09-06 morning</td></tr>
+          <tr class="pend"><td><b>GR-1</b> base_v3 harvest → deck</td><td>+30 min after the sweep</td><td>Sun 09-06 morning</td></tr>
+          <tr><td><b>base_v3</b> + <b>C2</b> evals, clips</td><td>landed 23:00 KST</td><td>this deck</td></tr>
         </tbody>
       </table></figure>
   </div>
@@ -328,26 +446,28 @@
       <table class="compact dense status dec wrap">
         <thead><tr><th>C · your decisions</th><th>options</th><th>recommendation · deadline</th></tr></thead>
         <tbody>
-          <tr><td><b>1 · ct / po05</b></td><td>finish on base_v2 (no history) · <b>cancel, re-run both on base_v3</b></td><td><b>cancel and re-run on base_v3</b> · tonight</td></tr>
-          <tr><td><b>2 · GR-1 object set</b></td><td>two objects (pick + target) · <b>all scene objects</b> (variable sets now supported)</td><td><b>paired arm on base_v3</b>, two vs all · before Sun</td></tr>
-          <tr><td><b>3 · camera-frame arm</b></td><td>launch after base_v3 · defer</td><td><b>defer</b> · after the 23:00 read</td></tr>
+          <tr><td><b>1 · ct / po05</b></td><td>finish on base_v2 (no history) · <b>cancel, re-run contact + partial-obs on base_v3</b></td><td><b>cancel, re-run on base_v3</b> · tonight</td></tr>
+          <tr><td><b>2 · GR-1 object set</b></td><td>two objects (pick + target) · <b>all scene objects</b></td><td><b>paired arm on base_v3</b>, two vs all · Sun</td></tr>
+          <tr><td><b>3 · far-start chunks</b></td><td><b>keep</b> · down-weight · re-cut (GRAB / ARCTIC / OakInk2)</td><td><b>keep for now</b>, re-cut arm later · Sun</td></tr>
+          <tr><td><b>4 · next arms on base_v3</b></td><td>H = 10 (free) · cap 8 × 512 pts (~13 h) · both · neither</td><td><b>your call</b> · Sun</td></tr>
         </tbody>
       </table></figure>
   </div>
-  <p class="etabar"><b>ETA at a glance</b> · base_v3 lands <b>≈22:40</b> · metrics <b>≈23:00</b> · clips <b>≈23:30</b> (Sat 09-05 KST) · GR-1 base_v3 <b>Sun 09-06 morning</b> · ct budget <b>≈17:15</b> · po05 unestimated</p>
-  <p class="footnote">grey italic = not landed · steps at 0.278 s each on 4×H100 · silence defaults to the recommendation</p>
+  <p class="etabar"><b>ETA at a glance</b> · GR-1 base_v3 <b>Sun 09-06 ≈04:00–09:00 KST</b> (≈+5 h compute, queue) · harvest + deck <b>+30 min</b> after · ct / po05 <b>unestimated</b></p>
+  <p class="footnote">grey italic = not landed · silence defaults to the recommendation · base_v3 = weights_final.pt of ICLR27 7487 (110,996 steps, 8.6 h on 4×H100)</p>
 </section>
 
 <!-- SECTION: appendix (1) · corrections / notes -->
 <section class="slide s-appendix">
   <h2>Appendix · notes on the record (2026-09-05)</h2>
-  <ol class="corr">
-    <li><b>FRESH-on-requeue bug</b> — a preempted job restarted from scratch instead of its checkpoint: base_v2_ct lost 62k steps and was resumed from its 50k checkpoint as job 7353; the requeue path now resumes from the latest checkpoint.</li>
-    <li><b>set -e seeding bug</b> — base_v3's first launch (7459) died in 1 s: the seed line returned non-zero under <span class="mono">set -e</span>; fixed, relaunched as 7487 at 14:05 KST.</li>
-    <li><b>PnPAppleToPlate broken since the 09-03 sweep</b> — robocasa raises "No valid categories … ['coffee_pod']" at reset; it is one of the 5–7 sim-fail tasks per sweep that never ran (with PnPCounterToPan, PnPCupToDishRackUpperLevel, PnPVegetableBowlToPlate and one or two sweep-specific failures).</li>
-    <li><b>Chunk keys re-indexed in v2</b> — taco and oakink2 chunk ids changed with the v2 corpus, so the paired test between bases runs on the 224 keys shared by both evals only (arctic 96, grab 96, dexycb 32); the 432 / 528 numbers are unpaired.</li>
-    <li><b>TACO generated text glitches</b> — some captions are malformed ("pour in some the kettle with the kettle"); they are the training text and are shown verbatim in the clip captions.</li>
-    <li><b>GR-1 jit1m sweep</b> — the sweep_table.json holds 39 tasks / 117 episodes with 1 success; the earlier partial count (1 / 39 at 16 tasks) is superseded by the file.</li>
+  <ol class="corr tight">
+    <li><b>C2 on the ctl (v1) basis, 480 chunks</b> — C2 cos 0.255, ADE 9.34, zero 9.08 (ctl 0.270 / 9.10 / 9.08); paired C2 − ctl Δcos −0.015 [−0.023, −0.008], ΔADE +0.24 cm [+0.09, +0.38]. C2 was trained with ≤ 2 objects at train time and is queried here with the v1 / v2 loaders unchanged.</li>
+    <li><b>base_v3 per dataset (v2 basis, cos / ADE cm / zero cm)</b> — taco 0.315 / 4.79 / 4.65 · arctic 0.281 / 12.28 / 10.24 · dexycb 0.231 / 6.25 / 7.18 · oakink2 0.209 / 3.03 / 2.63 · grab 0.436 / 17.87 / 19.16 · hot3d 0.166 / 7.26 / 5.49 · five-dataset subset (432) 0.304 / 9.43 / 9.37. Paired Δcos base_v3 − base_v2: arctic +0.257 · grab +0.287 · oakink2 +0.191 · taco +0.177 · hot3d +0.125 · dexycb +0.073.</li>
+    <li><b>C2 transfer</b> — the rlwrld checkpoint (hist_long, step 109,228) was stripped of its optimizer state to 915 MiB (rlwrld 158333) before the local → ICLR27 hop; evaluated as ICLR27 7626 (v1 basis) and 7627 (v2 basis).</li>
+    <li><b>Eval QoS queue</b> — the ICLR27 eval QoS was 2 h deep on Sep 5 evening, so the base_v3 evaluations (7759 / 7760 / 7761) ran on the normal QoS.</li>
+    <li><b>FRESH-on-requeue bug</b> — a preempted job restarted from scratch instead of its checkpoint: base_v2_ct lost 62k steps and was resumed from its 50k checkpoint as job 7353; the requeue path now resumes from the latest checkpoint. <b>set -e seeding bug</b> — base_v3's first launch (7459) died in 1 s; fixed, relaunched as 7487 at 14:05 KST.</li>
+    <li><b>PnPAppleToPlate broken since the 09-03 sweep</b> — robocasa raises "No valid categories … ['coffee_pod']" at reset; one of the 5–7 sim-fail tasks per sweep (with PnPCounterToPan, PnPCupToDishRackUpperLevel, PnPVegetableBowlToPlate and one or two sweep-specific failures).</li>
+    <li><b>Chunk keys re-indexed in v2</b> — taco and oakink2 chunk ids changed with the v2 corpus, so the paired test against ctl runs on the 224 keys shared by both evals (arctic 96, grab 96, dexycb 32); the 432 / 528 numbers are unpaired against ctl. <b>TACO generated text glitches</b> ("pour in some the kettle with the kettle") are the training text, shown verbatim.</li>
   </ol>
 </section>
 
@@ -357,19 +477,20 @@
   <div class="cols">
     <div>
       <dl class="kv">
-        <dt>Metrics</dt><dd class="mono">pull4/ieval/harvest_ep06.json (rows + paired_vs_ctl) · ieval_ctl.json · ieval_base_v2.json (per_chunk; 224-key table computed on (dataset, key) matches) · README_ep06.md.</dd>
-        <dt>Curves</dt><dd class="mono">trainer val: jobs/98e98703/tmp/valcurves.txt (ctl, jit1m, w_ep, ciou_0p1, base_v2, base_v2_ct, base_v2_po05) + base_v3 points from the 7487 log → assets/fig_valcurves.png.</dd>
-        <dt>Figures</dt><dd class="mono">assets/fig_paired_forest.png · fig_gr1_sweeps.png (new) · pull4/figs/fig_ep06_base_v2.png · arch_main.png.</dd>
-        <dt>Clips</dt><dd class="mono">pull4/iroll_ar5/base_v2/ (8 GIFs + drift.json) · pull4/iviz_d6/base_v2/ (10 GIFs + base_v2_report.json).</dd>
+        <dt>Metrics</dt><dd class="mono">pull4/ieval/{harvest_ep06, ieval_ctl, ieval_base_v2, ieval_base_v3, ieval_c2_v1, ieval_c2_v2}.json (per_chunk; paired tables on (dataset, key) matches) · README_ep06.md.</dd>
+        <dt>Curves</dt><dd class="mono">trainer val: jobs/98e98703/tmp/valcurves.txt (8 arms; base_v3 complete to 110,996) → assets/fig_valcurves.png.</dd>
+        <dt>Figures</dt><dd class="mono">assets/{fig_paired_forest, fig_gr1_sweeps, fig_approach, arch_main}.png · pull4/figs/fig_ep06_base_v2.png (ctl vs base_v2 per dataset, cut).</dd>
+        <dt>Clips</dt><dd class="mono">pull4/iroll_ar5/{base_v2,base_v3}/ (8 GIFs + drift.json) · pull4/iviz_d6/{base_v2,base_v3}/ (10 GIFs + *_report.json) · pull4/data_inspect_0905/{inspect.md, inspect.json, clips/ (18 mp4 + jpg)}.</dd>
+        <dt>rlwrld jobs</dt><dd class="mono">158333 C2 optimizer strip · 158449 inspection · 158806 GR-1 base_v3 sweep (44 × 3, since 22:55 KST) · 157980 base_v2 smoke.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
-        <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/sweep_0904_ctl · sweep_0904_w_ep · sweep_0905_jit1m (sweep_table.json each) · base_v2 smoke rlwrld 157980.</dd>
-        <dt>ICLR27 jobs</dt><dd class="mono">ctl · w_ep · ciou_0p001 5648 · ciou_0p1 5470 · ciou_1p0 5471 · jit1m 6634 · base_v2 6905 · base_v2_ct 6948 → 7353 · base_v2_po05 6959 → 7354 · base_v3 7459 (died) → 7487 · 320M: MLXP p8c_320m_10ep_4gpu.</dd>
-        <dt>Bases</dt><dd class="mono">v1: ieval 480 = 96 × 5, zero 9.08 cm · v2: ieval 528 = 96 × 6, zero 8.66 cm; 432 five-dataset subset zero 9.37 · 224 shared keys: zero 12.84 (ctl points) / 13.56 (base_v2 points).</dd>
+        <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/{sweep_0904_ctl, sweep_0904_w_ep, sweep_0905_jit1m}/sweep_table.json · base_v3 sweep: rlwrld 158806 (running).</dd>
+        <dt>ICLR27 jobs</dt><dd class="mono">ciou_0p001 5648 · ciou_0p1 5470 · ciou_1p0 5471 · jit1m 6634 · base_v2 6905 · base_v2_ct 6948 → 7353 · base_v2_po05 6959 → 7354 · base_v3 7459 (died) → 7487 · C2 evals 7626 (v1) / 7627 (v2) · base_v3 evals 7759 / 7760 / 7761 · 320M: MLXP p8c_320m_10ep_4gpu.</dd>
+        <dt>Bases</dt><dd class="mono">v1: 480 = 96 × 5, zero 9.08 cm · v2: 528 = 96 × 6, zero 8.66; 432 subset 9.37 · 224 shared keys: 12.84 (v1 pts) / 13.56 (v2 pts).</dd>
       </dl>
-      <p class="cut"><b>Cut:</b> per-dataset rows for every arm (README_ep06.md) · HOT3D clips · 3-epoch intermediate reads · mp4 twins of every GIF · per-chunk drift tables · x10_sharpa rows · configs (base_v2 / base_v3 yaml) · 320M ep06 row · GR-1 per-task clips (deck #10 / #11) · base_v2_ct / po05 val curves beyond the overview figure.</p>
+      <p class="cut"><b>Cut:</b> ctl-vs-base_v2 figure · per-dataset rows per arm · HOT3D clips · 3-epoch reads · mp4 twins · drift tables · x10_sharpa rows · configs · 320M ep06 row · GR-1 per-task clips (decks #10 / #11) · ct / po05 curves · inspection p10 / p90 · 12 other episode clips (incl. Sharpa TACO).</p>
     </div>
   </div>
   <p class="footnote">sources: pull4/ (local mirror of the ICLR27 + rlwrld outputs) · previous decks #10 (GR-1 zero-shot) · #11 (progress)</p>
