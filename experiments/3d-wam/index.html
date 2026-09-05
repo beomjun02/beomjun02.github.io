@@ -60,6 +60,11 @@
   </div>
   <div class="road reveal">
     <div class="item"><span class="badge wip">running</span><div>
+      <h3><a href="decks/2026-09-05-new-base/">New baseline: what broke, what fixed it</a></h3>
+      <p><code>2026-09-05 · running</code> — <b>The new base base_v2 (eleven changes at once, history conditioning removed) landed at chance: cos 0.092, ADE 11.83 vs zero 8.66 cm on 528 chunks; paired vs ctl on the 224 shared keys Δcos −0.218 [−0.267, −0.169], ΔADE +6.2 cm. The cause is the removed history, not the evaluator; base_v3 = base_v2 + history H=2 is training (ICLR27 7487, lands ≈22:40 KST) and its trainer val already crosses the zero predictor at 32.5k steps.</b> Closed on the ctl basis: contact λ ladder, episode-weighted mix, 320M at eff 256; jit1m positive (Δcos +0.038, ΔADE −0.74 cm). GR-1 zero-shot sweeps: ctl 0/107, w_ep 1/117, jit1m 1/117. Owner decisions: re-run ct / po05 on base_v3; GR-1 object set (two vs all).</p>
+    </div></div>
+
+    <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-09-04-progress/">Progress: contact loss, data mix, coordinate jitter, mirror</a></h3>
       <p><code>2026-09-04 · running</code> — <b>The same-cluster baseline is set (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm); the soft-IoU contact loss at λ 0.1 is harmful (paired Δcos −0.088, ΔADE +1.40 cm); the episode-weighted data mix is a null (Δcos +0.000 [−0.007, +0.007]); coordinate jitter and left-right mirror land tonight (≈20:30 / 20:40 KST); the GR-1 6-ep success-rate sweeps for ctl and w_ep are in flight (≈16:30).</b> Per arm: autoregressive 5-chunk rollouts and single-chunk clips for the owner to verify.</p>
     </div></div>
