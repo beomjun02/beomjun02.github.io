@@ -292,10 +292,10 @@
     <li>New base: base_v3 restores history — above C2, parity with ctl</li>
     <li class="on">GR-1 zero-shot closed loop
       <ul><li>rlwrld · robocasa tabletop · 44 tasks × 3 eps · both hands · two objects (pick + target)</li>
-          <li>base_v2 not swept (chance-level); its 256-pt object path verified in MuJoCo (157980)</li></ul></li>
+          <li><b>base_v3: 2 / 116 successes, median 23.5 cm — the stratified gain does not carry into the loop</b></li></ul></li>
   </ol>
   <div class="band snug">
-    <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_gr1_sweeps.png" alt="Strip chart of final hand-to-target distance per task, mean of three episodes, for three sweeps: ctl 37 of 44 tasks, 0 of 107 episodes succeed, median 18.6 cm; w_ep 39 tasks, 1 of 117, median 17.4 cm; jit1m 39 tasks, 1 of 117, median 21.7 cm. Values above 60 cm are capped and counted.">
+    <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_gr1_sweeps.png" alt="Strip chart of final hand-to-target distance per task, mean of three episodes, for four sweeps: ctl 37 of 44 tasks, 0 of 107 episodes succeed, median 18.6 cm; w_ep 39 tasks, 1 of 117, median 17.4 cm; jit1m 39 tasks, 1 of 117, median 21.7 cm; base_v3 40 tasks, 2 of 116, median 23.5 cm. Black bars mark the medians; tasks above 60 cm are clipped and counted.">
       <figcaption><b>GR-1 sweeps</b> — final hand → target per task (mean of 3 eps), bar = median · only the model varies</figcaption></figure>
     <figure class="tb" style="flex:0 0 52%;min-width:0">
       <table class="compact dense nw">
@@ -305,13 +305,13 @@
           <tr><td>0904 · <b>w_ep</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>17.4</td></tr>
           <tr><td>0905 · <b>jit1m</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>21.7</td></tr>
           <tr><td>— · <b>base_v2</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">not swept · MuJoCo smoke (P = 1,536 · 90 replans · rc 0)</td></tr>
-          <tr class="pend"><td>0905 · <b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">Sun 09-06 morning · 158806 running since 22:55 KST · ≈+5 h · target: beat 1 / 117</td></tr>
+          <tr><td>0905 · <b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td>40 / 44</td><td>116</td><td><b>2</b></td><td><b>23.5</b></td></tr>
         </tbody>
       </table>
       <figcaption>median over tasks of the per-task mean · sim-fail tasks excluded (appendix)</figcaption></figure>
   </div>
-  <p class="etabar"><b>ETA</b> · base_v3 sweep · rlwrld 158806 · 44 × 3 · since <b>22:55 KST</b> · <b>≈+5 h compute</b> · queue → <b>Sun 09-06 ≈04:00–09:00 KST</b></p>
-  <p class="footnote">sweep_table.json per sweep · success = robocasa task flag · PnPAppleToPlate never ran (coffee_pod error, appendix) · per-task clips: decks #10 / #11</p>
+  <p class="etabar"><b>Read</b> · object-target tasks 2 / 71, median 18.5 cm · fixture-target tasks (drawer / cabinet / microwave) 0 / 45, <b>31.5 cm</b> — fixtures are not point sets yet · next: guided sampling (URDF projection), inference-only, <b>≈1 day</b></p>
+  <p class="footnote">sweep_table.json per sweep · success = robocasa task flag · base_v3 successes: ObjectsShelfToCounter ep0, ObjectsTieredBasketToCounter ep2 · 4 sim-fail tasks (appendix) · paired vs jit1m: closer on 17 tasks, farther on 22</p>
 </section>
 
 <!-- SECTION: viz · AR rollouts · base_v2 (top) vs base_v3 (bottom) · set 1 · captions only (outside the ≤8 cap) -->
@@ -420,14 +420,14 @@
 
 <!-- SECTION: summary · LAST MAIN SLIDE · running / due / decisions -->
 <section class="slide s-discuss s-status">
-  <h2>Summary · running / due / your decisions · 2026-09-05</h2>
-  <p class="thesis">base_v3 is the base; GR-1 lands Sunday; four calls are yours.</p>
+  <h2>Summary · running / due / your decisions · 2026-09-06 02:30 KST</h2>
+  <p class="thesis">base_v3 is the base; GR-1 did not follow; filtering is training.</p>
   <div class="band">
     <figure class="tb" style="flex:1 1 50%;min-width:0">
       <table class="compact dense status wrap">
         <thead><tr><th>A · running</th><th>progress · target</th><th>lands</th></tr></thead>
         <tbody>
-          <tr><td><b>GR-1 sweep</b> 158806 · rlwrld</td><td>base_v3 · 44 × 3 eps · %3 · target: beat 1 / 117</td><td>≈+5 h → <b>Sun ≈04:00–09:00</b></td></tr>
+          <tr><td><b>base_v3_trim</b> 7784 · normal · 4×H100</td><td>filtered train index (89.9 % of chunks) · 110,996 st · val cos 0.243 @10k (base_v3 0.277)</td><td>since 00:22 → <b>Sun ≈09:00 KST</b></td></tr>
           <tr class="pend"><td><b>base_v2_ct</b> 7353 · λ 0.1</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
           <tr class="pend"><td><b>base_v2_po05</b> 7354 · p 0.5</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
         </tbody>
@@ -436,7 +436,8 @@
       <table class="compact dense status wrap">
         <thead><tr><th>B · due, no input</th><th>work</th><th>when</th></tr></thead>
         <tbody>
-          <tr class="pend"><td><b>GR-1</b> base_v3 harvest → deck</td><td>+30 min after the sweep</td><td>Sun 09-06 morning</td></tr>
+          <tr><td><b>GR-1</b> base_v3 sweep 158806</td><td>harvested · 2 / 116 · 23.5 cm</td><td>this deck</td></tr>
+          <tr class="pend"><td><b>base_v3_trim</b> eval + paired + clips</td><td>+20 min after landing</td><td>Sun ≈09:30 KST</td></tr>
           <tr><td><b>base_v3</b> + <b>C2</b> evals, clips</td><td>landed 23:00 KST</td><td>this deck</td></tr>
         </tbody>
       </table></figure>
@@ -453,7 +454,7 @@
         </tbody>
       </table></figure>
   </div>
-  <p class="etabar"><b>ETA at a glance</b> · GR-1 base_v3 <b>Sun 09-06 ≈04:00–09:00 KST</b> (≈+5 h compute, queue) · harvest + deck <b>+30 min</b> after · ct / po05 <b>unestimated</b></p>
+  <p class="etabar"><b>ETA at a glance</b> · base_v3_trim lands <b>Sun ≈09:00 KST</b> (+6.5 h) · its eval + paired <b>+20 min</b> · ct / po05 <b>unestimated</b> · VITRA + guided-sampling notes: pull4/, for the morning</p>
   <p class="footnote">grey italic = not landed · silence defaults to the recommendation · base_v3 = weights_final.pt of ICLR27 7487 (110,996 steps, 8.6 h on 4×H100)</p>
 </section>
 
