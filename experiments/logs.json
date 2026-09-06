@@ -511,6 +511,28 @@
   },
   {
    "project": "3d-wam",
+   "date": "2026-09-07",
+   "slug": "object-gate",
+   "format": "deck",
+   "status": "done",
+   "updated": "2026-09-07",
+   "title": "The 2× model with an object gate (deck #14)",
+   "path": "3d-wam/decks/2026-09-07-object-gate/",
+   "tldr": "Deck #14, single-model deck for base_v3_trim 2× (221,992 steps, ≈ 8.3 effective epochs on the v2 corpus) sampled with an inference-time contact gate on objects: at every Euler step the clean estimate's object points stay at their frame-0 position until the predicted hand comes within 2 cm, then follow the prediction (τ₀ 0.5 → 1 smoothstep, no rigid fit, hands untouched, no training). Slides: core idea + config (+ sampler table); hand–object interaction metrics on the 528 kept-window val chunks vs ground truth (OMWC 0.012 vs 0.032, onset error −0.03 frames, missed/false contact 0.05/0.06, dmin error 3.21 cm, contact-frame F1 0.922, transport 0.85, pair RMS 1.19 cm/frame, object displacement 5.49 vs 6.81 cm/s) with every standard metric unchanged (ADE 7.50 vs zero-motion 8.41 cm); GR-1 closed loop, 44-task sweep with the gate (40 tasks run, 120 episodes, 0 successes, median final hand–object distance 20.2 cm, mean 30.7; rlwrld job 161124) with two episode-0 clips; reading: objects stop floating without contact, accuracy and GR-1 success unchanged, reach is the next lever.",
+   "tags": [
+    "base_v3_trim",
+    "2x",
+    "object-gate",
+    "sampling",
+    "interaction-metrics",
+    "contact",
+    "gr-1",
+    "closed-loop",
+    "single-model"
+   ]
+  },
+  {
+   "project": "3d-wam",
    "date": "2026-09-06",
    "slug": "2x-model",
    "format": "deck",
