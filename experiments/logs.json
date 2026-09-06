@@ -508,6 +508,27 @@
     "sampling",
     "velocity-conditioning"
    ]
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-09-06",
+   "slug": "2x-model",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-06",
+   "title": "The 2× model: what it learned (deck #13)",
+   "path": "3d-wam/decks/2026-09-06-2x-model/",
+   "tldr": "Deck #13, single-model deck for base_v3_trim 2× (221,992 steps = 2 × 110,996, resumed from the 1× weights; ≈ 8.3 effective epochs on the v2 corpus, 9.2 on the kept train index; 4 × H100 ≈ 17 h). Slides: core idea + full training config; what the model saw (10 train chunks, render lands ≈ 20:30 KST 09-06); what it did not see (10 held-out val chunks, GT | prediction, k = 8); GR-1 closed loop PnPCanToBowl episode 0 (unguided, not success, final hand-object distance 16.9 cm; 44-task sweep lands ≈ 00:30 KST 09-07). No comparison with other models and no metric table by the owner's decision.",
+   "tags": [
+    "base_v3_trim",
+    "2x",
+    "visualisation",
+    "held-out",
+    "train-chunks",
+    "gr-1",
+    "closed-loop",
+    "single-model"
+   ]
   }
  ]
 }

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #13 · 2026-09-06 · The 2× model: what it learned · SINGLE-MODEL deck for base_v3_trim 2× (221,992 steps
+     = 2 × 110,996, resumed from the 1× weights; ≈ 8.3 effective epochs on the full v2 corpus, 9.2 on the kept train index;
+     ICLR27 job 7784 → 8003). Owner's slide list, nothing more: (1) core idea + FULL training config · (2) what the model saw
+     (train chunks — render lands ≈ 20:30 KST, placeholder tiles) · (3) what it did not see (10 held-out val chunks) ·
+     (4) GR-1 closed loop, PnPCanToBowl episode 0 (44-task sweep lands ≈ 00:30 KST 09-07). No comparison with other models,
+     no metric table; numbers live only in the config table and in captions. Clips are never described — the owner verifies. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-06 · The 2× model: what it learned — 3D-WAM</title>
+<meta name="description" content="Deck #13, 2026-09-06. Single-model deck for base_v3_trim 2× (221,992 steps, ≈ 8.3 effective epochs on the v2 corpus, 4×H100 ≈ 17 h): the core idea and the full training configuration, what the model saw (train chunks), what it did not see (held-out val chunks), and the first GR-1 closed-loop episode (PnPCanToBowl). Visualisations only — the owner verifies the clips.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* ---- deck stepper: the reference's dim-inactive agenda, laid out as ONE line under the title (every slide) ---- */
+  .deck ol.agenda.strip{display:flex;flex-wrap:nowrap;gap:0 2.2em;font-size:1.75em;line-height:1.3;
+    margin:-1.1em 0 .4em;counter-reset:item}
+  .deck ol.agenda.strip>li{padding-left:1.35em;margin:0;white-space:nowrap}
+  .deck ol.agenda.strip>li::before{left:0}
+  /* ---- slide 1: core idea strip + three config tables ---- */
+  .deck .band.snug{margin-top:.5em}
+  .deck .band.cfg3{gap:1.4em;flex:0 0 auto;margin-top:.9em}
+  .deck .band figure.tb{flex:1 1 0;min-width:0;justify-content:flex-start}
+  .deck .band.cfg3 figure.tb.wide{flex:1.14 1 0}
+  .deck .band.cfg3 figure.tb.narrow{flex:.98 1 0}
+  .deck .band.cfg3{gap:1.1em}
+  .deck table.cfg{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.28}
+  .deck table.cfg th,.deck table.cfg td{padding:.16em .35em;vertical-align:top}
+  .deck table.cfg td:first-child:not([colspan]){white-space:nowrap;font-weight:700}
+  .deck table.cfg td[colspan]{font-weight:400}
+  .deck table.cfg td .mono{font-size:.88em;overflow-wrap:anywhere;word-break:break-all}
+  .deck .band.idea{flex:0 0 auto;margin-top:.2em}
+  .deck .band.idea figure{flex:1 1 100%}
+  .deck table.idea{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.28}
+  .deck table.idea th,.deck table.idea td{padding:.16em .4em;vertical-align:top}
+  .deck table.idea th{white-space:nowrap}
+  .deck .band figcaption.tight{margin-top:.15em;font-size:1.3em}
+  /* ---- viz grids (copied from deck #12): the figure is a flex column, the img flexes into what is left ---- */
+  .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;
+    grid-template-columns:repeat(5,1fr);grid-template-rows:auto auto;gap:.6em .8em;align-content:space-evenly}
+  .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
+  .deck .vizgrid figure>img{flex:0 0 auto;width:100%;height:9em;object-fit:contain;
+    object-position:center bottom;border-radius:3px}   /* explicit height: an img in an auto grid row collapses to 0 */
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.34em;font-size:1.0em;line-height:1.3;
+    font-style:normal;color:var(--cap,#595959);text-align:left}
+  .deck .s-viz h2{margin-bottom:.4em}
+  .deck .s-viz p.key{margin:0 0 .4em;font-size:1.45em;color:#333}
+  .deck .s-viz p.key b{color:#000}
+  .deck .epoch{font-weight:700;color:var(--acc,#0070C0)}
+  /* ---- pending visuals: dashed "WILL UPDATE" tiles ---- */
+  .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.3em;
+    align-items:center;justify-content:center;text-align:center;min-height:4.5em;
+    border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;
+    padding:.7em;background:#FAFAFA}
+  .deck .vizgrid figure.phold .pbox{flex:0 0 auto;height:9em;min-height:0;font-size:1.12em;line-height:1.4;box-sizing:border-box}
+  /* ---- slide 4: two videos side by side + a dated placeholder band ---- */
+  .deck .band.gr1{margin-top:.5em;gap:1.6em}
+  .deck .band.gr1>figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain;
+    background:transparent;border-radius:3px}
+  .deck .band.gr1>figure.ego{flex:0 0 36%}
+  .deck .band.gr1>figure.flow{flex:1 1 0}
+  .deck .band.gr1 figcaption{font-style:normal;font-size:1.3em;text-align:left;line-height:1.3}
+  .deck .band.pend{flex:0 0 auto;margin-top:.7em}
+  .deck .band.pend>figure{flex:1 1 100%}
+  .deck .band.pend .pbox{min-height:0;flex-direction:row;gap:1.2em;padding:.45em .9em;font-size:1.3em;line-height:1.35;text-align:left;justify-content:flex-start}
+  .deck .band.pend .pbox b{color:#333;white-space:nowrap}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #13 · the 2× model · base_v3_trim 2×" data-date="2026-09-06">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>The 2× model: what it learned</h1>
+  <p class="ctx">3D-WAM · base_v3_trim 2× · one model, visualisations only</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 06<br>Presented by 김범준 (beomjun)</p>
+</section>
+
+<!-- SECTION: 1 · core idea + training config (FULL) -->
+<section class="slide s-method">
+  <h2>Core idea and training config · base_v3_trim 2×</h2>
+  <ol class="agenda strip">
+    <li class="on">Core idea + config</li>
+    <li>What the model saw</li>
+    <li>What it did not see</li>
+    <li>GR-1 closed loop</li>
+  </ol>
+  <div class="band idea">
+    <figure class="tb">
+      <table class="idea"><colgroup><col style="width:23%"><col style="width:25%"><col style="width:14%"><col style="width:15%"><col style="width:11%"><col style="width:12%"></colgroup>
+        <thead><tr><th>input</th><th>model</th><th>output</th><th>decode</th><th>not used</th><th>claim</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>scene + embodiment as ONE dense labelled 3-D point set (hand 512 pts · object 256 pts · part labels) + 2 history frames + task text</td>
+            <td>language-conditioned flow-matching video-DiT predicts the TOTAL scene flow (hand + objects together) over the next 1 s · T = 10 @ 10 Hz</td>
+            <td>a 1 s trajectory for every input point, hand and objects in one prediction</td>
+            <td>hand flow → robot joints by per-link Procrustes + IK</td>
+            <td>no world model, no retargeter, no inverse dynamics</td>
+            <td>robot zero-shot execution of tasks demonstrated only by humans</td>
+          </tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <div class="band cfg3">
+    <figure class="tb wide">
+      <table class="cfg"><colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+        <thead><tr><th colspan="2">data</th></tr></thead>
+        <tbody>
+          <tr><td>corpus</td><td>v2 · taco, arctic, dexycb, oakink2, grab, hot3d · 10 Hz · T = 10</td></tr>
+          <tr><td>points</td><td>512 / hand · 256 / object · ≤ 16 objects per chunk</td></tr>
+          <tr><td>index</td><td>part-aligned prefix · stored validity · motion filter on · chunk_stride 1 · chunks_per_episode 4</td></tr>
+          <tr><td>contact</td><td>window filter, TRAIN index only · OakInk2 start 1.0 s / end 0.5 s · ARCTIC &amp; GRAB end 0.5 s · 89.9 % of train chunks kept</td></tr>
+          <tr><td>frame</td><td>history H = 2 frames (0.1 / 0.2 s ago) · origin = hand centre + random jitter ≤ 1 m (origin_jitter_m 1.0) · yaw aug · up-axis z</td></tr>
+          <tr><td>text</td><td>T5-base, cached · entity phrases on · text dropout 0.05</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb narrow">
+      <table class="cfg"><colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+        <thead><tr><th colspan="2">model</th></tr></thead>
+        <tbody>
+          <tr><td>backbone</td><td>video-DiT 120M · d 768 · depth 12 · heads 12 · mlp 4.0 · qk-norm</td></tr>
+          <tr><td>tokens</td><td>patch · k = 8 part-major Hilbert patches</td></tr>
+          <tr><td>attention</td><td>full 3-D attention · time-only RoPE</td></tr>
+          <tr><td>target</td><td>v-parameterisation · flow matching</td></tr>
+          <tr><td>conditioning</td><td>history channels · entity_text true</td></tr>
+          <tr><td>sampler</td><td>16 Euler steps · CFG 1.0 (eval)</td></tr>
+          <tr><td>EMA</td><td>0.999</td></tr>
+          <tr><td colspan="2"><b>weights</b> · <span class="mono">/s3ckpt/beomjun/3dwam/base_v3_trim/weights_final.pt</span></td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb">
+      <table class="cfg"><colgroup><col style="width:31%"><col style="width:69%"></colgroup>
+        <thead><tr><th colspan="2">optimisation</th></tr></thead>
+        <tbody>
+          <tr><td>optimiser</td><td>AdamW · lr 3e-4 · betas 0.9 / 0.95 · wd 0.05</td></tr>
+          <tr><td>schedule</td><td>warmup 300 · cosine to 0.1× · grad clip 1.0</td></tr>
+          <tr><td>batch</td><td>8 × 4 GPUs × accum 1 = eff 32 · micro_batch_points 98,304 · bucket by P</td></tr>
+          <tr><td>steps</td><td>221,992 = 2 × 110,996 · resumed from the 1× weights</td></tr>
+          <tr><td>eff. epochs</td><td><span class="epoch">≈ 8.3</span> on the full v2 corpus · 9.2 on the kept train index</td></tr>
+          <tr><td>compute</td><td>4 × H100 · ≈ 17 h total · ckpt every 30 min · iclr27 jobs 7784 → 8003</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <p class="footnote">source: configs/base_v3_trim.yaml (verbatim) · eff ep = steps × eff batch ÷ corpus chunks · every number on this slide is in the tables</p>
+</section>
+
+<!-- SECTION: 2 · viz · what the model SAW (train chunks) · render lands ≈ 20:30 KST · captions only -->
+<section class="slide s-viz">
+  <h2>What the model saw · train chunks · 1 s</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li class="on">What the model saw</li>
+    <li>What it did not see</li>
+    <li>GR-1 closed loop</li>
+  </ol>
+  <p class="key"><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 eff ep</span> · each tile: GT left | prediction right (k = 8 averaged samples) · objects <b style="color:#eb6834">orange</b> · right hand <b style="color:#1baf7a">green</b> · left hand <b style="color:#8e5bd6">purple</b></p>
+  <div class="vizgrid">
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+    <figure class="phold"><div class="pbox">WILL UPDATE<br>train chunk · rendering · ≈ 20:30 KST</div>
+      <figcaption>dataset · chunk id · “instruction” · lands ≈ 20:30 KST 09-06</figcaption></figure>
+  </div>
+  <p class="footnote">train chunks = inside the kept contact windows of the TRAIN index · same renderer, camera and k = 8 as the held-out slide · tiles swap to assets/train_&lt;dataset&gt;_…gif when the render lands</p>
+</section>
+
+<!-- SECTION: 3 · viz · what it did NOT see (held-out val chunks) · captions only -->
+<section class="slide s-viz">
+  <h2>What it did not see · held-out val chunks · 1 s</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What the model saw</li>
+    <li class="on">What it did not see</li>
+    <li>GR-1 closed loop</li>
+  </ol>
+  <p class="key"><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 eff ep</span> · each tile: GT left | prediction right (k = 8 averaged samples) · objects <b style="color:#eb6834">orange</b> · right hand <b style="color:#1baf7a">green</b> · left hand <b style="color:#8e5bd6">purple</b></p>
+  <div class="vizgrid">
+    <figure><img src="assets/heldout_taco_human_s21_c40693_k8.gif" alt="Held-out chunk, taco 40693: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · chunk 40693 · “dust the kettle with the roller”</figcaption></figure>
+    <figure><img src="assets/heldout_arctic_human_s3_c413_k8.gif" alt="Held-out chunk, arctic 413: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 413 · “grab the waffleiron”</figcaption></figure>
+    <figure><img src="assets/heldout_dexycb_human_s12_c4142_k8.gif" alt="Held-out chunk, dexycb 4142: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 4142 · “grasp the tomato soup can”</figcaption></figure>
+    <figure><img src="assets/heldout_oakink2_human_s71_c28115_k8.gif" alt="Held-out chunk, oakink2 28115: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 28115 · “Stir in the mug.”</figcaption></figure>
+    <figure><img src="assets/heldout_grab_human_s3_c4987_k8.gif" alt="Held-out chunk, grab 4987: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · chunk 4987 · “eat the banana”</figcaption></figure>
+    <figure><img src="assets/heldout_taco_human_s59_c41942_k8.gif" alt="Held-out chunk, taco 41942: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · chunk 41942 · “empty the cup with the kettle”</figcaption></figure>
+    <figure><img src="assets/heldout_arctic_human_s6_c1247_k8.gif" alt="Held-out chunk, arctic 1247: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 1247 · “grab the notebook”</figcaption></figure>
+    <figure><img src="assets/heldout_dexycb_human_s7_c4320_k8.gif" alt="Held-out chunk, dexycb 4320: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 4320 · “grasp the bleach cleanser”</figcaption></figure>
+    <figure><img src="assets/heldout_oakink2_human_s987_c26392_k8.gif" alt="Held-out chunk, oakink2 26392: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 26392 · “Make a baked sandwich with a filling of donut and sa…”</figcaption></figure>
+    <figure><img src="assets/heldout_grab_human_s26_c5319_k8.gif" alt="Held-out chunk, grab 5319: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · chunk 5319 · “look through the binoculars”</figcaption></figure>
+  </div>
+  <p class="footnote">val split = held-out TAKES (5 % sequence-hash split); tasks 62–100 % seen, objects 100 % seen; chunks chosen inside the contact windows</p>
+</section>
+
+<!-- SECTION: 4 · viz · GR-1 closed loop · PnPCanToBowl episode 0 · captions only · other tasks pending -->
+<section class="slide s-viz">
+  <h2>GR-1 closed loop · PnPCanToBowl · episode 0</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What the model saw</li>
+    <li>What it did not see</li>
+    <li class="on">GR-1 closed loop</li>
+  </ol>
+  <p class="key"><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 eff ep</span> · zero-shot, no fine-tuning · left: ego view · right: 3-D point flow, executed | predicted</p>
+  <div class="band gr1">
+    <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep00_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep00_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 0"></video>
+      <figcaption><b>GR-1 · PnPCanToBowl · episode 0</b> · ego view · “pick the can from the counter and place it in the bowl” · unguided · 3 episodes/task · replan every 4 executed frames · 720 steps · 90 replans</figcaption></figure>
+    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 0: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>3-D point flow</b> · left = executed scene points · right = model prediction · first 20 replans, every predicted step · result: <b>not success</b>, final hand–object distance <b>16.9 cm</b></figcaption></figure>
+  </div>
+  <div class="band pend">
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · other tasks</b><span>44-task sweep running on rlwrld (job 160217), lands ≈ 00:30 KST 09-07 · guided (URDF-projected) sweep follows</span></div></figure>
+  </div>
+  <p class="footnote">MuJoCo · robosuite · GR1ArmsAndWaistFourierHands · right hand · two objects · human tag · cfg 1.0 · 16 steps · results.json: sweep_0906_trim2x/PnPCanToBowl</p>
+</section>
+
+</main>
+</body>
+</html>

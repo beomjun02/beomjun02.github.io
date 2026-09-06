@@ -60,6 +60,11 @@
   </div>
   <div class="road reveal">
     <div class="item"><span class="badge wip">running</span><div>
+      <h3><a href="decks/2026-09-06-2x-model/">The 2× model: what it learned</a></h3>
+      <p><code>2026-09-06 · running · deck #13</code> — <b>Single-model deck for base_v3_trim 2× (221,992 steps = 2 × 110,996, resumed from the 1× weights; ≈ 8.3 effective epochs on the v2 corpus; 4 × H100 ≈ 17 h): the core idea and the full training configuration, then visualisations only — 10 held-out val chunks (GT | prediction, k = 8), 10 train chunks (render lands ≈ 20:30 KST), and the first GR-1 closed-loop episode (PnPCanToBowl ep 0, unguided: not success, final hand–object 16.9 cm).</b> No comparison with other models and no metric table by the owner's decision; the 44-task GR-1 sweep (rlwrld 160217) lands ≈ 00:30 KST 09-07, a guided (URDF-projected) sweep follows.</p>
+    </div></div>
+
+    <div class="item"><span class="badge wip">running</span><div>
       <h3><a href="decks/2026-09-05-new-base/">New baseline: what broke, what fixed it</a></h3>
       <p><code>2026-09-05 · running · rev 3 Sun 09-06 10:00</code> — <b>base_v3 (base_v2 + history H=2, 110,996 steps = 4.14 eff ep) is the base: cos 0.279, ADE 9.04 vs zero 8.66 cm on 528 chunks; paired Δcos +0.186 vs base_v2, +0.045 vs C2, +0.026 [−0.011, +0.062] vs ctl on the 224 shared keys. The contact-window filter (base_v3_trim, 89.9 % of train chunks kept) is null on direction (Δcos −0.006 [−0.017, +0.004]) and worse on ADE (+1.14 cm [+0.73, +1.59]) — the loss sits on grab / arctic / oakink2, whose removed phases remain in the unfiltered val; kept-window val ≈12:00 KST, 2× resume to 221,992 steps lands ≈18:00. URDF-manifold guided sampling closed at +0.007 [+0.002, +0.012] Sharpa hand cosine across four settings: feasibility is not the human→robot bottleneck.</b> VITRA converted: 948,010 groups → 89,834 episodes (right hand only; left-hand MANO convention unresolved) → 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3 sweep: 2 / 116, median 23.5 cm. Owner decisions: keep the filter (decide on the kept-window read); cancel ct / po05 and rerun on base_v3; VITRA left hand and the GR-1 all-scene-objects arm.</p>
     </div></div>
