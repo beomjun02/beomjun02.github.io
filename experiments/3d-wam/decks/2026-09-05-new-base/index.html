@@ -453,7 +453,7 @@
 <!-- SECTION: viz · single chunk · base_v3_trim 1× + 2× · kept-window chunks · captions only (outside the ≤8 cap) -->
 <section class="slide s-viz">
   <h2>Single chunk · 1 s · trim 1× (rows 1–2) vs 2× (row 3)</h2>
-  <div class="vizgrid five rows3">
+  <div class="vizgrid five rows3" style="grid-template-rows:1fr 1fr auto;gap:.3em .8em">
     <figure><img src="assets/base_v3_trim_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, taco chunk 40693: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>taco</b> chunk 40693 · “dust the kettle with the roller” · ADE 11.5 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_arctic_human_s3_c413_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, arctic chunk 413: ground truth left, prediction right." loading="lazy">
@@ -474,15 +474,15 @@
       <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>oakink2</b> chunk 26392 · “Make a baked sandwich with a filling of donut and sa…” · ADE 2.0 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_grab_human_s26_c5319_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, grab chunk 5319: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>grab</b> chunk 5319 · “look through the binoculars” · ADE 20.1 cm</figcaption></figure>
-    <figure><img src="assets/trim2x_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, taco chunk 40693: ground truth left, prediction right." loading="lazy">
+    <figure><img style="flex:0 0 auto;height:6.6em;object-fit:contain" src="assets/trim2x_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, taco chunk 40693: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 ep</span> · single chunk · 1 s · <b>taco</b> chunk 40693 · “dust the kettle with the roller”</figcaption></figure>
-    <figure><img src="assets/trim2x_arctic_human_s3_c413_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, arctic chunk 413: ground truth left, prediction right." loading="lazy">
+    <figure><img style="flex:0 0 auto;height:6.6em;object-fit:contain" src="assets/trim2x_arctic_human_s3_c413_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, arctic chunk 413: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 ep</span> · single chunk · 1 s · <b>arctic</b> chunk 413 · “grab the waffleiron”</figcaption></figure>
-    <figure><img src="assets/trim2x_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
+    <figure><img style="flex:0 0 auto;height:6.6em;object-fit:contain" src="assets/trim2x_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 ep</span> · single chunk · 1 s · <b>dexycb</b> chunk 4142 · “grasp the tomato soup can”</figcaption></figure>
-    <figure><img src="assets/trim2x_oakink2_human_s71_c28115_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, oakink2 chunk 28115: ground truth left, prediction right." loading="lazy">
+    <figure><img style="flex:0 0 auto;height:6.6em;object-fit:contain" src="assets/trim2x_oakink2_human_s71_c28115_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, oakink2 chunk 28115: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 ep</span> · single chunk · 1 s · <b>oakink2</b> chunk 28115 · “Stir in the mug.”</figcaption></figure>
-    <figure><img src="assets/trim2x_grab_human_s3_c4987_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, grab chunk 4987: ground truth left, prediction right." loading="lazy">
+    <figure><img style="flex:0 0 auto;height:6.6em;object-fit:contain" src="assets/trim2x_grab_human_s3_c4987_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim 2x, grab chunk 4987: ground truth left, prediction right." loading="lazy">
       <figcaption><b>base_v3_trim 2×</b> · 221,992 st · <span class="epoch">8.3 ep</span> · single chunk · 1 s · <b>grab</b> chunk 4987 · “eat the banana”</figcaption></figure>
   </div>
   <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · kept-window chunks · row 3 = the 2× model on row 1's chunks · k = 8 · cfg 1.0</p>
