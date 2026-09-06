@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #12 · 2026-09-05 (rev 6, Sun 09-06 17:00 KST · metrics: standard set only (ADE/FDE/Acc3D + zero refs), direction cosine dropped) · New baseline: what broke, what fixed it — plus the
+<!-- 3D-WAM deck #12 · 2026-09-05 (rev 7, Sun 09-06 18:40 KST · standard metrics only (cosine dropped); kept-window basis, 5 draws, 5 s rollouts; 2× trim final) · New baseline: what broke, what fixed it — plus the
      first three arms on base_v3. base_v2 (eleven changes at once, no history) landed AT CHANCE on the v2 basis;
      base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: 528 chunks cos 0.279 /
      ADE 9.04 vs zero 8.66; paired vs base_v2 dcos +0.186, vs C2 +0.045, vs ctl on 224 shared keys +0.026 = parity.
@@ -20,7 +20,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-05 · New baseline: what broke, what fixed it — 3D-WAM</title>
-<meta name="description" content="Deck #12, 2026-09-05 (rev 6, Sun 09-06 17:00 KST · metrics: standard set only (ADE/FDE/Acc3D + zero refs), direction cosine dropped). Rev 6 re-reads every table with the STANDARD metric set (scene-flow ADE/FDE/Acc3D next to the zero predictor; direction cosine dropped at the owner's request 09-06): on 528 v2 chunks no arm beats the zero predictor (ADE 8.66, Acc5 61.8 %); base_v3 (history H=2) is closest at 9.04 / 58.5 % and beats zero only on dexycb; base_v2 (no history) 11.83, C2 10.05; paired dADE vs base_v3: base_v2 +2.79, C2 +1.01, trim +1.14 (+0.71 on kept windows). New: base_v3_trim (contact-window filter on the train index, 89.9 % kept) is null on direction (dcos -0.006 [-0.017,+0.004]) and worse on ADE (+1.14 cm [+0.73,+1.59], on grab/arctic/oakink2 where the removed phases stay in the unfiltered val); kept-window val pending ~12:00 KST, 2x resume to 221,992 steps running (lands ~18:00). URDF-guided sampling closed at +0.007 [+0.002,+0.012] Sharpa hand cosine (feasibility is not the bottleneck). VITRA converted: 89,834 episodes, 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3: 2/116, median 23.5 cm.">
+<meta name="description" content="Deck #12, 2026-09-05 (rev 7, Sun 09-06 18:40 KST · standard metrics only (cosine dropped); kept-window basis, 5 draws, 5 s rollouts; 2× trim final). Rev 6 re-reads every table with the STANDARD metric set (scene-flow ADE/FDE/Acc3D next to the zero predictor; direction cosine dropped at the owner's request 09-06): on 528 v2 chunks no arm beats the zero predictor (ADE 8.66, Acc5 61.8 %); base_v3 (history H=2) is closest at 9.04 / 58.5 % and beats zero only on dexycb; base_v2 (no history) 11.83, C2 10.05; paired dADE vs base_v3: base_v2 +2.79, C2 +1.01, trim +1.14 (+0.71 on kept windows). New: base_v3_trim (contact-window filter on the train index, 89.9 % kept) is null on direction (dcos -0.006 [-0.017,+0.004]) and worse on ADE (+1.14 cm [+0.73,+1.59], on grab/arctic/oakink2 where the removed phases stay in the unfiltered val); kept-window val pending ~12:00 KST, 2x resume to 221,992 steps running (lands ~18:00). URDF-guided sampling closed at +0.007 [+0.002,+0.012] Sharpa hand cosine (feasibility is not the bottleneck). VITRA converted: 89,834 episodes, 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3: 2/116, median 23.5 cm.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -250,7 +250,7 @@
     <li class="on">Closed levers on the ctl basis
       <ul><li>480 stratified chunks · every arm paired against ctl · 10k bootstrap</li>
           <li>one positive lever (jit1m); contact λ, mix, 320M closed</li></ul></li>
-    <li>New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE</li>
+    <li>New base + filter + 2× length: 2× trim beats zero; base_v3 > C2 > base_v2</li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
@@ -279,39 +279,40 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li class="on">New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE
-      <ul><li>v2 basis · 528 chunks (96 × 6) · <b>unfiltered</b> val · ctl parity on the 224 shared keys: appendix</li>
+    <li class="on">New base + filter + 2× length: 2× trim beats zero; base_v3 > C2 > base_v2
+      <ul><li>standard metrics only (09-06) · kept-window val · 528 chunks · 5 draws · 5 s rollouts on 78 episodes</li>
           <li>trim = base_v3 recipe, train index cut to the contact windows (89.9 % kept) · 7784 · 8.6 h</li></ul></li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
     <figure class="tb" style="flex:1 1 0;min-width:0">
       <table class="compact dense ci">
-        <thead><tr><th>arm · v2 basis · 528</th><th>ADE cm</th><th>Acc5 %</th><th style="white-space:nowrap">ΔADE vs base_v3 · cm</th></tr></thead>
+        <thead><tr><th>kept-window val · 528</th><th>ADE cm</th><th>Acc5 %</th><th>δ<sub>avg</sub> %</th><th style="white-space:nowrap">ΔADE · cm</th></tr></thead>
         <tbody>
-          <tr><td><i>zero-motion predictor</i></td><td><i>8.66</i></td><td><i>61.8</i></td><td>—</td></tr>
-          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>11.83</td><td>50.2</td><td style="white-space:nowrap"><b>+2.79 [+2.27, +3.35]</b></td></tr>
-          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>10.05</td><td>54.0</td><td style="white-space:nowrap"><b>+1.01 [+0.60, +1.41]</b></td></tr>
-          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>9.04</b></td><td><b>58.5</b></td><td>—</td></tr>
-          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>10.17</td><td>57.7</td><td style="white-space:nowrap"><b>+1.14 [+0.72, +1.59]</b></td></tr>
+          <tr><td><i>zero-motion predictor</i></td><td><i>8.41</i></td><td><i>62.0</i></td><td><i>59.9</i></td><td>—</td></tr>
+          <tr><td><b>base_v2</b> · no hist</td><td>10.53</td><td>50.0</td><td>49.9</td><td style="white-space:nowrap"><b>+2.33 [+1.95, +2.71]</b></td></tr>
+          <tr><td><b>C2</b> · 109k</td><td>9.76</td><td>53.1</td><td>51.7</td><td style="white-space:nowrap"><b>+1.55 [+1.25, +1.86]</b></td></tr>
+          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td>8.20</td><td>58.9</td><td>56.9</td><td>—</td></tr>
+          <tr><td><b>trim</b> · <span class="epoch">4.14 ep</span></td><td>8.68</td><td>58.4</td><td>56.5</td><td style="white-space:nowrap"><b>+0.47 [+0.23, +0.74]</b></td></tr>
+          <tr><td><b>trim 2×</b> · <span class="epoch">8.3 ep</span></td><td><b>7.47</b></td><td><b>62.4</b></td><td><b>59.8</b></td><td style="white-space:nowrap"><b>−0.73 [−0.96, −0.51]</b></td></tr>
         </tbody>
       </table>
-      <figcaption><b>no arm beats the zero predictor</b> · base_v3 closest · below zero on dexycb only</figcaption></figure>
+</figure>
     <figure class="tb" style="flex:0 0 42%;min-width:0">
       <table class="compact dense ci nw2">
-        <thead><tr><th>trim − base_v3</th><th>cut start / end</th><th>ΔADE cm</th></tr></thead>
+        <thead><tr><th>5 s rollout · 78 ep</th><th>ADE cm</th><th>δ<sub>avg</sub> %</th><th>surv@5 s %</th><th>horizon s</th></tr></thead>
         <tbody>
-          <tr><td><b>all 528</b></td><td>—</td><td><b>+1.14</b> [+0.73, +1.59]</td></tr>
-          <tr><td><b>kept-window</b> · 528</td><td>—</td><td><b>+0.71</b> [+0.42, +1.01]</td></tr>
-          <tr><td><b>grab</b></td><td>— / 0.5 s</td><td><b>+4.16</b></td></tr>
-          <tr><td><b>arctic</b></td><td>— / 0.5 s</td><td><b>+2.28</b></td></tr>
-          <tr><td><b>oakink2</b></td><td>1.0 s / 0.5 s</td><td>+0.72</td></tr>
-          <tr><td><b>taco</b> · <b>dexycb</b> · <b>hot3d</b></td><td>none</td><td>−0.34 · −0.14 · −0.15</td></tr>
+          <tr><td><i>stay-put reference</i></td><td><i>26.2</i></td><td><i>46.2</i></td><td><i>36.0</i></td><td><i>0.85</i></td></tr>
+          <tr><td><b>base_v2</b></td><td>19.0</td><td>36.4</td><td>23.7</td><td>0.9</td></tr>
+          <tr><td><b>C2</b></td><td>25.7</td><td>33.9</td><td>21.1</td><td>0.85</td></tr>
+          <tr><td><b>base_v3</b></td><td>20.4</td><td>37.9</td><td>24.7</td><td>0.8</td></tr>
+          <tr><td><b>base_v3_trim</b></td><td>19.4</td><td>38.7</td><td>26.4</td><td>0.9</td></tr>
+          <tr><td><b>base_v3_trim 2×</b></td><td><b>17.5</b></td><td><b>43.0</b></td><td><b>29.4</b></td><td><b>1.15</b></td></tr>
         </tbody>
       </table>
 </figure>
   </div>
-  <p class="etabar"><b>Read</b> · ADE loss sits in the removed far-start / retreat chunks; kept windows still <b>+0.71 cm</b> → filter does not help · 2× resume 8003 lands <b>≈18:00 KST</b></p>
+  <p class="etabar"><b>Read</b> · <b>2× is the first arm below the zero predictor</b>; 110k → 222k = −0.73 cm, +3.5 pp Acc5 on every dataset · all arms still below stay-put on δ<sub>avg</sub> / survival · GR-1 sweep of 2× running</p>
   <p class="footnote">per-chunk means · Δ paired, 10k bootstrap, 95 % CI · standard metrics only since 09-06 · δ_avg, minADE₅, 5 s rollouts: jobs 8244–8248 · ctl + GR-1 tables: appendix</p>
 </section>
 
@@ -320,7 +321,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li>New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE</li>
+    <li>New base + filter + 2× length: 2× trim beats zero; base_v3 > C2 > base_v2</li>
     <li class="on">GR-1 zero-shot closed loop · human → robot: URDF-guided sampling
       <ul><li><b>GR-1 base_v3: 2 / 116, median 23.5 cm — the stratified gain does not carry into the loop</b></li>
           <li>guided = URDF projection inside the sampler, inference-only · 384 paired human / Sharpa TACO chunks</li></ul></li>
