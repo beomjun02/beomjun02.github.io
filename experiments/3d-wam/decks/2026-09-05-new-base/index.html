@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #12 · 2026-09-05 (rev 2, 23:30 KST) · New baseline: what broke, what fixed it. base_v2 (eleven
-     changes at once, no history) landed AT CHANCE on the v2 basis; diagnosis = the removed history conditioning.
-     base_v3 = base_v2 + history H=2 (ONE variable; ICLR27 7487, 4xH100, 8.6 h, 110,996 steps = 4.14 eff ep)
-     FINISHED 22:38 KST and was evaluated: 528 chunks cos 0.279 / ADE 9.04 vs zero 8.66; paired vs base_v2
-     dcos +0.186, vs C2 (rlwrld best, re-evaluated on the v2 loader) +0.045; on the 224 keys shared with ctl
-     dcos +0.026 [-0.011,+0.062] = parity at 4.14 vs 6.0 eff ep. Dataset inspection (approach / retreat): GRAB,
-     ARCTIC, OakInk2 start and end far from the object. GR-1 sweep for base_v3 running on rlwrld (array 158806,
-     since 22:55 KST). Closed on the ctl basis: contact lambda ladder, episode mix, 320M; positive: jit1m.
-     Structure: 8 main slides (title, overview, method x2 incl. data, results x3, summary) + 5 viz-grid slides
-     OUTSIDE the <=8 cap (captions only) + 2 appendix slides. Clips are never described - the owner verifies
-     renders. -->
+<!-- 3D-WAM deck #12 · 2026-09-05 (rev 3, Sun 09-06 10:00 KST) · New baseline: what broke, what fixed it — plus the
+     first three arms on base_v3. base_v2 (eleven changes at once, no history) landed AT CHANCE on the v2 basis;
+     base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: 528 chunks cos 0.279 /
+     ADE 9.04 vs zero 8.66; paired vs base_v2 dcos +0.186, vs C2 +0.045, vs ctl on 224 shared keys +0.026 = parity.
+     Rev 3 (Sun morning): base_v3_trim (contact-window filter on the TRAIN index, 89.9 % of chunks kept, ICLR27 7784)
+     is NULL on direction (paired dcos -0.006 [-0.017,+0.004]) and WORSE on ADE (+1.14 cm, all of it on grab/arctic/
+     oakink2 where the removed phases remain in the unfiltered val); kept-window val for both arms pending ~12:00 KST;
+     2x resume (8003, to 221,992 steps) running, lands ~18:00. URDF-manifold guided sampling (inference-only, 384
+     paired human/Sharpa TACO chunks) CLOSED at +0.007 Sharpa hand cosine across four settings: feasibility is not
+     the human->robot bottleneck. VITRA converted: 948,010 groups -> 89,834 episodes -> 359,666 chunks (right hand
+     only; left-hand MANO convention unresolved); mixture arm base_v3_vitra10 (8022) queued. GR-1 base_v3 sweep
+     harvested: 2/116, median 23.5 cm. Structure: 8 main slides (title, overview, method x2 incl. data + VITRA,
+     results x3 [URDF-guided folded into the GR-1 slide to hold the cap], summary) + 7 viz-grid slides OUTSIDE the
+     <=8 cap (captions only) + 3 appendix slides (moved tables, notes, evidence + cut list). Clips are never
+     described - the owner verifies renders. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-05 · New baseline: what broke, what fixed it — 3D-WAM</title>
-<meta name="description" content="Deck #12, 2026-09-05 (rev 2). The new base base_v2 (corpus v2, 16 objects x 256 pts, flag validity, origin jitter, NO history) landed at chance: cos 0.092, ADE 11.83 vs zero 8.66 cm on 528 chunks. base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: cos 0.279, ADE 9.04; paired dcos +0.186 vs base_v2, +0.045 vs C2 (the rlwrld best model re-evaluated on the v2 loader), +0.026 [-0.011,+0.062] vs ctl on the 224 shared keys = parity at 4.14 vs 6.0 eff ep. Dataset inspection: GRAB, ARCTIC, OakInk2 episodes start and end far from the object (d0 120 / 84 / 59 cm). GR-1 base_v3 sweep running on rlwrld (158806). Closed on the ctl basis: contact lambda ladder, episode-weighted mix, 320M at eff 256; jit1m positive. GR-1 zero-shot sweeps: ctl 0/107, w_ep 1/117, jit1m 1/117.">
+<meta name="description" content="Deck #12, 2026-09-05 (rev 3, Sun 09-06 10:00 KST). base_v2 (corpus v2, no history) landed at chance (cos 0.092, ADE 11.83 vs zero 8.66 cm, 528 chunks); base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: cos 0.279, ADE 9.04; paired dcos +0.186 vs base_v2, +0.045 vs C2, +0.026 [-0.011,+0.062] vs ctl on 224 shared keys. New: base_v3_trim (contact-window filter on the train index, 89.9 % kept) is null on direction (dcos -0.006 [-0.017,+0.004]) and worse on ADE (+1.14 cm [+0.73,+1.59], on grab/arctic/oakink2 where the removed phases stay in the unfiltered val); kept-window val pending ~12:00 KST, 2x resume to 221,992 steps running (lands ~18:00). URDF-guided sampling closed at +0.007 [+0.002,+0.012] Sharpa hand cosine (feasibility is not the bottleneck). VITRA converted: 89,834 episodes, 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3: 2/116, median 23.5 cm.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -109,6 +113,28 @@
   .deck table.dense.ci th{white-space:nowrap}
   .deck table.dense.ci td.d{white-space:normal}
   .deck table.data th,.deck table.data td{padding:.2em .4em}
+  /* ---- rev 3 (Sun 09-06: trim, guided sampling, VITRA) ---- */
+  .deck table.funnel{table-layout:fixed;width:100%}
+  .deck table.funnel th,.deck table.funnel td{padding:.18em .4em;vertical-align:top}
+  .deck table.funnel td:first-child,.deck table.funnel th:first-child{white-space:nowrap;font-weight:700}
+  .deck table.guided td:first-child{white-space:nowrap}
+  .deck table.guided th{white-space:nowrap}
+  .deck .vizgrid.rows3 figure.phold.ref .pbox{border:1px solid #D9D9D9;background:#FFF;color:#7A7A7A}
+  .deck .vizgrid.four.rows3 figure.phold .pbox{min-height:0;font-size:1.0em;line-height:1.35;padding:.4em}
+  .deck .band.vitra{flex:0 0 auto;margin-top:.9em}
+  .deck .band.vitra th{white-space:nowrap}
+  .deck .band.vitra figcaption{margin-top:.2em}
+  .deck table.data th,.deck table.data td{white-space:nowrap}
+  .deck table.funnel td{white-space:nowrap}
+  .deck table.ci.nw2 td,.deck table.ci.nw2 th{white-space:nowrap}
+  .deck .s-appendix.s-compare table td{white-space:normal}
+  .deck table.guided{table-layout:fixed;width:100%}
+  .deck table.guided td,.deck table.guided th{white-space:nowrap;padding:.2em .4em}
+  .deck .s-appendix.s-compare{font-family:var(--deck-sans)}
+  .deck .s-appendix.s-compare .band{display:flex;gap:2.4em}
+  .deck .s-appendix.s-compare table{font-size:1.45em}
+  .deck .s-appendix.s-compare .band figcaption{font-style:italic;font-size:1.45em}
+  .deck .s-appendix.s-compare .thesis{white-space:normal}
 </style>
 </head>
 <body class="deck-page">
@@ -125,15 +151,15 @@
 <!-- SECTION: overview · TL;DR + hero figure -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Restoring history recovers the base: parity with ctl, above C2</p>
+  <p class="thesis"><b>[TL;DR]</b> base_v3 holds; contact filter and URDF guidance do not move it</p>
   <ul>
-    <li>Fixed: history back, base_v3 = ctl parity</li>
-    <li>Data: GRAB, ARCTIC, OakInk2 start far</li>
-    <li>Decide: ct · po05 · GR-1 object set</li>
+    <li>Filter: null on direction, worse ADE</li>
+    <li>Guidance closed: feasibility not the bottleneck</li>
+    <li>VITRA converted; decide filter, ct / po05</li>
   </ul>
   <div class="band snug">
     <figure><img src="assets/fig_valcurves.png" alt="Two line charts of trainer validation versus training step for five arms, all complete to 110,996 steps. Left: direction cosine. ctl and jit1m rise from about 0.24 and 0.17 at 2,500 steps to 0.51 and 0.48 at 110,996; base_v3 rises from 0.17 to 0.44; base_v2 stays between 0.00 and 0.13 for the whole run; base_v2_po05 tracks base_v2 up to 37,500 steps. Right: ADE divided by the zero-predictor ADE with a dotted line at 1.0. ctl and jit1m fall from 1.07 to 0.84 and 0.81; base_v3 falls from 1.04 to 0.98 at the end; base_v2 rises from 1.10 to 1.21.">
-      <figcaption><b>Trainer validation</b> vs step — direction cosine (left) · ADE ÷ zero-predictor ADE (right, 1.0 = zero predictor) · ctl / jit1m: v1 corpus, <span class="epoch">6.00 eff ep</span> at 110,996 steps · base_v2 / base_v3: v2 corpus, <span class="epoch">4.14 eff ep</span> at 110,996 · all runs complete</figcaption></figure>
+      <figcaption><b>Trainer validation</b> vs step — direction cosine (left) · ADE ÷ zero-predictor ADE (right, 1.0 = zero predictor) · ctl / jit1m: v1 corpus, <span class="epoch">6.00 eff ep</span> at 110,996 steps · base_v2 / base_v3: v2 corpus, <span class="epoch">4.14 eff ep</span> at 110,996 · all runs complete · base_v3_trim: curve not pulled (its stratified read is on Results 2)</figcaption></figure>
   </div>
   <p class="footnote">trainer val = in-training val loader, one basis per corpus (v1 zero 0.1306 m · v2 zero 0.1242 m) · the Results numbers come from ieval on stratified chunks, not from these curves</p>
 </section>
@@ -164,19 +190,14 @@
 
 <!-- SECTION: method (2) · data · approach / retreat inspection (owner's request) -->
 <section class="slide s-method">
-  <h2>Method (2): data — approach / retreat per dataset</h2>
-  <p class="thesis">GRAB, ARCTIC and OakInk2 begin and end far from the object</p>
-  <ul>
-    <li>GRAB: most far-start chunks</li>
-    <li>TACO, HOT3D: contact throughout</li>
-    <li>DexYCB: approach only, no retreat</li>
-  </ul>
+  <h2>Method (2): data — approach / retreat · filter · VITRA</h2>
+  <p class="thesis">Far starts motivate the filter; VITRA adds in-the-wild episodes</p>
   <div class="band snug">
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_approach.png" alt="Three panels. Left: median hand-to-nearest-object distance versus normalised episode time per dataset with an interquartile band; grab starts near 120 cm, arctic 84, oakink2 59, dexycb 25, hot3d 15, taco 7; grab, arctic and oakink2 return to a similar distance at the end, dexycb ends at 3 cm. Middle: violin of the start distance d0 per dataset with the median marked. Right: stacked share of tracked frames per phase, approach / manipulation / retreat / never near, per dataset.">
-      <figcaption><b>Hand → nearest-object distance</b> over normalised episode time (median, IQR) · start distance d<sub>0</sub> per episode · share of frames per phase · all six datasets of the v2 corpus</figcaption></figure>
-    <figure class="tb" style="flex:0 0 46%;min-width:0">
+      <figcaption><b>Hand → nearest-object distance</b> over episode time (median, IQR) · start distance d<sub>0</sub> · phase shares · six datasets</figcaption></figure>
+    <figure class="tb" style="flex:0 0 50%;min-width:0">
       <table class="compact dense data">
-        <thead><tr><th>dataset</th><th>eps</th><th>d<sub>0</sub> cm</th><th>d<sub>end</sub> cm</th><th>appr / manip / retreat %</th><th>far-start chunks %</th><th>no-contact chunks %</th></tr></thead>
+        <thead><tr><th>dataset</th><th>eps</th><th>d<sub>0</sub> cm</th><th>d<sub>end</sub> cm</th><th>phases %</th><th>far-start %</th><th>no-contact %</th></tr></thead>
         <tbody>
           <tr><td><b>grab</b></td><td>1,332</td><td>120</td><td>120</td><td>18 / 56 / 23</td><td><b>24.3</b></td><td><b>13.6</b></td></tr>
           <tr><td><b>arctic</b></td><td>277</td><td>84</td><td>88</td><td>6 / 86 / 9</td><td>8.2</td><td>4.0</td></tr>
@@ -186,10 +207,20 @@
           <tr><td><b>taco</b></td><td>3,398</td><td>7</td><td>7</td><td>12 / 78 / 10</td><td>0.0</td><td>0.0</td></tr>
         </tbody>
       </table>
-      <figcaption>medians over episodes · phase shares pooled over frames · chunk shares over all training chunks</figcaption></figure>
+      <figcaption>phases = approach / manip / retreat · filter definition: footnote</figcaption></figure>
   </div>
-  <p class="etabar"><b>Decision pending</b> · far-start chunks: <b>keep / down-weight / re-cut</b> (owner) · no compute spent until ruled · a re-cut arm on base_v3 would be a one-variable run</p>
-  <p class="footnote">d = hand centroid → nearest object point (min over hands) · near &lt; 5 cm · far &gt; 20 cm · chunk = 11 frames @ 10 Hz · rlwrld 158449 · data_inspect_0905/inspect.md</p>
+  <div class="band vitra">
+    <figure class="tb" style="flex:1 1 100%;min-width:0">
+      <table class="compact dense funnel"><colgroup><col style="width:9%"><col style="width:16%"><col style="width:17%"><col style="width:20%"><col style="width:12%"><col style="width:13%"><col style="width:13%"></colgroup>
+        <thead><tr><th>VITRA</th><th>groups (3,845 shards)</th><th>≥ 1.1 s (11 fr @ 10 Hz)</th><th>≤ 5 cm contact</th><th>top by score</th><th>converted eps</th><th>train chunks</th></tr></thead>
+        <tbody>
+          <tr><td>count</td><td>948,010</td><td>223,363</td><td>167,433 (75 %)</td><td>100,000</td><td><b>89,834</b></td><td><b>359,666</b> · 6.7 GB</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>VITRA funnel</b> — groups → training chunks · R-hand MANO exact, L-hand convention unresolved (86,195 hands dropped, 10,166 eps failed) · 128-pt visible-surface objects · fps assumed Ego4D 30 / EPIC 50 / SSv2 12 · S3 v2/vitra</figcaption></figure>
+  </div>
+  <p class="etabar"><b>Filter arm</b> base_v3_trim trained → Results 2 · <b>VITRA mixture arm</b> base_v3_vitra10 (vitra = 10 % of sampled chunks via dataset_fraction) · ICLR27 8022 · background lane · <b>PENDING, unestimated start</b> · +8.5 h compute once running</p>
+  <p class="footnote">d = hand centroid → nearest object point · near &lt; 5 cm · far &gt; 20 cm · chunk = 11 fr @ 10 Hz · filter (train only): OakInk2 start 1.0 s / end 0.5 s, ARCTIC + GRAB end 0.5 s · rlwrld 158449</p>
 </section>
 
 <!-- SECTION: viz · full episodes · one per dataset · captions only (outside the ≤8 cap) -->
@@ -219,8 +250,8 @@
     <li class="on">Closed levers on the ctl basis
       <ul><li>480 stratified chunks · every arm paired against ctl · 10k bootstrap</li>
           <li>one positive lever (jit1m); contact λ, mix, 320M closed</li></ul></li>
-    <li>New base: base_v3 restores history — above C2, parity with ctl</li>
-    <li>GR-1 zero-shot closed loop</li>
+    <li>New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction</li>
+    <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_paired_forest.png" alt="Forest plot, two panels, seven arms paired against ctl with 95 percent intervals. Delta direction cosine: w_ep plus 0.000, contact lambda 0.001 plus 0.002, lambda 0.1 minus 0.088, lambda 1.0 minus 0.124, 320M at 9 epochs minus 0.038, jit1m plus 0.038, base_v2 minus 0.218 on 224 shared keys. Delta ADE in centimetres: plus 0.04, plus 0.03, plus 1.40, plus 2.37, plus 0.84, minus 0.74, plus 6.23.">
@@ -243,75 +274,74 @@
   <p class="footnote">480 = 96 × 5 (taco, arctic, dexycb, oakink2, grab) · v1 corpus · 110,996 steps · 2×H100 · 320M row = p8c_320m_ep09, 20,318 steps @ eff 256 (MLXP) · CIs in the figure · harvest_ep06.json</p>
 </section>
 
-<!-- SECTION: results · 2 · new base -->
+<!-- SECTION: results · 2 · new base + contact-window filter (base_v3_trim) -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li class="on">New base: base_v3 restores history — above C2, parity with ctl
-      <ul><li>v2 basis: 528 chunks (96 × 6) · C2 = rlwrld best (hist_long, H = 2) queried with the v2 loader</li>
-          <li>ctl basis: the 224 chunk keys shared by both bases (arctic 96 · grab 96 · dexycb 32)</li></ul></li>
-    <li>GR-1 zero-shot closed loop</li>
+    <li class="on">New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction
+      <ul><li>v2 basis · 528 chunks (96 × 6) · <b>unfiltered</b> val · ctl parity on the 224 shared keys: appendix</li>
+          <li>trim = base_v3 recipe, train index cut to the contact windows (89.9 % kept) · 7784 · 8.6 h</li></ul></li>
+    <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
     <figure class="tb" style="flex:1 1 0;min-width:0">
       <table class="compact dense ci">
-        <thead><tr><th>v2 basis · 528 · zero 8.66 cm</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>Acc5 %</th></tr></thead>
+        <thead><tr><th>arm · v2 basis · 528</th><th>cos</th><th>ADE cm</th><th>Δcos arm − base_v3</th></tr></thead>
         <tbody>
-          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td>0.092</td><td>0.144</td><td>11.83</td><td>50.2</td></tr>
-          <tr><td><b>C2</b> · rlwrld · H = 2 · <span class="epoch">4.1 ep</span></td><td>0.234</td><td>0.337</td><td>10.05</td><td>54.0</td></tr>
-          <tr><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td><b>0.279</b></td><td><b>0.390</b></td><td><b>9.04</b></td><td><b>58.5</b></td></tr>
-          <tr><td colspan="5" class="d">Δ base_v3 − base_v2: cos <b>+0.186</b> [+0.163, +0.210] · ADE <b>−2.79</b> [−3.34, −2.27]</td></tr>
-          <tr><td colspan="5" class="d">Δ base_v3 − C2: cos <b>+0.045</b> [+0.028, +0.063] · ADE <b>−1.01</b> [−1.41, −0.60]</td></tr>
+          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>0.092</td><td>11.83</td><td><b>−0.186</b> [−0.210, −0.163]</td></tr>
+          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>0.234</td><td>10.05</td><td><b>−0.045</b> [−0.063, −0.028]</td></tr>
+          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>0.279</b></td><td><b>9.04</b></td><td>—</td></tr>
+          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>0.273</td><td>10.17</td><td><b>−0.006</b> [−0.017, +0.004]</td></tr>
+          <tr class="pend"><td colspan="4"><b>kept-window val</b> · both arms · eval QoS queue · <b>Sun 09-06 ≈12:00 KST</b></td></tr>
         </tbody>
       </table>
-      <figcaption>v2 points · zero Acc5 61.8 % · dexycb 88 / oakink2 56 scored</figcaption></figure>
-    <figure class="tb" style="flex:1 1 0;min-width:0">
-      <table class="compact dense ci">
-        <thead><tr><th>224 shared keys</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>zero cm</th></tr></thead>
+      <figcaption>zero 8.66 cm · H = 2 except base_v2 · Δ paired, 10k bootstrap · cos<sub>hand</sub>, Acc5: appendix · eff ep on the full v2 corpus (trim: 4.61 on its kept index)</figcaption></figure>
+    <figure class="tb" style="flex:0 0 42%;min-width:0">
+      <table class="compact dense ci nw2">
+        <thead><tr><th>trim − base_v3</th><th>cut start / end</th><th>ΔADE cm</th></tr></thead>
         <tbody>
-          <tr><td><b>ctl</b> · H = 2 · <span class="epoch">6.00 ep</span> · v1 pts</td><td>0.317</td><td>0.381</td><td>12.96</td><td>12.84</td></tr>
-          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td>0.099</td><td>0.135</td><td>19.18</td><td>13.56</td></tr>
-          <tr><td><b>C2</b> · H = 2 · <span class="epoch">4.1 ep</span></td><td>0.285</td><td>0.346</td><td>15.08</td><td>13.56</td></tr>
-          <tr><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td><b>0.343</b></td><td><b>0.398</b></td><td><b>13.73</b></td><td>13.56</td></tr>
-          <tr><td colspan="5" class="d">Δ base_v3 − ctl: cos <b>+0.026</b> [−0.011, +0.062] · ADE <b>+0.77</b> [−0.05, +1.63]</td></tr>
-          <tr><td colspan="5" class="d">Δ base_v2 − ctl: cos <b>−0.218</b> [−0.267, −0.169] · ADE <b>+6.2</b> [+4.9, +7.7]</td></tr>
+          <tr><td><b>all 528</b></td><td>—</td><td><b>+1.14</b> [+0.73, +1.59]</td></tr>
+          <tr><td><b>grab</b></td><td>— / 0.5 s</td><td><b>+4.16</b></td></tr>
+          <tr><td><b>arctic</b></td><td>— / 0.5 s</td><td><b>+2.28</b></td></tr>
+          <tr><td><b>oakink2</b></td><td>1.0 s / 0.5 s</td><td>+0.72</td></tr>
+          <tr><td><b>taco</b> · <b>dexycb</b> · <b>hot3d</b></td><td>none</td><td>−0.34 · −0.14 · −0.15</td></tr>
         </tbody>
       </table>
-      <figcaption>same chunks · ctl on v1 points, the rest on v2 · zero moves +0.73 cm</figcaption></figure>
+      <figcaption>paired, 528 · Δcos<sub>hand</sub> −0.007 [−0.022, +0.006] · ΔAcc5 −0.8 pp · val unfiltered</figcaption></figure>
   </div>
-  <p class="etabar"><b>GR-1 sweep running</b> · base_v3 · rlwrld 158806 · 44 tasks × 3 · since 22:55 KST · <b>≈+5 h compute → Sun 09-06 ≈04:00–09:00 KST</b> (queue)</p>
-  <p class="footnote">per-chunk means · Δ = paired, 10k bootstrap, 95 % CI · trainer val at the final step: base_v3 0.435 · base_v2 0.116 · ctl 0.506 (v1 loader) · per-dataset rows: appendix</p>
+  <p class="etabar"><b>Read</b> · the unfiltered val keeps the far-start / retreat chunks removed from training — the ADE loss sits there; direction indistinguishable · <b>kept-window val</b>, both arms · <b>Sun ≈12:00 KST (+2 h)</b> · <b>2× resume</b> 8003 → 221,992 st, LR warm-restart · since 09:12 · <b>lands ≈18:00 KST (+8 h)</b></p>
+  <p class="footnote">per-chunk means · Δ = paired, 10k bootstrap, 95 % CI · trainer val motion ratio: base_v3_trim 97–99 % of truth, base_v3 86–87 % · ctl (224 keys) + GR-1 tables: appendix</p>
 </section>
 
-<!-- SECTION: results · 3 · GR-1 -->
+<!-- SECTION: results · 3 · GR-1 + human→robot URDF-guided sampling (folded here to hold the ≤8 cap) -->
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li>New base: base_v3 restores history — above C2, parity with ctl</li>
-    <li class="on">GR-1 zero-shot closed loop
-      <ul><li>rlwrld · robocasa tabletop · 44 tasks × 3 eps · both hands · two objects (pick + target)</li>
-          <li><b>base_v3: 2 / 116 successes, median 23.5 cm — the stratified gain does not carry into the loop</b></li></ul></li>
+    <li>New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction</li>
+    <li class="on">GR-1 zero-shot closed loop · human → robot: URDF-guided sampling
+      <ul><li><b>GR-1 base_v3: 2 / 116, median 23.5 cm — the stratified gain does not carry into the loop</b></li>
+          <li>guided = URDF projection inside the sampler, inference-only · 384 paired human / Sharpa TACO chunks</li></ul></li>
   </ol>
   <div class="band snug">
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_gr1_sweeps.png" alt="Strip chart of final hand-to-target distance per task, mean of three episodes, for four sweeps: ctl 37 of 44 tasks, 0 of 107 episodes succeed, median 18.6 cm; w_ep 39 tasks, 1 of 117, median 17.4 cm; jit1m 39 tasks, 1 of 117, median 21.7 cm; base_v3 40 tasks, 2 of 116, median 23.5 cm. Black bars mark the medians; tasks above 60 cm are clipped and counted.">
-      <figcaption><b>GR-1 sweeps</b> — final hand → target per task (mean of 3 eps), bar = median · only the model varies</figcaption></figure>
-    <figure class="tb" style="flex:0 0 52%;min-width:0">
-      <table class="compact dense nw">
-        <thead><tr><th>sweep · model</th><th>tasks ran</th><th>episodes</th><th>successes</th><th>median cm</th></tr></thead>
+      <figcaption><b>GR-1 sweeps</b> — final hand → target per task (mean of 3 eps), bar = median · only the model varies · sweep table: appendix</figcaption></figure>
+    <figure class="tb" style="flex:0 0 60%;min-width:0">
+      <table class="compact dense guided"><colgroup><col style="width:29%"><col style="width:29%"><col style="width:29%"><col style="width:13%"></colgroup>
+        <thead><tr><th>sampler · 384 pairs</th><th>gap Sharpa − human</th><th>Δ vs unguided</th><th>IK resid.</th></tr></thead>
         <tbody>
-          <tr><td>0904 · <b>ctl</b> · <span class="epoch">6.00 ep</span></td><td>37 / 44</td><td>107</td><td><b>0</b></td><td>18.6</td></tr>
-          <tr><td>0904 · <b>w_ep</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>17.4</td></tr>
-          <tr><td>0905 · <b>jit1m</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>21.7</td></tr>
-          <tr><td>— · <b>base_v2</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">not swept · MuJoCo smoke (P = 1,536 · 90 replans · rc 0)</td></tr>
-          <tr><td>0905 · <b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td>40 / 44</td><td>116</td><td><b>2</b></td><td><b>23.5</b></td></tr>
+          <tr><td><b>unguided</b></td><td>−0.108 [−0.136, −0.082]</td><td>—</td><td>—</td></tr>
+          <tr><td><b>guided</b> τ₀ 0.6 · hard</td><td>−0.101 [−0.129, −0.073]</td><td><b>+0.007</b> [+0.002, +0.012]</td><td>6.3 mm</td></tr>
+          <tr><td><b>guided</b> τ₀ 0.3 · hard</td><td>−0.101</td><td>+0.007 [+0.002, +0.012]</td><td>5.6 mm</td></tr>
+          <tr><td><b>guided</b> τ₀ 0.6 · 12 iters</td><td>−0.101</td><td>+0.007 [+0.002, +0.012]</td><td>6.2 mm</td></tr>
+          <tr><td><b>guided</b> gradient η 0.5</td><td>—</td><td>+0.006 [+0.003, +0.009]</td><td>7.7 mm</td></tr>
         </tbody>
       </table>
-      <figcaption>median over tasks of the per-task mean · sim-fail tasks excluded (appendix)</figcaption></figure>
+      <figcaption>cos<sub>hand</sub>: Sharpa 0.178 unguided → 0.185 guided τ₀ 0.6, human 0.286 in every run · paired, 10k bootstrap · guidance 2.7 s per 8-chunk batch vs 20.6 s sampling</figcaption></figure>
   </div>
-  <p class="etabar"><b>Read</b> · object-target tasks 2 / 71, median 18.5 cm · fixture-target tasks (drawer / cabinet / microwave) 0 / 45, <b>31.5 cm</b> — fixtures are not point sets yet · next: guided sampling (URDF projection), inference-only, <b>≈1 day</b></p>
-  <p class="footnote">sweep_table.json per sweep · success = robocasa task flag · base_v3 successes: ObjectsShelfToCounter ep0, ObjectsTieredBasketToCounter ep2 · 4 sim-fail tasks (appendix) · paired vs jit1m: closer on 17 tasks, farther on 22</p>
+  <p class="etabar"><b>Closed at ≈ +0.007 hand cosine</b> — feasibility is not the human → robot bottleneck; Sharpa predictions are nearly reachable but point the wrong way · next: contact-aware projection needs the contact-channel model (ct queued, unestimated) · <b>the Sharpa gap is the lever</b></p>
+  <p class="footnote">GR-1: success = robocasa task flag · base_v3 successes ObjectsShelfToCounter ep0, ObjectsTieredBasketToCounter ep2 · guided: base_v3, pull4/guided_sampling_design.md</p>
 </section>
 
 <!-- SECTION: viz · AR rollouts · base_v2 (top) vs base_v3 (bottom) · set 1 · captions only (outside the ≤8 cap) -->
@@ -418,27 +448,90 @@
   <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · 2 most dynamic of 40 val chunks per dataset · k = 8 samples · cfg 1.0 · same chunks, seed, camera in both rows</p>
 </section>
 
+<!-- SECTION: viz · single chunk · base_v3_trim · kept-window chunks · captions only (outside the ≤8 cap) -->
+<section class="slide s-viz">
+  <h2>Single chunk · 1 s · base_v3_trim · kept-window chunks</h2>
+  <div class="vizgrid five rows3">
+    <figure><img src="assets/base_v3_trim_taco_human_s21_c40693_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, taco chunk 40693: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>taco</b> chunk 40693 · “dust the kettle with the roller” · ADE 11.5 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_arctic_human_s3_c413_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, arctic chunk 413: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>arctic</b> chunk 413 · “grab the waffleiron” · ADE 32.8 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_dexycb_human_s12_c4142_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, dexycb chunk 4142: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>dexycb</b> chunk 4142 · “grasp the tomato soup can” · ADE 16.3 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_oakink2_human_s71_c28115_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, oakink2 chunk 28115: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>oakink2</b> chunk 28115 · “Stir in the mug.” · ADE 3.2 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_grab_human_s3_c4987_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, grab chunk 4987: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>grab</b> chunk 4987 · “eat the banana” · ADE 17.1 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_taco_human_s59_c41942_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, taco chunk 41942: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>taco</b> chunk 41942 · “empty the cup with the kettle” · ADE 9.9 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_arctic_human_s6_c1247_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, arctic chunk 1247: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>arctic</b> chunk 1247 · “grab the notebook” · ADE 26.4 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_dexycb_human_s7_c4320_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, dexycb chunk 4320: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>dexycb</b> chunk 4320 · “grasp the bleach cleanser” · ADE 12.2 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_oakink2_human_s987_c26392_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, oakink2 chunk 26392: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>oakink2</b> chunk 26392 · “Make a baked sandwich with a filling of donut and sa…” · ADE 2.0 cm</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_grab_human_s26_c5319_k8.gif" alt="Single-chunk point-cloud rollout, base_v3_trim, grab chunk 5319: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · 110,996 st · <span class="epoch">4.14 ep</span> · single chunk · 1 s · <b>grab</b> chunk 5319 · “look through the binoculars” · ADE 20.1 cm</figcaption></figure>
+    <figure class="phold ref"><div class="pbox">base_v3 · same chunks 40693 / 41942 · rendered — single-chunk slides 1 / 2, 2 / 2</div></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b> · base_v3 · same chunks 413 / 1247 · Sun ≈12:00 KST (+2 h)</div></figure>
+    <figure class="phold ref"><div class="pbox">base_v3 · same chunks 4142 / 4320 · rendered — single-chunk slides 1 / 2, 2 / 2</div></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b> · base_v3 · same chunks 28115 / 26392 · Sun ≈12:00 KST (+2 h)</div></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b> · base_v3 · same chunks 4987 / 5319 · Sun ≈12:00 KST (+2 h)</div></figure>
+  </div>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · chunks chosen inside the contact windows · k = 8 · cfg 1.0 · eff ep on the full v2 corpus (4.61 on the kept index)</p>
+</section>
+
+<!-- SECTION: viz · AR rollouts · base_v3_trim · captions only (outside the ≤8 cap) -->
+<section class="slide s-viz">
+  <h2>AR rollouts · 5 chunks · 5 s · base_v3_trim</h2>
+  <div class="vizgrid four rows3">
+    <figure><img src="assets/base_v3_trim_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, taco episode 5552: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 −0.06 → k4 0.14</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, arctic episode 212: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.57 → k4 0.13</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.16 → k4 −0.02</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_grab_1433_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, grab episode 1433: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 1433 · “eat the banana” · cos k0 0.63 → k4 −0.25</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, taco episode 6147: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.44 → k4 0.06</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, arctic episode 236: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.47 → k4 −0.09</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.08 → k4 −0.01</figcaption></figure>
+    <figure><img src="assets/base_v3_trim_grab_2184_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, grab episode 2184: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 2184 · “inspect the medium torus” · cos k0 0.39 → k4 0.06</figcaption></figure>
+    <figure class="phold ref"><div class="pbox">base_v3 · same episodes 5552 / 6147 · rendered — AR slides 1 / 2, 2 / 2</div></figure>
+    <figure class="phold ref"><div class="pbox">base_v3 · same episodes 212 / 236 · rendered — AR slides 1 / 2, 2 / 2</div></figure>
+    <figure class="phold ref"><div class="pbox">base_v3 · same episodes 3035 / 3059 · rendered — AR slides 1 / 2, 2 / 2</div></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b> · base_v3 · grab 1433 / 2184 · Sun ≈12:00 KST (+2 h)</div></figure>
+  </div>
+  <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · seed 20260904 as in the base_v3 rows · DexYCB: no 5-chunk eps</p>
+</section>
+
 <!-- SECTION: summary · LAST MAIN SLIDE · running / due / decisions -->
 <section class="slide s-discuss s-status">
-  <h2>Summary · running / due / your decisions · 2026-09-06 02:30 KST</h2>
-  <p class="thesis">base_v3 is the base; GR-1 did not follow; filtering is training.</p>
+  <h2>Summary · running / due / your decisions · 2026-09-06 10:00 KST</h2>
+  <p class="thesis">Filter null on direction; guidance saturated; VITRA converted; 2× running.</p>
   <div class="band">
     <figure class="tb" style="flex:1 1 50%;min-width:0">
       <table class="compact dense status wrap">
         <thead><tr><th>A · running</th><th>progress · target</th><th>lands</th></tr></thead>
         <tbody>
-          <tr><td><b>base_v3_trim</b> 7784 · normal · 4×H100</td><td>filtered train index (89.9 % of chunks) · 110,996 st · val cos 0.243 @10k (base_v3 0.277)</td><td>since 00:22 → <b>Sun ≈09:00 KST</b></td></tr>
-          <tr class="pend"><td><b>base_v2_ct</b> 7353 · λ 0.1</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
-          <tr class="pend"><td><b>base_v2_po05</b> 7354 · p 0.5</td><td>PENDING · no-history recipe</td><td>unestimated</td></tr>
+          <tr><td><b>base_v3_trim 2×</b> 8003</td><td>→ 221,992 st · 115k at 09:48</td><td><b>Sun ≈18:00 KST</b> (+8 h)</td></tr>
+          <tr class="pend"><td><b>base_v3_vitra10</b> 8022</td><td>PENDING · vitra 10 %</td><td>unestimated</td></tr>
+          <tr class="pend"><td><b>base_v2_ct</b> 7353</td><td>PENDING since 09-05</td><td>unestimated</td></tr>
+          <tr class="pend"><td><b>base_v2_po05</b> 7354</td><td>PENDING since 09-05</td><td>unestimated</td></tr>
         </tbody>
       </table></figure>
     <figure class="tb" style="flex:1 1 50%;min-width:0">
       <table class="compact dense status wrap">
         <thead><tr><th>B · due, no input</th><th>work</th><th>when</th></tr></thead>
         <tbody>
-          <tr><td><b>GR-1</b> base_v3 sweep 158806</td><td>harvested · 2 / 116 · 23.5 cm</td><td>this deck</td></tr>
-          <tr class="pend"><td><b>base_v3_trim</b> eval + paired + clips</td><td>+20 min after landing</td><td>Sun ≈09:30 KST</td></tr>
-          <tr><td><b>base_v3</b> + <b>C2</b> evals, clips</td><td>landed 23:00 KST</td><td>this deck</td></tr>
+          <tr class="pend"><td><b>kept-window</b> evals</td><td>base_v3 + trim, paired</td><td>≈12:00 KST (+2 h)</td></tr>
+          <tr class="pend"><td><b>2×</b> eval + deck</td><td>+30 min after landing</td><td>≈18:30 KST (+8.5 h)</td></tr>
+          <tr class="pend"><td><b>vitra10</b> eval</td><td>+8.5 h after start</td><td>unestimated</td></tr>
+          <tr><td><b>GR-1</b> · guidance · VITRA</td><td>harvested</td><td>this deck</td></tr>
         </tbody>
       </table></figure>
   </div>
@@ -447,26 +540,70 @@
       <table class="compact dense status dec wrap">
         <thead><tr><th>C · your decisions</th><th>options</th><th>recommendation · deadline</th></tr></thead>
         <tbody>
-          <tr><td><b>1 · ct / po05</b></td><td>finish on base_v2 (no history) · <b>cancel, re-run contact + partial-obs on base_v3</b></td><td><b>cancel, re-run on base_v3</b> · tonight</td></tr>
-          <tr><td><b>2 · GR-1 object set</b></td><td>two objects (pick + target) · <b>all scene objects</b></td><td><b>paired arm on base_v3</b>, two vs all · Sun</td></tr>
-          <tr><td><b>3 · far-start chunks</b></td><td><b>keep</b> · down-weight · re-cut (GRAB / ARCTIC / OakInk2)</td><td><b>keep for now</b>, re-cut arm later · Sun</td></tr>
-          <tr><td><b>4 · next arms on base_v3</b></td><td>H = 10 (free) · cap 8 × 512 pts (~13 h) · both · neither</td><td><b>your call</b> · Sun</td></tr>
+          <tr><td><b>1 · keep the filter?</b></td><td>keep · drop · <b>wait for the kept-window read</b></td><td><b>decide on the 12:00 read</b> · unfiltered: null on direction, worse ADE on removed-phase chunks</td></tr>
+          <tr><td><b>2 · ct / po05</b></td><td>finish on base_v2 (no history) · <b>cancel, rerun on base_v3</b></td><td><b>cancel, rerun on base_v3</b> · 4th day pending · today</td></tr>
+          <tr><td><b>3 · VITRA L-hand · GR-1 objects</b></td><td>resolve the L-hand convention or ship R-hand only · GR-1 arm: all scene objects vs two</td><td><b>your call</b> · Sun</td></tr>
         </tbody>
       </table></figure>
   </div>
-  <p class="etabar"><b>ETA at a glance</b> · base_v3_trim lands <b>Sun ≈09:00 KST</b> (+6.5 h) · its eval + paired <b>+20 min</b> · ct / po05 <b>unestimated</b> · VITRA + guided-sampling notes: pull4/, for the morning</p>
-  <p class="footnote">grey italic = not landed · silence defaults to the recommendation · base_v3 = weights_final.pt of ICLR27 7487 (110,996 steps, 8.6 h on 4×H100)</p>
+  <p class="etabar"><b>ETA at a glance</b> · kept-window read <b>≈12:00 KST</b> (+2 h) · 2× lands <b>≈18:00</b> (+8 h), its eval + deck ≈18:30 · vitra10 / ct / po05 <b>unestimated</b> (background lane)</p>
+  <p class="footnote">grey italic = not landed · silence defaults to the recommendation · 8003 / 8022 / 7353 / 7354 = ICLR27 jobs; 8003 normal 4×H100, the rest background · base_v3_trim = 7784 weights_final.pt</p>
+</section>
+
+<!-- SECTION: appendix (0) · tables moved from the main flow (rev 3) -->
+<section class="slide s-appendix s-compare">
+  <h2>Appendix · tables moved from the main flow (rev 2 → rev 3)</h2>
+  <p class="thesis ctx">ctl-basis parity on the 224 shared keys · GR-1 sweep table — unchanged from rev 2</p>
+  <div class="band snug">
+    <figure class="tb" style="flex:1 1 0;min-width:0">
+      <table class="compact dense ci">
+        <thead><tr><th>224 shared keys</th><th>cos</th><th>cos<sub>hand</sub></th><th>ADE cm</th><th>zero cm</th></tr></thead>
+        <tbody>
+          <tr><td><b>ctl</b> · H = 2 · <span class="epoch">6.00 ep</span> · v1 pts</td><td>0.317</td><td>0.381</td><td>12.96</td><td>12.84</td></tr>
+          <tr><td><b>base_v2</b> · no history · <span class="epoch">4.14 ep</span></td><td>0.099</td><td>0.135</td><td>19.18</td><td>13.56</td></tr>
+          <tr><td><b>C2</b> · H = 2 · <span class="epoch">4.1 ep</span></td><td>0.285</td><td>0.346</td><td>15.08</td><td>13.56</td></tr>
+          <tr><td><b>base_v3</b> · H = 2 · <span class="epoch">4.14 ep</span></td><td><b>0.343</b></td><td><b>0.398</b></td><td><b>13.73</b></td><td>13.56</td></tr>
+          <tr><td colspan="5" class="d">Δ base_v3 − ctl: cos <b>+0.026</b> [−0.011, +0.062] · ADE <b>+0.77</b> [−0.05, +1.63]</td></tr>
+          <tr><td colspan="5" class="d">Δ base_v2 − ctl: cos <b>−0.218</b> [−0.267, −0.169] · ADE <b>+6.2</b> [+4.9, +7.7]</td></tr>
+        </tbody>
+      </table>
+      <figcaption>same chunks (arctic 96 · grab 96 · dexycb 32) · ctl on v1 points, the rest on v2 · zero moves +0.73 cm · paired, 10k bootstrap</figcaption></figure>
+    <figure class="tb" style="flex:1 1 0;min-width:0">
+      <table class="compact dense">
+        <thead><tr><th>GR-1 sweep · model</th><th>tasks ran</th><th>episodes</th><th>successes</th><th>median cm</th></tr></thead>
+        <tbody>
+          <tr><td>0904 · <b>ctl</b> · <span class="epoch">6.00 ep</span></td><td>37 / 44</td><td>107</td><td><b>0</b></td><td>18.6</td></tr>
+          <tr><td>0904 · <b>w_ep</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>17.4</td></tr>
+          <tr><td>0905 · <b>jit1m</b> · <span class="epoch">6.00 ep</span></td><td>39 / 44</td><td>117</td><td><b>1</b></td><td>21.7</td></tr>
+          <tr><td>— · <b>base_v2</b> · <span class="epoch">4.14 ep</span></td><td colspan="4">not swept · MuJoCo smoke only</td></tr>
+          <tr><td>0905 · <b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td>40 / 44</td><td>116</td><td><b>2</b></td><td><b>23.5</b></td></tr>
+          <tr><td colspan="5" class="d">base_v3 by target: object-target <b>2 / 71</b>, median 18.5 cm · fixture-target (drawer / cabinet / microwave) <b>0 / 45</b>, 31.5 cm</td></tr>
+        </tbody>
+      </table>
+      <figcaption>median over tasks of the per-task mean · sim-fail tasks excluded · paired vs jit1m: closer on 17 tasks, farther on 22 · rlwrld 158806</figcaption></figure>
+  </div>
+  <p class="footnote">both tables sat on Results 2 / 3 in rev 2 · moved to hold the ≤ 8 main-slide cap · base_v2 smoke: P = 1,536, 90 replans, rc 0</p>
 </section>
 
 <!-- SECTION: appendix (1) · corrections / notes -->
 <section class="slide s-appendix">
-  <h2>Appendix · notes on the record (2026-09-05)</h2>
+  <h2>Appendix · notes on the record (2026-09-05 → 09-06)</h2>
   <ol class="corr tight">
     <li><b>C2 on the ctl (v1) basis, 480 chunks</b> — C2 cos 0.255, ADE 9.34, zero 9.08 (ctl 0.270 / 9.10 / 9.08); paired C2 − ctl Δcos −0.015 [−0.023, −0.008], ΔADE +0.24 cm [+0.09, +0.38]. C2 was trained with ≤ 2 objects at train time and is queried here with the v1 / v2 loaders unchanged.</li>
-    <li><b>base_v3 per dataset (v2 basis, cos / ADE cm / zero cm)</b> — taco 0.315 / 4.79 / 4.65 · arctic 0.281 / 12.28 / 10.24 · dexycb 0.231 / 6.25 / 7.18 · oakink2 0.209 / 3.03 / 2.63 · grab 0.436 / 17.87 / 19.16 · hot3d 0.166 / 7.26 / 5.49 · five-dataset subset (432) 0.304 / 9.43 / 9.37. Paired Δcos base_v3 − base_v2: arctic +0.257 · grab +0.287 · oakink2 +0.191 · taco +0.177 · hot3d +0.125 · dexycb +0.073.</li>
+    <li><b>base_v3 per dataset (v2 basis, cos / ADE cm / zero cm)</b> — taco 0.315 / 4.79 / 4.65 · arctic 0.281 / 12.28 / 10.24 · dexycb 0.231 / 6.25 / 7.18 · oakink2 0.209 / 3.03 / 2.63 · grab 0.436 / 17.87 / 19.16 · hot3d 0.166 / 7.26 / 5.49 · five-dataset subset (432) 0.304 / 9.43 / 9.37. Paired Δcos base_v3 − base_v2: arctic +0.257 · grab +0.287 · oakink2 +0.191 · taco +0.177 · hot3d +0.125 · dexycb +0.073. <b>Acc5 % (v2 basis, zero 61.8)</b>: base_v2 50.2 · C2 54.0 · base_v3 58.5 · base_v3_trim 57.7 (paired trim − base_v3 −0.8 pp); Δ base_v3 − base_v2 ADE −2.79 cm [−3.34, −2.27].</li>
     <li><b>C2 transfer</b> — the rlwrld checkpoint (hist_long, step 109,228) was stripped of its optimizer state to 915 MiB (rlwrld 158333) before the local → ICLR27 hop; evaluated as ICLR27 7626 (v1 basis) and 7627 (v2 basis).</li>
-    <li><b>Eval QoS queue</b> — the ICLR27 eval QoS was 2 h deep on Sep 5 evening, so the base_v3 evaluations (7759 / 7760 / 7761) ran on the normal QoS.</li>
-    <li><b>FRESH-on-requeue bug</b> — a preempted job restarted from scratch instead of its checkpoint: base_v2_ct lost 62k steps and was resumed from its 50k checkpoint as job 7353; the requeue path now resumes from the latest checkpoint. <b>set -e seeding bug</b> — base_v3's first launch (7459) died in 1 s; fixed, relaunched as 7487 at 14:05 KST.</li>
+    <li><b>Eval QoS queue</b> — 2–3 h waits on the ICLR27 eval QoS (Sep 5 evening, Sep 6 morning); evals move to the normal QoS whenever it is free (base_v3 evals 7759 / 7760 / 7761 ran there); the kept-window evals are in the eval queue.</li>
+    <li><b>Fixed bugs</b> — <b>FRESH-on-requeue</b>: a preempted job restarted from scratch instead of its checkpoint (base_v2_ct lost 62k steps, resumed from 50k as 7353); the requeue path now resumes from the latest checkpoint. <b>set -e seeding</b>: base_v3's first launch (7459) died in 1 s; relaunched as 7487. <b>VITRA JSON numpy crash</b>: the converter's report writer choked on numpy scalars; fixed before the 89,834-episode run.</li>
+    <li><b>VITRA left-hand MANO convention unresolved</b> — 24 candidate conventions (axis flips / mirror / rotation order) all leave 18–29 mm keypoint residual, so left hands were dropped (86,195) and episodes needing them failed (10,166); the right hand is exact. Source frame rates are assumed (Ego4D 30 · EPIC 50 · SSv2 12): the groups carry no fps attribute.</li>
+
+  </ol>
+</section>
+
+<!-- SECTION: appendix (1b) · notes, continued -->
+<section class="slide s-appendix">
+  <h2>Appendix · notes on the record (continued)</h2>
+  <ol class="corr tight" start="7">
+    <li><b>base_v3_trim units</b> — same 110,996 steps and batch as base_v3; eff ep is 4.14 on the full v2 corpus and 4.61 on its own 89.9 % kept index; the deck quotes 4.14 so the two arms share an axis. Its val is the unfiltered 528-chunk set; trainer val motion ratio 97–99 % of truth vs 86–87 % for base_v3. <b>Guided-sampling rows marked "—"</b> report only the paired gap / Δ; the Sharpa absolute was not exported for those runs.</li>
     <li><b>PnPAppleToPlate broken since the 09-03 sweep</b> — robocasa raises "No valid categories … ['coffee_pod']" at reset; one of the 5–7 sim-fail tasks per sweep (with PnPCounterToPan, PnPCupToDishRackUpperLevel, PnPVegetableBowlToPlate and one or two sweep-specific failures).</li>
     <li><b>Chunk keys re-indexed in v2</b> — taco and oakink2 chunk ids changed with the v2 corpus, so the paired test against ctl runs on the 224 keys shared by both evals (arctic 96, grab 96, dexycb 32); the 432 / 528 numbers are unpaired against ctl. <b>TACO generated text glitches</b> ("pour in some the kettle with the kettle") are the training text, shown verbatim.</li>
   </ol>
@@ -474,27 +611,35 @@
 
 <!-- SECTION: appendix (2) · evidence · jobs · cut list -->
 <section class="slide s-appendix">
-  <h2>Appendix · evidence · jobs · cut list</h2>
+  <h2>Appendix · evidence · jobs</h2>
   <div class="cols">
     <div>
       <dl class="kv">
-        <dt>Metrics</dt><dd class="mono">pull4/ieval/{harvest_ep06, ieval_ctl, ieval_base_v2, ieval_base_v3, ieval_c2_v1, ieval_c2_v2}.json (per_chunk; paired tables on (dataset, key) matches) · README_ep06.md.</dd>
-        <dt>Curves</dt><dd class="mono">trainer val: jobs/98e98703/tmp/valcurves.txt (8 arms; base_v3 complete to 110,996) → assets/fig_valcurves.png.</dd>
-        <dt>Figures</dt><dd class="mono">assets/{fig_paired_forest, fig_gr1_sweeps, fig_approach, arch_main}.png · pull4/figs/fig_ep06_base_v2.png (ctl vs base_v2 per dataset, cut).</dd>
-        <dt>Clips</dt><dd class="mono">pull4/iroll_ar5/{base_v2,base_v3}/ (8 GIFs + drift.json) · pull4/iviz_d6/{base_v2,base_v3}/ (10 GIFs + *_report.json) · pull4/data_inspect_0905/{inspect.md, inspect.json, clips/ (18 mp4 + jpg)}.</dd>
-        <dt>rlwrld jobs</dt><dd class="mono">158333 C2 optimizer strip · 158449 inspection · 158806 GR-1 base_v3 sweep (44 × 3, since 22:55 KST) · 157980 base_v2 smoke.</dd>
+        <dt>Metrics</dt><dd class="mono">pull4/ieval/ieval_{ctl, base_v2, base_v3, base_v3_trim, c2_v1, c2_v2}.json + harvest_ep06.json (per_chunk; paired on (dataset, key)) · pull4/xeval/xeval_base_v3_{unguided, guided_t06_hard, guided_t03_hard, guided_t06_hard_it12, guided_t06_grad}.json.</dd>
+        <dt>Figures</dt><dd class="mono">assets/{fig_valcurves, fig_paired_forest, fig_gr1_sweeps, fig_approach, arch_main}.png · curves from jobs/98e98703/tmp/valcurves.txt.</dd>
+        <dt>Clips</dt><dd class="mono">pull4/iroll_ar5/{base_v2, base_v3, base_v3_trim}/ (8 GIFs + drift.json) · pull4/iviz_d6/{base_v2, base_v3, base_v3_trim}/ (10 GIFs + report) · pull4/data_inspect_0905/.</dd>
+        <dt>Notes</dt><dd class="mono">pull4/vitra_assessment.md · pull4/guided_sampling_design.md.</dd>
+        <dt>rlwrld jobs</dt><dd class="mono">158333 C2 optimizer strip · 158449 inspection · 158806 GR-1 base_v3 sweep (44 × 3) · 159447 VITRA inspection · 157980 base_v2 smoke.</dd>
       </dl>
     </div>
     <div>
       <dl class="kv">
         <dt>GR-1</dt><dd class="mono">pull4/gr1_trial/{sweep_0904_ctl, sweep_0904_w_ep, sweep_0905_jit1m}/sweep_table.json · base_v3 sweep: rlwrld 158806 (running).</dd>
-        <dt>ICLR27 jobs</dt><dd class="mono">ciou_0p001 5648 · ciou_0p1 5470 · ciou_1p0 5471 · jit1m 6634 · base_v2 6905 · base_v2_ct 6948 → 7353 · base_v2_po05 6959 → 7354 · base_v3 7459 (died) → 7487 · C2 evals 7626 (v1) / 7627 (v2) · base_v3 evals 7759 / 7760 / 7761 · 320M: MLXP p8c_320m_10ep_4gpu.</dd>
+        <dt>ICLR27 jobs</dt><dd class="mono">ciou_0p001 5648 · ciou_0p1 5470 · ciou_1p0 5471 · jit1m 6634 · base_v2 6905 · base_v2_ct 6948 → 7353 · base_v2_po05 6959 → 7354 · base_v3 7459 → 7487 · C2 evals 7626 / 7627 · base_v3 evals 7759–7761 · base_v3_trim 7784, its eval + clips 8000–8002, 2× resume 8003 · guided sampling 7897 / 7898 / 7906–7908 · VITRA convert 8012–8015 · base_v3_vitra10 8022 · 320M: MLXP p8c_320m_10ep_4gpu.</dd>
         <dt>Bases</dt><dd class="mono">v1: 480 = 96 × 5, zero 9.08 cm · v2: 528 = 96 × 6, zero 8.66; 432 subset 9.37 · 224 shared keys: 12.84 (v1 pts) / 13.56 (v2 pts).</dd>
       </dl>
-      <p class="cut"><b>Cut:</b> ctl-vs-base_v2 figure · per-dataset rows per arm · HOT3D clips · 3-epoch reads · mp4 twins · drift tables · x10_sharpa rows · configs · 320M ep06 row · GR-1 per-task clips (decks #10 / #11) · ct / po05 curves · inspection p10 / p90 · 12 other episode clips (incl. Sharpa TACO).</p>
+
     </div>
   </div>
   <p class="footnote">sources: pull4/ (local mirror of the ICLR27 + rlwrld outputs) · previous decks #10 (GR-1 zero-shot) · #11 (progress)</p>
+</section>
+
+<!-- SECTION: appendix (3) · cut list · LAST -->
+<section class="slide s-appendix">
+  <h2>Appendix · cut list</h2>
+  <p class="thesis ctx">Nothing is silently lost — everything below exists in pull4/ or an earlier deck</p>
+<p class="cut"><b>Cut:</b> a 4th results slide for URDF guidance (folded into Results 3 to hold the ≤ 8 cap) · Method (2) bullets (restated the table) · trim per-dataset Δcos / Δcos<sub>hand</sub> rows · base_v3_trim val curve (not pulled) · trim 2× partial reads · guidance cost table · Sharpa absolutes for the τ₀ 0.3 / 12-iter / gradient rows (not exported) · VITRA schema + storage tables, VITRA clips (none rendered) · ctl-vs-base_v2 figure · per-dataset rows per arm · HOT3D clips · 3-epoch reads · mp4 twins · drift tables · x10_sharpa rows · configs · 320M ep06 row · GR-1 per-task clips (decks #10 / #11) · ct / po05 curves · inspection p10 / p90 · 12 other episode clips (incl. Sharpa TACO).</p>
+  <p class="footnote">rev 3 written Sun 09-06 10:00 KST · main slides 8 · viz-grid slides 7 (outside the cap) · appendix 5</p>
 </section>
 
 </main>
