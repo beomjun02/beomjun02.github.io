@@ -250,25 +250,25 @@
     <li class="on">Closed levers on the ctl basis
       <ul><li>480 stratified chunks · every arm paired against ctl · 10k bootstrap</li>
           <li>one positive lever (jit1m); contact λ, mix, 320M closed</li></ul></li>
-    <li>New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)</li>
+    <li>New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE</li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_paired_forest.png" alt="Forest plot, two panels, seven arms paired against ctl with 95 percent intervals. Delta direction cosine: w_ep plus 0.000, contact lambda 0.001 plus 0.002, lambda 0.1 minus 0.088, lambda 1.0 minus 0.124, 320M at 9 epochs minus 0.038, jit1m plus 0.038, base_v2 minus 0.218 on 224 shared keys. Delta ADE in centimetres: plus 0.04, plus 0.03, plus 1.40, plus 2.37, plus 0.84, minus 0.74, plus 6.23.">
-      <figcaption><b>Paired vs ctl</b> — ΔADE cm (right panel is the standard read; left Δcos panel is legacy, cosine dropped 09-06), mean · 95 % CI · n = 480, base_v2 on the 224 shared keys</figcaption></figure>
+      <figcaption><b>Paired vs ctl</b> — ΔADE cm (right; the Δcos panel is legacy) · 95 % CI · n = 480</figcaption></figure>
     <figure class="tb" style="flex:0 0 44%;min-width:0">
       <table class="compact dense">
-        <thead><tr><th>480 · <span class="epoch">6 ep</span> · ctl 9.10 cm / 56.9 %</th><th>ADE cm</th><th>Acc5 %</th><th>ΔADE vs ctl · cm</th></tr></thead>
+        <thead><tr><th>480 · <span class="epoch">6 ep</span> · ctl 9.10 / 56.9</th><th>ADE</th><th>Acc5</th><th style="white-space:nowrap">ΔADE vs ctl · cm</th></tr></thead>
         <tbody>
-          <tr><td>w_ep · episode-weighted mix</td><td>9.13</td><td>57.1</td><td>+0.04 [-0.08, +0.16]</td></tr>
-          <tr><td>ciou_0p001 · contact λ 0.001</td><td>9.12</td><td>57.5</td><td>+0.03 [-0.15, +0.21]</td></tr>
-          <tr><td>ciou_0p1 · contact λ 0.1</td><td>10.50</td><td>47.8</td><td><b>+1.40 [+1.10, +1.68]</b></td></tr>
-          <tr><td>ciou_1p0 · contact λ 1.0</td><td>11.47</td><td>34.4</td><td><b>+2.37 [+2.04, +2.68]</b></td></tr>
-          <tr><td>320M · eff 256 · 9 ep</td><td>9.94</td><td>52.4</td><td><b>+0.84 [+0.66, +1.03]</b></td></tr>
-          <tr><td><b>jit1m</b> · origin within 1 m</td><td>8.36</td><td>59.6</td><td><b>-0.74 [-0.98, -0.50]</b></td></tr>
+          <tr><td>w_ep · ep-weighted mix</td><td>9.13</td><td>57.1</td><td style="white-space:nowrap">+0.04 [-0.08, +0.16]</td></tr>
+          <tr><td>contact λ 0.001</td><td>9.12</td><td>57.5</td><td style="white-space:nowrap">+0.03 [-0.15, +0.21]</td></tr>
+          <tr><td>contact λ 0.1</td><td>10.50</td><td>47.8</td><td style="white-space:nowrap"><b>+1.40 [+1.10, +1.68]</b></td></tr>
+          <tr><td>contact λ 1.0</td><td>11.47</td><td>34.4</td><td style="white-space:nowrap"><b>+2.37 [+2.04, +2.68]</b></td></tr>
+          <tr><td>320M · 9 ep</td><td>9.94</td><td>52.4</td><td style="white-space:nowrap"><b>+0.84 [+0.66, +1.03]</b></td></tr>
+          <tr><td><b>jit1m</b> · origin ≤ 1 m</td><td>8.36</td><td>59.6</td><td style="white-space:nowrap"><b>-0.74 [-0.98, -0.50]</b></td></tr>
         </tbody>
       </table>
-      <figcaption>per-chunk means · zero predictor: ADE 9.08 cm · Acc5 59.8 % (only jit1m matches it) · Δ paired, 10k bootstrap</figcaption></figure>
+      <figcaption>zero predictor: ADE 9.08 · Acc5 59.8 — only jit1m matches it</figcaption></figure>
   </div>
   <p class="etabar"><b>Closed · no ETA</b> — no further arms on the ctl recipe; jit1m is carried into base_v2 / base_v3</p>
   <p class="footnote">480 = 96 × 5 (taco, arctic, dexycb, oakink2, grab) · v1 corpus · 110,996 steps · 2×H100 · 320M row = p8c_320m_ep09, 20,318 steps @ eff 256 (MLXP) · CIs in the figure · harvest_ep06.json</p>
@@ -279,7 +279,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li class="on">New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)
+    <li class="on">New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE
       <ul><li>v2 basis · 528 chunks (96 × 6) · <b>unfiltered</b> val · ctl parity on the 224 shared keys: appendix</li>
           <li>trim = base_v3 recipe, train index cut to the contact windows (89.9 % kept) · 7784 · 8.6 h</li></ul></li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
@@ -287,33 +287,32 @@
   <div class="band snug">
     <figure class="tb" style="flex:1 1 0;min-width:0">
       <table class="compact dense ci">
-        <thead><tr><th>arm · v2 basis · 528</th><th>ADE cm</th><th>FDE cm</th><th>Acc5 %</th><th>ΔADE vs base_v3 · cm</th></tr></thead>
+        <thead><tr><th>arm · v2 basis · 528</th><th>ADE cm</th><th>Acc5 %</th><th style="white-space:nowrap">ΔADE vs base_v3 · cm</th></tr></thead>
         <tbody>
-          <tr><td><i>zero-motion predictor</i></td><td><i>8.66</i></td><td><i>13.83</i></td><td><i>61.8</i></td><td>—</td></tr>
-          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>11.83</td><td>17.32</td><td>50.2</td><td><b>+2.79 [+2.27, +3.35]</b></td></tr>
-          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>10.05</td><td>17.05</td><td>54.0</td><td><b>+1.01 [+0.60, +1.41]</b></td></tr>
-          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>9.04</b></td><td><b>14.90</b></td><td><b>58.5</b></td><td>—</td></tr>
-          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>10.17</td><td>15.78</td><td>57.7</td><td><b>+1.14 [+0.72, +1.59]</b></td></tr>
-          <tr><td><b>trim vs base_v3</b> · kept-window val · zero 8.41</td><td>8.80 vs 8.09</td><td>14.24 vs 13.51</td><td>58.1 vs 59.1</td><td><b>+0.71 [+0.42, +1.01]</b></td></tr>
+          <tr><td><i>zero-motion predictor</i></td><td><i>8.66</i></td><td><i>61.8</i></td><td>—</td></tr>
+          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>11.83</td><td>50.2</td><td style="white-space:nowrap"><b>+2.79 [+2.27, +3.35]</b></td></tr>
+          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>10.05</td><td>54.0</td><td style="white-space:nowrap"><b>+1.01 [+0.60, +1.41]</b></td></tr>
+          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>9.04</b></td><td><b>58.5</b></td><td>—</td></tr>
+          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>10.17</td><td>57.7</td><td style="white-space:nowrap"><b>+1.14 [+0.72, +1.59]</b></td></tr>
         </tbody>
       </table>
-      <figcaption>H = 2 except base_v2 · Δ paired, 10k bootstrap · <b>no arm beats the zero predictor on ADE or Acc5</b>; base_v3 is the closest (+0.38 cm) and beats zero only on dexycb (6.2 vs 7.2) · metrics 09-06: standard set only, cosine dropped · eff ep on the full v2 corpus (trim: 4.61 on its kept index)</figcaption></figure>
+      <figcaption><b>no arm beats the zero predictor</b> · base_v3 closest · below zero on dexycb only</figcaption></figure>
     <figure class="tb" style="flex:0 0 42%;min-width:0">
       <table class="compact dense ci nw2">
         <thead><tr><th>trim − base_v3</th><th>cut start / end</th><th>ΔADE cm</th></tr></thead>
         <tbody>
           <tr><td><b>all 528</b></td><td>—</td><td><b>+1.14</b> [+0.73, +1.59]</td></tr>
-          <tr><td><b>kept-window</b> · 483</td><td>—</td><td><b>+0.45</b> [+0.18, +0.73]</td></tr>
+          <tr><td><b>kept-window</b> · 528</td><td>—</td><td><b>+0.71</b> [+0.42, +1.01]</td></tr>
           <tr><td><b>grab</b></td><td>— / 0.5 s</td><td><b>+4.16</b></td></tr>
           <tr><td><b>arctic</b></td><td>— / 0.5 s</td><td><b>+2.28</b></td></tr>
           <tr><td><b>oakink2</b></td><td>1.0 s / 0.5 s</td><td>+0.72</td></tr>
           <tr><td><b>taco</b> · <b>dexycb</b> · <b>hot3d</b></td><td>none</td><td>−0.34 · −0.14 · −0.15</td></tr>
         </tbody>
       </table>
-      <figcaption>paired · 528 chunks · val unfiltered · kept-window row from the same chunks</figcaption></figure>
+      <figcaption>paired · 10k bootstrap</figcaption></figure>
   </div>
-  <p class="etabar"><b>Read</b> · unfiltered val keeps the removed far-start / retreat chunks — the ADE loss sits there · kept-window (483): direction <b>null</b>, ADE <b>+0.45 cm</b> → the filter does not help manipulation · 2× resume 8003 → 221,992 st · lands <b>≈18:00 KST (+8 h)</b></p>
-  <p class="footnote">per-chunk means · Δ = paired, 10k bootstrap, 95 % CI · trainer val motion ratio: base_v3_trim 97–99 % of truth, base_v3 86–87 % · ctl (224 keys) + GR-1 tables: appendix</p>
+  <p class="etabar"><b>Read</b> · the ADE loss sits in the removed far-start / retreat chunks; on kept windows still <b>+0.71 cm</b> → the filter does not help manipulation · 2× resume 8003 lands <b>≈18:00 KST</b></p>
+  <p class="footnote">per-chunk means · Δ paired, 10k bootstrap, 95 % CI · standard metrics only since 09-06 · δ_avg, minADE₅, 5 s rollouts: jobs 8244–8248 · ctl + GR-1 tables: appendix</p>
 </section>
 
 <!-- SECTION: results · 3 · GR-1 + human→robot URDF-guided sampling (folded here to hold the ≤8 cap) -->
@@ -321,7 +320,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li>New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)</li>
+    <li>New base + filter: base_v3 > C2 > base_v2, ctl parity; trim +1.14 cm ADE</li>
     <li class="on">GR-1 zero-shot closed loop · human → robot: URDF-guided sampling
       <ul><li><b>GR-1 base_v3: 2 / 116, median 23.5 cm — the stratified gain does not carry into the loop</b></li>
           <li>guided = URDF projection inside the sampler, inference-only · 384 paired human / Sharpa TACO chunks</li></ul></li>
