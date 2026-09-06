@@ -287,13 +287,13 @@
   <div class="band snug">
     <figure class="tb" style="flex:1 1 0;min-width:0">
       <table class="compact dense ci">
-        <thead><tr><th>arm · v2 basis · 528</th><th>cos</th><th>ADE cm</th><th>Δcos arm − base_v3</th></tr></thead>
+        <thead><tr><th>arm · v2 basis · 528</th><th>cos</th><th>ADE cm</th><th>Δcos vs base_v3</th></tr></thead>
         <tbody>
           <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>0.092</td><td>11.83</td><td><b>−0.186</b> [−0.210, −0.163]</td></tr>
           <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>0.234</td><td>10.05</td><td><b>−0.045</b> [−0.063, −0.028]</td></tr>
           <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>0.279</b></td><td><b>9.04</b></td><td>—</td></tr>
           <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>0.273</td><td>10.17</td><td><b>−0.006</b> [−0.017, +0.004]</td></tr>
-          <tr class="pend"><td colspan="4"><b>kept-window val</b> · both arms · eval QoS queue · <b>Sun 09-06 ≈12:00 KST</b></td></tr>
+          <tr><td><b>trim</b> · kept-window chunks · n 483</td><td>0.294</td><td>8.38</td><td><b>+0.005</b> [−0.003, +0.013]</td></tr>
         </tbody>
       </table>
       <figcaption>zero 8.66 cm · H = 2 except base_v2 · Δ paired, 10k bootstrap · cos<sub>hand</sub>, Acc5: appendix · eff ep on the full v2 corpus (trim: 4.61 on its kept index)</figcaption></figure>
@@ -302,15 +302,16 @@
         <thead><tr><th>trim − base_v3</th><th>cut start / end</th><th>ΔADE cm</th></tr></thead>
         <tbody>
           <tr><td><b>all 528</b></td><td>—</td><td><b>+1.14</b> [+0.73, +1.59]</td></tr>
+          <tr><td><b>kept-window</b> · 483</td><td>—</td><td><b>+0.45</b> [+0.18, +0.73]</td></tr>
           <tr><td><b>grab</b></td><td>— / 0.5 s</td><td><b>+4.16</b></td></tr>
           <tr><td><b>arctic</b></td><td>— / 0.5 s</td><td><b>+2.28</b></td></tr>
           <tr><td><b>oakink2</b></td><td>1.0 s / 0.5 s</td><td>+0.72</td></tr>
           <tr><td><b>taco</b> · <b>dexycb</b> · <b>hot3d</b></td><td>none</td><td>−0.34 · −0.14 · −0.15</td></tr>
         </tbody>
       </table>
-      <figcaption>paired, 528 · Δcos<sub>hand</sub> −0.007 [−0.022, +0.006] · ΔAcc5 −0.8 pp · val unfiltered</figcaption></figure>
+      <figcaption>paired · 528 chunks · val unfiltered · kept-window row from the same chunks</figcaption></figure>
   </div>
-  <p class="etabar"><b>Read</b> · the unfiltered val keeps the far-start / retreat chunks removed from training — the ADE loss sits there; direction indistinguishable · <b>kept-window val</b>, both arms · <b>Sun ≈12:00 KST (+2 h)</b> · <b>2× resume</b> 8003 → 221,992 st, LR warm-restart · since 09:12 · <b>lands ≈18:00 KST (+8 h)</b></p>
+  <p class="etabar"><b>Read</b> · unfiltered val keeps the removed far-start / retreat chunks — the ADE loss sits there · kept-window (483): direction <b>null</b>, ADE <b>+0.45 cm</b> → the filter does not help manipulation · 2× resume 8003 → 221,992 st · lands <b>≈18:00 KST (+8 h)</b></p>
   <p class="footnote">per-chunk means · Δ = paired, 10k bootstrap, 95 % CI · trainer val motion ratio: base_v3_trim 97–99 % of truth, base_v3 86–87 % · ctl (224 keys) + GR-1 tables: appendix</p>
 </section>
 
@@ -528,7 +529,7 @@
       <table class="compact dense status wrap">
         <thead><tr><th>B · due, no input</th><th>work</th><th>when</th></tr></thead>
         <tbody>
-          <tr class="pend"><td><b>kept-window</b> evals</td><td>base_v3 + trim, paired</td><td>≈12:00 KST (+2 h)</td></tr>
+          <tr><td><b>kept-window</b> read</td><td>local, 528 chunks mapped · README</td><td>done 11:05 KST</td></tr>
           <tr class="pend"><td><b>2×</b> eval + deck</td><td>+30 min after landing</td><td>≈18:30 KST (+8.5 h)</td></tr>
           <tr class="pend"><td><b>vitra10</b> eval</td><td>+8.5 h after start</td><td>unestimated</td></tr>
           <tr><td><b>GR-1</b> · guidance · VITRA</td><td>harvested</td><td>this deck</td></tr>
@@ -540,13 +541,13 @@
       <table class="compact dense status dec wrap">
         <thead><tr><th>C · your decisions</th><th>options</th><th>recommendation · deadline</th></tr></thead>
         <tbody>
-          <tr><td><b>1 · keep the filter?</b></td><td>keep · drop · <b>wait for the kept-window read</b></td><td><b>decide on the 12:00 read</b> · unfiltered: null on direction, worse ADE on removed-phase chunks</td></tr>
+          <tr><td><b>1 · keep the filter?</b></td><td>keep · <b>drop</b> · wait for the 2× read</td><td><b>drop</b> · kept-window: Δcos +0.005 (null), ΔADE +0.45 cm; removed phases lost (−0.125 cos) · re-base the 2× length arm on base_v3</td></tr>
           <tr><td><b>2 · ct / po05</b></td><td>finish on base_v2 (no history) · <b>cancel, rerun on base_v3</b></td><td><b>cancel, rerun on base_v3</b> · 4th day pending · today</td></tr>
           <tr><td><b>3 · VITRA L-hand · GR-1 objects</b></td><td>resolve the L-hand convention or ship R-hand only · GR-1 arm: all scene objects vs two</td><td><b>your call</b> · Sun</td></tr>
         </tbody>
       </table></figure>
   </div>
-  <p class="etabar"><b>ETA at a glance</b> · kept-window read <b>≈12:00 KST</b> (+2 h) · 2× lands <b>≈18:00</b> (+8 h), its eval + deck ≈18:30 · vitra10 / ct / po05 <b>unestimated</b> (background lane)</p>
+  <p class="etabar"><b>ETA at a glance</b> · kept-window read <b>done</b> · 2× lands <b>≈18:00</b> (+8 h), its eval + deck ≈18:30 · vitra10 / ct / po05 <b>unestimated</b> (background lane)</p>
   <p class="footnote">grey italic = not landed · silence defaults to the recommendation · 8003 / 8022 / 7353 / 7354 = ICLR27 jobs; 8003 normal 4×H100, the rest background · base_v3_trim = 7784 weights_final.pt</p>
 </section>
 
