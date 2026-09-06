@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 3D-WAM deck #12 · 2026-09-05 (rev 3, Sun 09-06 10:00 KST) · New baseline: what broke, what fixed it — plus the
+<!-- 3D-WAM deck #12 · 2026-09-05 (rev 6, Sun 09-06 17:00 KST · metrics: standard set only (ADE/FDE/Acc3D + zero refs), direction cosine dropped) · New baseline: what broke, what fixed it — plus the
      first three arms on base_v3. base_v2 (eleven changes at once, no history) landed AT CHANCE on the v2 basis;
      base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: 528 chunks cos 0.279 /
      ADE 9.04 vs zero 8.66; paired vs base_v2 dcos +0.186, vs C2 +0.045, vs ctl on 224 shared keys +0.026 = parity.
@@ -20,7 +20,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-05 · New baseline: what broke, what fixed it — 3D-WAM</title>
-<meta name="description" content="Deck #12, 2026-09-05 (rev 3, Sun 09-06 10:00 KST). base_v2 (corpus v2, no history) landed at chance (cos 0.092, ADE 11.83 vs zero 8.66 cm, 528 chunks); base_v3 = base_v2 + history H=2 (ICLR27 7487, 110,996 steps = 4.14 eff ep) restores it: cos 0.279, ADE 9.04; paired dcos +0.186 vs base_v2, +0.045 vs C2, +0.026 [-0.011,+0.062] vs ctl on 224 shared keys. New: base_v3_trim (contact-window filter on the train index, 89.9 % kept) is null on direction (dcos -0.006 [-0.017,+0.004]) and worse on ADE (+1.14 cm [+0.73,+1.59], on grab/arctic/oakink2 where the removed phases stay in the unfiltered val); kept-window val pending ~12:00 KST, 2x resume to 221,992 steps running (lands ~18:00). URDF-guided sampling closed at +0.007 [+0.002,+0.012] Sharpa hand cosine (feasibility is not the bottleneck). VITRA converted: 89,834 episodes, 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3: 2/116, median 23.5 cm.">
+<meta name="description" content="Deck #12, 2026-09-05 (rev 6, Sun 09-06 17:00 KST · metrics: standard set only (ADE/FDE/Acc3D + zero refs), direction cosine dropped). Rev 6 re-reads every table with the STANDARD metric set (scene-flow ADE/FDE/Acc3D next to the zero predictor; direction cosine dropped at the owner's request 09-06): on 528 v2 chunks no arm beats the zero predictor (ADE 8.66, Acc5 61.8 %); base_v3 (history H=2) is closest at 9.04 / 58.5 % and beats zero only on dexycb; base_v2 (no history) 11.83, C2 10.05; paired dADE vs base_v3: base_v2 +2.79, C2 +1.01, trim +1.14 (+0.71 on kept windows). New: base_v3_trim (contact-window filter on the train index, 89.9 % kept) is null on direction (dcos -0.006 [-0.017,+0.004]) and worse on ADE (+1.14 cm [+0.73,+1.59], on grab/arctic/oakink2 where the removed phases stay in the unfiltered val); kept-window val pending ~12:00 KST, 2x resume to 221,992 steps running (lands ~18:00). URDF-guided sampling closed at +0.007 [+0.002,+0.012] Sharpa hand cosine (feasibility is not the bottleneck). VITRA converted: 89,834 episodes, 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3: 2/116, median 23.5 cm.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -250,25 +250,25 @@
     <li class="on">Closed levers on the ctl basis
       <ul><li>480 stratified chunks · every arm paired against ctl · 10k bootstrap</li>
           <li>one positive lever (jit1m); contact λ, mix, 320M closed</li></ul></li>
-    <li>New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction</li>
+    <li>New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)</li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
   </ol>
   <div class="band snug">
     <figure style="flex:1 1 0;min-width:0"><img src="assets/fig_paired_forest.png" alt="Forest plot, two panels, seven arms paired against ctl with 95 percent intervals. Delta direction cosine: w_ep plus 0.000, contact lambda 0.001 plus 0.002, lambda 0.1 minus 0.088, lambda 1.0 minus 0.124, 320M at 9 epochs minus 0.038, jit1m plus 0.038, base_v2 minus 0.218 on 224 shared keys. Delta ADE in centimetres: plus 0.04, plus 0.03, plus 1.40, plus 2.37, plus 0.84, minus 0.74, plus 6.23.">
-      <figcaption><b>Paired vs ctl</b> — Δcos (left) and ΔADE cm (right), mean · 95 % CI · n = 480, base_v2 on the 224 shared keys</figcaption></figure>
+      <figcaption><b>Paired vs ctl</b> — ΔADE cm (right panel is the standard read; left Δcos panel is legacy, cosine dropped 09-06), mean · 95 % CI · n = 480, base_v2 on the 224 shared keys</figcaption></figure>
     <figure class="tb" style="flex:0 0 44%;min-width:0">
       <table class="compact dense">
-        <thead><tr><th>480 · <span class="epoch">6 ep</span> · ctl 0.270 / 9.10</th><th>cos</th><th>ADE cm</th><th>Δcos vs ctl</th></tr></thead>
+        <thead><tr><th>480 · <span class="epoch">6 ep</span> · ctl 9.10 cm / 56.9 %</th><th>ADE cm</th><th>Acc5 %</th><th>ΔADE vs ctl · cm</th></tr></thead>
         <tbody>
-          <tr><td>w_ep · episode-weighted mix</td><td>0.270</td><td>9.13</td><td>+0.000</td></tr>
-          <tr><td>ciou_0p001 · contact λ 0.001</td><td>0.272</td><td>9.12</td><td>+0.002</td></tr>
-          <tr><td>ciou_0p1 · contact λ 0.1</td><td>0.182</td><td>10.50</td><td><b>−0.088</b></td></tr>
-          <tr><td>ciou_1p0 · contact λ 1.0</td><td>0.146</td><td>11.47</td><td><b>−0.124</b></td></tr>
-          <tr><td>320M · eff 256 · 9 ep</td><td>0.232</td><td>9.94</td><td><b>−0.038</b></td></tr>
-          <tr><td><b>jit1m</b> · origin within 1 m</td><td><b>0.308</b></td><td><b>8.36</b></td><td><b>+0.038</b></td></tr>
+          <tr><td>w_ep · episode-weighted mix</td><td>9.13</td><td>57.1</td><td>+0.04 [-0.08, +0.16]</td></tr>
+          <tr><td>ciou_0p001 · contact λ 0.001</td><td>9.12</td><td>57.5</td><td>+0.03 [-0.15, +0.21]</td></tr>
+          <tr><td>ciou_0p1 · contact λ 0.1</td><td>10.50</td><td>47.8</td><td><b>+1.40 [+1.10, +1.68]</b></td></tr>
+          <tr><td>ciou_1p0 · contact λ 1.0</td><td>11.47</td><td>34.4</td><td><b>+2.37 [+2.04, +2.68]</b></td></tr>
+          <tr><td>320M · eff 256 · 9 ep</td><td>9.94</td><td>52.4</td><td><b>+0.84 [+0.66, +1.03]</b></td></tr>
+          <tr><td><b>jit1m</b> · origin within 1 m</td><td>8.36</td><td>59.6</td><td><b>-0.74 [-0.98, -0.50]</b></td></tr>
         </tbody>
       </table>
-      <figcaption>per-chunk means · zero ADE 9.08 cm</figcaption></figure>
+      <figcaption>per-chunk means · zero predictor: ADE 9.08 cm · Acc5 59.8 % (only jit1m matches it) · Δ paired, 10k bootstrap</figcaption></figure>
   </div>
   <p class="etabar"><b>Closed · no ETA</b> — no further arms on the ctl recipe; jit1m is carried into base_v2 / base_v3</p>
   <p class="footnote">480 = 96 × 5 (taco, arctic, dexycb, oakink2, grab) · v1 corpus · 110,996 steps · 2×H100 · 320M row = p8c_320m_ep09, 20,318 steps @ eff 256 (MLXP) · CIs in the figure · harvest_ep06.json</p>
@@ -279,7 +279,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li class="on">New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction
+    <li class="on">New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)
       <ul><li>v2 basis · 528 chunks (96 × 6) · <b>unfiltered</b> val · ctl parity on the 224 shared keys: appendix</li>
           <li>trim = base_v3 recipe, train index cut to the contact windows (89.9 % kept) · 7784 · 8.6 h</li></ul></li>
     <li>GR-1 zero-shot closed loop · human → robot: URDF-guided sampling</li>
@@ -287,16 +287,17 @@
   <div class="band snug">
     <figure class="tb" style="flex:1 1 0;min-width:0">
       <table class="compact dense ci">
-        <thead><tr><th>arm · v2 basis · 528</th><th>cos</th><th>ADE cm</th><th>Δcos vs base_v3</th></tr></thead>
+        <thead><tr><th>arm · v2 basis · 528</th><th>ADE cm</th><th>FDE cm</th><th>Acc5 %</th><th>ΔADE vs base_v3 · cm</th></tr></thead>
         <tbody>
-          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>0.092</td><td>11.83</td><td><b>−0.186</b> [−0.210, −0.163]</td></tr>
-          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>0.234</td><td>10.05</td><td><b>−0.045</b> [−0.063, −0.028]</td></tr>
-          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>0.279</b></td><td><b>9.04</b></td><td>—</td></tr>
-          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>0.273</td><td>10.17</td><td><b>−0.006</b> [−0.017, +0.004]</td></tr>
-          <tr><td><b>trim</b> · kept-window chunks · n 483</td><td>0.294</td><td>8.38</td><td><b>+0.005</b> [−0.003, +0.013]</td></tr>
+          <tr><td><i>zero-motion predictor</i></td><td><i>8.66</i></td><td><i>13.83</i></td><td><i>61.8</i></td><td>—</td></tr>
+          <tr><td><b>base_v2</b> · no hist · <span class="epoch">4.14 ep</span></td><td>11.83</td><td>17.32</td><td>50.2</td><td><b>+2.79 [+2.27, +3.35]</b></td></tr>
+          <tr><td><b>C2</b> · rlwrld · <span class="epoch">4.1 ep</span></td><td>10.05</td><td>17.05</td><td>54.0</td><td><b>+1.01 [+0.60, +1.41]</b></td></tr>
+          <tr><td><b>base_v3</b> · <span class="epoch">4.14 ep</span></td><td><b>9.04</b></td><td><b>14.90</b></td><td><b>58.5</b></td><td>—</td></tr>
+          <tr><td><b>base_v3_trim</b> · <span class="epoch">4.14 ep</span></td><td>10.17</td><td>15.78</td><td>57.7</td><td><b>+1.14 [+0.72, +1.59]</b></td></tr>
+          <tr><td><b>trim vs base_v3</b> · kept-window val · zero 8.41</td><td>8.80 vs 8.09</td><td>14.24 vs 13.51</td><td>58.1 vs 59.1</td><td><b>+0.71 [+0.42, +1.01]</b></td></tr>
         </tbody>
       </table>
-      <figcaption>zero 8.66 cm · H = 2 except base_v2 · Δ paired, 10k bootstrap · cos<sub>hand</sub>, Acc5: appendix · eff ep on the full v2 corpus (trim: 4.61 on its kept index)</figcaption></figure>
+      <figcaption>H = 2 except base_v2 · Δ paired, 10k bootstrap · <b>no arm beats the zero predictor on ADE or Acc5</b>; base_v3 is the closest (+0.38 cm) and beats zero only on dexycb (6.2 vs 7.2) · metrics 09-06: standard set only, cosine dropped · eff ep on the full v2 corpus (trim: 4.61 on its kept index)</figcaption></figure>
     <figure class="tb" style="flex:0 0 42%;min-width:0">
       <table class="compact dense ci nw2">
         <thead><tr><th>trim − base_v3</th><th>cut start / end</th><th>ΔADE cm</th></tr></thead>
@@ -320,7 +321,7 @@
   <h2>Results</h2>
   <ol class="agenda">
     <li>Closed levers on the ctl basis</li>
-    <li>New base + contact-window filter: base_v3 above C2, parity with ctl; trim null on direction</li>
+    <li>New base + contact-window filter: base_v3 above C2 and base_v2, parity with ctl; trim +1.14 cm ADE (+0.71 on kept windows)</li>
     <li class="on">GR-1 zero-shot closed loop · human → robot: URDF-guided sampling
       <ul><li><b>GR-1 base_v3: 2 / 116, median 23.5 cm — the stratified gain does not carry into the loop</b></li>
           <li>guided = URDF projection inside the sampler, inference-only · 384 paired human / Sharpa TACO chunks</li></ul></li>
@@ -350,21 +351,21 @@
   <h2>AR rollouts · 5 chunks · 5 s · base_v2 top · base_v3 bottom · 1 / 2</h2>
   <div class="vizgrid four pair">
     <figure><img src="assets/base_v2_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, taco episode 5552: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.22 → k4 0.32</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · ADE k0 1.4 → k4 15.5 cm</figcaption></figure>
     <figure><img src="assets/base_v2_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, arctic episode 212: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.67 → k4 0.05</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · ADE k0 14.4 → k4 29.4 cm</figcaption></figure>
     <figure><img src="assets/base_v2_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.23 → k4 0.16</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · ADE k0 10.3 → k4 5.8 cm</figcaption></figure>
     <figure><img src="assets/base_v2_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, grab episode 1434: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · cos k0 0.64 → k4 −0.34</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · ADE k0 27.8 → k4 47.5 cm</figcaption></figure>
     <figure><img src="assets/base_v3_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 5552: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.25 → k4 0.42</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · ADE k0 1.7 → k4 17.1 cm</figcaption></figure>
     <figure><img src="assets/base_v3_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 212: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.57 → k4 0.16</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 212 · “use the notebook” · ADE k0 16.7 → k4 30.8 cm</figcaption></figure>
     <figure><img src="assets/base_v3_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.20 → k4 0.16</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · ADE k0 13.6 → k4 5.7 cm</figcaption></figure>
     <figure><img src="assets/base_v3_grab_1434_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 1434: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · cos k0 0.54 → k4 −0.35</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 1434 · “lift the banana” · ADE k0 27.6 → k4 32.4 cm</figcaption></figure>
   </div>
   <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · same episodes, seed, camera in both rows · DexYCB: no 5-chunk eps</p>
 </section>
@@ -374,21 +375,21 @@
   <h2>AR rollouts · 5 chunks · 5 s · base_v2 top · base_v3 bottom · 2 / 2</h2>
   <div class="vizgrid four pair">
     <figure><img src="assets/base_v2_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, taco episode 6147: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.61 → k4 0.29</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · ADE k0 3.2 → k4 12.8 cm</figcaption></figure>
     <figure><img src="assets/base_v2_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, arctic episode 236: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.43 → k4 −0.09</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · ADE k0 31.2 → k4 15.9 cm</figcaption></figure>
     <figure><img src="assets/base_v2_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.11 → k4 −0.05</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · ADE k0 7.8 → k4 6.5 cm</figcaption></figure>
     <figure><img src="assets/base_v2_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v2, grab episode 2219: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · cos k0 0.49 → k4 −0.26</figcaption></figure>
+      <figcaption><b>base_v2</b> · no history · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · ADE k0 34.4 → k4 64.8 cm</figcaption></figure>
     <figure><img src="assets/base_v3_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 6147: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.50 → k4 −0.13</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · ADE k0 3.5 → k4 12.5 cm</figcaption></figure>
     <figure><img src="assets/base_v3_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 236: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.44 → k4 −0.13</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>arctic</b> ep 236 · “use the laptop” · ADE k0 41.0 → k4 14.9 cm</figcaption></figure>
     <figure><img src="assets/base_v3_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.16 → k4 −0.10</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · ADE k0 11.0 → k4 9.1 cm</figcaption></figure>
     <figure><img src="assets/base_v3_grab_2219_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 2219: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · cos k0 0.29 → k4 −0.12</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · <b>grab</b> ep 2219 · “browse the camera” · ADE k0 24.9 → k4 65.6 cm</figcaption></figure>
   </div>
   <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · each chunk starts from the previous prediction · same episodes, seed, camera in both rows · drift.json per arm</p>
 </section>
@@ -514,21 +515,21 @@
   <h2>AR rollouts · 5 chunks · 5 s · base_v3_trim</h2>
   <div class="vizgrid four rows3">
     <figure><img src="assets/base_v3_trim_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, taco episode 5552: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 −0.06 → k4 0.14</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · ADE k0 1.5 → k4 23.0 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, arctic episode 212: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.57 → k4 0.13</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 212 · “use the notebook” · ADE k0 21.6 → k4 28.2 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.16 → k4 −0.02</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · ADE k0 1.0 → k4 10.4 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_grab_1433_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, grab episode 1433: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 1433 · “eat the banana” · cos k0 0.63 → k4 −0.25</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 1433 · “eat the banana” · ADE k0 31.0 → k4 12.3 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, taco episode 6147: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.44 → k4 0.06</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · ADE k0 3.5 → k4 9.4 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, arctic episode 236: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.47 → k4 −0.09</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 236 · “use the laptop” · ADE k0 45.6 → k4 17.4 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.08 → k4 −0.01</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · ADE k0 2.4 → k4 15.8 cm</figcaption></figure>
     <figure><img src="assets/base_v3_trim_grab_2184_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3_trim, grab episode 2184: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 2184 · “inspect the medium torus” · cos k0 0.39 → k4 0.06</figcaption></figure>
+      <figcaption><b>base_v3_trim</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 2184 · “inspect the medium torus” · ADE k0 41.0 → k4 52.2 cm</figcaption></figure>
     <figure class="phold ref"><div class="pbox">base_v3 · same episodes · next slide</div></figure>
     <figure class="phold ref"><div class="pbox">base_v3 · same episodes · next slide</div></figure>
     <figure class="phold ref"><div class="pbox">base_v3 · same episodes · next slide</div></figure>
@@ -541,21 +542,21 @@
   <h2>AR rollouts · 5 chunks · 5 s · base_v3 · same episodes</h2>
   <div class="vizgrid four">
     <figure><img src="assets/base_v3_taco_5552_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 5552: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · cos k0 0.25 → k4 0.43</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 5552 · “pour in some the kettle with the kettle” · ADE k0 1.7 → k4 17.1 cm</figcaption></figure>
     <figure><img src="assets/base_v3_arctic_212_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 212: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 212 · “use the notebook” · cos k0 0.57 → k4 0.15</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 212 · “use the notebook” · ADE k0 16.7 → k4 30.8 cm</figcaption></figure>
     <figure><img src="assets/base_v3_oakink2_3035_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3035: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · cos k0 0.15 → k4 0.00</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3035 · “Heat the test tube and put off the alcohol burner after …” · ADE k0 13.6 → k4 5.7 cm</figcaption></figure>
     <figure><img src="assets/base_v3_grab_1433_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 1433: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 1433 · “eat the banana” · cos k0 0.67 → k4 -0.21</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 1433 · “eat the banana”</figcaption></figure>
     <figure><img src="assets/base_v3_taco_6147_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, taco episode 6147: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · cos k0 0.50 → k4 -0.13</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>taco</b> ep 6147 · “scrape off the plate with the spoon” · ADE k0 3.5 → k4 12.5 cm</figcaption></figure>
     <figure><img src="assets/base_v3_arctic_236_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, arctic episode 236: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 236 · “use the laptop” · cos k0 0.44 → k4 -0.13</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>arctic</b> ep 236 · “use the laptop” · ADE k0 41.0 → k4 14.9 cm</figcaption></figure>
     <figure><img src="assets/base_v3_oakink2_3059_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, oakink2 episode 3059: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · cos k0 0.09 → k4 -0.08</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>oakink2</b> ep 3059 · “Heat the beaker, put off the alcohol burner after heating, …” · ADE k0 11.0 → k4 9.1 cm</figcaption></figure>
     <figure><img src="assets/base_v3_grab_2184_ar.gif" alt="Autoregressive 5-chunk point-cloud rollout, base_v3, grab episode 2184: ground truth left, prediction right." loading="lazy">
-      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 2184 · “inspect the medium torus” · cos k0 0.37 → k4 -0.00</figcaption></figure>
+      <figcaption><b>base_v3</b> · H = 2 · 110,996 st · <span class="epoch">4.14 ep</span> · AR 5 chunks · <b>grab</b> ep 2184 · “inspect the medium torus”</figcaption></figure>
   </div>
   <p class="footnote">GT left · pred right · objects orange · R hand green · L hand purple · same episodes, start frames and seed as the base_v3_trim slide before · DexYCB: no 5-chunk eps</p>
 </section>
