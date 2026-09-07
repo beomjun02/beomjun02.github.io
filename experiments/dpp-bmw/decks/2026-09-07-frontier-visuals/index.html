@@ -66,12 +66,14 @@
 
 <!-- SECTION: results (4) -->
 <section class="slide s-results">
-  <h2>Pick a side view — the rotating one is out</h2>
+  <h2>B and C, on the work surface</h2>
   <div class="band">
-    <figure><img src="assets/fig_sideviews.jpg" alt="Four fixed viewpoints of the same 3D frame, side by side: right at eye level, right and front, right and behind, and right from higher up.">
-      <figcaption>a bystander beside the operator, not moving, watching the workspace — same frame, four standpoints · clips: <a href="assets/side_right.mp4">A</a> · <a href="assets/side_right-front.mp4">B</a> · <a href="assets/side_right-back.mp4">C</a> · <a href="assets/side_right-high.mp4">D</a></figcaption></figure>
+    <figure><video src="assets/side_B.mp4" poster="assets/side_B.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>B · right + front — azim −45°, elev 20°</figcaption></figure>
+    <figure><video src="assets/side_C.mp4" poster="assets/side_C.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>C · right + behind — azim −135°, elev 20°</figcaption></figure>
   </div>
-  <p class="footnote">measured geometry: base +Z up, the operator's right is −Y, forward +X · head 85 cm, workspace 42 cm · <b>A recommended</b></p>
+  <p class="footnote">a bystander at the operator's right, not moving · work surface reconstructed once per episode, 166 cm left-right · the package is a completed box, not the visible shell</p>
 </section>
 
 <!-- SECTION: method (pipeline) -->
@@ -109,16 +111,19 @@
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix (1) · the object cloud</h2>
+  <h2>Appendix (1) · the object cloud and the surface</h2>
   <div class="cols">
     <div>
       <dl class="kv">
         <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>), then <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT metric depth — IoU-0.55 merge across prompts, 5 cm continuity credit. Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
-        <dt>Depth edges</dt><dd class="mono">NEW 09-07 — <code>lift()</code> now drops pixels whose depth gradient exceeds 2 cm/px and erodes the mask 1 px. At a silhouette the depth map ramps from object to background and every pixel on that ramp unprojects into empty space; farthest-point sampling <b>preferentially keeps</b> those, because being far from everything is what FPS selects for. Gradient at the object points runs p50 0.1, p99 2.9, p99.9 9.5 cm/px. Cloud depth span 21.3 → 18.7 cm on ep0, p90 35.4 → 29.4 cm on ep1, with no frame losing its cloud.</dd>
+        <dt>Work surface</dt><dd class="mono">NEW 09-07 — <code>viz/tabletop.py</code> stacks every 4th depth frame in base coordinates and keeps a ±2 cm band. Picking the height is the trap: scoring z-bands by planarity measures nothing, and scoring by point count picks z=0.26 m — 15–20 cm <b>below</b> where the package rests, so it floated above its own table. The band is anchored to the object instead: the mode of the package's bottom height over the frames where it is stationary. z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
+        <dt>Depth edges</dt><dd class="mono">NEW 09-07 — <code>lift()</code> drops pixels whose depth gradient exceeds 2 cm/px and erodes the mask 1 px. Every pixel on a silhouette ramp unprojects into empty space, and FPS <b>preferentially keeps</b> those. Cloud depth span 21.3 → 18.7 cm (ep0), p90 35.4 → 29.4 cm (ep1).</dd>
       </dl>
     </div>
     <div>
-      <p class="cut"><b>Every number on the slides is recomputed at render time</b> from the caches in <code>viz/cache/</code>; nothing here is transcribed by hand.</p>
+      <dl class="kv">
+        <dt>Completed object</dt><dd class="mono">NEW 09-07 — <code>viz/complete_object.py</code>. An oriented box is fitted to the visible faces (robust normal, extents from 1.5–98.5 percentiles) and 2048 points are area-weighted over all six, so the count is preserved exactly. <b>No box/flat branch</b>: on a poly mailer the same fit returns a thin slab whose two large faces are the visible surface and its mirror — the requested proxy. ep0 29.4×23.6×11.1 cm at 12.5 mm fit; ep1 32.9×27.8×10.3 cm at 10.1 mm. Sits +2.9 cm above the surface in the median. <b>⚠️ only 9–12% of completed points lie within 1 cm of a real observation — the rest is proxy</b>, and the hidden depth is never measured, so a box seen face-on completes too shallow.</dd>
+      </dl>
     </div>
   </div>
 </section>
