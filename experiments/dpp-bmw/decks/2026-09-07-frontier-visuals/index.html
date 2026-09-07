@@ -111,23 +111,34 @@
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix (1) · the object</h2>
+  <h2>Appendix (1) · picking the object</h2>
   <div class="cols">
     <div><dl class="kv">
         <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>); <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT depth (IoU-0.55 merge, 5 cm continuity). Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
         <dt>Object class</dt><dd class="mono">NEW — <code>viz/obj_label.py</code> reads <code>sel_pmask</code>, which SAM3 prompts matched the selected instance, grouped into classes; most specific wins. ep0: cardboard box 148 · wrapped parcel 60 · styrofoam 6 · <b>conveyor belt 3</b>. ep1: wrapped parcel 105 · cardboard box 70 · <b>conveyor belt 39</b> · styrofoam 38. A conveyor label is a selection error the overlay now surfaces.</dd>
-        <dt>Depth edges</dt><dd class="mono">NEW — <code>lift()</code> drops pixels with a depth gradient over 2 cm/px and erodes the mask 1 px. Silhouette-ramp pixels unproject into empty space and FPS <b>preferentially keeps</b> them. Cloud depth span 21.3 → 18.7 cm (ep0).</dd>
-        <dt>Work surface</dt><dd class="mono">NEW — <code>viz/tabletop.py</code> stacks depth frames in base coordinates, ±2 cm band, anchored to the mode of the package's resting height over stationary frames: z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
       </dl></div>
     <div><dl class="kv">
-        <dt>Completed object</dt><dd class="mono">NEW — <code>viz/complete_object.py</code>, built only on what is reliable: the dominant face fits a plane to <b>7–8 mm</b>, giving two dimensions. The third needs a second face, accepted only if it is flat, holds ≥8% of the cloud, sits ≥55° away AND <b>shares an edge with the first</b> — the edge test is decisive, since a plane fitted to the silhouette ramp trims itself planar (a rejected face scattered 44 mm vs 8.3 mm). Real corners: 108/217 frames on ep0, meeting face 1 to 0.1 mm; their short span IS the depth. Size is held <b>rigid per (episode, class)</b> — per-frame fitting jittered 6.6–9.2 cm at p90 — and only pose is fitted per frame. ep0 box 28.0×26.0×<b>13.3 cm measured</b>; its flat bag keeps <b>3 cm ASSUMED</b>. Observed points stick out <b>8.5 mm</b> = the face's own planarity. ⚠️ 15–17% of completed points lie within 1 cm of an observation.</dd>
-        </dl></div>
+        <dt>Depth edges</dt><dd class="mono">NEW — <code>lift()</code> drops pixels with a depth gradient over 2 cm/px and erodes the mask 1 px. Silhouette-ramp pixels unproject into empty space and FPS <b>preferentially keeps</b> them. Cloud depth span 21.3 → 18.7 cm (ep0).</dd>
+      </dl></div>
   </div>
 </section>
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix (2) · the hands, timing, and the code</h2>
+  <h2>Appendix (2) · completing it, and the surface</h2>
+  <div class="cols">
+    <div><dl class="kv">
+        <dt>Completed object</dt><dd class="mono">NEW — <code>viz/complete_object.py</code> peels off <b>every</b> flat face, not just the dominant one. Each must be flat (the faces fit planes to 7–8 mm), carry ≥6% of the cloud, sit ≥55° from those already taken, AND <b>share an edge</b> with one of them — the edge test is decisive, since a plane fitted to the silhouette ramp trims itself planar (a rejected face scattered 44 mm vs 8.3 mm). Measured: <b>one face on ~48% of clouds, two on ~50%, three on 1%</b> — one view sees the top and a side, rarely a third face. The accepted normals come out 85–87° apart and are orthogonalised into a box frame; each face then measures its own two extents, Size is held <b>rigid per (episode, class)</b> (per-frame fitting jittered 6.6–9.2 cm); only pose is fitted per frame. ep0 box 27.3×27.4×<b>12.8 cm measured</b>; its flat bag keeps <b>3 cm ASSUMED</b>. Observed points stick out <b>8.2 / 7.1 mm</b> — at the faces' own planarity, the ceiling. ⚠️ 14–15% of completed points lie within 1 cm of an observation.</dd>
+      </dl></div>
+    <div><dl class="kv">
+        <dt>Work surface</dt><dd class="mono">NEW — <code>viz/tabletop.py</code> stacks depth frames in base coordinates, ±2 cm band, anchored to the mode of the package's resting height over stationary frames: z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
+      </dl></div>
+  </div>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix (3) · hands, timing, code</h2>
   <div class="cols">
     <div><dl class="kv">
         <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline, two eyes as one hoi session, baseline 66.4388 mm. Re-run <b>without <code>--bbox_track</code></b> (job 160289): kept hand-frames 38/28/30% → <b>77/79/79%</b> at an unchanged 5.5 px triangulation error. Then gated on his <code>used</code>/<code>reproj_err</code> and held 1 s.</dd>
