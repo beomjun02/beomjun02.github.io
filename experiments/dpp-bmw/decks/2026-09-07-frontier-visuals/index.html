@@ -44,18 +44,6 @@
   <p class="footnote">the caption burned into each frame prints the selected object's depth and how many candidates it beat</p>
 </section>
 
-<!-- SECTION: results (2) -->
-<section class="slide s-results">
-  <h2>Object: visible surface, or completed</h2>
-  <div class="band">
-    <figure><video src="assets/obj_raw.mp4" poster="assets/obj_raw.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>as measured — only the faces turned to the camera</figcaption></figure>
-    <figure><video src="assets/obj_full.mp4" poster="assets/obj_full.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>completed — a box fitted to those faces, 2048 points over all six</figcaption></figure>
-  </div>
-  <p class="footnote">same frames, hands, surface and view box · size measured where a corner is visible (108/217 on ep0), assumed otherwise · 14–15% of completed points sit on real observations</p>
-</section>
-
 <!-- SECTION: results (3) -->
 <section class="slide s-results">
   <h2>Hands: seungjun's solver, or HaWoR</h2>
@@ -77,7 +65,7 @@
     <figure><video src="assets/side_C.mp4" poster="assets/side_C.jpg" autoplay loop muted playsinline preload="metadata"></video>
       <figcaption>C · right + behind — azim −135°, elev 20°</figcaption></figure>
   </div>
-  <p class="footnote">a bystander at the operator's right, not moving · real time, 28.9 s · work surface 166 cm left-right · the object is completed, per class</p>
+  <p class="footnote">a bystander at the operator's right, not moving · real time, 28.9 s · work surface 166 cm left-right · object points are the measured surface</p>
 </section>
 
 <!-- SECTION: method (pipeline) -->
@@ -115,7 +103,7 @@
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix (1) · picking the object</h2>
+  <h2>Appendix (1) · the object and the surface</h2>
   <div class="cols">
     <div><dl class="kv">
         <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>); <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT depth (IoU-0.55 merge, 5 cm continuity). Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
@@ -123,18 +111,6 @@
       </dl></div>
     <div><dl class="kv">
         <dt>Depth edges</dt><dd class="mono">NEW — <code>lift()</code> drops pixels with a depth gradient over 2 cm/px and erodes the mask 1 px. Silhouette-ramp pixels unproject into empty space and FPS <b>preferentially keeps</b> them. Cloud depth span 21.3 → 18.7 cm (ep0).</dd>
-      </dl></div>
-  </div>
-</section>
-
-<!-- SECTION: appendix -->
-<section class="slide s-appendix">
-  <h2>Appendix (2) · completing it, and the surface</h2>
-  <div class="cols">
-    <div><dl class="kv">
-        <dt>Completed object</dt><dd class="mono">NEW — <code>viz/complete_object.py</code> peels off <b>every</b> flat face, not just the dominant one. Each must be flat (the faces fit planes to 7–8 mm), carry ≥6% of the cloud, sit ≥55° from those already taken, AND <b>share an edge</b> with one of them — the edge test is decisive, since a plane fitted to the silhouette ramp trims itself planar (a rejected face scattered 44 mm vs 8.3 mm). Measured: <b>one face on ~48% of clouds, two on ~50%, three on 1%</b> — one view sees the top and a side, rarely a third face. The accepted normals come out 85–87° apart and are orthogonalised into a box frame; each face then measures its own two extents, Size is held <b>rigid per (episode, class)</b> (per-frame fitting jittered 6.6–9.2 cm); only pose is fitted per frame. ep0 box 27.3×27.4×<b>12.8 cm measured</b>; its flat bag keeps <b>3 cm ASSUMED</b>. Observed points stick out <b>8.2 / 7.1 mm</b> — at the faces' own planarity, the ceiling. ⚠️ 14–15% of completed points lie within 1 cm of an observation.</dd>
-      </dl></div>
-    <div><dl class="kv">
         <dt>Work surface</dt><dd class="mono">NEW — <code>viz/tabletop.py</code> stacks depth frames in base coordinates, ±2 cm band, anchored to the mode of the package's resting height over stationary frames: z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
       </dl></div>
   </div>
@@ -142,7 +118,7 @@
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix (3) · hands, timing, code</h2>
+  <h2>Appendix (2) · hands, timing, code</h2>
   <div class="cols">
     <div><dl class="kv">
         <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline, the two eyes as one hoi session, baseline 66.4388 mm, run <b>without <code>--bbox_track</code></b> (job 160289) — with it, kept hand-frames were 38/28/30%, without it 77/79/79% at the same 5.5 px triangulation error. Final output is then gated on his own <code>used</code>/<code>reproj_err</code>, held 1 s in the world frame, and ego-gated. HaWoR gets the identical hold and ego gate for the comparison.</dd>
