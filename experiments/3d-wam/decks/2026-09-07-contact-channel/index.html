@@ -25,6 +25,11 @@
   .deck ol.agenda.strip>li::before{left:0}
   /* ---- slide 1: core idea strip + config tables ---- */
   .deck .band.cfg3{gap:1.1em;flex:0 0 auto;margin-top:.45em}
+  /* three episodes side by side (owner 09-07): equal columns, video keeps its aspect */
+  .deck .band.gr1.three{gap:.9em;align-items:stretch}
+  .deck .band.gr1.three figure{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+  .deck .band.gr1.three figure>video{width:100%;height:auto;max-height:20em;object-fit:contain;background:#EEE}
+  .deck .band.gr1.three figcaption{font-size:.92em;line-height:1.25}
   .deck .band figure.tb{flex:1 1 0;min-width:0;justify-content:flex-start}
   .deck .band.cfg3 figure.tb.wide{flex:1.45 1 0}
   .deck .band.cfg3 figure.tb.narrow{flex:1.0 1 0}
@@ -343,14 +348,40 @@
       </table>
     </figure>
   </div>
-  <div class="band gr1">
+  <div class="band gr1 three">
     <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep00_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep00_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 0, base_v2_ct"></video>
-      <figcaption><b>base_v2_ct · PnPCanToBowl · episode 0</b> · ego view · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
-    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 0: executed scene points left, model prediction right, first 20 replans"></video>
-      <figcaption><b>base_v2_ct · PnPCanToBowl · episode 0</b> · point flow, left = executed | right = predicted, first 20 replans · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
+      <figcaption><b>episode 0</b> · ego view · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
+    <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep01_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep01_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 1, base_v2_ct"></video>
+      <figcaption><b>episode 1</b> · ego view · <b>not success</b> · final <b>11.4 cm</b></figcaption></figure>
+    <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep02_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep02_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 2, base_v2_ct"></video>
+      <figcaption><b>episode 2</b> · ego view · <b>not success</b> · final <b>10.9 cm</b></figcaption></figure>
   </div>
   <p class="footnote">one task, 3 episodes · <b>OMWC is a share, and this model keeps the predicted hand close to the object throughout, which lowers it mechanically</b> · gr1_trial/arm3_base_v2_ct_ep03</p>
 </section>
+
+<!-- SECTION: 5b · GR-1 point flow, all three episodes (owner 2026-09-07: not just episode 0) -->
+<section class="slide s-viz s-flow">
+  <h2>GR-1 closed loop · 3-D point flow · three episodes</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What it saw</li>
+    <li>What it did not see</li>
+    <li>Metrics</li>
+    <li class="on">GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key"><b>base_v2_ct · weights_ep03</b> · <span class="epoch">≈ 80,000 st</span> · zero-shot, no robot data · “pick the can from the counter and place it in the bowl”</p>
+  <div class="band gr1 three">
+    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 0: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>episode 0</b> · point flow · left = executed | right = predicted, first 20 replans · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
+    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep01_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep01_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 1: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>episode 1</b> · point flow · left = executed | right = predicted, first 20 replans · <b>not success</b> · final <b>11.4 cm</b></figcaption></figure>
+    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep02_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep02_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 2: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>episode 2</b> · point flow · left = executed | right = predicted, first 20 replans · <b>not success</b> · final <b>10.9 cm</b></figcaption></figure>
+  </div>
+  <p class="footnote">left = the scene points the sim actually executed · right = what the model predicted from that state · first 20 of 90 replans, every predicted step · gr1_trial/arm3_base_v2_ct_ep03</p>
+</section>
+
 
 <!-- SECTION: 6 · reading · numbers only in the evidence table -->
 <section class="slide s-method">
