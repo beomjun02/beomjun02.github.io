@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>2026-09-07 · Frontier data, as it now looks — BMW &amp; Frontier Demo</title>
-<meta name="description" content="Visualization-only record: object points and hand points on the ego-stereo logistics captures, after removing the bbox tracker that starved seungjun's solver.">
+<title>2026-09-07 · Frontier input pipeline, final — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Final Frontier input pipeline: object points and hand points on the ego-stereo captures, the visualizations, and the code guide.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
 </head>
 <body class="deck-page">
-<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="frontier data, as it now looks" data-date="2026-09-07">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="frontier input pipeline, final" data-date="2026-09-07">
 
 <!-- SECTION: title -->
 <section class="slide s-title">
-  <h1>Frontier data, as it now looks</h1>
-  <p class="ctx">BMW &amp; Frontier Demo · object points + hand points on the ego-stereo captures</p>
+  <h1>Frontier input pipeline — final</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · object points + hand points, and how to run it</p>
   <p class="venue"><b>Lab meeting</b></p>
   <p class="when">2026. 09. 07<br>Presented by beomjun</p>
 </section>
@@ -24,7 +24,7 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Policy input, end to end, on his hands.</p>
+  <p class="thesis"><b>[TL;DR]</b> Policy input, end to end, matched to BMW where it can be.</p>
   <div class="band">
     <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
       <figcaption>ep0, full episode — left: ego RGB · right: the same viewpoint in points. Object orange (nearest of every SAM3 candidate), rejected slate, hands from seungjun's MANO solver</figcaption></figure>
