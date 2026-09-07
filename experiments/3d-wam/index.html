@@ -4,490 +4,449 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>3D-WAM — a language-conditioned generative model over labeled 4D point flow</title>
-<meta name="description" content="3D-WAM concept: observation and action as one dense labeled 3D point set; a single generative model predicts total scene flow; trained on human and Sharpa data; claim: robot-zero-shot execution of tasks demonstrated only by humans.">
+<title>3D-WAM — Method</title>
+<meta name="description" content="Method draft: scene and embodiment as one labeled 3D point set, a language-conditioned flow-matching video-DiT over total scene flow, contact-correspondence supervision, and decoding to robot joints.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/experiments/assets/present.css">
 <script src="/experiments/assets/present.js" defer></script>
+<style>
+  /* Draft-page typography only. No token is redefined; everything below composes existing vars. */
+  .paper{max-width:760px}
+  .paper h3{font-size:19px;margin:34px 0 10px;letter-spacing:-.01em}
+  .paper h4{font-size:15px;margin:22px 0 6px;color:var(--ink-2);font-weight:600}
+  .paper p{font-size:15.5px;line-height:1.75;margin:0 0 14px;color:var(--ink-2)}
+  .paper p b,.paper li b{color:var(--ink);font-weight:600}
+  .paper ul{margin:0 0 14px 0;padding-left:20px}
+  .paper li{font-size:15.5px;line-height:1.75;margin-bottom:7px;color:var(--ink-2)}
+  .eq{font-family:var(--font-m);font-size:14px;line-height:1.8;background:var(--surface-2);
+      border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--radius);
+      padding:14px 18px;margin:16px 0;overflow-x:auto;color:var(--ink)}
+  .eq .c{color:var(--muted)}
+  .secnum{font-family:var(--font-m);font-size:12px;color:var(--accent);letter-spacing:.08em;
+          display:block;margin-bottom:3px}
+  .draft{display:inline-block;font-family:var(--font-m);font-size:10.5px;letter-spacing:.06em;
+         text-transform:uppercase;padding:3px 8px;border-radius:999px;
+         background:var(--accent-weak);color:var(--accent);vertical-align:middle;margin-left:8px}
+  figure.sch{margin:20px 0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+             background:var(--surface-2)}
+  figure.sch svg{display:block;width:100%;height:auto}
+  figure.sch figcaption{padding:11px 15px;font-size:13px;color:var(--muted);
+                        border-top:1px solid var(--line);line-height:1.65}
+  figure.sch figcaption b{color:var(--ink);font-weight:600}
+</style>
 </head>
 <body>
 
 <header class="top">
   <div class="wrap">
-    <div class="brand">3D-WAM <b>·</b> CONCEPT</div>
+    <div class="brand">3D-WAM <b>·</b> METHOD</div>
     <nav>
-      <a href="#related">Related work</a>
-      <a href="#method">Method</a>
-      <a href="#experiments">Experiments</a>
-      <a href="#actions">Action items</a>
+      <a href="#representation">Representation</a>
+      <a href="#model">Model</a>
+      <a href="#contact">Contact</a>
+      <a href="#decode">Decoding</a>
+      <a href="#training">Training</a>
       <a href="/experiments/">Lab</a>
     </nav>
     <button class="toggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
   </div>
 </header>
 
-<div class="hero"><div class="wrap"><div class="hero-grid">
-  <div class="reveal">
-    <div class="eyebrow">3D-WAM · CONCEPT v0.4 · 2026-08-25 · NO RUNS YET</div>
-    <h1>A language-conditioned generative model over labeled 4D point flow</h1>
-    <p class="lede">Observation and action live in the same space: the scene and the embodiment are one
-      dense labeled 3D point set, and a single generative model, conditioned on the frame-0 points and a
-      language instruction, predicts the flow of the entire scene over the next chunk. Because embodiment
-      points are part of the prediction, flow decodes to joint commands by per-link Procrustes and IK —
-      generation is the action; there is no inverse-dynamics model, no retargeting mechanism, and no
-      separate world model. Training mixes human demonstrations with Sharpa-hand episodes over partially
-      overlapping task sets. The claim: the robot executes tasks demonstrated only by humans —
-      cross-embodiment zero-shot — measured by simulated replay success against an oracle ceiling, with
-      matched ablations of generation, density, and joint scene prediction.</p>
+<div class="hero"><div class="wrap">
+  <div class="reveal" style="max-width:820px">
+    <div class="eyebrow">PAPER DRAFT · METHOD SECTION · ICLR 2027 · 2026-09-07</div>
+    <h1>Method</h1>
+    <p class="lede">We model manipulation as the evolution of a single labeled 3D point set that contains
+      the scene and the embodiment together. A language-conditioned flow-matching transformer predicts the
+      displacement of every point over a short horizon; because the hand's points are part of the
+      prediction, generation <i>is</i> the action, and joint commands follow by per-link Procrustes and
+      inverse kinematics. There is no separate world model, no policy head, no retargeting network and no
+      inverse-dynamics model. On top of this we add supervision on the one structure a per-point
+      generative objective cannot express — <b>which part of the hand is touching which part of which
+      object</b> — stated in a part vocabulary that human and robot hands share.</p>
     <div class="meta-line">
-      <span>Updated 2026-08-25</span><span class="dot"></span>
-      <span>full spec: Claude project “Point Policy”</span>
+      <span>Draft — notation and component descriptions are settled; §<b>3.4</b> is proposed and not yet trained</span>
     </div>
   </div>
-  <figure class="hero-media reveal">
-    <img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled points at t=0 and the generated flow chunk: object flow (green) and hand flow (red).">
-    <figcaption>Schematic, not a run: labeled points at t=0 in, point-matched flow chunk out; hand flow decodes to joints via per-link Procrustes + IK.</figcaption>
-  </figure>
-</div></div></div>
+</div></div>
 
-<section id="logs"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">ALL LOGS</div>
-    <h2>Experiment log</h2>
-    <p>Newest first. Each log is one question, ended by a verdict.</p>
-  </div>
-  <div class="road reveal">
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-09-07-contact-iteration/">The contact iteration: four arms (plan)</a></h3>
-      <p><code>2026-09-07 · running · deck #20</code> — <b>PLAN deck, no results yet. Four arms trained from scratch on one identical rig and each read against the newly trained baseline, never against the project's 222k-step model: <span class="mono">baseline fast_o6p512</span> (the control, no change); E1 contact in and out — a frame-0 contact flag enters as an additive token embedding, the same mechanism as the per-entity language phrase (Linear(1→d) beside Linear(text_dim→d)), and a head emits one contact logit per point per frame trained with BCE (config only); E2 grasp map — per patch token, a contact flag plus the touch location expressed in the paired object's own coordinate frame (a second 4-output head plus a loss); E3 two-stream, selective decode — hand and object tokens get their own norms, QKV and MLPs while attention stays one joint operation over all tokens, and during training one stream is sometimes given its clean target and dropped from the loss so the model also learns object-motion-given-the-hand (doubled block parameters, same FLOPs). Shared rig: no history, chunk_stride 4, 6 objects × 512 points plus 2 hands × 512, video-DiT d 512 / depth 8 / heads 8 ≈ 36M (k = 8 part-major Hilbert patches, full 3-D attention, v-parameterisation, 16 Euler steps, EMA 0.999), effective batch 32 on one H100 per arm, 50,000 steps = 8.2 epochs of the stride-4 index (194,612 train chunks, 6,082 steps/epoch), AdamW 3e-4 with warmup 300 and cosine to 0.1×, corpus v2 (taco, arctic, dexycb, oakink2, grab, hot3d) with the contact-window trim on the training index keeping 89.9 % of chunks (194,612 of 216,417).</b> Evaluation basis, owner's decision: the 5-second autoregressive rollout — 5 chained chunks, each conditioned on the model's own previous prediction, on held-out episodes drawn from inside the contact windows — reporting end-point error and its stay-put reference, TAP-Vid δ_avg, survival at 5 s and the survival horizon, minADE over samples, and the interaction block (object motion without contact, contact-onset error, missed and false contact, contact F1, transport, pair RMS) each next to its ground-truth value, plus the same interaction figures per rollout second; the single-chunk standard table and one GR-1 closed-loop task are secondary. Every results cell in the deck is an explicit WILL UPDATE placeholder. Structure is the owner's: one overview slide comparing the arms with the baseline, one detail slide per experiment with a figure plus why and how, and the results placeholder — a problem slide and a negative-results slide were cut. Landing time pending the loader-optimisation measurement (job 9197).</p>
-    </div></div>
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-contact-channel/">Contact channel, no history</a></h3>
-      <p><code>2026-09-07 · done · deck #19</code> — <b>Single-model deck for base_v2_ct: the base_v2 recipe trained from scratch with NO history (with_hist 0, 16 objects × 256 pts, jit1m origin, parts × 8 patches, stored validity) plus a per-point contact flag as a frame-0 input channel and a binary contact head trained with BCE at weight 0.1, evaluated at the epoch-3 snapshot (weights_ep03 ≈ 80,000 steps; the run stopped at 106,420 of 110,996 without final weights). Kept-window val (528 chunks): OMWC 0.160 vs ground truth 0.032, onset error −0.02 frames, missed/false contact 0.08/0.08, dmin error 4.19 cm, contact-frame F1 0.901, transport 0.90, pair RMS 1.19 cm/frame, object displacement 6.04 vs 6.81 cm/s; ADE 9.70 vs zero-motion 8.41 cm, FDE 15.24 vs 13.21, Acc5 54.3 vs 62.0 %, Acc10 68.7 vs 74.6 %, δ_avg 52.9 vs 59.9 %, minADE₅ 7.02 cm; 5 s rollout ADE 19.1 vs stay-put 26.2 cm, survival 26.6 vs 36.0 %, horizon 0.85 vs 0.85 s. GR-1 closed loop, PnPCanToBowl × 3 episodes: 0 / 3 successes, final hand–object 12.8 / 11.4 / 10.9 cm (median 11.4) — the closest so far; sim object motion 25.1 cm/s, OMWC 0.03, hand motion 12.8 cm/s.</b> Reading: kept-window metrics are worse than the project's best model and objects still move without contact, but the GR-1 hand gets closer than any arm to date — one task, three episodes, and OMWC is a share that this model lowers mechanically by keeping the hand near the object. Follow-up: the same contact channel WITH history. Train and held-out clip grids plus two episode-0 clips for the owner to verify.</p>
-    </div></div>
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-ft-ctrl/">Fine-tune control (no change)</a></h3>
-      <p><code>2026-09-07 · done · deck #15</code> — <b>Single-model deck for ft_ctrl: the base_v3_trim 2× weights (221,992 steps) fine-tuned 15,000 more steps at lr 1e-4 with the recipe unchanged (eff batch 32, 4 × H100, ≈ 8.9 effective epochs total). Kept-window val (528 chunks): OMWC 0.127 vs ground truth 0.032, contact-frame F1 0.915, transport 0.92, object displacement 6.21 vs 6.81 cm/s; ADE 7.78 vs zero-motion 8.41 cm; paired vs the init weights ΔADE +0.31 [+0.06, +0.56] cm, ΔAcc5 −0.94 [−1.84, −0.03] pts; 5 s rollout ADE 16.8 vs stay-put 26.2 cm. GR-1 closed loop, 3 tasks × 3 episodes: 0 / 9 successes, PnPCanToBowl median final hand–object distance 23.8 cm.</b> Reading: continued training at low lr leaves ADE above init and objects still moving without contact. Two episode-0 clips (PnPCanToBowl, PnPCounterToCuttingBoard) for the owner to verify.</p>
-    </div></div>
+<section id="representation"><div class="wrap"><div class="paper">
 
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-ft-contact-consistency/">Contact-consistency loss</a></h3>
-      <p><code>2026-09-07 · done · deck #16</code> — <b>Single-model deck for ft_ccons: the base_v3_trim 2× weights (221,992 steps) fine-tuned 15,000 steps at lr 1e-4 with an added contact-consistency loss (predicted object displacement × sigmoid((min hand–object distance − 2 cm)/1 cm), weight 3, gate detached; wam/train/losses.py::contact_consistency_loss). Kept-window val (528 chunks): OMWC 0.129 vs ground truth 0.032, contact-frame F1 0.917, transport 0.56, object displacement 3.97 vs 6.81 cm/s; ADE 8.09 vs zero-motion 8.41 cm; paired vs the init weights ΔADE +0.62 [+0.35, +0.90] cm, ΔAcc5 −1.42 [−2.37, −0.47] pts; 5 s rollout ADE 17.5 vs stay-put 26.2 cm. GR-1 closed loop: 0 / 6 successes (PnPCounterToPlate = sim asset failure), PnPCanToBowl median final hand–object distance 23.2 cm.</b> Reading: the loss shrinks object motion everywhere, not only away from the hand; objects still move without contact. Two episode-0 clips for the owner to verify.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-ft-causal-attention/">Hand→object causal attention</a></h3>
-      <p><code>2026-09-07 · done · deck #17</code> — <b>Single-model deck for ft_causal: the base_v3_trim 2× weights (221,992 steps) fine-tuned 15,000 steps at lr 1e-4 with hand tokens masked from object tokens at future frames (objects attend everything; model.hand_obj_causal, wam/model/vdit_c.py::hand_obj_causal_mask). Kept-window val (528 chunks): OMWC 0.135 vs ground truth 0.032, contact-frame F1 0.918, transport 0.91, object displacement 6.26 vs 6.81 cm/s; ADE 7.67 vs zero-motion 8.41 cm; paired vs the init weights ΔADE +0.20 [−0.06, +0.45] cm, ΔAcc5 −0.60 [−1.53, +0.33] pts; 5 s rollout ADE 16.6 vs stay-put 26.2 cm, horizon 1.15 vs 0.85 s. GR-1 closed loop: 0 / 6 successes (PnPCounterToPlate = sim asset failure), PnPCanToBowl median final hand–object distance 21.7 cm.</b> Reading: masking future object tokens leaves accuracy and contact metrics at init; objects still move without contact. Two episode-0 clips for the owner to verify.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-ft-proximity/">Proximity channel + interaction-weighted loss</a></h3>
-      <p><code>2026-09-07 · done · deck #18</code> — <b>Single-model deck for ft_prox: the base_v3_trim 2× weights (221,992 steps) fine-tuned 15,000 steps at lr 1e-4 with a per-point proximity input channel (distance to the nearest other entity at frame 0, 3k features per patch, zero-initialised columns; model.prox_channel) and an interaction-weighted MSE (1 + 4·exp(−d/5 cm); loss.interaction_weight). Kept-window val (528 chunks): OMWC 0.129 vs ground truth 0.032, contact-frame F1 0.922, transport 0.91, object displacement 6.09 vs 6.81 cm/s; ADE 7.70 vs zero-motion 8.41 cm; paired vs the init weights ΔADE +0.23 [−0.02, +0.47] cm, ΔAcc5 −1.07 [−2.02, −0.14] pts; 5 s rollout ADE 16.5 vs stay-put 26.2 cm. GR-1 closed loop, 3 tasks × 3 episodes: 0 / 9 successes, PnPCanToBowl median final hand–object distance 20.3 cm, PnPCounterToCuttingBoard median 10.8 cm.</b> Reading: the ADE gap vs init spans zero, Acc5 is below init, objects still move without contact. Two episode-0 clips for the owner to verify.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-07-object-gate/">The 2× model with an object gate</a></h3>
-      <p><code>2026-09-07 · done · deck #14</code> — <b>Single-model deck for base_v3_trim 2× (221,992 steps) sampled with an inference-time contact gate on objects (object points stay at frame 0 until the predicted hand comes within 2 cm, then follow the prediction; τ₀ 0.5, no rigid fit, no training): hand–object interaction metrics on the 528 kept-window val chunks vs ground truth (OMWC 0.012 vs GT 0.032, contact-frame F1 0.922, transport 0.85, object displacement 5.49 vs 6.81 cm/s) with every standard metric unchanged (ADE 7.50 vs zero-motion 8.41), and the 44-task GR-1 closed-loop sweep with the gate (40 tasks, 120 episodes, 0 successes, median final hand–object distance 20.2 cm; rlwrld 161124).</b> Reading: objects stop floating without contact, accuracy and GR-1 success are unchanged, the hand still stops 15–20 cm short — reach, not contact, is the next lever. Two episode-0 clips (PnPCanToBowl, PnPObjectsTieredBasketToCounter) for the owner to verify.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-09-06-2x-model/">The 2× model: what it learned</a></h3>
-      <p><code>2026-09-06 · running · deck #13</code> — <b>Single-model deck for base_v3_trim 2× (221,992 steps = 2 × 110,996, resumed from the 1× weights; ≈ 8.3 effective epochs on the v2 corpus; 4 × H100 ≈ 17 h): the core idea and the full training configuration, then visualisations only — 10 held-out val chunks (GT | prediction, k = 8), 10 train chunks (render lands ≈ 20:30 KST), and the first GR-1 closed-loop episode (PnPCanToBowl ep 0, unguided: not success, final hand–object 16.9 cm).</b> No comparison with other models and no metric table by the owner's decision; the 44-task GR-1 sweep (rlwrld 160217) lands ≈ 00:30 KST 09-07, a guided (URDF-projected) sweep follows.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-09-05-new-base/">New baseline: what broke, what fixed it</a></h3>
-      <p><code>2026-09-05 · running · rev 3 Sun 09-06 10:00</code> — <b>base_v3 (base_v2 + history H=2, 110,996 steps = 4.14 eff ep) is the base: cos 0.279, ADE 9.04 vs zero 8.66 cm on 528 chunks; paired Δcos +0.186 vs base_v2, +0.045 vs C2, +0.026 [−0.011, +0.062] vs ctl on the 224 shared keys. The contact-window filter (base_v3_trim, 89.9 % of train chunks kept) is null on direction (Δcos −0.006 [−0.017, +0.004]) and worse on ADE (+1.14 cm [+0.73, +1.59]) — the loss sits on grab / arctic / oakink2, whose removed phases remain in the unfiltered val; kept-window val ≈12:00 KST, 2× resume to 221,992 steps lands ≈18:00. URDF-manifold guided sampling closed at +0.007 [+0.002, +0.012] Sharpa hand cosine across four settings: feasibility is not the human→robot bottleneck.</b> VITRA converted: 948,010 groups → 89,834 episodes (right hand only; left-hand MANO convention unresolved) → 359,666 chunks; mixture arm base_v3_vitra10 queued. GR-1 base_v3 sweep: 2 / 116, median 23.5 cm. Owner decisions: keep the filter (decide on the kept-window read); cancel ct / po05 and rerun on base_v3; VITRA left hand and the GR-1 all-scene-objects arm.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-09-04-progress/">Progress: contact loss, data mix, coordinate jitter, mirror</a></h3>
-      <p><code>2026-09-04 · running</code> — <b>The same-cluster baseline is set (ctl, 6.00 eff ep: cos 0.270, ADE 9.10 vs zero 9.08 cm); the soft-IoU contact loss at λ 0.1 is harmful (paired Δcos −0.088, ΔADE +1.40 cm); the episode-weighted data mix is a null (Δcos +0.000 [−0.007, +0.007]); coordinate jitter and left-right mirror land tonight (≈20:30 / 20:40 KST); the GR-1 6-ep success-rate sweeps for ctl and w_ep are in flight (≈16:30).</b> Per arm: autoregressive 5-chunk rollouts and single-chunk clips for the owner to verify.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-09-03-gr1-zero-shot/">GR-1 tabletop zero-shot: 44 tasks, no fine-tuning</a></h3>
-      <p><code>2026-09-03 · done</code> — <b>A human-only 120M 3D-WAM model drives the GR-1 humanoid in closed loop on all 44 RoboCasa pick-and-place tasks, 3 episodes each</b>: the loop closes end-to-end with no robot data and no retargeter, <b>2 of 117 episodes succeed</b> (KettleToPlate, ObjectsTieredBasketToCounter), the hand ends a median 23&nbsp;cm from the object because the controller executes a fraction of each plan; 5 tasks failed inside the simulator before step 0. Every ego-view clip is embedded, one slide per task.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-31-scaling-plan/">The base model is finished; the 320M generation is training</a></h3>
-      <p><code>2026-08-31 → 09-01 · running</code> — <b>The 120M curated base finished 110,000 steps as the project's best model</b>: cos 0.279 vs the previous best's 0.248, ADE 7.94 beating the 7.97 zero predictor — and the split verdict that direction improves to the very end while <b>magnitude calibration peaked at 50k (7.71)</b>. Two 320M models at <b>π0.5 action-expert dims</b> (d1024 × 18L, canonical DiT recipe: lr 1e-4, effective batch 256) train on — at 0.51M samples they trail the 120M trajectory (colder LR, 4× fewer updates) but already calibrate magnitude at 93–96&nbsp;%, which the 120M never did. First closed-loop groundwork, measured: <b>chunk-chained rollouts stay bounded when replanning from ground truth but break in ~1&nbsp;s from their own predictions</b>; contact lands within 2.8&nbsp;cm of the true region (IoU 0.44, 94&nbsp;% hit); <b>the predicted hand's parts fit rigid to 0.17&nbsp;cm vs GT 0.08 — decodable to joints</b>. Closed-loop arena: GR00T's own open-source GR-1 tabletop benchmark, for directly comparable success rates.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-08-31-evaluation/">Every number we had was one dataset</a></h3>
-      <p><code>2026-08-31 · done</code> — <code>build_loader</code> gates every sampler on <code>split=="train"</code>, so val walks the chunk index in file order and <b>the first 400 batches are 100&nbsp;% arctic</b>: every evaluation number this project has reported was measured on 32–48 chunks of one dataset. A stratified six-dataset evaluator — validated to reproduce the old probe digit-for-digit on the old 48 chunks — restates 18 checkpoints: <b>the ranking survives, the absolute values roughly halve, and nothing beats a zero predictor</b>. D6 at 110,000 steps lands below a 3,400-step arm with history on. A paired bootstrap over shared chunks says <b>only three of nine single-flag ablations were ever distinguishable from their control</b>. Eight new arms: interface tokens null, spatial RoPE <b>negative</b> (−0.008 at 10k) after reading a steady +0.015 on the arctic curve, uniform k=4 negative (−0.007), which finally settles the patchify question in favour of k=8. The one real gain is data composition — dropping hot3d beats its own volume control by <b>+0.008 [+0.002, +0.014]</b>. First cross-embodiment measurement: a model trained only on human hands keeps <b>79&nbsp;% of its hand direction accuracy on the Sharpa hand, zero-shot</b> (gap −0.052 [−0.091, −0.015] over 258 matched sequence pairs).</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-29-overnight/">Overnight — the model was better than we could measure</a></h3>
-      <p><code>2026-08-30 · running</code> — Ten trained arms, ten ablation arms, nine measurement-only investigations. Both long runs finished at 110 k steps fully annealed: <b>history + duration reaches cosine 0.457 and ADE 12.89; duration alone 0.282 and 16.69, losing to a zero predictor by 23 %</b> — history is worth more than nine times the compute, and hand cosine 0.544 was the first crossing of the 0.5 threshold. The decisive finding is a metric one: <b>best-of-8 sampling reaches cosine 0.837 against a model-free ceiling of 0.861</b>, so the distribution already contains near-optimal trajectories and the failure is selection, not capability. A 36-recipe inference sweep on an existing checkpoint reaches <b>ADE 10.41, 29 % better than predicting nothing, with no training at all</b>. A new interaction-quality suite adapted from the hand-object generation literature shows object shape improving 4.8× and contact placement 2× across arms, while objects still deform 23× beyond physics and contact IoU sits at 38.8 %. In the ablation, x1 parameterisation halves penetration and improves shape 33–36 %, while the rigidity loss made shape worse rather than better.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-28-videodit/">Rebuilt as a video generation model — 10 Hz data, time as a token axis, three designs</a></h3>
-      <p><code>2026-08-28 · running</code> — Five arms had failed the same way: the model behaves as an averager, emitting 12–28 % of true motion. Rebuilt to the video-generation contract. Data re-preprocessed at 10 Hz, human only, chunk stride 1, 512 points per entity (5,645 episodes, 848,622 chunks, 20.2 h). Time becomes a token axis instead of 48 channels; tokens are Hilbert-serialized patches of eight points (PTv3 construction used as Wan's patch embed — unpatchify verified exact, permutation equivariance 1.7e-06); RoPE on the frame index. The loss is stripped to plain masked MSE: no rigidity, no contact, no motion reweighting, no adaptive batch-RMS divisor, no autoregressive arm. Three parameter-matched arms at ~120 M — D1 patches with full attention, D2 one token per point-frame with PTv3 windowed attention (2.2× faster than full at equal tokens), D3 = D1 plus block-causal temporal attention (from MolmoMotion, whose autoregressive head beats its own flow matching). A fourth arm finetunes MolmoMotion itself for hand+object flow, and a fifth tests per-step normalised displacement targets. <b>Result:</b> no arm beats the zero-flow baseline (14.66 cm) — all of them slide along one ADE-vs-motion trade-off curve toward predicting nothing, with D3 the only arm holding its motion at 63 %. The binding problem is direction, not magnitude: cosine(pred, gt) is 0.145, perfect magnitude buys 8 % and still loses to a zero predictor while perfect direction buys 36 % and wins.</p>
-    </div></div>
-
-    <div class="item"><span class="badge done">done</span><div>
-      <h3><a href="decks/2026-08-28-multistream/">Multi-stream joint attention did not fix it — a falsified prediction</a></h3>
-      <p><code>2026-08-28 · done</code> — Per-entity-class MLP parameters with joint attention (MMDiT / RLDX-1 MSAT style), parameters matched at 119.94 M, three cells at 2,200 steps. Objects more than 10 cm from any hand move 0.56–2.64 cm against 0.06 cm true, and object motion overshoots ground truth. Hand motion unchanged. Separate parameters gave objects their own motion prior, not interaction reasoning.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-28-iteration/">Collapse defeated, direction missing — motion-weighted loss and an autoregressive head</a></h3>
-      <p><code>2026-08-28 · running</code> — Motion weighting lifts generated motion from 12 % to 73 % of ground truth (hand 17 % → 48 %), monotone in both runs, so the mean-collapse is beaten. Accuracy does not follow: no checkpoint beats both baselines. The autoregressive head is the best trade (ADE 0.078 at 50 % motion) and drifts on long sequences. Next: drift control, contact-gated object motion, a direction-only metric.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-27-diagnosis/">Why it does not work yet — the pilot predicts no motion, and why</a></h3>
-      <p><code>2026-08-27 · running</code> — 12,000 steps train cleanly, but the model does not beat a zero-flow baseline and its samples carry 8× too little motion. Oracle-velocity and foreign-target tests exclude sampler bugs, leakage, capacity and normalisation; the velocity target lets the model denoise instead of using the scene, so sampling collapses to the conditional mean. Fix: predict the flow, add a regression baseline, rescale the auxiliaries.</p>
-    </div></div>
-
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-26-architecture-training/">Deck #2 · Architecture &amp; training — design C, pilot chain launched (action items 2.1–2.4)</a></h3>
-      <p><code>2026-08-26 · running · rebuilt 08-26 evening</code> — One plain DiT over the frame-0 labelled points (≤ 8,192 tokens, 12 blocks, d = 768, 119 M); each point emits its 16-step flow as a 48-d vector. Flow matching + per-part rigidity + contact-pair auxiliaries; batch 16 + grad checkpointing, 4.5 s/step measured on 1× A100 (12k steps ≈ 16 h; 4× A100 ≈ 3.8×). Pipeline verified (tests · smoke · dry run); chain job 132202 running since 18:38. Discuss: entity phrases (chain link 2) · 10 Hz variant · 4× A100 move.</p>
-    </div></div>
-    <div class="item"><span class="badge wip">running</span><div>
-      <h3><a href="decks/2026-08-25-point-budget/">Deck #1 · Datasets &amp; train data structure — six human sources + CHORD Sharpa, 15 Hz · N = 2048 (action items 1.1–1.3)</a></h3>
-      <p><code>2026-08-25 · running · rebuilt 08-26 evening</code> — TACO 2,317 · ARCTIC 277 · GRAB 1,335 (meshes pending) · OakInk2 492 (104 loaded) · HOT3D 294 · DexYCB 1,000 = 5,319 human episodes / 4.03 M frames / 19.6 h through one CHORD LOAD schema; Sharpa = NVIDIA's TACO release (1,215). Preprocessed at 15 Hz, N = 2048 per entity, T = 16, stride 4 → 4,022 human + 1,148 Sharpa episodes on disk (18:57); metric-scale audit: units consistent (metres) across all seven sources. Train sample = metric points at t₀ (hand-midpoint centred) · one group label · 48-d flow normalised per step · exists / valid masks · 1 cm contact + nearest object point · T5 task text (entity phrases = link 2). Point budget N = 2048 from the sweep; raw-vs-points clips per dataset.</p>
-    </div></div>
-  </div>
-</div></section>
-
-<section id="related"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">RELATED WORK</div>
-    <h2>Neighbors and the delta</h2>
-  </div>
-  <div class="tbl-wrap reveal">
-    <table>
-      <thead><tr><th>neighbor</th><th>establishes</th><th>lacks (= our delta)</th></tr></thead>
-      <tbody>
-        <tr><td><a href="https://arxiv.org/abs/2601.03782">PointWorld</a> (NVlabs '26)</td><td>point flow as action representation at scale (2M traj)</td><td>action-conditioned world model only — no language, no generation of embodiment flow, no dexterous hands, no human data</td></tr>
-        <tr><td><a href="https://www.alphaxiv.org/abs/2606.10614">Dexterous Point Policy</a> ('26)</td><td>points→IK works on a real dexterous hand (75% vs VLA 1%)</td><td>6 sparse points, regression, no scene generation</td></tr>
-        <tr><td><a href="https://arxiv.org/html/2603.08485v1">3PoinTr</a> ('26)</td><td>dense 3D scene flow from human video; 20-demo policies</td><td>no language, open-loop, embodiment removed from the representation</td></tr>
-        <tr><td><a href="https://nvidia-isaac.github.io/video_to_data/chord/">CHORD</a> + <a href="https://arxiv.org/abs/2503.21860">ManipTrans</a></td><td>human demos → sim-valid robot-hand episodes</td><td>per-task pipelines: new demo + RL per task, no policy prior</td></tr>
-        <tr><td>π0 / GR00T-class VLAs</td><td>open-vocabulary semantics from VLM pretraining</td><td>disjoint per-robot action spaces; human video used only for pretraining; no geometry-native transfer</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="note">Relation to CHORD/ManipTrans: a data-supply role — they mint robot-hand episodes from human mocap; no retargeting mechanism exists in the model.</p>
-</div></section>
-
-<section id="method"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">METHOD</div>
-    <h2>Model</h2>
-  </div>
-  <div class="tbl-wrap reveal">
-    <table>
-      <thead><tr><th>component</th><th>choice</th></tr></thead>
-      <tbody>
-        <tr><td>representation</td><td>per-point xyz + instance/class label; embodiment points additionally carry link IDs (keeps IK closed-form) and an embodiment tag; points sampled from MANO/URDF mesh; target = Δx over T=16 @ 10 Hz</td></tr>
-        <tr><td>conditioning</td><td>frame-0 point set + language instruction + embodiment tag → full scene flow. One pattern, no masking variants. The tag disambiguates near-isomorphic hand geometries; the geometry itself carries the causal conditioning — the model moves the points it is given</td></tr>
-        <tr><td>backbone</td><td>one token per point track; factorized DiT — spatial attention over PTv3-serialized order, temporal along each track; text conditioning; 100–200M for the pilot</td></tr>
-        <tr><td>objective</td><td>conditional flow matching with classifier-free guidance. One loss</td></tr>
-        <tr><td>decoding</td><td>per-link Procrustes + IK → joint commands; closed loop = regenerate per chunk</td></tr>
-      </tbody>
-    </table>
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.1</div>
+    <h2>Scene and embodiment as one labeled point set</h2>
   </div>
 
-  <figure class="media reveal" style="margin-top:26px">
-    <div style="background:var(--surface);padding:22px 16px">
-    <svg viewBox="0 0 980 360" role="img" aria-label="One labeled point set: hand and object points at frame 0 become rows of one array; frame-0 positions and labels are given, the flow chunk is generated; embodiment rows decode to joint commands." style="width:100%;height:auto;display:block;font-family:var(--font-m)">
-      <defs>
-        <marker id="f1m" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
-        <marker id="f1r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--accent)"/></marker>
-        <marker id="f1g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--ok)"/></marker>
-      </defs>
+  <p>A state is a set of points carrying semantic labels. At frame <i>t</i>,</p>
 
-      <!-- scene panel -->
-      <rect x="20" y="36" width="230" height="306" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
-      <text x="135" y="58" text-anchor="middle" font-size="11.5" fill="var(--muted)">scene at t = 0</text>
-      <rect x="52" y="70" width="112" height="20" rx="10" fill="var(--accent-weak)" stroke="var(--accent)" stroke-width="0.8"/>
-      <text x="108" y="84" text-anchor="middle" font-size="11" fill="var(--accent)">tag : sharpa</text>
-      <!-- hand dots -->
-      <g fill="var(--accent)">
-        <circle cx="85" cy="208" r="4"/><circle cx="107" cy="203" r="4"/><circle cx="129" cy="208" r="4"/>
-        <circle cx="90" cy="233" r="4"/><circle cx="112" cy="230" r="4"/><circle cx="134" cy="233" r="4"/>
-        <circle cx="62" cy="188" r="4"/><circle cx="48" cy="170" r="4"/>
-        <circle cx="82" cy="173" r="4"/><circle cx="76" cy="146" r="4"/><circle cx="73" cy="122" r="4"/>
-        <circle cx="104" cy="166" r="4"/><circle cx="102" cy="139" r="4"/><circle cx="101" cy="113" r="4"/>
-        <circle cx="126" cy="169" r="4"/><circle cx="128" cy="142" r="4"/><circle cx="129" cy="120" r="4"/>
-        <circle cx="148" cy="178" r="4"/><circle cx="152" cy="156" r="4"/>
-      </g>
-      <text x="100" y="260" text-anchor="middle" font-size="11" fill="var(--accent)">embodiment points</text>
-      <!-- cup dots -->
-      <g fill="var(--ok)">
-        <circle cx="196" cy="252" r="4"/><circle cx="212" cy="252" r="4"/>
-        <circle cx="180" cy="260" r="4"/><circle cx="180" cy="281" r="4"/><circle cx="180" cy="302" r="4"/>
-        <circle cx="228" cy="260" r="4"/><circle cx="228" cy="281" r="4"/><circle cx="228" cy="302" r="4"/>
-        <circle cx="196" cy="310" r="4"/><circle cx="212" cy="310" r="4"/>
-        <circle cx="241" cy="268" r="4"/><circle cx="247" cy="281" r="4"/><circle cx="241" cy="294" r="4"/>
-      </g>
-      <text x="178" y="330" text-anchor="middle" font-size="11" fill="var(--ok)">object points (cup)</text>
+  <div class="eq">S<sub>t</sub> = { (x<sub>i</sub>, ℓ<sub>i</sub>) }<sub>i=1…P</sub>,&nbsp;&nbsp;
+    x<sub>i</sub> ∈ ℝ³,&nbsp;&nbsp; ℓ<sub>i</sub> = (class, instance, part, side, tag)</div>
 
-      <!-- panel -> array -->
-      <line x1="256" y1="190" x2="306" y2="190" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f1m)"/>
-      <text x="282" y="178" text-anchor="middle" font-size="10.5" fill="var(--muted)">N tracks</text>
+  <p><b>class</b> separates hand from object. <b>instance</b> identifies the entity a point belongs to, so
+    two objects are distinguishable without any ordering convention. <b>part</b> is the semantic sub-unit
+    of an entity — for hands, the sixteen MANO parts. <b>side</b> is left or right, <b>tag</b> carries the
+    per-entity language phrase. Point identity is stable across the frames of a window: point <i>i</i> at
+    frame <i>t</i> and frame <i>t+1</i> are the same material point, which is what makes displacement a
+    well-defined per-point quantity rather than a set-matching problem.</p>
 
-      <!-- array headers -->
-      <text x="480" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">given (frame 0)</text>
-      <text x="800" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">generated (T = 16 @ 10 Hz)</text>
-      <g font-size="10.5" fill="var(--muted)" text-anchor="middle">
-        <text x="360" y="76">xyz₀</text><text x="432" y="76">class</text><text x="486" y="76">inst</text><text x="548" y="76">link</text><text x="612" y="76">tag</text>
-        <text x="800" y="76">Δx₁&#160;&#160;Δx₂&#160;&#160;⋯&#160;&#160;Δx₁₆</text>
-      </g>
-      <line x1="644" y1="42" x2="644" y2="290" stroke="var(--line-2)" stroke-dasharray="4 4"/>
+  <p>Each entity is sampled to a fixed budget of 512 points, hands and objects alike, and a window admits
+    at most two hands and six objects. Uniform density matters because contact is a geometric
+    measurement: at tabletop scale, 512 points on an object is roughly 1 cm spacing, and coarser sampling
+    quantises the very quantity the model is asked to reason about.</p>
 
-      <!-- row 1: hand -->
-      <rect x="324" y="88" width="312" height="28" rx="6" fill="var(--surface-2)"/>
-      <rect x="652" y="88" width="296" height="28" rx="6" fill="var(--accent-weak)"/>
-      <circle cx="340" cy="102" r="3.5" fill="var(--accent)"/>
-      <g font-size="11" fill="var(--ink)" text-anchor="middle">
-        <text x="368" y="106">x y z</text><text x="432" y="106">hand</text><text x="486" y="106">1</text><text x="548" y="106">thumb-d</text><text x="612" y="106">sharpa</text>
-      </g>
-      <g stroke="var(--accent)" stroke-width="1.4">
-        <line x1="672" y1="102" x2="704" y2="102" marker-end="url(#f1r)"/><line x1="736" y1="102" x2="768" y2="102" marker-end="url(#f1r)"/><line x1="800" y1="102" x2="832" y2="102" marker-end="url(#f1r)"/><line x1="880" y1="102" x2="912" y2="102" marker-end="url(#f1r)"/>
-      </g>
-      <text x="856" y="106" text-anchor="middle" font-size="11" fill="var(--accent)">⋯</text>
+  <p>The consequence of putting the embodiment inside the state is that there is no action space distinct
+    from the observation space. A policy, in this formulation, is a generative model of how the world —
+    hand included — continues.</p>
 
-      <!-- row 2: hand -->
-      <rect x="324" y="124" width="312" height="28" rx="6" fill="var(--surface-2)"/>
-      <rect x="652" y="124" width="296" height="28" rx="6" fill="var(--accent-weak)"/>
-      <circle cx="340" cy="138" r="3.5" fill="var(--accent)"/>
-      <g font-size="11" fill="var(--ink)" text-anchor="middle">
-        <text x="368" y="142">x y z</text><text x="432" y="142">hand</text><text x="486" y="142">1</text><text x="548" y="142">palm</text><text x="612" y="142">sharpa</text>
-      </g>
-      <g stroke="var(--accent)" stroke-width="1.4">
-        <line x1="672" y1="138" x2="704" y2="138" marker-end="url(#f1r)"/><line x1="736" y1="138" x2="768" y2="138" marker-end="url(#f1r)"/><line x1="800" y1="138" x2="832" y2="138" marker-end="url(#f1r)"/><line x1="880" y1="138" x2="912" y2="138" marker-end="url(#f1r)"/>
-      </g>
-      <text x="856" y="142" text-anchor="middle" font-size="11" fill="var(--accent)">⋯</text>
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.2</div>
+    <h2>Language-conditioned scene flow</h2>
+  </div>
 
-      <!-- ellipsis row -->
-      <text x="480" y="180" text-anchor="middle" font-size="13" fill="var(--muted)">⋮</text>
-      <text x="800" y="180" text-anchor="middle" font-size="13" fill="var(--muted)">⋮</text>
+  <p>Given the frame-0 points, their labels and a natural-language instruction <i>c</i>, the model predicts
+    the displacement of every point over the next <i>T</i> frames:</p>
 
-      <!-- row 4: cup -->
-      <rect x="324" y="196" width="312" height="28" rx="6" fill="var(--surface-2)"/>
-      <rect x="652" y="196" width="296" height="28" rx="6" fill="var(--ok-bg)"/>
-      <circle cx="340" cy="210" r="3.5" fill="var(--ok)"/>
-      <g font-size="11" fill="var(--ink)" text-anchor="middle">
-        <text x="368" y="214">x y z</text><text x="432" y="214">cup</text><text x="486" y="214">2</text><text x="548" y="214">—</text><text x="612" y="214">—</text>
-      </g>
-      <g stroke="var(--ok)" stroke-width="1.4">
-        <line x1="672" y1="210" x2="704" y2="210" marker-end="url(#f1g)"/><line x1="736" y1="210" x2="768" y2="210" marker-end="url(#f1g)"/><line x1="800" y1="210" x2="832" y2="210" marker-end="url(#f1g)"/><line x1="880" y1="210" x2="912" y2="210" marker-end="url(#f1g)"/>
-      </g>
-      <text x="856" y="214" text-anchor="middle" font-size="11" fill="var(--ok)">⋯</text>
+  <div class="eq">Δ = f<sub>θ</sub>(x<sub>0</sub>, ℓ, c) ∈ ℝ<sup>T×P×3</sup>,&nbsp;&nbsp;
+    x<sub>t</sub> = x<sub>0</sub> + Δ<sub>t</sub><br>
+    <span class="c">T = 10 frames at 10 Hz — a one-second chunk</span></div>
 
-      <!-- row 5: cup -->
-      <rect x="324" y="232" width="312" height="28" rx="6" fill="var(--surface-2)"/>
-      <rect x="652" y="232" width="296" height="28" rx="6" fill="var(--ok-bg)"/>
-      <circle cx="340" cy="246" r="3.5" fill="var(--ok)"/>
-      <g font-size="11" fill="var(--ink)" text-anchor="middle">
-        <text x="368" y="250">x y z</text><text x="432" y="250">cup</text><text x="486" y="250">2</text><text x="548" y="250">—</text><text x="612" y="250">—</text>
-      </g>
-      <g stroke="var(--ok)" stroke-width="1.4">
-        <line x1="672" y1="246" x2="704" y2="246" marker-end="url(#f1g)"/><line x1="736" y1="246" x2="768" y2="246" marker-end="url(#f1g)"/><line x1="800" y1="246" x2="832" y2="246" marker-end="url(#f1g)"/><line x1="880" y1="246" x2="912" y2="246" marker-end="url(#f1g)"/>
-      </g>
-      <text x="856" y="250" text-anchor="middle" font-size="11" fill="var(--ok)">⋯</text>
+  <p>Predicting <i>total</i> scene flow, rather than object motion conditioned on a given hand trajectory,
+    is deliberate: the hand and the objects it acts on are generated jointly by one distribution, so the
+    model is never given the answer to half of the interaction. Longer horizons come from chaining — each
+    chunk is re-conditioned on the model's own final predicted state — which is also the regime in which
+    the model is deployed on a robot, where the controller replans every few executed frames.</p>
 
-      <!-- annotations -->
-      <text x="948" y="306" text-anchor="end" font-size="11" fill="var(--accent)">embodiment rows → per-link Procrustes + IK → joints (action)</text>
-      <text x="948" y="326" text-anchor="end" font-size="11" fill="var(--ok)">object rows → predicted consequence (world model)</text>
+  <figure class="sch reveal">
+    <svg viewBox="0 0 900 190" role="img" aria-label="Pipeline: labeled points to patches to transformer to flow to joints">
+      <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+        <path d="M0,0 L7,3.2 L0,6.4 z" fill="#8b93a7"/></marker>
+        <style>
+          .bx{fill:none;stroke:#8b93a7;stroke-width:1.2;rx:8}
+          .tl{font:600 12.5px Archivo,sans-serif;fill:#c9d1e2}
+          .ts{font:400 10.5px 'IBM Plex Mono',monospace;fill:#8b93a7}
+          .ar{stroke:#8b93a7;stroke-width:1.2;marker-end:url(#a)}
+          .hl{fill:none;stroke:#ff6a5e;stroke-width:1.5;rx:8}
+          .th{font:600 12.5px Archivo,sans-serif;fill:#ff6a5e}
+        </style></defs>
+      <rect class="bx" x="8"   y="46" width="132" height="66"/>
+      <text class="tl" x="74" y="72" text-anchor="middle">labeled points</text>
+      <text class="ts" x="74" y="91" text-anchor="middle">P × 3  +  ℓ</text>
+      <line class="ar" x1="145" y1="79" x2="176" y2="79"/>
+      <rect class="bx" x="181" y="46" width="132" height="66"/>
+      <text class="tl" x="247" y="72" text-anchor="middle">part-major</text>
+      <text class="ts" x="247" y="91" text-anchor="middle">k = 8 patches</text>
+      <line class="ar" x1="318" y1="79" x2="349" y2="79"/>
+      <rect class="bx" x="354" y="30" width="150" height="98"/>
+      <text class="tl" x="429" y="63" text-anchor="middle">video-DiT</text>
+      <text class="ts" x="429" y="82" text-anchor="middle">flow matching</text>
+      <text class="ts" x="429" y="99" text-anchor="middle">T × G tokens</text>
+      <line class="ar" x1="509" y1="79" x2="540" y2="79"/>
+      <rect class="bx" x="545" y="46" width="132" height="66"/>
+      <text class="tl" x="611" y="72" text-anchor="middle">scene flow</text>
+      <text class="ts" x="611" y="91" text-anchor="middle">T × P × 3</text>
+      <line class="ar" x1="682" y1="79" x2="713" y2="79"/>
+      <rect class="bx" x="718" y="46" width="174" height="66"/>
+      <text class="tl" x="805" y="72" text-anchor="middle">Procrustes → IK</text>
+      <text class="ts" x="805" y="91" text-anchor="middle">joint commands</text>
+      <rect class="hl" x="354" y="142" width="150" height="34"/>
+      <text class="th" x="429" y="164" text-anchor="middle">contact head</text>
+      <line class="ar" x1="429" y1="130" x2="429" y2="140"/>
+      <text class="ts" x="520" y="164">§3.4 — training only</text>
     </svg>
-    </div>
-    <figcaption><b>Scene data structure.</b> The scene is one array of N point-tracks. The frame-0 columns (xyz₀ and labels) are the observation; the Δx block is what the model generates. Embodiment rows decode to joint commands — the action; object rows are the predicted consequence.</figcaption>
+    <figcaption><b>Schematic, not a run.</b> One forward pass. The contact head branches off the same
+      final-layer tokens the flow head reads, is supervised during training, and is discarded at
+      inference.</figcaption>
   </figure>
 
-  <figure class="media reveal" style="margin-top:26px">
-    <div style="background:var(--surface);padding:22px 16px">
-    <svg viewBox="0 0 980 430" role="img" aria-label="Point tokens with language, tag, and flow-step conditioning pass through N factorized DiT blocks alternating spatial and temporal attention; the sampled scene flow's embodiment rows decode via per-link Procrustes and IK to joint commands executed in simulation, and the loop regenerates per chunk." style="width:100%;height:auto;display:block;font-family:var(--font-m)">
-      <defs>
-        <marker id="f2m" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker>
-      </defs>
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.3</div>
+    <h2>Tokenization and backbone</h2>
+  </div>
 
-      <!-- conditioning -->
+  <h4>Part-major patches</h4>
+  <p>Attending over individual points is quadratic in <i>P</i> and wasteful, since neighbouring points on
+    a rigid part move almost identically. We group points into patches of <b>k = 8</b>, ordered
+    <i>part-major</i>: points are sorted first by entity and part, then along a Hilbert curve within the
+    part, and consecutive runs of eight become one token. A token is therefore a coherent
+    two-centimetre piece of <i>one</i> semantic part of <i>one</i> entity — never a mixture of a thumb and
+    the mug it holds. This is what later allows contact to be expressed between tokens rather than between
+    raw points, and it is why the part label, not merely the instance label, is load-bearing.</p>
+
+  <h4>Backbone</h4>
+  <p>The <i>T × G</i> patch tokens are processed by a DiT with <b>full three-dimensional attention</b> —
+    every token attends every other token at every frame, with no factorisation into spatial and temporal
+    passes. Rotary position encoding is applied on the <i>time</i> axis only; spatial position enters
+    through the point coordinates themselves rather than through an index, so the model is not committed
+    to any canonical ordering of entities or points. Blocks are adaLN-zero conditioned on the diffusion
+    time, with RMSNorm on queries and keys and a SwiGLU feed-forward. The instruction is encoded by a
+    frozen T5 and injected per entity through the <b>tag</b> label, so a phrase attaches to the object it
+    names.</p>
+
+  <p>Two design choices were tested and rejected, and we report them as such: factorised or
+    entity-then-scene attention, and auxiliary reconstruction losses. Neither improved on the plain
+    configuration.</p>
+
+  <h4>Flow matching</h4>
+  <p>Training uses conditional flow matching with <b>v</b>-parameterisation. With τ ∈ [0,1] the noise
+    level, Δ<sup>1</sup> the ground-truth flow and ε ~ 𝒩(0, I),</p>
+
+  <div class="eq">Δ<sup>τ</sup> = (1 − τ)·ε + τ·Δ<sup>1</sup><br>
+    ℒ<sub>fm</sub> = 𝔼<sub>τ,ε</sub> ‖ v<sub>θ</sub>(Δ<sup>τ</sup>, τ, x<sub>0</sub>, ℓ, c) − (Δ<sup>1</sup> − ε) ‖²
+    &nbsp;<span class="c">masked to existing, valid points</span></div>
+
+  <p>Sampling integrates the learned field with sixteen Euler steps. An exponential moving average of the
+    weights (decay 0.999) is used for all evaluation.</p>
+
+</div></div></section>
+
+<section id="contact"><div class="wrap"><div class="paper">
+
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.4</div>
+    <h2>Contact correspondence<span class="draft">proposed</span></h2>
+  </div>
+
+  <h4>The objective is marginal; the phenomenon is relational</h4>
+  <p>The flow-matching loss decomposes into a sum of per-point terms. Its minimiser therefore depends only
+    on the <i>marginal</i> conditional distribution of each point's displacement given the scene. But an
+    object accelerates <i>because</i> a particular part of a hand is pressing on a particular part of its
+    surface: contact is a property of a <b>pair</b> of points, and no quantity of per-point supervision
+    identifies it. A model can drive ℒ<sub>fm</sub> down by learning the correlation <i>hand near object ⇒
+    object moves</i> without ever representing the mechanism that licenses it.</p>
+
+  <p>That shortcut predicts specific failures under distribution shift, and we observe all three: objects
+    translate toward a hand that has not closed on them; both hands are recruited when only the nearer one
+    is acting; and grasps form whose contacts do not oppose one another. We therefore supervise the
+    relation directly, as a relation.</p>
+
+  <h4>An assignment between patch tokens</h4>
+  <p>Let H be the hand patch tokens and O the object patch tokens at a given frame, taken from the same
+    final-layer activations the flow head reads. We project both into a small matching space and score
+    every pair by inner product:</p>
+
+  <div class="eq">q<sub>h</sub> = W<sub>q</sub> z<sub>h</sub>,&nbsp;&nbsp; k<sub>o</sub> = W<sub>k</sub> z<sub>o</sub>
+    &nbsp;&nbsp;<span class="c">(d<sub>m</sub> = 128)</span><br>
+    S<sub>ho</sub> = ⟨q<sub>h</sub>, k<sub>o</sub>⟩ / √d<sub>m</sub><br>
+    S<sub>h·</sub> ← [ n<sub>h</sub> , S<sub>h1</sub>, …, S<sub>hO</sub> ]
+    &nbsp;<span class="c">n<sub>h</sub> = learned no-contact logit</span></div>
+
+  <p>A softmax over each hand row — object patches plus the no-contact slot — gives a distribution over
+    <i>what this part of the hand is touching, if anything</i>. The same matrix, transposed and given its
+    own no-contact slot, is normalised down each object column to give <i>what is touching this part of the
+    object, if anything</i>. Sharing one compatibility matrix between the two directions is both cheaper
+    and stricter than learning two: a single notion of "these two patches are in contact" must satisfy both
+    normalisations.</p>
+
+  <p>Targets are built from ground-truth point-level correspondences, coarsened to patches and left
+    <b>soft</b>: for each hand patch we count how many of its eight points contact each object patch and
+    normalise. A grasp that straddles two adjacent object patches puts mass on both rather than forcing an
+    arbitrary winner — appropriate, since adjacent patches are about a centimetre apart. Rows with no
+    contact place all mass on the no-contact slot. The loss is the soft cross-entropy in both directions,
+    averaged over scorable rows and columns.</p>
+
+  <figure class="sch reveal">
+    <svg viewBox="0 0 900 240" role="img" aria-label="Assignment matrix between hand patches and object patches with a no-contact column">
+      <defs><style>
+        .g{fill:none;stroke:#8b93a7;stroke-width:.9}
+        .lb{font:600 11.5px Archivo,sans-serif;fill:#c9d1e2}
+        .sm{font:400 10px 'IBM Plex Mono',monospace;fill:#8b93a7}
+        .on{fill:#ff6a5e;opacity:.85}.mid{fill:#ff6a5e;opacity:.4}.off{fill:#8b93a7;opacity:.13}
+        .du{fill:#5b8def;opacity:.7}
+      </style></defs>
+      <text class="lb" x="150" y="26" text-anchor="end">hand patches</text>
+      <text class="lb" x="470" y="26" text-anchor="middle">object patches</text>
+      <text class="lb" x="700" y="26" text-anchor="middle">no contact</text>
       <g>
-        <rect x="250" y="28" width="160" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-        <text x="330" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">language instruction</text>
-        <rect x="430" y="28" width="125" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-        <text x="492" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">embodiment tag</text>
-        <rect x="575" y="28" width="105" height="30" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-        <text x="627" y="47" text-anchor="middle" font-size="10.5" fill="var(--ink)">flow step τ</text>
-        <line x1="330" y1="58" x2="330" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
-        <line x1="492" y1="58" x2="492" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
-        <line x1="627" y1="58" x2="627" y2="114" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
-        <text x="618" y="90" text-anchor="end" font-size="10.5" fill="var(--muted)">conditioning</text>
+        <text class="sm" x="150" y="59" text-anchor="end">thumb distal</text>
+        <text class="sm" x="150" y="89" text-anchor="end">index distal</text>
+        <text class="sm" x="150" y="119" text-anchor="end">index middle</text>
+        <text class="sm" x="150" y="149" text-anchor="end">palm</text>
+        <text class="sm" x="150" y="179" text-anchor="end">ring distal</text>
+        <text class="sm" x="150" y="209" text-anchor="end">L-hand thumb</text>
       </g>
-
-      <!-- input tokens -->
-      <text x="110" y="112" text-anchor="middle" font-size="11.5" fill="var(--muted)">input tokens</text>
-      <rect x="30" y="120" width="160" height="180" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
-      <text x="110" y="142" text-anchor="middle" font-size="10" fill="var(--muted)">one token / point-track</text>
-      <g font-size="9.5" fill="var(--ink)">
-        <rect x="46" y="152" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="162" r="3" fill="var(--accent)"/><text x="68" y="166">hand · xyz+labels</text>
-        <rect x="46" y="178" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="188" r="3" fill="var(--accent)"/><text x="68" y="192">hand · xyz+labels</text>
-        <rect x="46" y="204" width="128" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="58" cy="214" r="3" fill="var(--accent)"/><text x="68" y="218">hand · xyz+labels</text>
-        <rect x="46" y="230" width="128" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="58" cy="240" r="3" fill="var(--ok)"/><text x="68" y="244">cup · xyz+labels</text>
-        <rect x="46" y="256" width="128" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="58" cy="266" r="3" fill="var(--ok)"/><text x="68" y="270">cup · xyz+labels</text>
+      <g>
+        <rect class="off" x="170" y="46" width="42" height="20"/><rect class="on" x="218" y="46" width="42" height="20"/><rect class="mid" x="266" y="46" width="42" height="20"/><rect class="off" x="314" y="46" width="42" height="20"/><rect class="off" x="362" y="46" width="42" height="20"/><rect class="off" x="410" y="46" width="42" height="20"/><rect class="off" x="458" y="46" width="42" height="20"/><rect class="off" x="506" y="46" width="42" height="20"/><rect class="off" x="554" y="46" width="42" height="20"/><rect class="off" x="602" y="46" width="42" height="20"/><rect class="off" x="676" y="46" width="48" height="20"/>
+        <rect class="off" x="170" y="76" width="42" height="20"/><rect class="off" x="218" y="76" width="42" height="20"/><rect class="off" x="266" y="76" width="42" height="20"/><rect class="off" x="314" y="76" width="42" height="20"/><rect class="on" x="362" y="76" width="42" height="20"/><rect class="off" x="410" y="76" width="42" height="20"/><rect class="off" x="458" y="76" width="42" height="20"/><rect class="off" x="506" y="76" width="42" height="20"/><rect class="off" x="554" y="76" width="42" height="20"/><rect class="off" x="602" y="76" width="42" height="20"/><rect class="off" x="676" y="76" width="48" height="20"/>
+        <rect class="off" x="170" y="106" width="42" height="20"/><rect class="off" x="218" y="106" width="42" height="20"/><rect class="off" x="266" y="106" width="42" height="20"/><rect class="mid" x="314" y="106" width="42" height="20"/><rect class="mid" x="362" y="106" width="42" height="20"/><rect class="off" x="410" y="106" width="42" height="20"/><rect class="off" x="458" y="106" width="42" height="20"/><rect class="off" x="506" y="106" width="42" height="20"/><rect class="off" x="554" y="106" width="42" height="20"/><rect class="off" x="602" y="106" width="42" height="20"/><rect class="off" x="676" y="106" width="48" height="20"/>
+        <rect class="off" x="170" y="136" width="42" height="20"/><rect class="off" x="218" y="136" width="42" height="20"/><rect class="off" x="266" y="136" width="42" height="20"/><rect class="off" x="314" y="136" width="42" height="20"/><rect class="off" x="362" y="136" width="42" height="20"/><rect class="off" x="410" y="136" width="42" height="20"/><rect class="off" x="458" y="136" width="42" height="20"/><rect class="off" x="506" y="136" width="42" height="20"/><rect class="off" x="554" y="136" width="42" height="20"/><rect class="off" x="602" y="136" width="42" height="20"/><rect class="du" x="676" y="136" width="48" height="20"/>
+        <rect class="off" x="170" y="166" width="42" height="20"/><rect class="off" x="218" y="166" width="42" height="20"/><rect class="off" x="266" y="166" width="42" height="20"/><rect class="off" x="314" y="166" width="42" height="20"/><rect class="off" x="362" y="166" width="42" height="20"/><rect class="off" x="410" y="166" width="42" height="20"/><rect class="off" x="458" y="166" width="42" height="20"/><rect class="off" x="506" y="166" width="42" height="20"/><rect class="off" x="554" y="166" width="42" height="20"/><rect class="off" x="602" y="166" width="42" height="20"/><rect class="du" x="676" y="166" width="48" height="20"/>
+        <rect class="off" x="170" y="196" width="42" height="20"/><rect class="off" x="218" y="196" width="42" height="20"/><rect class="off" x="266" y="196" width="42" height="20"/><rect class="off" x="314" y="196" width="42" height="20"/><rect class="off" x="362" y="196" width="42" height="20"/><rect class="off" x="410" y="196" width="42" height="20"/><rect class="off" x="458" y="196" width="42" height="20"/><rect class="off" x="506" y="196" width="42" height="20"/><rect class="off" x="554" y="196" width="42" height="20"/><rect class="off" x="602" y="196" width="42" height="20"/><rect class="du" x="676" y="196" width="48" height="20"/>
       </g>
-      <line x1="190" y1="210" x2="244" y2="210" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
-
-      <!-- DiT -->
-      <rect x="250" y="120" width="430" height="180" rx="12" fill="var(--surface-2)" stroke="var(--line-2)"/>
-      <text x="465" y="146" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">factorized DiT × N — 100–200M</text>
-      <rect x="275" y="168" width="185" height="104" rx="8" fill="var(--surface)" stroke="var(--line)"/>
-      <text x="367" y="202" text-anchor="middle" font-size="11.5" fill="var(--ink)">spatial attention</text>
-      <text x="367" y="224" text-anchor="middle" font-size="10" fill="var(--muted)">over PTv3-serialized</text>
-      <text x="367" y="240" text-anchor="middle" font-size="10" fill="var(--muted)">point order</text>
-      <rect x="480" y="168" width="185" height="104" rx="8" fill="var(--surface)" stroke="var(--line)"/>
-      <text x="572" y="202" text-anchor="middle" font-size="11.5" fill="var(--ink)">temporal attention</text>
-      <text x="572" y="224" text-anchor="middle" font-size="10" fill="var(--muted)">along each track</text>
-      <line x1="462" y1="196" x2="476" y2="196" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
-      <line x1="478" y1="244" x2="464" y2="244" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#f2m)"/>
-
-      <!-- output -->
-      <line x1="680" y1="210" x2="724" y2="210" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
-      <text x="702" y="198" text-anchor="middle" font-size="10" fill="var(--muted)">sample</text>
-      <text x="815" y="96" text-anchor="middle" font-size="11" fill="var(--ok)">object rows = predicted consequence</text>
-      <text x="815" y="114" text-anchor="middle" font-size="11.5" fill="var(--muted)">generated scene flow</text>
-      <rect x="730" y="120" width="170" height="180" rx="10" fill="var(--surface-2)" stroke="var(--line)"/>
-      <text x="815" y="142" text-anchor="middle" font-size="10" fill="var(--muted)">all points × T = 16</text>
-      <g font-size="9.5">
-        <rect x="746" y="152" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="162" r="3" fill="var(--accent)"/><text x="768" y="166" fill="var(--ink)">Δx₁ … Δx₁₆</text>
-        <rect x="746" y="178" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="188" r="3" fill="var(--accent)"/><text x="768" y="192" fill="var(--ink)">Δx₁ … Δx₁₆</text>
-        <rect x="746" y="204" width="138" height="20" rx="5" fill="var(--accent-weak)"/><circle cx="758" cy="214" r="3" fill="var(--accent)"/><text x="768" y="218" fill="var(--ink)">Δx₁ … Δx₁₆</text>
-        <rect x="746" y="230" width="138" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="758" cy="240" r="3" fill="var(--ok)"/><text x="768" y="244" fill="var(--ink)">Δx₁ … Δx₁₆</text>
-        <rect x="746" y="256" width="138" height="20" rx="5" fill="var(--ok-bg)"/><circle cx="758" cy="266" r="3" fill="var(--ok)"/><text x="768" y="270" fill="var(--ink)">Δx₁ … Δx₁₆</text>
-      </g>
-
-      <!-- decode chain -->
-      <line x1="815" y1="300" x2="815" y2="336" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#f2m)"/>
-      <text x="805" y="322" text-anchor="end" font-size="10" fill="var(--accent)">embodiment rows</text>
-      <rect x="710" y="340" width="190" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-      <text x="805" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">per-link Procrustes + IK</text>
-      <line x1="710" y1="360" x2="654" y2="360" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
-      <rect x="460" y="340" width="190" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-      <text x="555" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">joint commands q₁…₁₆</text>
-      <line x1="460" y1="360" x2="404" y2="360" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#f2m)"/>
-      <rect x="230" y="340" width="170" height="40" rx="8" fill="var(--surface-3)" stroke="var(--line-2)"/>
-      <text x="315" y="364" text-anchor="middle" font-size="11" fill="var(--ink)">simulation / robot</text>
-      <polyline points="230,360 110,360 110,306" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#f2m)"/>
-      <text x="315" y="406" text-anchor="middle" font-size="10.5" fill="var(--muted)">closed loop — regenerate per chunk with new frame-0 points</text>
+      <line class="g" x1="660" y1="40" x2="660" y2="222"/>
+      <text class="sm" x="170" y="232">mug ← instance 1 →</text>
+      <text class="sm" x="466" y="232">← instance 2 (distractor) →</text>
     </svg>
-    </div>
-    <figcaption><b>Base architecture.</b> One token per point-track; N factorized DiT blocks alternate spatial attention (PTv3-serialized order) and temporal attention (along each track), conditioned on the instruction, the embodiment tag, and the flow-matching step. Embodiment rows of the sampled flow decode to joint commands; the loop closes by regenerating each chunk from new frame-0 points.</figcaption>
+    <figcaption><b>Schematic, not a run.</b> Each row is a hand patch, each column an object patch, plus a
+      no-contact slot at the right. Rows are normalised to give what a hand part is touching; columns are
+      normalised to give what is touching an object part. The idle left hand and the untouched distractor
+      resolve to the no-contact slot — the supervision that says <i>this has no reason to move</i>.</figcaption>
   </figure>
 
-  <div class="sec-head reveal" style="margin-top:34px">
-    <h2>Data</h2>
+  <h4>Relation to contrastive representation learning</h4>
+  <p>Row-wise, the loss is InfoNCE: a softmax over inner products, pulling a hand patch toward the object
+    patch it touches and pushing it from the rest, with the no-contact slot as an explicit negative for
+    the common case of touching nothing. The natural simplification — raise the cosine similarity of
+    contacting tokens directly, with no projection — is worse for a specific reason. The tokens are read
+    by a <i>linear</i> flow head, so their geometry already encodes predicted displacement, and forcing
+    contacting hand and object tokens together in that space is forcing them to similar predicted motion.
+    That is right for a rigid grasp and wrong for a hand resting on a stationary object, where contact is
+    total and relative motion is zero; more importantly it rewards exactly the co-motion shortcut we are
+    trying to remove. Projecting into a separate matching space first — the standard reason contrastive
+    objectives use a projection head — keeps the contact geometry off the feature the flow head reads. The
+    projection is two matrices, and like the rest of the component it is discarded at inference.</p>
+
+  <h4>Why an assignment rather than a regressed contact point</h4>
+  <p>Contact is discrete, combinatorial and set-valued under uncertainty. Regressing a contact
+    <i>coordinate</i> imposes a metric on a multimodal quantity, so when two objects are plausible partners
+    the squared-error optimum is the mean of the modes — a location in contact with nothing. A coordinate
+    also has to be expressed in some frame: in the object's own frame it is not decodable without
+    separately naming the object, and the frame must itself be estimated, which confounds "wrong place on
+    the object" with "wrong idea of how the object is turned". An assignment has none of these problems.
+    Predicting an object patch names its object by construction, the output space matches the phenomenon,
+    and ambiguity appears as a spread distribution rather than a meaningless average.</p>
+
+  <h4>Why this is the quantity that transfers</h4>
+  <p>Patches are part-major, and both robot hands we deploy on map onto the same sixteen-part MANO
+    taxonomy that labels the human demonstrations — the Sharpa hand through its URDF links, the GR-1
+    Fourier hand through a link-to-part table that splits fused segments along their long axis. A
+    correspondence of the form <i>index fingertip ↔ this patch of the mug</i> is therefore stated in a
+    vocabulary shared by the demonstrator and the robot, whereas joint angles, link poses and absolute
+    hand-point positions are not. Our central claim is that a model trained only on human demonstrations
+    executes on a robot without adaptation; this component is the proposed <i>mechanism</i> for that
+    transfer rather than an empirical accident, and §<b>4</b> tests it as such.</p>
+
+  <p>The head is discarded at inference: the model is evaluated on rollout accuracy and interaction
+    diagnostics, not on its own matching accuracy. The prediction we pre-register is specific — if the
+    account above is right, the benefit should concentrate in the interaction measures rather than spread
+    uniformly over end-point error, should grow with scene crowding, where the correlational shortcut is
+    most ambiguous, and should survive the change of embodiment. A capacity or regularisation explanation
+    predicts none of these.</p>
+
+</div></div></section>
+
+<section id="decode"><div class="wrap"><div class="paper">
+
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.5</div>
+    <h2>From flow to joint commands</h2>
   </div>
+
+  <p>Because the embodiment's points are predicted alongside the scene, no learned decoder is needed to
+    turn a prediction into a command. Points carry a part label, and a part corresponds to a rigid link.
+    For each link we take the predicted positions of its points at frame <i>t</i> against their frame-0
+    positions and solve the orthogonal Procrustes problem for the rigid transform that best explains
+    them:</p>
+
+  <div class="eq">R<sub>ℓ</sub>, t<sub>ℓ</sub> = arg min<sub>R ∈ SO(3), t</sub>
+    Σ<sub>i ∈ ℓ</sub> ‖ R x<sub>i</sub><sup>0</sup> + t − x̂<sub>i</sub><sup>t</sup> ‖²</div>
+
+  <p>The resulting per-link poses are the target of an inverse-kinematics solve against the robot's URDF,
+    which yields joint angles. The chain is deterministic and carries no learned parameters, so nothing
+    about it is fitted to a particular embodiment: swapping robots means swapping a URDF and a
+    link-to-part table. Errors are attributable — a failure is a bad predicted point cloud or an
+    infeasible pose, and the two are separable.</p>
+
+  <p>On the robot the model runs closed-loop: a chunk is predicted, a few frames are executed, and the
+    next chunk is conditioned on the resulting observation. The model is therefore deployed on its own
+    distribution of conditioning states, which is why the autoregressive rollout, not the single
+    teacher-forced chunk, is our primary evaluation.</p>
+
+</div></div></section>
+
+<section id="training"><div class="wrap"><div class="paper">
+
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">3.6</div>
+    <h2>Data and training</h2>
+  </div>
+
+  <h4>Corpus</h4>
+  <p>Six human hand-object capture datasets — TACO, ARCTIC, DexYCB, OakInk2, GRAB and HOT3D — are
+    converted to the common labeled-point representation at 10 Hz, with per-frame validity and
+    point-level contact annotations. Robot-embodiment episodes come from retargeting a subset to the
+    Sharpa hand, which lets us measure cross-embodiment behaviour directly rather than only through
+    simulation.</p>
+
+  <h4>Window trimming</h4>
+  <p>Raw episodes begin and end with the demonstrator moving to and from a ready pose — motion that is
+    real but carries no interaction. Training and evaluation windows are trimmed to the interaction
+    interval of each take, which retains 89.9 % of candidate windows. Windows are additionally filtered
+    for tracking jumps, parked segments and excessive invalidity.</p>
+
+  <h4>Augmentation</h4>
+  <p>The scene origin is jittered by up to one metre per sample. This is not cosmetic: it prevents the
+    model from reading absolute position as a task cue, and it is why any auxiliary target must be
+    equivariant to a global translation.</p>
+
+  <h4>Configuration</h4>
+  <p>The configuration below is the fast-iteration rig used for the contact study. Structural conclusions
+    are read at this scale against a control trained identically; absolute numbers are not comparable to
+    the larger models reported elsewhere in this work.</p>
+
   <div class="tbl-wrap reveal">
     <table>
-      <thead><tr><th>source</th><th>gives</th></tr></thead>
+      <thead><tr><th>Group</th><th>Setting</th><th>Value</th></tr></thead>
       <tbody>
-        <tr class="hero-row"><td>human demonstrations — three of GRAB · TACO · OakInk2 · HOT3D · ARCTIC (selection = action item 1.1)</td><td>mesh+pose ⇒ exact point-matched flow; verb-level language from intent / task labels</td></tr>
-        <tr><td>Sharpa episodes — CHORD episodes if released (CHORD's primary hand is Sharpa); else a ManipTrans run on the same mocap with the Sharpa URDF; DexManipNet as ready-made fallback (Inspire hand — switches the robot embodiment, concept unchanged)</td><td>robot-embodiment supervision</td></tr>
-        <tr><td>splits — task-overlap construction</td><td>Sharpa sees a controlled fraction of the human task set (0 / 25 / 50%); zero-shot task×object cells reserved from day one</td></tr>
+        <tr><td>Representation</td><td>points per entity</td><td>512 (hands and objects)</td></tr>
+        <tr><td></td><td>entities per window</td><td>≤ 2 hands, ≤ 6 objects</td></tr>
+        <tr><td></td><td>horizon</td><td>T = 10 at 10 Hz (1.0 s)</td></tr>
+        <tr><td>Tokens</td><td>patch size</td><td>k = 8, part-major Hilbert</td></tr>
+        <tr><td>Backbone</td><td>width / depth / heads</td><td>512 / 8 / 8 (≈ 36 M)</td></tr>
+        <tr><td></td><td>attention</td><td>full 3-D, time-only RoPE</td></tr>
+        <tr><td></td><td>conditioning</td><td>adaLN-zero; T5 text per entity</td></tr>
+        <tr><td>Objective</td><td>parameterisation</td><td>flow matching, v-prediction</td></tr>
+        <tr><td></td><td>sampling</td><td>16 Euler steps; EMA 0.999</td></tr>
+        <tr><td>Optimisation</td><td>optimiser</td><td>AdamW, β = (0.9, 0.95), wd 0.05</td></tr>
+        <tr><td></td><td>learning rate</td><td>3e-4, 300 warmup, cosine to 0.1×</td></tr>
+        <tr><td></td><td>batch / schedule</td><td>32 effective, 50 000 steps (8.2 epochs)</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="note">Scope: kinematic point flow (force-blind); appearance events, liquids, and granular media are outside the representation; simulation only through the pilot.</p>
-</div></section>
+  <p class="note">Draft. §3.4 describes a component that is specified and implemented but not yet trained;
+    every other element of this section is in use. Numbers stated here are configuration, not results.</p>
 
-<section id="experiments"><div class="wrap">
+</div></div></section>
+
+<section id="records"><div class="wrap">
   <div class="sec-head reveal">
-    <div class="eyebrow">EXPERIMENTS · PILOT</div>
-    <h2>Three evaluations</h2>
-    <p>Three of GRAB · TACO · OakInk2 · HOT3D · ARCTIC; human and Sharpa hand; 100–200M model; single node; no robot hardware. Numbered as in Phase 3 of the work list.</p>
+    <div class="eyebrow">RECORDS</div>
+    <h2>Experiment archive</h2>
+    <p>Meeting decks behind this draft, newest first. Each is one question, ended by a verdict.</p>
   </div>
   <div class="road reveal">
-    <div class="item"><span class="badge plan">3.1</span><div>
-      <h3>Unseen tasks — generalizability (headline)</h3><p>Sharpa on tasks demonstrated only by humans. Robot-zero-shot: the model saw the task, the embodiment did not; unseen = held-out task×object cells within the mocap vocabulary, reserved from day one. Reference: the same measurement on Sharpa's trained tasks (in-distribution). Main figure: zero-shot success vs task-overlap fraction (0 / 25 / 50%).</p></div></div>
-    <div class="item"><span class="badge plan">3.2</span><div>
-      <h3>Open-loop evaluation</h3><p>Generated flow against held-out ground-truth flow, per class (object / hand) and per horizon step; on the same scene, swapping the instruction must change the generated flow appropriately. No simulator in the loop.</p></div></div>
-    <div class="item"><span class="badge plan">3.3</span><div>
-      <h3>Closed-loop evaluation</h3><p>openarm-sim (TBD): decoded joints executed chunk by chunk, regenerating per chunk. Control = the oracle replay ceiling — ground-truth flow through the identical Procrustes+IK+sim pipeline, measured before any model; every closed-loop number is read relative to it.</p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-09-07-contact-iteration/">The contact iteration: four arms (plan)</a></h3><p><code>2026-09-07 · deck #20</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-contact-channel/">Contact channel, no history</a></h3><p><code>2026-09-07 · deck #19</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-ft-proximity/">Proximity channel + interaction-weighted loss</a></h3><p><code>2026-09-07 · deck #18</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-ft-causal-attention/">Hand→object causal attention</a></h3><p><code>2026-09-07 · deck #17</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-ft-contact-consistency/">Contact-consistency loss</a></h3><p><code>2026-09-07 · deck #16</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-ft-ctrl/">Fine-tune control (no change)</a></h3><p><code>2026-09-07 · deck #15</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-07-object-gate/">The 2× model with an object gate</a></h3><p><code>2026-09-07 · deck #14</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-09-06-2x-model/">The 2× model: what it learned</a></h3><p><code>2026-09-06 · deck #13</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-09-05-new-base/">New baseline: what broke, what fixed it</a></h3><p><code>2026-09-05</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-09-04-progress/">Progress: contact loss, data mix, coordinate jitter, mirror</a></h3><p><code>2026-09-04</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-09-03-gr1-zero-shot/">GR-1 tabletop zero-shot: 44 tasks, no fine-tuning</a></h3><p><code>2026-09-03</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-31-scaling-plan/">The base model is finished; the 320M generation is training</a></h3><p><code>2026-08-31 → 09-01</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-08-31-evaluation/">Every number we had was one dataset</a></h3><p><code>2026-08-31</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-29-overnight/">Overnight — the model was better than we could measure</a></h3><p><code>2026-08-30</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-28-videodit/">Rebuilt as a video generation model</a></h3><p><code>2026-08-28</code></p></div></div>
+    <div class="item"><span class="badge done">done</span><div><h3><a href="decks/2026-08-28-multistream/">Multi-stream joint attention did not fix it — a falsified prediction</a></h3><p><code>2026-08-28</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-28-iteration/">Collapse defeated, direction missing</a></h3><p><code>2026-08-28</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-27-diagnosis/">Why it does not work yet — the pilot predicts no motion</a></h3><p><code>2026-08-27</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-26-architecture-training/">Deck #2 · Architecture &amp; training</a></h3><p><code>2026-08-26</code></p></div></div>
+    <div class="item"><span class="badge wip">running</span><div><h3><a href="decks/2026-08-25-point-budget/">Deck #1 · Datasets &amp; train data structure</a></h3><p><code>2026-08-25</code></p></div></div>
   </div>
-
-  <div class="sec-head reveal" style="margin-top:34px">
-    <h2>Ablations and analysis</h2>
-    <p>Each ablation removes one word of the claim, at matched parameters and data.</p>
-  </div>
-  <div class="tbl-wrap reveal">
-    <table>
-      <thead><tr><th>ablation / probe</th><th>question it settles</th></tr></thead>
-      <tbody>
-        <tr><td>regression head on the same tokens</td><td>is generation needed?</td></tr>
-        <tr><td>21-keypoint sparse variant</td><td>is density needed?</td></tr>
-        <tr><td>embodiment-only generation (no object flow)</td><td>is joint scene prediction needed?</td></tr>
-        <tr><td>factorization probe — tag swap (Sharpa geometry, human tag); object-flow invariance under embodiment conditioning</td><td>does the embodiment conditioning ride on the geometry or on the tag?</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div></section>
-
-<section id="actions"><div class="wrap">
-  <div class="sec-head reveal">
-    <div class="eyebrow">ACTION ITEMS</div>
-    <h2>Ordered work list</h2>
-    <p>Three phases — acquire data, then data structure / architecture / training, then inference. Item 1.1 is open.</p>
-  </div>
-
-  <div class="reveal" style="margin-top:30px"><div class="eyebrow">PHASE 1 · ACQUIRE DATA</div></div>
-  <div class="road reveal" style="margin-top:14px">
-    <div class="item"><span class="badge wip">1.1</span><div>
-      <h3>Datasets</h3><p>Set up three datasets out of GRAB · TACO · OakInk2 · HOT3D · ARCTIC. Embodiments for now: human hand and Sharpa hand. Sharpa-hand episodes: check the CHORD (NVIDIA) release first; else ManipTrans on the same mocap with a Sharpa URDF (DexManipNet is Inspire, not Sharpa).</p></div></div>
-    <div class="item"><span class="badge plan">1.2</span><div>
-      <h3>Point budget</h3><p>Deterministic uniform sampling of N points from the object and from the hand. Gallery of ~10 demos over N<sub>obj</sub> ∈ {128, 256, 512, 1024} × N<sub>hand</sub> ∈ {128, 256, 512, 1024}; the budget is selected by eye from the gallery (user decision).</p></div></div>
-    <div class="item"><span class="badge plan">1.3</span><div>
-      <h3>Preprocessing</h3><p>Convert the selected datasets into the episode format at the chosen point budget.</p></div></div>
-  </div>
-
-  <div class="reveal" style="margin-top:34px"><div class="eyebrow">PHASE 2 · DATA STRUCTURE, ARCHITECTURE, TRAINING</div></div>
-  <div class="road reveal" style="margin-top:14px">
-    <div class="item"><span class="badge plan">2.1</span><div>
-      <h3>Data structure</h3><p>Design how a 3D point is represented — xyz, labels, and the embodiment tag.</p></div></div>
-    <div class="item"><span class="badge plan">2.2</span><div>
-      <h3>Architecture</h3><p>Select the base to build on: PointWorld, or a video-generation model.</p></div></div>
-    <div class="item"><span class="badge plan">2.3</span><div>
-      <h3>Training</h3><p>Loss = main loss + one auxiliary loss (hand constraints, contact, …); training steps and ETA. Experiment cycle for the pilot: 6–12 h.</p></div></div>
-    <div class="item"><span class="badge plan">2.4</span><div>
-      <h3>Main figure</h3><p>Make the main figure of the method.</p></div></div>
-  </div>
-
-  <div class="reveal" style="margin-top:34px"><div class="eyebrow">PHASE 3 · INFERENCE</div></div>
-  <div class="road reveal" style="margin-top:14px">
-    <div class="item"><span class="badge plan">3.1</span><div>
-      <h3>Unseen tasks</h3><p>Generalizability: tasks the robot embodiment never saw.</p></div></div>
-    <div class="item"><span class="badge plan">3.2</span><div>
-      <h3>Open-loop evaluation</h3><p>Generated flow against held-out ground-truth flow.</p></div></div>
-    <div class="item"><span class="badge plan">3.3</span><div>
-      <h3>Closed-loop evaluation</h3><p>openarm-sim — TBD.</p></div></div>
-  </div>
-
-  <p class="note" style="margin-top:26px">References:
-    <a href="https://arxiv.org/abs/2601.03782">PointWorld</a> ·
-    <a href="https://arxiv.org/html/2607.00033v1">CHORD</a> ·
-    <a href="https://arxiv.org/abs/2503.21860">ManipTrans</a> ·
-    <a href="https://www.alphaxiv.org/abs/2606.10614">Dexterous Point Policy</a> ·
-    <a href="https://arxiv.org/html/2603.08485v1">3PoinTr</a> ·
-    <a href="https://point-policy.github.io/">Point Policy</a></p>
 </div></section>
 
 <footer><div class="wrap">
   <div>
-    <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — concept hub</div>
-    <div style="margin-top:6px">Internal page · concept v0.4 · updated 2026-08-25</div>
+    <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — method draft</div>
+    <div style="margin-top:6px">Internal page · ICLR 2027 · updated 2026-09-07</div>
   </div>
   <div class="paths">
-    <div>spec <code>Claude project “Point Policy” › claude/3d-wam-concept.md</code></div>
-    <div>logs <code>/experiments/3d-wam/logs/</code></div>
+    <div>code <code>~/3d-wam/code/wam/{data,model,train,eval}</code></div>
+    <div>decks <code>/experiments/3d-wam/decks/</code></div>
   </div>
 </div></footer>
 
