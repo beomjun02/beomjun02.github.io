@@ -46,6 +46,29 @@
  },
  "logs": [
   {
+   "project": "3d-wam",
+   "date": "2026-09-07",
+   "slug": "contact-channel",
+   "format": "deck",
+   "status": "done",
+   "updated": "2026-09-07",
+   "title": "Contact channel, no history (deck #19)",
+   "path": "3d-wam/decks/2026-09-07-contact-channel/",
+   "tldr": "Deck #19, single-model deck for base_v2_ct: the base_v2 recipe trained from scratch with NO history (with_hist 0, 16 objects × 256 pts, jit1m origin, parts × 8 patches, stored validity) plus a per-point contact flag as a frame-0 input channel and a binary contact head trained with BCE at weight 0.1. Evaluated at the epoch-3 snapshot (weights_ep03 ≈ 80,000 steps); the run stopped at 106,420 of 110,996 steps and never wrote final weights. Slides: core idea + config with the change shaded and a snapshot row; what the model saw (10 train clips); what it did not see (10 held-out val clips); metrics; GR-1; reading. Kept-window val (528 chunks, 1,656 chunk×object rows, 659 with true contact): OMWC 0.160 vs ground truth 0.032, onset error −0.02 frames (abs 0.12), missed/false contact 0.08/0.08, dmin error 4.19 cm, contact-frame F1 0.901, transport 0.90, pair RMS 1.19 cm/frame, object displacement 6.04 vs 6.81 cm/s. Standard vs the zero-motion predictor: ADE 9.70 vs 8.41, FDE 15.24 vs 13.21, Acc5 54.3 vs 62.0, Acc10 68.7 vs 74.6, δ_avg 52.9 vs 59.9, minADE₅ 7.02 cm. 5 s rollout (78 episodes) vs stay-put: ADE 19.1 vs 26.2, δ_avg 39.7 vs 46.2, survival 26.6 vs 36.0 %, horizon 0.85 vs 0.85 s. GR-1 closed loop on PnPCanToBowl, 3 episodes: 0 / 3 successes, final hand–object 12.8 / 11.4 / 10.9 cm (median 11.4) — the closest so far; sim object motion 25.1 cm/s, OMWC 0.03, hand motion 12.8 cm/s. Reading: kept-window metrics are worse than the project's best model and objects still move without contact; the GR-1 distance is the closest to date but that is one task and OMWC is a share this model lowers mechanically by keeping the hand near the object; follow-up is the contact channel WITH history.",
+   "tags": [
+    "base_v2_ct",
+    "contact-channel",
+    "contact-head",
+    "bce",
+    "no-history",
+    "base_v2",
+    "interaction-metrics",
+    "gr-1",
+    "closed-loop",
+    "single-model"
+   ]
+  },
+  {
    "project": "dpp-bmw",
    "date": "2026-09-02",
    "slug": "policy-rate-and-sam3d",

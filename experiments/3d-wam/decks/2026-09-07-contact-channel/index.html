@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #19 · 2026-09-07 · Contact channel, no history · SINGLE-MODEL deck for base_v2_ct (epoch-3 snapshot
+     ≈ 80,000 steps). base_v2 recipe (NO history, 16 objects × 256 pts, jit1m origin, parts×8, stored validity) plus a
+     contact flag as a frame-0 input channel and a binary contact head trained with BCE weight 0.1. Slides: (1) core idea
+     + config with the change shaded and a snapshot row · (2) what the model saw, 10 train clips · (3) what it did not
+     see, 10 held-out clips · (4) interaction / standard / 5 s rollout metrics · (5) GR-1 closed loop, PnPCanToBowl ·
+     (6) reading. No arm-vs-arm tables: the only reference values are ground truth, the zero-motion predictor and the
+     stay-put reference. Clips are never described — the owner verifies.
+     Source: deck_arms/base_v2_ct_ep03/numbers.json -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-07 · Contact channel, no history — 3D-WAM</title>
+<meta name="description" content="Deck #19, 2026-09-07. Single-model deck for base_v2_ct: the base_v2 recipe (no history) with a contact flag as a frame-0 input channel and a binary contact head trained with BCE weight 0.1, at the epoch-3 snapshot (≈ 80,000 steps). Train and held-out clips, hand–object interaction metrics on the kept-window val vs ground truth, standard metrics vs the zero-motion predictor, a 5 s rollout vs the stay-put reference, GR-1 closed loop on PnPCanToBowl, and a reading. The owner verifies the clips.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* ---- deck stepper: dim-inactive agenda on ONE line under the title (six items → smaller than deck #15) ---- */
+  .deck ol.agenda.strip{display:flex;flex-wrap:nowrap;gap:0 1.5em;font-size:1.4em;line-height:1.3;
+    margin:-0.9em 0 .4em;counter-reset:item}
+  .deck ol.agenda.strip>li{padding-left:1.35em;margin:0;white-space:nowrap}
+  .deck ol.agenda.strip>li::before{left:0}
+  /* ---- slide 1: core idea strip + config tables ---- */
+  .deck .band.cfg3{gap:1.1em;flex:0 0 auto;margin-top:.45em}
+  .deck .band figure.tb{flex:1 1 0;min-width:0;justify-content:flex-start}
+  .deck .band.cfg3 figure.tb.wide{flex:1.45 1 0}
+  .deck .band.cfg3 figure.tb.narrow{flex:1.0 1 0}
+  .deck .band.cfg3 figure.tb.opt{flex:1.05 1 0}
+  .deck table.cfg{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.12}
+  .deck table.cfg th,.deck table.cfg td{padding:.08em .35em;vertical-align:top}
+  .deck table.cfg td:first-child:not([colspan]){white-space:nowrap;font-weight:700}
+  .deck table.cfg td[colspan]{font-weight:400}
+  .deck table.cfg td .mono{font-size:.88em;overflow-wrap:anywhere;word-break:break-all}
+  .deck table.cfg tr.chg td{background:#F2F7FC}
+  .deck .band.idea{flex:0 0 auto;margin-top:.1em;gap:1.1em;align-items:flex-start}
+  .deck .band.idea figure.tb.main{flex:1 1 0}
+  .deck .band.idea figure.tb.smp{flex:0 0 29%}
+  .deck table.idea{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.12}
+  .deck table.idea th,.deck table.idea td{padding:.08em .4em;vertical-align:top}
+  .deck table.idea th{white-space:nowrap}
+  .deck table.idea td.chg{background:#F2F7FC}
+  .deck .epoch{font-weight:700;color:var(--acc,#0070C0)}
+  /* ---- key line under the stepper (definitions / model id) ---- */
+  .deck p.key{margin:0 0 .4em;font-size:1.45em;color:#333}
+  .deck p.key b{color:#000}
+  .deck p.key.defs{font-size:1.28em;line-height:1.35;margin-top:.1em}
+  /* ---- viz grids: the figure is a flex column, the img gets an explicit height ---- */
+  .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;
+    grid-template-columns:repeat(5,1fr);grid-template-rows:auto auto;gap:.6em .8em;align-content:space-evenly}
+  .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
+  .deck .vizgrid figure>img{flex:0 0 auto;width:100%;height:9em;object-fit:contain;
+    object-position:center bottom;border-radius:3px}   /* explicit height: an img in an auto grid row collapses to 0 */
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.34em;font-size:1.0em;line-height:1.3;
+    font-style:normal;color:var(--cap,#595959);text-align:left}
+  .deck .s-viz h2{margin-bottom:.4em}
+  /* ---- metrics slide: interaction table (left) + standard/rollout table (right) ---- */
+  .deck .band.metrics{margin-top:.5em;gap:1.8em;flex:0 0 auto}
+  .deck .band.metrics>figure.tb.inter{flex:0 0 40%}
+  .deck .band.metrics>figure.tb.stdr{flex:1 1 0}
+  .deck table.met{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.28}
+  .deck table.met th,.deck table.met td{padding:.16em .4em;vertical-align:top}
+  .deck table.met td:first-child{font-weight:700}
+  .deck table.met td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .deck table.met th.n{text-align:right}
+  .deck table.met tr.grp th{text-align:left;font-weight:700;background:#F2F7FC;padding-top:.3em}
+  .deck .band.metrics figcaption{font-style:normal;font-size:1.3em;text-align:left;line-height:1.3;margin-top:.3em}
+  /* ---- GR-1 slide: two small tables, then the two videos ---- */
+  .deck .band.tb2{flex:0 0 auto;margin-top:.4em;gap:1.6em}
+  .deck .band.tb2>figure.tb.sweep{flex:1.15 1 0}
+  .deck .band.tb2>figure.tb.sim{flex:1 1 0}
+  .deck .band.gr1{margin-top:.7em;margin-bottom:1.4em;gap:1.6em}
+  .deck .band.gr1>figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain;
+    background:transparent;border-radius:3px}
+  .deck .band.gr1>figure.ego{flex:0 0 30%}
+  .deck .band.gr1>figure.flow{flex:1 1 0}
+  .deck .band.gr1 figcaption{font-style:normal;font-size:1.25em;text-align:left;line-height:1.3;margin-top:.3em}
+  /* ---- reading: bullets + one evidence table ---- */
+  .deck .band.read{margin-top:.5em;flex:1 1 auto;align-items:flex-start}
+  .deck .band.read>figure.tb{flex:0 0 72%}
+  .deck .band.read figcaption{font-style:normal;font-size:1.3em;text-align:left;line-height:1.3;margin-top:.35em}
+  .deck table.abl{table-layout:fixed;width:100%;font-size:1.45em;line-height:1.3}
+  .deck table.abl th,.deck table.abl td{padding:.2em .5em;vertical-align:top}
+  .deck table.abl td:first-child{font-weight:700}
+  .deck table.abl td.n,.deck table.abl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #19 · Contact channel, no history · base_v2_ct" data-date="2026-09-07">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Contact channel, no history</h1>
+  <p class="ctx">3D-WAM · base_v2_ct · one model: a contact flag in, a contact head out, no history</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 07<br>Presented by 김범준 (beomjun)</p>
+</section>
+
+<!-- SECTION: 1 · core idea + config (+ the change) -->
+<section class="slide s-method">
+  <h2>Core idea and config · base_v2_ct</h2>
+  <ol class="agenda strip">
+    <li class="on">Core idea + config</li>
+    <li>What it saw</li>
+    <li>What it did not see</li>
+    <li>Metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <div class="band idea">
+    <figure class="tb main">
+      <table class="idea"><colgroup><col style="width:22%"><col style="width:24%"><col style="width:15%"><col style="width:13%"><col style="width:12%"><col style="width:14%"></colgroup>
+        <thead><tr><th>input</th><th>model</th><th>output</th><th>decode</th><th>not used</th><th>claim</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>scene + embodiment as ONE dense labelled 3-D point set (hand 512 pts · object 256 pts · part labels) + task text · <b>no history frames</b></td>
+            <td>language-conditioned flow-matching video-DiT predicts the TOTAL scene flow (hand + objects together) over the next 1 s · T = 10 @ 10 Hz</td>
+            <td>a 1 s trajectory for every input point, hand and objects in one prediction</td>
+            <td>hand flow → robot joints by per-link Procrustes + IK</td>
+            <td>no world model, no retargeter, no inverse dynamics</td>
+            <td>robot zero-shot execution of tasks demonstrated only by humans</td>
+          </tr>
+          <tr><td colspan="6" class="chg"><b>change · contact made explicit</b> · a per-point <b>contact flag as an extra frame-0 input channel</b> (is this point within the contact threshold at the conditioning frame) + a <b>binary contact head</b> predicting per-point contact over the horizon, trained with BCE at <b>weight 0.1</b> alongside the flow-matching loss</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb smp">
+      <table class="cfg"><colgroup><col style="width:29%"><col style="width:71%"></colgroup>
+        <thead><tr><th colspan="2">this run</th></tr></thead>
+        <tbody>
+          <tr><td>recipe</td><td>base_v2 · trained from scratch · <b>with_hist 0</b></td></tr>
+          <tr class="chg"><td>change</td><td>contact flag in (frame 0) + contact head out · BCE weight 0.1</td></tr>
+          <tr><td>snapshot</td><td><b>weights_ep03</b> · <span class="epoch">≈ 80,000 steps</span> · epoch-3 checkpoint</td></tr>
+          <tr><td>run end</td><td>stopped at <b>106,420 of 110,996</b> steps · <b>no final weights</b> — every number here is the ep-3 snapshot</td></tr>
+          <tr><td colspan="2"><b>where</b> · <span class="mono">configs/base_v2_ct.yaml</span></td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <div class="band cfg3">
+    <figure class="tb wide">
+      <table class="cfg"><colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+        <thead><tr><th colspan="2">data · base_v2 recipe</th></tr></thead>
+        <tbody>
+          <tr><td>corpus</td><td>v2 · taco, arctic, dexycb, oakink2, grab, hot3d · 10 Hz · T = 10</td></tr>
+          <tr><td>points</td><td>512 / hand · 256 / object · <b>16 objects</b> per chunk · <b>stored validity</b> masks</td></tr>
+          <tr><td>contact</td><td>window filter, TRAIN index only · OakInk2 start 1.0 s / end 0.5 s · ARCTIC &amp; GRAB end 0.5 s</td></tr>
+          <tr><td>frame</td><td><b>no history (with_hist 0)</b> · origin = hand centre + <b>jitter ≤ 1 m (jit1m)</b> · yaw aug · up-axis z</td></tr>
+          <tr><td>text</td><td>T5-base, cached · entity phrases on · text dropout 0.05</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb narrow">
+      <table class="cfg"><colgroup><col style="width:32%"><col style="width:68%"></colgroup>
+        <thead><tr><th colspan="2">model</th></tr></thead>
+        <tbody>
+          <tr><td>backbone</td><td>video-DiT 120M · d 768 · depth 12 · heads 12 · mlp 4.0 · qk-norm</td></tr>
+          <tr><td>tokens</td><td>patch · <b>parts × 8</b> part-major Hilbert patches</td></tr>
+          <tr><td>attention</td><td>full 3-D attention · time-only RoPE</td></tr>
+          <tr class="chg"><td>input</td><td>xyz + part label + <b>frame-0 contact flag</b> · no history channels</td></tr>
+          <tr class="chg"><td>heads</td><td>v-parameterisation flow head + <b>binary contact head</b> · EMA 0.999</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb opt">
+      <table class="cfg"><colgroup><col style="width:31%"><col style="width:69%"></colgroup>
+        <thead><tr><th colspan="2">optimisation</th></tr></thead>
+        <tbody>
+          <tr><td>optimiser</td><td>AdamW · betas 0.9 / 0.95 · wd 0.05 · grad clip 1.0</td></tr>
+          <tr><td>schedule</td><td>warmup + cosine decay over 110,996 planned steps</td></tr>
+          <tr><td>snapshot</td><td>evaluated at <span class="epoch">epoch 3 ≈ 80,000 st</span></td></tr>
+          <tr class="chg"><td>loss</td><td>flow-matching MSE on v <b>+ 0.1 × BCE</b> on the contact head</td></tr>
+          <tr><td>compute</td><td>4 × H100 · ckpt every 30 min</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <p class="footnote">source: configs/base_v2_ct.yaml · shaded rows = what this run changed vs the plain base_v2 recipe · the run wrote no final weights, so the epoch-3 snapshot is the whole story</p>
+</section>
+
+<!-- SECTION: 2 · viz · what the model SAW (train chunks) · captions only -->
+<section class="slide s-viz">
+  <h2>What the model saw · train chunks · 1 s</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li class="on">What it saw</li>
+    <li>What it did not see</li>
+    <li>Metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key"><b>base_v2_ct · weights_ep03</b> · <span class="epoch">≈ 80,000 st</span> · each tile: GT left | prediction right (k = 8 averaged samples) · objects <b style="color:#eb6834">orange</b> · right hand <b style="color:#1baf7a">green</b> · left hand <b style="color:#8e5bd6">purple</b></p>
+  <div class="vizgrid">
+    <figure><img src="assets/train_arctic_human_s221_c3090_k8.gif" alt="Train chunk, arctic 3090: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · train chunk 3090 · “use the laptop”</figcaption></figure>
+    <figure><img src="assets/train_arctic_human_s3_c54078_k8.gif" alt="Train chunk, arctic 54078: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · train chunk 54078 · “use the notebook”</figcaption></figure>
+    <figure><img src="assets/train_dexycb_human_s12_c64065_k8.gif" alt="Train chunk, dexycb 64065: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · train chunk 64065 · “grasp the mustard bottle”</figcaption></figure>
+    <figure><img src="assets/train_dexycb_human_s6_c64609_k8.gif" alt="Train chunk, dexycb 64609: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · train chunk 64609 · “grasp the scissors”</figcaption></figure>
+    <figure><img src="assets/train_grab_human_s3_c82670_k8.gif" alt="Train chunk, grab 82670: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · train chunk 82670 · “hand over the binoculars”</figcaption></figure>
+    <figure><img src="assets/train_grab_human_s95_c150560_k8.gif" alt="Train chunk, grab 150560: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · train chunk 150560 · “pour the water bottle”</figcaption></figure>
+    <figure><img src="assets/train_oakink2_human_s15_c645485_k8.gif" alt="Train chunk, oakink2 645485: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · train chunk 645485 · “Stir experiment substances in the beaker.”</figcaption></figure>
+    <figure><img src="assets/train_oakink2_human_s403_c701074_k8.gif" alt="Train chunk, oakink2 701074: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · train chunk 701074 · “Prepare the reactants by heating in the test tube, a”</figcaption></figure>
+    <figure><img src="assets/train_taco_human_s10_c748536_k8.gif" alt="Train chunk, taco 748536: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · train chunk 748536 · “brush the plate with the roller”</figcaption></figure>
+    <figure><img src="assets/train_taco_human_s33_c778619_k8.gif" alt="Train chunk, taco 778619: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · train chunk 778619 · “dust the box with the roller”</figcaption></figure>
+  </div>
+  <p class="footnote">train chunks = seen in training, inside the kept contact windows of the TRAIN index · same renderer, camera and k = 8 as the held-out slide · augmentation off for the render</p>
+</section>
+
+<!-- SECTION: 3 · viz · what it did NOT see (held-out val chunks) · captions only -->
+<section class="slide s-viz">
+  <h2>What it did not see · held-out val chunks · 1 s</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What it saw</li>
+    <li class="on">What it did not see</li>
+    <li>Metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key"><b>base_v2_ct · weights_ep03</b> · <span class="epoch">≈ 80,000 st</span> · each tile: GT left | prediction right (k = 8 averaged samples) · objects <b style="color:#eb6834">orange</b> · right hand <b style="color:#1baf7a">green</b> · left hand <b style="color:#8e5bd6">purple</b></p>
+  <div class="vizgrid">
+    <figure><img src="assets/heldout_arctic_human_s3_c413_k8.gif" alt="Held-out chunk, arctic 413: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 413 · “grab the waffleiron”</figcaption></figure>
+    <figure><img src="assets/heldout_arctic_human_s6_c1247_k8.gif" alt="Held-out chunk, arctic 1247: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>arctic</b> · chunk 1247 · “grab the notebook”</figcaption></figure>
+    <figure><img src="assets/heldout_dexycb_human_s12_c4142_k8.gif" alt="Held-out chunk, dexycb 4142: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 4142 · “grasp the tomato soup can”</figcaption></figure>
+    <figure><img src="assets/heldout_dexycb_human_s7_c4320_k8.gif" alt="Held-out chunk, dexycb 4320: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>dexycb</b> · chunk 4320 · “grasp the bleach cleanser”</figcaption></figure>
+    <figure><img src="assets/heldout_grab_human_s26_c5319_k8.gif" alt="Held-out chunk, grab 5319: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · chunk 5319 · “look through the binoculars”</figcaption></figure>
+    <figure><img src="assets/heldout_grab_human_s3_c4987_k8.gif" alt="Held-out chunk, grab 4987: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>grab</b> · chunk 4987 · “eat the banana”</figcaption></figure>
+    <figure><img src="assets/heldout_oakink2_human_s71_c28115_k8.gif" alt="Held-out chunk, oakink2 28115: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 28115 · “Stir in the mug.”</figcaption></figure>
+    <figure><img src="assets/heldout_oakink2_human_s987_c26392_k8.gif" alt="Held-out chunk, oakink2 26392: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>oakink2</b> · chunk 26392 · “Make a baked sandwich with a filling of donut and sa”</figcaption></figure>
+    <figure><img src="assets/heldout_taco_human_s21_c40693_k8.gif" alt="Held-out chunk, taco 40693: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · chunk 40693 · “dust the kettle with the roller”</figcaption></figure>
+    <figure><img src="assets/heldout_taco_human_s59_c41942_k8.gif" alt="Held-out chunk, taco 41942: ground truth left, prediction right." loading="lazy">
+      <figcaption><b>taco</b> · chunk 41942 · “empty the cup with the kettle”</figcaption></figure>
+  </div>
+  <p class="footnote">val split = held-out TAKES (5 % sequence-hash split); tasks 62–100 % seen, objects 100 % seen; chunks inside the contact windows</p>
+</section>
+
+<!-- SECTION: 4 · interaction (vs ground truth) · standard (vs zero-motion) · 5 s rollout (vs stay-put) -->
+<section class="slide s-results">
+  <h2>Interaction, standard and rollout metrics · kept-window val</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What it saw</li>
+    <li>What it did not see</li>
+    <li class="on">Metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key defs"><b>OMWC</b> = share of predicted object displacement on frames where no predicted hand point is within 2 cm · <b>onset</b> = predicted first-contact frame − true first-contact frame · <b>missed / false contact</b> rates · <b>dmin error</b> = |predicted − true hand–object minimum distance| · <b>contact-frame F1</b> · <b>transport</b> = predicted / true object displacement on true-contact frames · <b>pair RMS</b> = object-with-hand co-motion residual</p>
+  <div class="band metrics">
+    <figure class="tb inter">
+      <table class="met"><colgroup><col style="width:50%"><col style="width:28%"><col style="width:22%"></colgroup>
+        <thead><tr><th>interaction metric</th><th class="n">base_v2_ct</th><th class="n">ground truth</th></tr></thead>
+        <tbody>
+          <tr><td>OMWC</td><td class="n">0.160</td><td class="n">0.032</td></tr>
+          <tr><td>onset error (frames of 0.1 s)</td><td class="n">−0.02 (abs 0.12)</td><td class="n">0</td></tr>
+          <tr><td>missed / false contact</td><td class="n">0.08 / 0.08</td><td class="n">0 / 0</td></tr>
+          <tr><td>dmin error cm</td><td class="n">4.19</td><td class="n">0</td></tr>
+          <tr><td>contact-frame F1</td><td class="n">0.901</td><td class="n">1</td></tr>
+          <tr><td>transport</td><td class="n">0.90</td><td class="n">1</td></tr>
+          <tr><td>pair RMS cm/frame</td><td class="n">1.19</td><td class="n">0</td></tr>
+          <tr><td>object displacement cm/s</td><td class="n">6.04</td><td class="n">6.81</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>basis</b> · 1,656 chunk×object rows, 659 with true contact · 528 kept-window val chunks, 96 per dataset · base_v2_ct · <span class="epoch">weights_ep03 ≈ 80,000 st</span> · k = 1 sample</figcaption>
+    </figure>
+    <figure class="tb stdr">
+      <table class="met"><colgroup><col style="width:42%"><col style="width:29%"><col style="width:29%"></colgroup>
+        <thead><tr><th>standard metric · same 528 chunks</th><th class="n">base_v2_ct</th><th class="n">zero-motion predictor</th></tr></thead>
+        <tbody>
+          <tr><td>ADE cm</td><td class="n">9.70</td><td class="n">8.41</td></tr>
+          <tr><td>FDE cm</td><td class="n">15.24</td><td class="n">13.21</td></tr>
+          <tr><td>Acc5 %</td><td class="n">54.3</td><td class="n">62.0</td></tr>
+          <tr><td>Acc10 %</td><td class="n">68.7</td><td class="n">74.6</td></tr>
+          <tr><td>δ_avg %</td><td class="n">52.9</td><td class="n">59.9</td></tr>
+          <tr><td>minADE₅ cm</td><td class="n">7.02</td><td class="n">—</td></tr>
+        </tbody>
+        <tbody>
+          <tr class="grp"><th colspan="3">5 s autoregressive rollout · 78 val episodes · reference = stay-put (zero-motion)</th></tr>
+          <tr><td>ADE cm</td><td class="n">19.1</td><td class="n">26.2</td></tr>
+          <tr><td>δ_avg %</td><td class="n">39.7</td><td class="n">46.2</td></tr>
+          <tr><td>survival % (10 cm, at 5 s)</td><td class="n">26.6</td><td class="n">36.0</td></tr>
+          <tr><td>survival horizon s (median)</td><td class="n">0.85</td><td class="n">0.85</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>references</b> · ground truth for the interaction metrics, the zero-motion predictor for the standard ones, stay-put for the rollout · minADE₅ over 5 draws · survival = share of points never &gt; 10 cm off · horizon = time when fewer than half the points are alive</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">interaction metrics per chunk×object, same k = 1 sample · rollout: 1 s chunks chained for 5 s, no history · no arm-vs-arm comparison in this deck</p>
+</section>
+
+<!-- SECTION: 5 · GR-1 closed loop · PnPCanToBowl · captions only -->
+<section class="slide s-viz">
+  <h2>GR-1 closed loop · PnPCanToBowl · three episodes</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What it saw</li>
+    <li>What it did not see</li>
+    <li>Metrics</li>
+    <li class="on">GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key"><b>base_v2_ct · weights_ep03</b> · <span class="epoch">≈ 80,000 st</span> · zero-shot, no robot data · “pick the can from the counter and place it in the bowl”</p>
+  <div class="band tb2">
+    <figure class="tb sweep">
+      <table class="met"><colgroup><col style="width:34%"><col style="width:22%"><col style="width:44%"></colgroup>
+        <thead><tr><th>PnPCanToBowl</th><th class="n">success</th><th class="n">final hand–object distance cm</th></tr></thead>
+        <tbody>
+          <tr><td>episode 0</td><td class="n">no</td><td class="n">12.8</td></tr>
+          <tr><td>episode 1</td><td class="n">no</td><td class="n">11.4</td></tr>
+          <tr><td>episode 2</td><td class="n">no</td><td class="n">10.9</td></tr>
+          <tr><td>median · successes</td><td class="n"><b>0 / 3</b></td><td class="n"><b>11.4</b></td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb sim">
+      <table class="met"><colgroup><col style="width:60%"><col style="width:40%"></colgroup>
+        <thead><tr><th>object motion in sim · replans with the hand within 10 cm</th><th class="n">value</th></tr></thead>
+        <tbody>
+          <tr><td>predicted object motion cm/s</td><td class="n">25.1</td></tr>
+          <tr><td>OMWC</td><td class="n">0.03</td></tr>
+          <tr><td>predicted hand motion cm/s</td><td class="n">12.8</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <div class="band gr1">
+    <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep00_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep00_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 0, base_v2_ct"></video>
+      <figcaption><b>base_v2_ct · PnPCanToBowl · episode 0</b> · ego view · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
+    <figure class="flow"><video src="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 0: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>base_v2_ct · PnPCanToBowl · episode 0</b> · point flow, left = executed | right = predicted, first 20 replans · <b>not success</b> · final <b>12.8 cm</b></figcaption></figure>
+  </div>
+  <p class="footnote">one task, 3 episodes · <b>OMWC is a share, and this model keeps the predicted hand close to the object throughout, which lowers it mechanically</b> · gr1_trial/arm3_base_v2_ct_ep03</p>
+</section>
+
+<!-- SECTION: 6 · reading · numbers only in the evidence table -->
+<section class="slide s-method">
+  <h2>Reading · what the contact channel shows</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>What it saw</li>
+    <li>What it did not see</li>
+    <li>Metrics</li>
+    <li>GR-1 closed loop</li>
+    <li class="on">Reading</li>
+  </ol>
+  <p class="thesis">Contact in and out: val accuracy worse, GR-1 hand closest yet</p>
+  <ul>
+    <li>Kept-window accuracy below the best model</li>
+    <li>Objects still move without contact</li>
+    <li>Closest GR-1 hand, one task</li>
+  </ul>
+  <div class="band read">
+    <figure class="tb">
+      <table class="abl"><colgroup><col style="width:50%"><col style="width:24%"><col style="width:26%"></colgroup>
+        <thead><tr><th>evidence · base_v2_ct · weights_ep03</th><th class="n">this model</th><th class="n">reference</th></tr></thead>
+        <tbody>
+          <tr><td>OMWC · kept-window val</td><td class="n">0.160</td><td class="n">ground truth 0.032</td></tr>
+          <tr><td>transport · true-contact frames</td><td class="n">0.90</td><td class="n">ground truth 1</td></tr>
+          <tr><td>ADE · cm, 528 chunks</td><td class="n">9.70</td><td class="n">zero predictor 8.41</td></tr>
+          <tr><td>Acc5 · %</td><td class="n">54.3</td><td class="n">zero predictor 62.0</td></tr>
+          <tr><td>5 s rollout ADE · cm</td><td class="n">19.1</td><td class="n">stay-put 26.2</td></tr>
+          <tr><td>GR-1 PnPCanToBowl · median final cm · successes</td><td class="n">11.4 · 0 / 3</td><td class="n">—</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>the honest reading</b> · on the kept-window val this model is worse than the project's best model and beats neither the zero predictor nor, on OMWC, ground truth · what it does have is the <b>closest GR-1 hand so far</b> — one task, three episodes, no final weights · <b>follow-up: the contact channel WITH history.</b></figcaption>
+    </figure>
+  </div>
+  <p class="footnote">references: ground truth, the zero-motion predictor, the stay-put reference · source: deck_arms/base_v2_ct_ep03/numbers.json</p>
+</section>
+
+</main>
+</body>
+</html>
