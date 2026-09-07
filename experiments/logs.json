@@ -48,6 +48,33 @@
   {
    "project": "3d-wam",
    "date": "2026-09-07",
+   "slug": "contact-iteration",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-07",
+   "title": "The contact iteration: four arms (deck #20)",
+   "path": "3d-wam/decks/2026-09-07-contact-iteration/",
+   "tldr": "Deck #20, PLAN deck for the contact iteration: four arms, none of them trained yet, so the deck invents no results and every results cell is an explicit WILL UPDATE placeholder. All four arms are trained from scratch, identically, and every arm is read against the newly trained controlled baseline — never against the project's 222k-step model. Arms: baseline fast_o6p512 (no change, the control); E1 contact in and out — a frame-0 contact flag enters as an additive token embedding, the same mechanism as the per-entity language phrase (Linear(1→d) beside Linear(text_dim→d)), and head_contact = Linear(d→k) emits one contact logit per point per frame trained with BCE at weight 0.1 against the stored 1 cm labels (config only; targets objects moving without contact and wrong grasps); E2 grasp map — a second head Linear(d→4) per patch token per frame predicts a contact flag plus the touch location (u, v, w) in the paired object's own coordinate frame, obtained by a rigid fit of that object's frame-0 points onto its frame-t points, targets from the stored contact_nn pairing, loss = BCE on the flag + masked L2 on the location in cm (patch level because object points carry part 0 for every rigid object while hands carry 16 MANO parts, and 64 patches per hand is 4× finer than parts; targets wrong grasps); E3 two-stream with selective decode — per block, hand and object tokens get their own norms, QKV and MLPs with their own adaLN while Q, K and V are concatenated along the token axis and ONE joint attention runs over all tokens (connectivity deliberately unchanged), plus model.stream_dropout, which replaces one stream's noisy input with its clean target for a fraction of samples and drops it from the loss, and a sampler condition_stream=\"hand\"|\"object\" (doubled block parameters, same FLOPs; targets objects moving without contact and both hands acting when one suffices; lineage MM-DiT, Esser et al. 2024, and RLDX-1's Multi-Stream Action Transformer). Shared rig: no history, chunk_stride 4, 6 objects × 512 points per object and 2 hands × 512, video-DiT d 512 / depth 8 / heads 8 (≈36M, k = 8 part-major Hilbert patches, full 3-D attention, v-parameterisation, 16 Euler steps, EMA 0.999), effective batch 32 on one H100 per arm, 50,000 steps = 8.2 epochs of the stride-4 index (194,612 train chunks, 6,082 steps/epoch), AdamW 3e-4 with warmup 300 and cosine to 0.1×, corpus v2 (taco, arctic, dexycb, oakink2, grab, hot3d) with the contact-window trim on the training index removing the start and end ready-position phases and keeping 89.9 % of chunks (194,612 of 216,417). Evaluation basis, owner's decision: the 5-second autoregressive rollout, not single 1-second chunks — 5 chained chunks, each conditioned on the model's own previous prediction, on held-out episodes drawn from inside the contact windows. Reported per arm against the baseline: end-point error and its stay-put reference, TAP-Vid δ_avg, survival at 5 s and the survival horizon, minADE over samples, and the interaction block (object motion without contact, contact-onset error, missed and false contact, contact F1, transport, pair RMS) each next to its ground-truth value, plus the same interaction figures broken down per rollout second so drift is visible; secondary, in an appendix line, the single-chunk standard table and one GR-1 closed-loop task. Slides, the owner's structure exactly: title; (1) what each experiment is compared with the baseline, one overview slide carrying the shared rig; (2, 3, 4) one slide per experiment with a figure plus a why-we-do-it and a how-we-do-it — E1 the token-formation and two-head schematic, E2 the object-frame invariance panels, E3 the two-stream block diagram with a selective-decode inset; (5) results as a placeholder. A problem slide and a negative-results slide were explicitly cut. ETA: four arms in parallel, one H100 each, 50,000 steps; landing time pending the loader-optimisation measurement (job 9197), hours unestimated until then.",
+   "tags": [
+    "plan",
+    "contact",
+    "fast_o6p512",
+    "contact-input",
+    "contact-head",
+    "grasp-map",
+    "object-frame",
+    "two-stream",
+    "mm-dit",
+    "stream-dropout",
+    "selective-decode",
+    "rollout-5s",
+    "from-scratch",
+    "placeholder"
+   ]
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-09-07",
    "slug": "contact-channel",
    "format": "deck",
    "status": "done",
