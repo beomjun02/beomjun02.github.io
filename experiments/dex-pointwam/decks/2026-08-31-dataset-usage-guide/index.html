@@ -2,8 +2,9 @@
 <!-- Deck: dex-pointwam dataset usage guide. Deliberately minimal (owner, 2026-08-31): paths,
      the minimal set of keys to read, and the sample visualisations. The 2026-08-27 log stays the
      full reference. Structure per _template/DECK-STYLE.md §3; caps §4.
-     2026-09-07 update (owner): VITRA curation finished, so the corpus scale, the paths for the
-     two new families (vitra_full, hoi) and a load snippet were added. Guide-type deck: no
+     2026-09-07 update (owner): VITRA curation finished, so the corpus scale, the vitra_full path
+     and a load snippet were added. The hand-object sources were dropped from the record the same
+     day (owner) — the corpus is EgoDex + VITRA only; their bytes stay on disk, unreferenced. Guide-type deck: no
      Discussion/Action slide (precedent set 2026-08-31 — a reference sheet has nothing to decide);
      the one in-flight item carries an ETA strip instead. .etabar/.snip defined inline because
      deck.css does not ship them yet. Media reused by absolute path. -->
@@ -13,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>2026-09-07 · Dataset usage guide — dex-pointwam</title>
-<meta name="description" content="Deck: the EgoDex, VITRA and hand-object human corpus — scale, paths, keys and a load snippet for the 3D encoder and PointWAM.">
+<meta name="description" content="Deck: the EgoDex and VITRA human corpus — scale, paths, keys and a load snippet for the 3D encoder and PointWAM.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
@@ -38,7 +39,7 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> VITRA curation finished; the corpus is now three sources.</p>
+  <p class="thesis"><b>[TL;DR]</b> VITRA curation finished; EgoDex and VITRA are both complete.</p>
   <ul>
     <li>3D encoder: maskcap sidecars</li>
     <li>PointWAM: flow H5s</li>
@@ -54,7 +55,7 @@
 <!-- SECTION: results (0) -->
 <section class="slide s-results">
   <h2>How far the corpus scaled</h2>
-  <p class="thesis">VITRA closed 09-07; three sources, 1.16M episodes curated.</p>
+  <p class="thesis">VITRA closed 09-07; 1.15M episodes curated across two sources.</p>
   <div class="band">
     <div class="tbl">
       <table class="compact">
@@ -62,7 +63,6 @@
         <tbody>
           <tr><td>EgoDex</td><td>324,167</td><td>324,167 · 100%</td><td>A.7 62.8% — upgrade in flight</td></tr>
           <tr><td>VITRA</td><td>825,935</td><td>824,157 · 99.8%</td><td>A.7 complete</td></tr>
-          <tr><td>hand-object &times;6</td><td>6,793</td><td>6,793 · 100%</td><td>asset-name v1</td></tr>
           <tr><td><b>total</b></td><td><b>1,156,895</b></td><td><b>1,155,117</b></td><td>&mdash;</td></tr>
         </tbody>
       </table>
@@ -71,10 +71,9 @@
       <table class="compact">
         <thead><tr><th>what it cost</th><th>measured</th></tr></thead>
         <tbody>
-          <tr><td>sidecars 09-03 &rarr; 09-07</td><td>420,317 &rarr; 1,155,117 &nbsp;(2.7&times;)</td></tr>
+          <tr><td>sidecars 09-03 &rarr; 09-07</td><td>413,524 &rarr; 1,148,324 &nbsp;(2.8&times;)</td></tr>
           <tr><td>VITRA compute</td><td>650.3 GPU-h · avg 6.7 GPUs of 32</td></tr>
           <tr><td>VITRA sustained rate</td><td>1,130 episodes / h / GPU</td></tr>
-          <tr><td>hand-object compute</td><td>none — derived from metadata</td></tr>
         </tbody>
       </table>
     </div>
@@ -82,7 +81,7 @@
   <p class="etabar"><b>In flight</b> — EgoDex A.7 caption upgrade, 120,715 episodes, 32 shards
      (part2 &times;22, part3 &times;10). ~10 h per shard at the measured 390 eps/h/GPU, ~310 GPU-h total;
      lands <b>2026-09-08</b> if concurrency holds, later if the queue stays at ~7 GPUs.</p>
-  <p class="footnote">hand-object = TACO · GRAB · DexYCB · OakInk2 · HOT3D · ARCTIC, reusing 3D-WAM's episode pool · 1,778 VITRA episodes (0.2%) failed per-episode and were not chased</p>
+  <p class="footnote">1,778 VITRA episodes (0.2%) failed per-episode and were not chased · EgoDex coverage closed 08-30; only its caption generation is still being homogenised</p>
 </section>
 
 <!-- SECTION: method (1) -->
@@ -103,7 +102,6 @@
           <tr><td>VITRA flow H5 — PointWAM</td><td><code>/virtual_lab/sjw_alinlab/beomjun/vitra_1m/flows/</code></td></tr>
           <tr><td>EgoDex sidecar — 3D encoder</td><td><code>…/maskcap_pilot/{egodex,egodex_part2…part5,egodex_extra,egodex_test}/</code></td></tr>
           <tr><td>VITRA sidecar — 3D encoder</td><td><code>…/maskcap_pilot/vitra_full/</code></td></tr>
-          <tr><td>hand-object sidecar — 3D encoder</td><td><code>…/maskcap_pilot/hoi/{taco,grab,dexycb,oakink2,hot3d,arctic}/</code></td></tr>
           <tr><td>subset + generation manifests</td><td><code>…/maskcap_pilot/manifests/{a7_stems.txt,generation_index.tsv}</code></td></tr>
         </tbody>
       </table>
@@ -177,7 +175,6 @@ tgt = emb[iid[iid &gt; 0] - 1]                       # per-point target</code></
         <tbody>
           <tr><td>EgoDex + VITRA, one generation</td><td><code>attrs["caption_style"] == "sf_gemma3_pass2_v1"</code></td></tr>
           <tr><td>the same, by manifest</td><td><code>stem in a7_stems.txt</code></td></tr>
-          <tr><td>hand-object sources</td><td><code>attrs["caption_style"] == "hoi_assetname_v1"</code></td></tr>
           <tr><td>objects only, drop hands</td><td><code>attrs["global_is_agent"]</code> &rarr; drop true ids</td></tr>
         </tbody>
       </table>
@@ -193,7 +190,8 @@ tgt = emb[iid[iid &gt; 0] - 1]                       # per-point target</code></
     <li class="on">PointWAM — scene points and hand skeleton
       <ul><li>same contract on both sources; EgoDex 1080p, VITRA 240p</li>
           <li>EgoDex hands are ARKit GT, VITRA hands are reconstructed MANO</li></ul></li>
-    <li>3D encoder — instances and their captions</li>
+    <li>3D encoder — EgoDex instances</li>
+    <li>3D encoder — VITRA instances</li>
   </ol>
   <div class="band">
     <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/pw_egodex.jpg" alt="EgoDex episode: left scene points in their own colours, right hand skeleton joints">
@@ -209,17 +207,38 @@ tgt = emb[iid[iid &gt; 0] - 1]                       # per-point target</code></
   <h2>Results</h2>
   <ol class="agenda">
     <li>PointWAM — scene points and hand skeleton</li>
-    <li class="on">3D encoder — instances and their captions
+    <li class="on">3D encoder — EgoDex instances
       <ul><li>each tile isolates one instance's points over a dimmed anchor frame</li>
           <li>tiles sorted by number of points; captions are the A.7 Gemma-3 generation</li></ul></li>
+    <li>3D encoder — VITRA instances</li>
   </ol>
   <div class="band">
     <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/enc_paint_clean_brush.jpg" alt="Per-instance grid for paint_clean_brush: each tile is one instance's points with its caption">
       <figcaption>paint_clean_brush — one tile per instance, each with the caption whose SigLIP2 row is the target</figcaption></figure>
     <figure><img src="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/assets/enc_peel_place_sticker.jpg" alt="Per-instance grid for peel_place_sticker">
-      <figcaption>peel_place_sticker — same rendering, different task; agent instances appear alongside objects</figcaption></figure>
+      <figcaption>EgoDex peel_place_sticker — same rendering, different task; agent instances appear alongside objects</figcaption></figure>
   </div>
   <p class="footnote">more sample grids: <a href="/experiments/dex-pointwam/logs/2026-08-27-dataset-usage-guide/">usage-guide log</a> · <a href="/experiments/dex-pointwam/logs/2026-08-13-spaceformer-data-engine/">SpaceFormer data engine log</a></p>
+</section>
+
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>PointWAM — scene points and hand skeleton</li>
+    <li>3D encoder — EgoDex instances</li>
+    <li class="on">3D encoder — VITRA instances
+      <ul><li>points coloured by instance, captions beside</li>
+          <li>rendered from the completed corpus</li></ul></li>
+  </ol>
+  <div class="band">
+    <figure><img src="assets/enc_vitra_100000.jpg" alt="VITRA episode: points coloured by instance over a dimmed frame, with the captioned instances listed beside">
+      <figcaption>VITRA ssv2 100000 · clip 0:11 · production fused run, <code>caption_style=sf_gemma3_pass2_v1</code></figcaption></figure>
+    <figure><img src="assets/enc_vitra_100020.jpg" alt="Second VITRA episode rendered the same way">
+      <figcaption>VITRA ssv2 100020 · clip 0:11 · same run; captions stop at the CAPK=15 budget, uncaptioned ids are omitted</figcaption></figure>
+  </div>
+  <p class="footnote">rendered from the finished corpus, not the 08-25 five-episode demo — that demo used the two-pass masker settings, these use the fused run that produced the sidecars</p>
 </section>
 
 </main>
