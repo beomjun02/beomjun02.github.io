@@ -49,6 +49,7 @@
       <a href="#contact">Contact</a>
       <a href="#decode">Decoding</a>
       <a href="#training">Training</a>
+      <a href="#findings">Findings</a>
       <a href="/experiments/">Lab</a>
     </nav>
     <button class="toggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
@@ -513,6 +514,65 @@
   </div>
   <p class="note">Draft. §3.4 describes a component that is specified and implemented but not yet trained;
     every other element of this section is in use. Numbers stated here are configuration, not results.</p>
+
+</div></div></section>
+
+<section id="findings"><div class="wrap"><div class="paper">
+
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">4</div>
+    <h2>What the auxiliaries actually did</h2>
+  </div>
+
+  <p>Seven arms, each one variable against a byte-identical control, on one 1×H100 rig. A six-hour
+    wall-clock cap — rather than a step target — truncated three of them, so the primary basis is the
+    matched 30,000-step checkpoint, the largest every arm has. Zero-motion predictor: 18.99 cm ADE on
+    the five-second autoregressive rollout.</p>
+
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead><tr><th>arm</th><th>ADE cm</th><th>vs control</th><th>OMWC</th><th>δ_avg %</th><th>survival %</th></tr></thead>
+      <tbody>
+        <tr><td><b>A4</b> Sharpa 10 % co-training</td><td><b>15.88</b></td><td><b>+0.67</b></td><td>0.616</td><td><b>49.2</b></td><td>39.9</td></tr>
+        <tr><td><b>E2</b> partner identity</td><td>16.15</td><td>+0.40</td><td><b>0.484</b></td><td>48.2</td><td>37.4</td></tr>
+        <tr><td>E1 contact flag + head</td><td>16.26</td><td>+0.29</td><td>0.552</td><td>47.9</td><td>37.7</td></tr>
+        <tr><td>control</td><td>16.55</td><td>—</td><td>0.583</td><td>47.9</td><td>37.7</td></tr>
+        <tr><td>A2 object motion (HumanEgo)</td><td>16.75</td><td>−0.20</td><td>0.591</td><td>47.2</td><td>37.3</td></tr>
+        <tr><td>E3 two-stream</td><td>17.66</td><td>−1.11</td><td>0.682</td><td>48.6</td><td><b>40.3</b></td></tr>
+        <tr><td>A3 conditioning noise</td><td>17.98</td><td>−1.43</td><td>0.640</td><td>43.8</td><td>37.4</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Matched 30,000-step checkpoint · 5 s AR rollout, 5 chained chunks, 10 episodes ×
+    6 datasets · OMWC = share of predicted object displacement on frames with no predicted contact
+    (ground truth 0.074) · positive "vs control" = lower error.</p>
+
+  <h4>Contact buys interaction, data buys accuracy, structure costs both</h4>
+  <p>The two contact arms are the only ones that improve interaction and accuracy together, and
+    <b>E2 gives the largest reduction in object-motion-without-contact — 0.484 against the control's
+    0.583</b>. Its head is not decorative: accuracy in naming which entity a contacting point touches
+    rises from 5.7 % to 71.3 %, hand-part accuracy from 60.8 % to 84.3 %, and accuracy on
+    contact-<i>onset</i> frames — the rare, hard ones — from 6.0 % to 78.6 %. Cross-embodiment
+    co-training gives the best accuracy, consistent with our earlier finding that it behaves like more
+    data rather than a new domain. Both structural additions cost accuracy.</p>
+
+  <h4>The result that bears on the literature</h4>
+  <p>HumanEgo attributes <b>+17.5 points</b> to its object-motion auxiliary, the largest of its three,
+    and reports no contact term at all. We imported that objective and it is <b>null to slightly
+    negative here (−0.20 cm)</b>. The likely reason is representational: HumanEgo's state <i>is</i> a
+    6-DoF pose token, so predicting object motion reinforces its native variable, whereas our state is
+    a dense point set in which rigid motion is a derived quantity the flow head never needs. A
+    controlled comparison of contact against kinematic auxiliaries on one rig is not something the
+    cited work provides, and the answer differs by representation.</p>
+
+  <h4>What this does not show</h4>
+  <p>The matched basis <i>understates</i> the contact arms: E1 is +0.29 cm with OMWC 0.552 at 30,000
+    steps, but +1.23 cm with OMWC 0.399 at 50,000 on its own basis — effects grow with training, as
+    they have throughout this project. The closed loop did not move: GR-1 zero-shot for E1 is 0 of 3
+    with a median final hand–object distance of 19.67 cm, unchanged, because no arm addressed reach,
+    which remains the binding failure. And E3's arm is not repairable as run — two-stream is 38 % slower
+    per step, so under a fixed hour budget it cannot be step-matched, which is itself a cost the
+    structural-prior literature does not report.</p>
 
 </div></div></section>
 
