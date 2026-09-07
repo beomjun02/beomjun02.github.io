@@ -66,12 +66,45 @@
 
 <!-- SECTION: results (4) -->
 <section class="slide s-results">
-  <h2>Hand and object in one metric frame</h2>
+  <h2>Pick a side view — the rotating one is out</h2>
   <div class="band">
-    <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
-      <figcaption>ep0 · ep1 · ep2 in the static world frame — a following camera holds a 46 cm box and turns once every 16 s, then each episode's grasp instant turns through a full revolution</figcaption></figure>
+    <figure><img src="assets/fig_sideviews.jpg" alt="Four fixed viewpoints of the same 3D frame, side by side: right at eye level, right and front, right and behind, and right from higher up.">
+      <figcaption>a bystander beside the operator, not moving, watching the workspace — same frame, four standpoints · clips: <a href="assets/side_right.mp4">A</a> · <a href="assets/side_right-front.mp4">B</a> · <a href="assets/side_right-back.mp4">C</a> · <a href="assets/side_right-high.mp4">D</a></figcaption></figure>
   </div>
-  <p class="footnote">faint skeletons are held where the hand last was, not fresh measurements (14–21% of drawn) · ep2 has no depth pass, hands only</p>
+  <p class="footnote">measured geometry: base +Z up, the operator's right is −Y, forward +X · head 85 cm, workspace 42 cm · <b>A recommended</b></p>
+</section>
+
+<!-- SECTION: method (pipeline) -->
+<section class="slide s-method">
+  <h2>The whole extraction, stage by stage</h2>
+  <div class="band">
+    <table>
+      <tr><th>stage</th><th>where</th><th>what it does</th><th>writes</th></tr>
+      <tr><td>frames</td><td class="mono">GPU</td><td>decode both eyes at stride 2</td><td class="mono">ep/{left,right}/*.jpg</td></tr>
+      <tr><td>depth</td><td class="mono">GPU</td><td>VGGT-Omega, anchored on the 66.4388 mm baseline</td><td class="mono">vggt/vggt.npz</td></tr>
+      <tr><td>masks</td><td class="mono">GPU</td><td>SAM3, every instance of 5 text prompts</td><td class="mono">sam3_multi/masks_multi.npz</td></tr>
+      <tr><td><b>object</b></td><td class="mono">CPU</td><td>IoU-0.55 merge → depth rank + 5 cm continuity → nearest → lift with the depth-edge filter → FPS 2048</td><td class="mono">&lt;ep&gt;_filt_objsel.npz</td></tr>
+      <tr><td>hand fit</td><td class="mono">GPU</td><td>seungjun's MANO pipeline on the two eyes as one hoi session, <b>no <code>--bbox_track</code></b></td><td class="mono">hand_pose_solver/joints_m.npy</td></tr>
+      <tr><td><b>hand</b></td><td class="mono">CPU</td><td>gate on his <code>used</code>/<code>reproj_err</code> → slot swap → 90 cm reach gate → 1 s world-frame hold → ego gate</td><td class="mono">&lt;ep&gt;_hands_mano2_held_ego.npz</td></tr>
+    </table>
+  </div>
+  <p class="footnote">both outputs land in the same ego-left camera frame in metres, so hand and object need no relative transform · one GPU job per episode, ~15 min; the CPU half is seconds</p>
+</section>
+
+<!-- SECTION: method (handoff) -->
+<section class="slide s-method">
+  <h2>Where the code is, and how to run it</h2>
+  <div class="band">
+    <table>
+      <tr><th>&nbsp;</th><th>command</th></tr>
+      <tr><td>1 · server, per episode</td><td class="mono">sbatch --job-name=&lt;50+ chars&gt; --export=ALL,MODEL_OUTPUT_DIR=&lt;dir&gt;,EP=ep7,IDX=000007 server/run_episode.sbatch</td></tr>
+      <tr><td>2 · pull the two files</td><td class="mono">ssh rlwrld-1 "cd $W &amp;&amp; tar cf - ep7/{vggt/vggt.npz,sam3_multi/masks_multi.npz}" | tar xf - -C pull/…</td></tr>
+      <tr><td>3 · local, per episode</td><td class="mono">viz/run_episode_local.sh ep7 000007 [--hands mano]</td></tr>
+      <tr><td>4 · his hand fit</td><td class="mono">sbatch … server/run_mano_notrack.sbatch  →  viz/run_mano_render.sh</td></tr>
+      <tr><td>5 · any visualization</td><td class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py --preset right · viz/overlay_sources.py · viz/two_eye_check.py — every view type with its exact flags is a table in the README</td></tr>
+    </table>
+  </div>
+  <p class="footnote"><code>viz/</code> local CPU · <code>server/</code> GPU jobs · <code>pull/</code> mirrors, never truth · if ssh denies the key: <code>export SSH_AUTH_SOCK=$(server/ssh-agent-sock.sh)</code></p>
 </section>
 
 <!-- SECTION: appendix -->
