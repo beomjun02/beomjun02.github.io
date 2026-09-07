@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-07 · Frontier data, as it now looks — BMW &amp; Frontier Demo</title>
+<meta name="description" content="Visualization-only record: object points and hand points on the ego-stereo logistics captures, after removing the bbox tracker that starved seungjun's solver.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="frontier data, as it now looks" data-date="2026-09-07">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Frontier data, as it now looks</h1>
+  <p class="ctx">BMW &amp; Frontier Demo · object points + hand points on the ego-stereo captures</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 07<br>Presented by beomjun</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Policy input, end to end, on his hands.</p>
+  <div class="band">
+    <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0, full episode — left: ego RGB · right: the same viewpoint in points. Object orange (nearest of every SAM3 candidate), rejected slate, hands from seungjun's MANO solver</figcaption></figure>
+  </div>
+  <p class="footnote">object on 217/217 frames · a hand on 95% · both hands on 88% · hands 21 metric keypoints each, in the ego-left camera frame</p>
+</section>
+
+<!-- SECTION: results (1) -->
+<section class="slide s-results">
+  <h2>Every object, and the one being handled</h2>
+  <div class="band">
+    <figure><img src="assets/prompt_package_montage.jpg" alt="Six ego frames with every instance the text prompt 'package' segmented, each instance in its own colour.">
+      <figcaption>one prompt, <code>package</code>, finds every parcel in the scene — 4.36 instances per frame</figcaption></figure>
+    <figure><video src="assets/ep1_allobj.mp4" poster="assets/ep1_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep1 — the handled one is chosen by metric depth, per frame, out of all of them (254/255 frames)</figcaption></figure>
+  </div>
+  <p class="footnote">the caption burned into each frame prints the selected object's depth and how many candidates it beat</p>
+</section>
+
+<!-- SECTION: results (2) -->
+<section class="slide s-results">
+  <h2>The hands his solver was throwing away</h2>
+  <div class="band">
+    <figure><img src="assets/fig_trackfix.jpg" alt="Two rows of three ego frames. Top row with the bbox tracker enabled shows missing or misplaced hand skeletons; bottom row without it shows both hands on the visible hands.">
+      <figcaption>same three frames · top: his pipeline as shipped · bottom: the same pipeline with <code>--bbox_track</code> off</figcaption></figure>
+  </div>
+  <p class="footnote">his tracker assumes a hand cannot jump between frames — true for a fixed rig, false for a head-mounted one. Kept hand-frames 38% → 77%, at the same 5.5 px triangulation error</p>
+</section>
+
+<!-- SECTION: results (3) -->
+<section class="slide s-results">
+  <h2>His hands against the video-only ones</h2>
+  <div class="band">
+    <figure><img src="assets/fig_AvsD.jpg" alt="Two rows of three ego frames. Top row shows MediaPipe plus VGGT depth skeletons in violet; bottom row shows seungjun's solver skeletons in orange on the same frames.">
+      <figcaption>top: MediaPipe + VGGT depth · bottom: seungjun's solver, both on the same frames</figcaption></figure>
+  </div>
+  <p class="footnote">reprojected into the second eye — his 14.9 px, MediaPipe's 31.1 px; a hand that only fits the eye it was fitted to is wrong in depth</p>
+</section>
+
+<!-- SECTION: results (4) -->
+<section class="slide s-results">
+  <h2>Hand and object in one metric frame</h2>
+  <div class="band">
+    <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>ep0 · ep1 · ep2 in the static world frame — a following camera holds a 46 cm box and turns once every 16 s, then each episode's grasp instant turns through a full revolution</figcaption></figure>
+  </div>
+  <p class="footnote">faint skeletons are held: carried where the hand last was while the head is turned away, never a fresh measurement · ep2 has no depth pass yet, so it shows hands only</p>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix · what produced each frame</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>), then <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT metric depth — IoU-0.55 merge across prompts, 5 cm continuity credit. Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
+        <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline on the two eyes as a 2-view hoi session, left eye = world, baseline 66.4388 mm. Re-run without <code>--bbox_track</code> (job 160289, 12 min): kept hand-frames 38/28/30% → <b>77/79/79%</b>, per-side starvation gone (ep0 21.9/54.3 → 86.4/67.2), spans converge on 9.3/8.6 cm. Gated on his own <code>used</code>/<code>reproj_err</code>, then held 1 s: both hands 42→88%, 59→90%, 50→92%.</dd>
+        <dt>Render</dt><dd class="mono">viz/full_episode_viz.py (two-panel) · viz/hands3d_multi.py --append-turn (3D) · viz/overlay_sources.py (the two comparison strips) · viz/hold_hands.py (the hold) · caches viz/cache/&lt;ep&gt;_{objsel,hands_mano2_held}.npz</dd>
+        <dt>Not shown</dt><dd class="mono">ep2's object cloud (no depth pass) · episodes 3–79 · HaWoR and stereo hand sources · every chart and table: visualizations only, by request — numbers in the <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">09-03 record</a></dd>
+      </dl>
+    </div>
+    <div>
+      <ul>
+        <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">hand source adjudicated</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-all-objects-nearest/">all objects, nearest one</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/">policy rate &amp; SAM 3D</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
