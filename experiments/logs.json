@@ -50,11 +50,11 @@
    "date": "2026-09-08",
    "slug": "auxiliary-campaign",
    "format": "deck",
-   "status": "running",
+   "status": "done",
    "updated": "2026-09-08",
    "title": "What improves a point-flow world model: contact, kinematics, or neither? (deck #21)",
    "path": "3d-wam/decks/2026-09-08-auxiliary-campaign/",
-   "tldr": "Seven arms on one byte-identical rig, each one variable against an identically trained control: E1 contact flag + per-point contact head, E2 partner identity (per point, WHICH entity and WHICH hand part it touches), E3 two-stream blocks, A2 object-motion auxiliary imported from HumanEgo, A3 conditioning-frame noise for the closed-loop gap, A4 10 % Sharpa co-training. Read on the 5 s autoregressive rollout with zero-motion references, the interaction block (OMWC, transport, contact F1) and the GR-1 closed loop. Also a detailed read of the nine closest published systems — PointWorld, General Flow, HumanEgo, EgoWAM, ContactFlow, ContactGen, ManiDext, iMaC, ContactWorld — establishing that every comparable system abstracts the embodiment away (PointWorld takes gripper flow as an action INPUT, HumanEgo treats the hand as a parallel-jaw thumb-index pair and needs 30 min of video per task, ContactFlow extracts contact rather than predicting it), while contact supervision itself is prior art we cite rather than claim."
+   "tldr": "Seven arms, one byte-identical rig, read at a MATCHED 30,000-step checkpoint because a 6 h wall-clock cap truncated three of them (E3 at 35,322 steps, E2 at 49,165, A2 near 32,000; E3 and E2 wrote no final weights at all). Zero predictor 18.99 cm ADE on the 5 s autoregressive rollout. A4 Sharpa 10 % co-training is best on accuracy (15.88 cm, +0.67 vs control, delta_avg 49.2 %); E2 partner identity is best on interaction (OMWC 0.484 vs the control's 0.583, -17 %) and its head genuinely learned — entity accuracy on contacting points 5.7 % -> 71.3 %, at contact onset 6.0 % -> 78.6 %; E1 contact sits between (+0.29, OMWC 0.552) and its advantage GROWS with length (+1.23 and OMWC 0.399 at 50k on its own basis). Negative: A2, the object-motion auxiliary imported from HumanEgo — which credits it with +17.5 points, its largest — is null here (-0.20); E3 two-stream -1.11 and A3 conditioning noise -1.43. GR-1 closed loop for E1: 0/3, median final hand-object 19.67 cm, unchanged, because nothing in this campaign addressed reach. Reading: contact identity buys interaction, robot co-training buys accuracy, added structure costs both."
   },
   {
    "project": "3d-wam",

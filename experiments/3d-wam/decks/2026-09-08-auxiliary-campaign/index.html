@@ -22,15 +22,17 @@
 
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Six auxiliaries, one control, one rig — and the field's own verdict.</p>
+  <p class="thesis"><b>[TL;DR]</b> Contact identity wins interaction; robot co-training wins accuracy.</p>
   <ul>
-    <li>Done: 0 of 7 arms landed, 50k steps each</li>
-    <li>Done: nine closest systems read in detail</li>
-    <li>Discuss: which axis the paper claims</li>
+    <li>7 of 7 arms, matched 30k</li>
+    <li>Nine closest systems read</li>
+    <li>Discuss: which axis we claim</li>
   </ul>
   <div class="band">
-    <figure><img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled point set at t=0 and the generated flow chunk">
-      <figcaption>Schematic, not a run — scene and embodiment as one labeled point set; the model predicts the flow of both</figcaption></figure>
+    <figure><img src="assets/base_o6p512_1g_arctic_human_s184_c997_k4.gif" alt="control model, ARCTIC held-out chunk, ground truth beside prediction">
+      <figcaption>control · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · ARCTIC held-out s184 · object orange, right hand green, left hand purple</figcaption></figure>
+    <figure><img src="assets/e1_contact_1g_arctic_human_s184_c997_k4.gif" alt="E1 contact arm, the same ARCTIC held-out chunk">
+      <figcaption>E1 contact · 50,000 steps (8.2 ep) · same chunk, same seed, same viewpoint · for the owner to verify</figcaption></figure>
   </div>
   <p class="footnote">arms 9230 · 9231 · 9233 · 9577 · 9588 · 9590 · 9592 · eval bundles 9581–9593 · harvest review/auto/night_0908.json</p>
 </section>
@@ -95,38 +97,38 @@
     <table class="compact">
       <thead><tr><th>arm</th><th>ADE cm</th><th>zero</th><th>vs zero</th><th>vs ctl</th><th>δ_avg %</th><th>surv %</th></tr></thead>
       <tbody>
-        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr><td>E1 contact flag+head</td><td>16.26</td><td>18.99</td><td>+2.73</td><td>+0.29</td><td>47.9</td><td>37.7</td></tr>
+        <tr><td>E2 partner identity</td><td>16.15</td><td>18.99</td><td>+2.84</td><td>+0.40</td><td>48.2</td><td>37.4</td></tr>
+        <tr><td>E3 two-stream</td><td>17.66</td><td>18.99</td><td>+1.33</td><td>-1.11</td><td>48.6</td><td>40.3</td></tr>
+        <tr><td>A2 object motion</td><td>16.75</td><td>18.99</td><td>+2.24</td><td>-0.20</td><td>47.2</td><td>37.3</td></tr>
+        <tr><td>A3 cond. noise</td><td>17.98</td><td>18.99</td><td>+1.01</td><td>-1.43</td><td>43.8</td><td>37.4</td></tr>
+        <tr><td>A4 Sharpa 10 %</td><td>15.88</td><td>18.99</td><td>+3.11</td><td>+0.67</td><td>49.2</td><td>39.9</td></tr>
+        <tr><td><b>control</b></td><td>16.55</td><td>18.99</td><td>+2.44</td><td>+0.00</td><td>47.9</td><td>37.7</td></tr>
       </tbody>
     </table>
   </div></div>
-  <p class="footnote">iroll --mode ar --max-chunks 5 · 10–16 episodes/dataset × 6 datasets · cfg 1.0 · 16 Euler steps · positive "vs" = better</p>
+  <p class="footnote">MATCHED BASIS: every arm at ckpt_0030000 · iroll --mode ar --max-chunks 5 · 10 episodes/dataset × 6 · cfg 1.0 · 16 Euler steps · positive "vs" = better · E3 stopped at 35,322 steps and A2 near 32,000 on the 6 h cap, so final-step reads are not comparable</p>
 </section>
 
 <section class="slide s-results">
   <h2>Results</h2>
   <ol class="agenda">
     <li>Standard metrics, 5 s autoregressive rollout</li>
-    <li class="on">Interaction metrics — does the hand actually drive the object?
-      <ul><li>OMWC = object motion with no predicted contact</li></ul></li>
+    <li class="on">Interaction — does the hand actually drive the object?
+      <ul><li>E2 contact identity gives the largest OMWC reduction</li></ul></li>
     <li>Closed loop and cross-embodiment</li>
   </ol>
   <div class="band"><div class="tbl">
     <table class="compact">
       <thead><tr><th>arm</th><th>OMWC</th><th>GT</th><th>transport</th><th>contact F1</th><th>pair RMS cm</th><th>dmin err cm</th></tr></thead>
       <tbody>
-        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr><td>E1 contact flag+head</td><td>0.552</td><td>0.074</td><td>0.42</td><td>0.69</td><td>2.57</td><td>10.29</td></tr>
+        <tr><td>E2 partner identity</td><td>0.484</td><td>0.074</td><td>0.45</td><td>0.67</td><td>2.37</td><td>9.86</td></tr>
+        <tr><td>E3 two-stream</td><td>0.682</td><td>0.074</td><td>0.45</td><td>0.62</td><td>2.36</td><td>12.27</td></tr>
+        <tr><td>A2 object motion</td><td>0.591</td><td>0.074</td><td>0.44</td><td>0.62</td><td>2.47</td><td>10.88</td></tr>
+        <tr><td>A3 cond. noise</td><td>0.640</td><td>0.074</td><td>0.61</td><td>0.61</td><td>2.83</td><td>11.40</td></tr>
+        <tr><td>A4 Sharpa 10 %</td><td>0.616</td><td>0.074</td><td>0.38</td><td>0.62</td><td>2.42</td><td>9.73</td></tr>
+        <tr><td><b>control</b></td><td>0.583</td><td>0.074</td><td>0.46</td><td>0.63</td><td>2.41</td><td>10.41</td></tr>
       </tbody>
     </table>
   </div></div>
@@ -138,41 +140,41 @@
   <ol class="agenda">
     <li>Standard metrics, 5 s autoregressive rollout</li>
     <li>Interaction metrics</li>
-    <li class="on">Closed loop — GR-1 zero-shot, no fine-tuning
-      <ul><li>PnPCanToBowl × 3, replan every 4 frames</li></ul></li>
+    <li class="on">Closed loop, and the field's own yardstick
+      <ul><li>only E1 got a GR-1 slot — the eval lane was saturated</li></ul></li>
   </ol>
   <div class="band"><div class="tbl">
     <table class="compact">
-      <thead><tr><th>arm</th><th>success</th><th>median final hand–obj cm</th><th>task</th></tr></thead>
+      <thead><tr><th>measurement</th><th>value</th><th>reference</th><th>basis</th></tr></thead>
       <tbody>
-        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
-        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr><td>GR-1 closed loop, E1 @30k</td><td>0 / 3 success</td><td>median final hand–object 19.67 cm</td><td>PnPCanToBowl, replan every 4 frames</td></tr>
+        <tr><td>General Flow, human→robot</td><td>81 % success</td><td>18 tasks, 6 scenes, no finetune</td><td>their rig, object flow + planner</td></tr>
+        <tr><td>HumanEgo, real robot</td><td>92.5 % success</td><td>30 min human video per task</td><td>their rig, thumb–index gripper</td></tr>
+        <tr><td>EPE at 1 s, control / E1</td><td>12.50 / 11.22 cm</td><td>zero-motion 14.65 cm</td><td>ours: all valid points, hand predicted</td></tr>
+        <tr><td>PointWorld ℓ2 at 1 s</td><td>3.00 cm</td><td>zero-shot, held-out real scenes</td><td>movers only, gripper given, 1B params</td></tr>
       </tbody>
     </table>
   </div></div>
-  <p class="footnote">wam.eval.gr1_loop · robocasa GR-1 tabletop · Fourier hand mapped onto the 16 MANO parts · clips in the appendix</p>
+  <p class="footnote">last two rows share a horizon and a unit, NOT a protocol: PointWorld scores movers only and is handed the gripper trajectory; ours scores every valid point and must generate the hand</p>
 </section>
 
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">The representation is the claim; the auxiliaries are components.</p>
+  <p class="thesis">Contact helps interaction, data helps accuracy, structure costs steps.</p>
+  <p class="subhead">Decided:</p>
+  <ol><li>Matched 30k is the basis — E3 and E2 never reached 50k on the 6 h cap</li></ol>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Paper's axis</b> — contact supervision vs dexterous joint prediction → the latter; contact is cited prior art (owner)</li>
-    <li><b>Next contact arm</b> — discrete parts vs ManiDext continuous correspondence → continuous, they measured it better (owner)</li>
-    <li><b>Missing benchmark</b> — GR-1 only vs add DexJoCo → add it; every competitor reports real-robot success (owner)</li>
+    <li><b>Paper's axis</b> — contact supervision vs dexterous joint prediction → the latter; contact is cited prior art, and our contact gain is real but small (owner)</li>
+    <li><b>Next contact arm</b> — keep discrete parts vs ManiDext continuous correspondence → continuous; they measured discrete worse on every metric (owner)</li>
+    <li><b>Compute budget</b> — fixed 6 h vs fixed steps → fixed steps; two arms were truncated and one lost its 50k read entirely (owner)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>Continuous-correspondence E2 from ManiDext's ablation (agent · 1 day)</li>
+    <li>Continuous-correspondence E2, from ManiDext's ablation (agent · 1 day)</li>
+    <li>Rerun E3 and A2 step-matched, not hour-matched (agent · 1 day)</li>
     <li>DexJoCo integration: Allegro sampler + link→MANO map (agent · 2 days)</li>
-    <li>Support-surface entity — ManiDext's stated gap and ours (agent · TBD)</li>
-    <li>Width-matched control for E3 (agent · next iteration)</li>
+    <li>Sharpa beyond TACO — A4's gain is confounded with more TACO (agent · TBD)</li>
   </ol>
 </section>
 
@@ -205,6 +207,9 @@
         <dt>Optim</dt><dd>AdamW 3e-4, warmup 300, cosine to 0.1× · eff batch 32 · 50,000 steps = 8.2 epochs of the stride-4 index (194,612 train chunks) · 1×H100, ~0.443 s/step</dd>
         <dt>Data</dt><dd>corpus v2: taco · arctic · dexycb · oakink2 · grab · hot3d · contact-window trim keeps 89.9 % (194,612 of 216,417) · 5,645 human + 1,148 Sharpa episodes (Sharpa = TACO only)</dd>
         <dt>Eval</dt><dd>PRIMARY 5 s AR rollout (5 chained chunks) with zero-motion references · interaction block · GR-1 closed loop via eval_fast (6.5 min, 2 GPUs)</dd>
+        <dt>E2 head learned</dt><dd>the auxiliary is not decorative: entity accuracy on CONTACTING points 5.7 % → 71.3 %, hand-part accuracy 60.8 % → 84.3 %, and accuracy at contact ONSET (the rare, hard frames) 6.0 % → 78.6 %. Its loss share drifted to 0.55 by the end, well above the 5–20 % band, because loss/fm keeps falling while the CE plateaus — the weight should decay with fm, not be fixed.</dd>
+        <dt>Truncated arms</dt><dd>the 6 h wall-clock cap, not a step target, ended three arms: E3 at 35,322 steps (two-stream = 0.612 s/step, 38 % slower than the control), E2 at 49,165 (0.439) and A2 near 32,000 (0.669, 51 % slower — the Kabsch targets). Neither E3 nor E2 wrote weights_final.pt, so neither has a final-step evaluation at all. That is why the matched 30,000-step checkpoint is the primary basis.</dd>
+        <dt>Length matters</dt><dd>E1 against the control is +0.29 cm ADE and OMWC 0.552 vs 0.583 at the matched 30k, but +1.23 cm and 0.399 vs 0.571 at 50k on its own (larger, 78-episode) basis. The matched table therefore UNDERSTATES the contact arms, consistent with this project's repeated finding that composition and auxiliary effects grow with training length.</dd>
         <dt>E2 fixes</dt><dd>contact_nn is stored hand→object ONLY, so object rows were unlabelable — inverted the map (recovers ~84 %); class-balanced CE because the corpus is 24:1 and plain CE collapsed to 97.4 % accuracy at exactly 0 % on contacting points</dd>
       </dl>
     </div>
