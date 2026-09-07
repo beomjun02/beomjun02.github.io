@@ -46,22 +46,26 @@
 
 <!-- SECTION: results (2) -->
 <section class="slide s-results">
-  <h2>The hands his solver was throwing away</h2>
+  <h2>Object: visible surface, or completed</h2>
   <div class="band">
-    <figure><img src="assets/fig_trackfix.jpg" alt="Two rows of three ego frames. Top row with the bbox tracker enabled shows missing or misplaced hand skeletons; bottom row without it shows both hands on the visible hands.">
-      <figcaption>same three frames · top: his pipeline as shipped · bottom: the same pipeline with <code>--bbox_track</code> off</figcaption></figure>
+    <figure><video src="assets/obj_raw.mp4" poster="assets/obj_raw.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>as measured — only the faces turned to the camera</figcaption></figure>
+    <figure><video src="assets/obj_full.mp4" poster="assets/obj_full.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>completed — a box fitted to those faces, 2048 points over all six</figcaption></figure>
   </div>
-  <p class="footnote">his tracker assumes a hand cannot jump between frames — true for a fixed rig, false for a head-mounted one. Kept hand-frames 38% → 77%, at the same 5.5 px triangulation error</p>
+  <p class="footnote">same frames, hands, surface and view box · size measured where a corner is visible (108/217 on ep0), assumed otherwise · 14–15% of completed points sit on real observations</p>
 </section>
 
 <!-- SECTION: results (3) -->
 <section class="slide s-results">
-  <h2>His hands against the video-only ones</h2>
+  <h2>Hands: seungjun's solver, or HaWoR</h2>
   <div class="band">
-    <figure><img src="assets/fig_AvsD.jpg" alt="Two rows of three ego frames. Top row shows MediaPipe plus VGGT depth skeletons in violet; bottom row shows seungjun's solver skeletons in orange on the same frames.">
-      <figcaption>top: MediaPipe + VGGT depth · bottom: seungjun's solver, both on the same frames</figcaption></figure>
+    <figure><video src="assets/hand_seungjun.mp4" poster="assets/hand_seungjun.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>seungjun's MANO solver, final — gated, held, ego-filtered</figcaption></figure>
+    <figure><video src="assets/hand_hawor.mp4" poster="assets/hand_hawor.jpg" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>HaWoR, monocular MANO — the same treatment applied</figcaption></figure>
   </div>
-  <p class="footnote">reprojected into the second eye — his 14.9 px, MediaPipe's 31.1 px; a hand that only fits the eye it was fitted to is wrong in depth</p>
+  <p class="footnote">both put through the identical reach gate, 1 s hold and ego gate, so only the estimator differs · HaWoR reprojects 150 px from the detected 2D wrist against seungjun's 15 px</p>
 </section>
 
 <!-- SECTION: results (4) -->
@@ -141,7 +145,7 @@
   <h2>Appendix (3) · hands, timing, code</h2>
   <div class="cols">
     <div><dl class="kv">
-        <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline, two eyes as one hoi session, baseline 66.4388 mm. Re-run <b>without <code>--bbox_track</code></b> (job 160289): kept hand-frames 38/28/30% → <b>77/79/79%</b> at an unchanged 5.5 px triangulation error. Then gated on his <code>used</code>/<code>reproj_err</code> and held 1 s.</dd>
+        <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline, the two eyes as one hoi session, baseline 66.4388 mm, run <b>without <code>--bbox_track</code></b> (job 160289) — with it, kept hand-frames were 38/28/30%, without it 77/79/79% at the same 5.5 px triangulation error. Final output is then gated on his own <code>used</code>/<code>reproj_err</code>, held 1 s in the world frame, and ego-gated. HaWoR gets the identical hold and ego gate for the comparison.</dd>
         <dt>Ego gate</dt><dd class="mono">NEW — drops a hand over 400 px from both projected stored wrists. Own hands sit <b>66–129 px</b> from the nearest, the person opposite <b>866–1080 px</b>; one threshold keeps 99–100% of own and cuts 100% of theirs. Also catches the solver's own misplacements: on-hand 71→78, 72→79, 64→75%.</dd>
         <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py <code>--preset right-front --tabletop</code> · viz/overlay_sources.py · viz/hold_hands.py · viz/ego_gate.py</dd>
       </dl></div>
