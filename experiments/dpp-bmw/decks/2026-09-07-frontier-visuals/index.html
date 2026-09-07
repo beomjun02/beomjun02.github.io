@@ -82,7 +82,7 @@
       <tr><td><b>hand</b></td><td class="mono">CPU</td><td>gate on his <code>used</code>/<code>reproj_err</code> → slot swap → 90 cm reach gate → 1 s world-frame hold → ego gate</td><td class="mono">&lt;ep&gt;_hands_mano2_held_ego.npz</td></tr>
     </table>
   </div>
-  <p class="footnote">both outputs land in the same ego-left camera frame in metres, so hand and object need no relative transform · one GPU job per episode, ~15 min; the CPU half is seconds</p>
+  <p class="footnote">both outputs in the same ego-left frame, in metres · matches BMW on solver, VGGT-Omega, the 10 mm filter and FPS-2048 · differs: 2 views not 4, no RGB-D sensor, no contact labels</p>
 </section>
 
 <!-- SECTION: method (handoff) -->
@@ -108,10 +108,11 @@
     <div><dl class="kv">
         <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>); <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT depth (IoU-0.55 merge, 5 cm continuity). Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
         <dt>Object class</dt><dd class="mono">NEW — <code>viz/obj_label.py</code> reads <code>sel_pmask</code>, which SAM3 prompts matched the selected instance, grouped into classes; most specific wins. ep0: cardboard box 148 · wrapped parcel 60 · styrofoam 6 · <b>conveyor belt 3</b>. ep1: wrapped parcel 105 · cardboard box 70 · <b>conveyor belt 39</b> · styrofoam 38. A conveyor label is a selection error the overlay now surfaces.</dd>
+        <dt>Work surface</dt><dd class="mono">NEW — <code>viz/tabletop.py</code> stacks depth frames in base coordinates, ±2 cm band, anchored to the mode of the package's resting height over stationary frames: z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
       </dl></div>
     <div><dl class="kv">
-        <dt>Depth edges</dt><dd class="mono">NEW — <code>lift()</code> drops pixels with a depth gradient over 2 cm/px and erodes the mask 1 px. Silhouette-ramp pixels unproject into empty space and FPS <b>preferentially keeps</b> them. Cloud depth span 21.3 → 18.7 cm (ep0).</dd>
-        <dt>Work surface</dt><dd class="mono">NEW — <code>viz/tabletop.py</code> stacks depth frames in base coordinates, ±2 cm band, anchored to the mode of the package's resting height over stationary frames: z=0.435 (ep0), 0.405 (ep1); extent 166 × 107 cm.</dd>
+        <dt>Depth edges</dt><dd class="mono">NEW — <code>lift()</code> drops pixels with a depth gradient over <b>10 mm/px</b> (BMW's threshold, REPORT_bmw0821.md §2) and erodes the mask 1 px. Silhouette-ramp pixels unproject into empty space and FPS <b>preferentially keeps</b> them. Measured on ep0, 10 vs 20 mm changes the cloud depth span by 0.1 cm and 1.5% of points, so parity is free. Span 21.3 → 18.4 cm (ep0), 21.4 cm (ep1).</dd>
+        <dt>Hand–object depth</dt><dd class="mono">Audited 09-07. <b>No calibration error.</b> VGGT depth agrees with stereo triangulation at the same pixels to <b>+0.2% (ep0) / −2.0% (ep1)</b>, so both are on one metric scale. Occluded contact patch accounts for 0.3–0.9 cm — the hand hides where it touches. During carry, fingertip-to-surface is 4.5/3.1 cm median, <b>p25 1.5/0.7 cm</b>. A radial hand-scale sweep bottoms at 1.05 on both episodes but buys 0.6–0.8 cm, so it is <b>not applied</b>.</dd>
       </dl></div>
   </div>
 </section>
