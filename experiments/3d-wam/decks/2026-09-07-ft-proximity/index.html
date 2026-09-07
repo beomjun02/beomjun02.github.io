@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!-- 3D-WAM deck #18 · 2026-09-07 · Proximity channel + interaction-weighted loss · SINGLE-MODEL deck for ft_prox: base_v3_trim 2× weights (221,992 st)
+     fine-tuned 15,000 steps at lr 1e-4 (eff batch 32, 4×H100). Owner's slide list: (1) core idea + config with the
+     fine-tune change highlighted · (2) hand–object interaction metrics on the kept-window val vs GROUND TRUTH, standard
+     metrics vs the ZERO-MOTION predictor with paired deltas vs this model's own INIT (the 2× weights), 5 s AR rollout ·
+     (3) GR-1 closed loop, three tasks × 3 episodes, two episode-0 clips · (4) reading. No arm-vs-arm tables anywhere:
+     the only reference values are ground truth, the zero-motion predictor and the init weights. Clips are never
+     described — the owner verifies. Built by build_ft_decks.py from deck_arms/ft_prox/numbers.json. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-07 · Proximity channel + interaction-weighted loss — 3D-WAM</title>
+<meta name="description" content="Deck #18, 2026-09-07. Single-model deck for ft_prox: base_v3_trim 2× weights (221,992 steps) fine-tuned 15,000 steps at lr 1e-4 with a per-point proximity channel (distance to the nearest other entity at frame 0, model.prox_channel) and an interaction-weighted MSE (1 + 4·exp(−d/5 cm), loss.interaction_weight). Core idea + config, hand–object interaction metrics on the kept-window val (vs ground truth), standard metrics vs the zero-motion predictor with paired deltas vs the init weights, a 5 s rollout, GR-1 closed loop on three tasks, and a reading. The owner verifies the clips.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* ---- deck stepper: the reference's dim-inactive agenda, laid out as ONE line under the title (every slide) ---- */
+  .deck ol.agenda.strip{display:flex;flex-wrap:nowrap;gap:0 2.2em;font-size:1.75em;line-height:1.3;
+    margin:-1.1em 0 .4em;counter-reset:item}
+  .deck ol.agenda.strip>li{padding-left:1.35em;margin:0;white-space:nowrap}
+  .deck ol.agenda.strip>li::before{left:0}
+  /* ---- slide 1: core idea strip + config tables ---- */
+  .deck .band.cfg3{gap:1.1em;flex:0 0 auto;margin-top:.45em}
+  .deck .band figure.tb{flex:1 1 0;min-width:0;justify-content:flex-start}
+  .deck .band.cfg3 figure.tb.wide{flex:1.45 1 0}
+  .deck .band.cfg3 figure.tb.narrow{flex:1.0 1 0}
+  .deck .band.cfg3 figure.tb.opt{flex:1.05 1 0}
+  .deck table.cfg{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.12}
+  .deck table.cfg th,.deck table.cfg td{padding:.08em .35em;vertical-align:top}
+  .deck table.cfg td:first-child:not([colspan]){white-space:nowrap;font-weight:700}
+  .deck table.cfg td[colspan]{font-weight:400}
+  .deck table.cfg td .mono{font-size:.88em;overflow-wrap:anywhere;word-break:break-all}
+  .deck table.cfg tr.chg td{background:#F2F7FC}
+  .deck .band.idea{flex:0 0 auto;margin-top:.1em;gap:1.1em;align-items:flex-start}
+  .deck .band.idea figure.tb.main{flex:1 1 0}
+  .deck .band.idea figure.tb.smp{flex:0 0 29%}
+  .deck table.idea{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.12}
+  .deck table.idea th,.deck table.idea td{padding:.08em .4em;vertical-align:top}
+  .deck table.idea th{white-space:nowrap}
+  .deck table.idea td.chg{background:#F2F7FC}
+  .deck .epoch{font-weight:700;color:var(--acc,#0070C0)}
+  /* ---- key line under the stepper (definitions / model id) ---- */
+  .deck p.key{margin:0 0 .4em;font-size:1.45em;color:#333}
+  .deck p.key b{color:#000}
+  .deck p.key.defs{font-size:1.3em;line-height:1.35;margin-top:.1em}
+  /* ---- slide 2: interaction table (left) + standard/rollout table (right) ---- */
+  .deck .band.metrics{margin-top:.5em;gap:1.8em;flex:0 0 auto}
+  .deck .band.metrics>figure.tb.inter{flex:0 0 38%}
+  .deck .band.metrics>figure.tb.stdr{flex:1 1 0}
+  .deck table.met{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.28}
+  .deck table.met th,.deck table.met td{padding:.16em .4em;vertical-align:top}
+  .deck table.met td:first-child{font-weight:700}
+  .deck table.met td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .deck table.met th.n{text-align:right}
+  .deck table.met tr.grp th{text-align:left;font-weight:700;background:#F2F7FC;padding-top:.3em}
+  .deck .band.metrics figcaption{font-style:normal;font-size:1.3em;text-align:left;line-height:1.3;margin-top:.3em}
+  /* ---- slide 3: two small tables, then four videos (two ego | flow pairs) ---- */
+  .deck .band.tb2{flex:0 0 auto;margin-top:.4em;gap:1.6em}
+  .deck .band.tb2>figure.tb.sweep{flex:1.35 1 0}
+  .deck .band.tb2>figure.tb.sim{flex:1 1 0}
+  .deck .band.gr1{margin-top:.7em;gap:1.2em}
+  .deck .band.gr1>figure>video{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain;
+    background:transparent;border-radius:3px}
+  .deck .band.gr1>figure.ego{flex:0 0 19%}
+  .deck .band.gr1>figure.flow{flex:1 1 0}
+  .deck .band.gr1>figure.flow.gap{margin-right:1.2em}
+  .deck .band.gr1 figcaption{font-style:normal;font-size:1.2em;text-align:left;line-height:1.3;margin-top:.3em}
+  /* ---- slide 4: bullets + one evidence table ---- */
+  .deck .band.read{margin-top:1.2em;flex:1 1 auto;align-items:flex-start}
+  .deck .band.read>figure.tb{flex:0 0 72%}
+  .deck .band.read figcaption{font-style:normal;font-size:1.3em;text-align:left;line-height:1.3;margin-top:.35em}
+  .deck table.abl{table-layout:fixed;width:100%;font-size:1.45em;line-height:1.3}
+  .deck table.abl th,.deck table.abl td{padding:.2em .5em;vertical-align:top}
+  .deck table.abl td:first-child{font-weight:700}
+  .deck table.abl td.n,.deck table.abl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #18 · Proximity channel + interaction-weighted loss · ft_prox" data-date="2026-09-07">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Proximity channel + interaction-weighted loss</h1>
+  <p class="ctx">3D-WAM · ft_prox · one model: the 2× weights + 15,000 fine-tune steps, proximity input + weighted loss</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 07<br>Presented by 김범준 (beomjun)</p>
+</section>
+
+<!-- SECTION: 1 · core idea + config (+ the fine-tune change) -->
+<section class="slide s-method">
+  <h2>Core idea and config · ft_prox</h2>
+  <ol class="agenda strip">
+    <li class="on">Core idea + config</li>
+    <li>Interaction metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <div class="band idea">
+    <figure class="tb main">
+      <table class="idea"><colgroup><col style="width:22%"><col style="width:24%"><col style="width:15%"><col style="width:13%"><col style="width:12%"><col style="width:14%"></colgroup>
+        <thead><tr><th>input</th><th>model</th><th>output</th><th>decode</th><th>not used</th><th>claim</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>scene + embodiment as ONE dense labelled 3-D point set (hand 512 pts · object 256 pts · part labels) + 2 history frames + task text</td>
+            <td>language-conditioned flow-matching video-DiT predicts the TOTAL scene flow (hand + objects together) over the next 1 s · T = 10 @ 10 Hz</td>
+            <td>a 1 s trajectory for every input point, hand and objects in one prediction</td>
+            <td>hand flow → robot joints by per-link Procrustes + IK</td>
+            <td>no world model, no retargeter, no inverse dynamics</td>
+            <td>robot zero-shot execution of tasks demonstrated only by humans</td>
+          </tr>
+          <tr><td colspan="6" class="chg"><b>fine-tune change · proximity channel + interaction-weighted loss</b> · input: per-point distance to the nearest OTHER entity at frame 0 (3k extra features per patch, zero-initialised) · loss: MSE weight 1 + 4 · exp(−d / 5 cm) per point</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb smp">
+      <table class="cfg"><colgroup><col style="width:27%"><col style="width:73%"></colgroup>
+        <thead><tr><th colspan="2">fine-tune</th></tr></thead>
+        <tbody>
+          <tr><td>init</td><td>base_v3_trim 2× weights @ 221,992 st · shape-tolerant copy · prox columns zero-init</td></tr>
+          <tr><td>steps</td><td>15,000 · lr 1e-4 · cosine to 0.1× · warmup 300</td></tr>
+          <tr><td>batch</td><td>8 × 4 H100 × accum 1 = eff 32</td></tr>
+          <tr class="chg"><td>change</td><td>+ proximity input channel · + MSE weight 1 + 4·exp(−d/5 cm)</td></tr>
+          <tr><td colspan="2"><b>where</b> · <span class="mono">model.prox_channel · loss.interaction_weight</span></td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <div class="band cfg3">
+    <figure class="tb wide">
+      <table class="cfg"><colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+        <thead><tr><th colspan="2">data (unchanged from the 2× model)</th></tr></thead>
+        <tbody>
+          <tr><td>corpus</td><td>v2 · taco, arctic, dexycb, oakink2, grab, hot3d · 10 Hz · T = 10</td></tr>
+          <tr><td>points</td><td>512 / hand · 256 / object · ≤ 16 objects per chunk</td></tr>
+          <tr><td>contact</td><td>window filter, TRAIN index only · OakInk2 start 1.0 s / end 0.5 s · ARCTIC &amp; GRAB end 0.5 s · 89.9 % kept</td></tr>
+          <tr><td>frame</td><td>history H = 2 frames (0.1 / 0.2 s ago) · origin = hand centre + jitter ≤ 1 m · yaw aug · up-axis z</td></tr>
+          <tr><td>text</td><td>T5-base, cached · entity phrases on · text dropout 0.05</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb narrow">
+      <table class="cfg"><colgroup><col style="width:32%"><col style="width:68%"></colgroup>
+        <thead><tr><th colspan="2">model</th></tr></thead>
+        <tbody>
+          <tr><td>backbone</td><td>video-DiT 120M · d 768 · depth 12 · heads 12 · mlp 4.0 · qk-norm</td></tr>
+          <tr><td>tokens</td><td>patch · k = 8 part-major Hilbert patches</td></tr>
+          <tr><td>attention</td><td>full 3-D attention · time-only RoPE</td></tr>
+          <tr class="chg"><td>input</td><td>xyz + part label + history + <b>proximity</b> (frame-0 distance to the nearest other entity · 3k per patch) · entity_text</td></tr>
+          <tr><td>target</td><td>v-parameterisation · flow matching · EMA 0.999</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb opt">
+      <table class="cfg"><colgroup><col style="width:31%"><col style="width:69%"></colgroup>
+        <thead><tr><th colspan="2">optimisation (fine-tune)</th></tr></thead>
+        <tbody>
+          <tr><td>optimiser</td><td>AdamW · lr 1e-4 · betas 0.9 / 0.95 · wd 0.05</td></tr>
+          <tr><td>schedule</td><td>warmup 300 · cosine to 0.1× · grad clip 1.0</td></tr>
+          <tr><td>eff. epochs</td><td>15,000 st × 32 = +0.56 on the v2 corpus → <span class="epoch">≈ 8.9</span> total (init = 8.3)</td></tr>
+          <tr class="chg"><td>loss</td><td>flow-matching MSE on v × <b>(1 + 4 · exp(−d / 5 cm))</b> per point, d = frame-0 distance to the nearest other entity (<span class="mono">loss.interaction_weight</span>)</td></tr>
+          <tr><td>compute</td><td>4 × H100 · ckpt every 30 min</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <p class="footnote">source: configs/base_v3_trim.yaml + configs/ft_prox.yaml · eff ep = steps × eff batch ÷ corpus chunks · shaded rows = what this fine-tune changed relative to the 2× weights</p>
+</section>
+
+<!-- SECTION: 2 · hand–object interaction metrics (vs ground truth) · standard metrics (vs zero-motion, Δ vs init) · 5 s rollout -->
+<section class="slide s-results">
+  <h2>Interaction, standard and rollout metrics · kept-window val</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li class="on">Interaction metrics</li>
+    <li>GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key defs"><b>OMWC</b> = share of predicted object displacement on frames where no predicted hand point is within 2 cm · <b>onset</b> = predicted first-contact frame − true first-contact frame · <b>missed / false contact</b> rates · <b>dmin error</b> = |predicted − true hand–object minimum distance| · <b>contact-frame F1</b> · <b>transport</b> = predicted / true object displacement on true-contact frames · <b>pair RMS</b> = object-with-hand co-motion residual</p>
+  <div class="band metrics">
+    <figure class="tb inter">
+      <table class="met"><colgroup><col style="width:50%"><col style="width:28%"><col style="width:22%"></colgroup>
+        <thead><tr><th>interaction metric</th><th class="n">ft_prox</th><th class="n">ground truth</th></tr></thead>
+        <tbody>
+          <tr><td>OMWC</td><td class="n">0.129</td><td class="n">0.032</td></tr>
+          <tr><td>onset error (frames of 0.1 s)</td><td class="n">−0.01 (abs 0.11)</td><td class="n">0</td></tr>
+          <tr><td>missed / false contact</td><td class="n">0.06 / 0.05</td><td class="n">0 / 0</td></tr>
+          <tr><td>dmin error cm</td><td class="n">3.21</td><td class="n">0</td></tr>
+          <tr><td>contact-frame F1</td><td class="n">0.922</td><td class="n">1</td></tr>
+          <tr><td>transport</td><td class="n">0.91</td><td class="n">1</td></tr>
+          <tr><td>pair RMS cm/frame</td><td class="n">1.11</td><td class="n">0</td></tr>
+          <tr><td>object displacement cm/s</td><td class="n">6.09</td><td class="n">6.81</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>basis</b> · 1,656 chunk×object rows, 659 with true contact · 528 kept-window val chunks, 96 per dataset · ft_prox · 2× + 15,000 st · <span class="epoch">≈ 8.9 eff ep</span> · k = 1 sample</figcaption>
+    </figure>
+    <figure class="tb stdr">
+      <table class="met"><colgroup><col style="width:30%"><col style="width:17%"><col style="width:20%"><col style="width:33%"></colgroup>
+        <thead><tr><th>standard metric · same 528 chunks</th><th class="n">ft_prox</th><th class="n">zero-motion predictor</th><th class="n">Δ vs init (2× weights), paired 95 % CI</th></tr></thead>
+        <tbody>
+          <tr><td>ADE cm</td><td class="n">7.70</td><td class="n">8.41</td><td class="n">+0.23 [−0.02, +0.47]</td></tr>
+          <tr><td>FDE cm</td><td class="n">13.15</td><td class="n">13.21</td><td class="n">+0.32 [−0.10, +0.74]</td></tr>
+          <tr><td>Acc5 %</td><td class="n">61.3</td><td class="n">62.0</td><td class="n">−1.07 [−2.02, −0.14] pts</td></tr>
+          <tr><td>Acc10 %</td><td class="n">75.1</td><td class="n">74.6</td><td class="n">—</td></tr>
+          <tr><td>δ_avg %</td><td class="n">59.0</td><td class="n">59.9</td><td class="n">−0.84 [−1.50, −0.18] pts</td></tr>
+          <tr><td>minADE₅ cm</td><td class="n">5.41</td><td class="n">—</td><td class="n">+0.19 [+0.04, +0.34]</td></tr>
+        </tbody>
+        <tbody>
+          <tr class="grp"><th colspan="4">5 s autoregressive rollout · 78 val episodes · reference = stay-put (zero-motion) predictor</th></tr>
+          <tr><td>ADE cm</td><td class="n">16.5</td><td class="n">26.2</td><td class="n">—</td></tr>
+          <tr><td>δ_avg %</td><td class="n">43.1</td><td class="n">46.2</td><td class="n">—</td></tr>
+          <tr><td>survival % (10 cm, at 5 s)</td><td class="n">29.6</td><td class="n">36.0</td><td class="n">—</td></tr>
+          <tr><td>survival horizon s (median)</td><td class="n">1.45</td><td class="n">0.85</td><td class="n">—</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>Δ vs init</b> · paired per chunk vs the 2× weights this model started from · bootstrap 95 % CI · +ADE / FDE / minADE₅ = worse than init, +Acc5 / δ_avg = better · minADE₅ over 5 draws · survival = share of points never &gt; 10 cm off · horizon = time when fewer than half the points are alive</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">interaction metrics per chunk×object, hands and objects from the same k = 1 sample · rollout: 1 s chunks chained with H = 2 history for 5 s</p>
+</section>
+
+<!-- SECTION: 3 · GR-1 closed loop · three tasks × 3 episodes · captions only -->
+<section class="slide s-viz">
+  <h2>GR-1 closed loop · three tasks, three episodes each</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>Interaction metrics</li>
+    <li class="on">GR-1 closed loop</li>
+    <li>Reading</li>
+  </ol>
+  <p class="key"><b>ft_prox · 2× + 15,000 st</b> · <span class="epoch">≈ 8.9 eff ep</span> · zero-shot, no robot data · each pair: ego view | 3-D point flow (executed | predicted)</p>
+  <div class="band tb2">
+    <figure class="tb sweep">
+      <table class="met"><colgroup><col style="width:37%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:14%"><col style="width:16%"></colgroup>
+        <thead><tr><th>final hand–object distance cm</th><th class="n">ep 0</th><th class="n">ep 1</th><th class="n">ep 2</th><th class="n">median</th><th class="n">success</th></tr></thead>
+        <tbody>
+          <tr><td>PnPCanToBowl</td><td class="n">20.2</td><td class="n">20.8</td><td class="n">20.3</td><td class="n"><b>20.3</b></td><td class="n">0 / 3</td></tr>
+          <tr><td>PnPCounterToCuttingBoard</td><td class="n">22.4</td><td class="n">10.8</td><td class="n">10.3</td><td class="n"><b>10.8</b></td><td class="n">0 / 3</td></tr>
+          <tr><td>PnPCounterToPlate</td><td class="n">26.2</td><td class="n">21.4</td><td class="n">15.3</td><td class="n"><b>21.4</b></td><td class="n">0 / 3</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <figure class="tb sim">
+      <table class="met"><colgroup><col style="width:56%"><col style="width:24%"><col style="width:20%"></colgroup>
+        <thead><tr><th>predicted object motion in sim</th><th class="n">cm/s</th><th class="n">OMWC</th></tr></thead>
+        <tbody>
+          <tr><td>PnPCanToBowl</td><td class="n">10.3</td><td class="n">0.45</td></tr>
+          <tr><td>PnPCounterToCuttingBoard</td><td class="n">7.9</td><td class="n">0.37</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </div>
+  <div class="band gr1">
+    <figure class="ego"><video src="assets/gr1_PnPCanToBowl_ep00_ego.mp4" poster="assets/gr1_PnPCanToBowl_ep00_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCanToBowl, episode 0, ft_prox"></video>
+      <figcaption><b>PnPCanToBowl · episode 0</b> · ego view · “pick the can from the counter and place it in the bowl” · ft_prox</figcaption></figure>
+    <figure class="flow gap"><video src="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCanToBowl_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCanToBowl episode 0: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>3-D point flow</b> · left = executed · right = predicted · first 20 replans · result: <b>not success</b> · final hand–object distance <b>20.2 cm</b></figcaption></figure>
+    <figure class="ego"><video src="assets/gr1_PnPCounterToCuttingBoard_ep00_ego.mp4" poster="assets/gr1_PnPCounterToCuttingBoard_ep00_ego.jpg" autoplay muted loop playsinline preload="auto" aria-label="Ego-view rollout of PnPCounterToCuttingBoard, episode 0, ft_prox"></video>
+      <figcaption><b>PnPCounterToCuttingBoard · episode 0</b> · ego view · ft_prox</figcaption></figure>
+    <figure class="flow"><video src="assets/gr1_PnPCounterToCuttingBoard_ep00_pointflow_first20.mp4" poster="assets/gr1_PnPCounterToCuttingBoard_ep00_pointflow_first20.jpg" autoplay muted loop playsinline preload="auto" aria-label="Point flow of PnPCounterToCuttingBoard episode 0: executed scene points left, model prediction right, first 20 replans"></video>
+      <figcaption><b>3-D point flow</b> · left = executed · right = predicted · first 20 replans · result: <b>not success</b> · final hand–object distance <b>22.4 cm</b></figcaption></figure>
+  </div>
+  <p class="footnote">3 episodes per task · human tag · two objects · 256 object points · rlwrld debug partition · sim OMWC = object displacement share with no predicted hand within 2 cm · gr1_trial/arm3_ft_prox</p>
+</section>
+
+<!-- SECTION: 4 · reading · numbers only in the evidence table -->
+<section class="slide s-method">
+  <h2>Reading · what this fine-tune shows</h2>
+  <ol class="agenda strip">
+    <li>Core idea + config</li>
+    <li>Interaction metrics</li>
+    <li>GR-1 closed loop</li>
+    <li class="on">Reading</li>
+  </ol>
+  <p class="thesis">Proximity input: ADE gap vs init spans zero, Acc5 below init</p>
+  <ul>
+    <li>ADE gap vs init includes zero</li>
+    <li>Acc5 below init, CI excludes zero</li>
+    <li>Objects still move without contact</li>
+  </ul>
+  <div class="band read">
+    <figure class="tb">
+      <table class="abl"><colgroup><col style="width:50%"><col style="width:24%"><col style="width:26%"></colgroup>
+        <thead><tr><th>evidence · ft_prox</th><th class="n">this model</th><th class="n">reference</th></tr></thead>
+        <tbody>
+          <tr><td>OMWC · kept-window val</td><td class="n">0.129</td><td class="n">ground truth 0.032</td></tr>
+          <tr><td>transport · true-contact frames</td><td class="n">0.91</td><td class="n">ground truth 1</td></tr>
+          <tr><td>ΔADE vs init (2× weights) · cm, paired 95 % CI</td><td class="n">+0.23 [−0.02, +0.47]</td><td class="n">init = 0</td></tr>
+          <tr><td>ΔAcc5 vs init (2× weights) · pts, paired 95 % CI</td><td class="n">−1.07 [−2.02, −0.14]</td><td class="n">init = 0</td></tr>
+          <tr><td>5 s rollout ADE · cm</td><td class="n">16.5</td><td class="n">stay-put 26.2</td></tr>
+          <tr><td>GR-1 PnPCanToBowl · median final hand–object cm · successes</td><td class="n">20.3 · 0 / 3</td><td class="n">all tasks 0 / 9</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>one model, three references</b> · ground truth (interaction metrics) · the zero-motion / stay-put predictor (standard and rollout metrics) · init = the 2× weights this model was fine-tuned from (paired deltas) · bases as on slides 2–3</figcaption>
+    </figure>
+  </div>
+  <p class="footnote">no comparison with the other fine-tune arms in this deck · source: deck_arms/ft_prox/numbers.json (xinteract · std · paired_vs_2x · rollout5s · gr1)</p>
+</section>
+
+</main>
+</body>
+</html>
