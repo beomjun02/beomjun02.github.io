@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-08 · Auxiliary supervision campaign — 3D-WAM</title>
+<meta name="description" content="Seven arms on one rig: contact and kinematic auxiliaries against an identically trained control, read against the nine closest published systems.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+</head>
+<body>
+<main class="deck">
+
+<section class="slide s-title">
+  <h1>What actually improves a point-flow world model: contact, kinematics, or neither?</h1>
+  <p class="ctx">3D-WAM · seven arms on one rig · overnight campaign 2026-09-07/08</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 08<br>Presented by beomjun</p>
+</section>
+
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Six auxiliaries, one control, one rig — and the field's own verdict.</p>
+  <ul>
+    <li>Done: 0 of 7 arms landed, 50k steps each</li>
+    <li>Done: nine closest systems read in detail</li>
+    <li>Discuss: which axis the paper claims</li>
+  </ul>
+  <div class="band">
+    <figure><img src="/experiments/3d-wam/assets/hero.jpg" alt="Labeled point set at t=0 and the generated flow chunk">
+      <figcaption>Schematic, not a run — scene and embodiment as one labeled point set; the model predicts the flow of both</figcaption></figure>
+  </div>
+  <p class="footnote">arms 9230 · 9231 · 9233 · 9577 · 9588 · 9590 · 9592 · eval bundles 9581–9593 · harvest review/auto/night_0908.json</p>
+</section>
+
+<section class="slide s-method">
+  <h2>Method (1): Six auxiliaries against one control</h2>
+  <p class="thesis">Every arm is one variable on a byte-identical rig.</p>
+  <ul>
+    <li>Contact: E1 flag · E2 partner identity</li>
+    <li>Structure: E3 two-stream blocks</li>
+    <li>Kinematic: A2 object motion (HumanEgo)</li>
+  </ul>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>what it adds</th><th>prior art</th></tr></thead>
+      <tbody>
+        <tr><td>E1</td><td>frame-0 contact flag in; per-point contact head (BCE)</td><td>—</td></tr>
+        <tr><td>E2</td><td>per point, WHO it touches: entity + hand part</td><td>ContactGen part map</td></tr>
+        <tr><td>E3</td><td>separate hand/object block params, one attention</td><td>RLDX-1 multi-stream</td></tr>
+        <tr><td>A2</td><td>each object patch predicts its own rigid motion</td><td>HumanEgo L_OM (+17.5 pts)</td></tr>
+        <tr><td>A3</td><td>noised conditioning frame (closed-loop gap)</td><td>SVD micro-conditioning</td></tr>
+        <tr><td>A4</td><td>10 % Sharpa co-training</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">shared rig: no history · stride 4 · 6 objects × 512 pts · d512/depth8 ≈ 39M · eff batch 32 · 50,000 steps = 8.2 epochs · 1×H100</p>
+</section>
+
+<section class="slide s-method">
+  <h2>Method (2): Where we sit in the field</h2>
+  <p class="thesis">Every comparable system abstracts the embodiment away; we predict it.</p>
+  <ul>
+    <li>PointWorld: gripper flow is an input</li>
+    <li>HumanEgo: hand = parallel-jaw pair</li>
+    <li>ContactFlow: contact extracted, not predicted</li>
+  </ul>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>system</th><th>embodiment predicted?</th><th>dexterity</th><th>data</th></tr></thead>
+      <tbody>
+        <tr><td>PointWorld ’26</td><td>no — action input</td><td>gripper, 300–500 pts</td><td>1300 h robot</td></tr>
+        <tr><td>General Flow ’24</td><td>no — object flow only</td><td>n/a</td><td>RGBD human video</td></tr>
+        <tr><td>HumanEgo ’26</td><td>pose, not dense</td><td>thumb–index pair</td><td>30 min per task</td></tr>
+        <tr><td>EgoWAM ’26</td><td>no — 14-D EE action</td><td>gripper</td><td>ego human + robot</td></tr>
+        <tr><td>ContactFlow ’26</td><td>no — extracted</td><td>grasp points</td><td>multi-source</td></tr>
+        <tr><td><b>3D-WAM (ours)</b></td><td><b>yes — with the scene</b></td><td><b>16 parts, 512 pts</b></td><td><b>human only</b></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">arXiv 2601.03782 · 2401.11439 · 2605.24934 · 2607.08436 · 2607.26579 · full read: /experiments/3d-wam/#related</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li class="on">Standard metrics, 5 s autoregressive rollout
+      <ul><li>5 chained chunks; control is the last row</li></ul></li>
+    <li>Interaction metrics</li>
+    <li>Closed loop and cross-embodiment</li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>ADE cm</th><th>zero</th><th>vs zero</th><th>vs ctl</th><th>δ_avg %</th><th>surv %</th></tr></thead>
+      <tbody>
+        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">iroll --mode ar --max-chunks 5 · 10–16 episodes/dataset × 6 datasets · cfg 1.0 · 16 Euler steps · positive "vs" = better</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Standard metrics, 5 s autoregressive rollout</li>
+    <li class="on">Interaction metrics — does the hand actually drive the object?
+      <ul><li>OMWC = object motion with no predicted contact</li></ul></li>
+    <li>Closed loop and cross-embodiment</li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>OMWC</th><th>GT</th><th>transport</th><th>contact F1</th><th>pair RMS cm</th><th>dmin err cm</th></tr></thead>
+      <tbody>
+        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">wam.eval.metrics.interaction_terms on the AR rollout · 2 cm contact threshold · transport 1.0 = carried as far as ground truth</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Standard metrics, 5 s autoregressive rollout</li>
+    <li>Interaction metrics</li>
+    <li class="on">Closed loop — GR-1 zero-shot, no fine-tuning
+      <ul><li>PnPCanToBowl × 3, replan every 4 frames</li></ul></li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>success</th><th>median final hand–obj cm</th><th>task</th></tr></thead>
+      <tbody>
+        <tr class="pend"><td>E1 contact flag+head</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E2 partner identity</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>E3 two-stream</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A2 object motion</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A3 cond. noise</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>A4 Sharpa 10 %</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+        <tr class="pend"><td>control</td><td colspan="6"><i>WILL UPDATE 2026-09-08 · running</i></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">wam.eval.gr1_loop · robocasa GR-1 tabletop · Fourier hand mapped onto the 16 MANO parts · clips in the appendix</p>
+</section>
+
+<section class="slide s-discuss">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">The representation is the claim; the auxiliaries are components.</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Paper's axis</b> — contact supervision vs dexterous joint prediction → the latter; contact is cited prior art (owner)</li>
+    <li><b>Next contact arm</b> — discrete parts vs ManiDext continuous correspondence → continuous, they measured it better (owner)</li>
+    <li><b>Missing benchmark</b> — GR-1 only vs add DexJoCo → add it; every competitor reports real-robot success (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Continuous-correspondence E2 from ManiDext's ablation (agent · 1 day)</li>
+    <li>DexJoCo integration: Allegro sampler + link→MANO map (agent · 2 days)</li>
+    <li>Support-surface entity — ManiDext's stated gap and ours (agent · TBD)</li>
+    <li>Width-matched control for E3 (agent · next iteration)</li>
+  </ol>
+</section>
+
+<section class="slide s-table">
+  <h2>Appendix · Related work, read in detail</h2>
+  <p class="thesis">Each neighbour owns one axis; none predicts a dexterous embodiment.</p>
+  <ul><li>Contact supervision is prior art — we cite, not claim</li></ul>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>system</th><th>establishes</th><th>stated limitation (= our opening)</th></tr></thead>
+      <tbody>
+        <tr><td>PointWorld ’26</td><td>point flow at scale: 1B params, ~2M traj; zero-shot ℓ2 0.0300 m</td><td>static initial state · "correlation vs causation" · AR drift · gripper only · robot is an INPUT</td></tr>
+        <tr><td>General Flow ’24</td><td>81 % zero-shot human→robot, 18 tasks, 6 scenes, no finetune</td><td>object flow only — the hand is not predicted, so a separate policy consumes it</td></tr>
+        <tr><td>HumanEgo ’26</td><td>92.5 % real from 30 min/task; auxiliaries +25 pts (obj motion +17.5)</td><td>hand = parallel-jaw thumb–index · per-task video · ~1 cm ceiling · no deformables</td></tr>
+        <tr><td>EgoWAM ’26</td><td>3D motion flow beats pixels/DINO in-domain by 20–30 %</td><td>"learning novel motion primitives from human data remains out of reach"</td></tr>
+        <tr><td>ContactFlow ’26</td><td>contact-point trajectories transfer across embodiments</td><td>contact EXTRACTED by HaMeR+HACO at train and test; HACO "not reliable" at detecting contact</td></tr>
+        <tr><td>ContactGen ’23 / ManiDext ’24</td><td>per-object-point contact + 16-part hand map; continuous correspondence beats discrete</td><td>grasp synthesis, not dynamics; ManiDext ignores the environment (lifts from below a table)</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">also read: iMaC (contact as control, FID 38.81→36.96) · ContactWorld (point-cloud 32.1 % vs wrist 20.7 %) · HACO (imbalance) · OA-WAM</p>
+</section>
+
+<section class="slide s-appendix">
+  <h2>Appendix · setup · what the literature changed · cut list</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Rig</dt><dd>no history · chunk_stride 4 · ≤ 6 objects × 512 pts + 2 hands × 512 · k = 8 part-major Hilbert patches · full 3-D attention · v-parameterisation · 16 Euler steps · EMA 0.999 · d512/depth8/heads8 ≈ 39.4 M</dd>
+        <dt>Optim</dt><dd>AdamW 3e-4, warmup 300, cosine to 0.1× · eff batch 32 · 50,000 steps = 8.2 epochs of the stride-4 index (194,612 train chunks) · 1×H100, ~0.443 s/step</dd>
+        <dt>Data</dt><dd>corpus v2: taco · arctic · dexycb · oakink2 · grab · hot3d · contact-window trim keeps 89.9 % (194,612 of 216,417) · 5,645 human + 1,148 Sharpa episodes (Sharpa = TACO only)</dd>
+        <dt>Eval</dt><dd>PRIMARY 5 s AR rollout (5 chained chunks) with zero-motion references · interaction block · GR-1 closed loop via eval_fast (6.5 min, 2 GPUs)</dd>
+        <dt>E2 fixes</dt><dd>contact_nn is stored hand→object ONLY, so object rows were unlabelable — inverted the map (recovers ~84 %); class-balanced CE because the corpus is 24:1 and plain CE collapsed to 97.4 % accuracy at exactly 0 % on contacting points</dd>
+      </dl>
+    </div>
+    <div>
+      <dl class="kv">
+        <dt>Lit → experiment</dt><dd>HumanEgo's ablation gives +17.5 pts to an object-motion auxiliary and has NO contact term → arm A2 imports it. HACO's imbalance analysis predicted E2's collapse exactly → class-balanced objective. ManiDext beats ContactGen's discrete parts with continuous correspondence → the indicated next arm.</dd>
+        <dt>Honest limit</dt><dd>Nearest-neighbour partners are recoverable from a predicted point cloud, so no auxiliary here adds information the flow loss lacks — they reshape optimisation. Four earlier interventions in this family came back null; the one hard constraint (inference-time object gate) took OMWC 0.127 → 0.012.</dd>
+        <dt>Behind</dt><dd>General Flow 81 % and HumanEgo 92.5 % real-robot vs our 0/3 on GR-1; PointWorld 1B params on ~2M trajectories vs 39M on 5,645 episodes.</dd>
+      </dl>
+      <p class="cut">CUT: four discarded E2 designs (world-frame touch point · InfoNCE patch↔patch with a dustbin · two-channel proximity field · rigid SE(3) decoder — the last rejected by the owner as "essentially a new framework") · the proximity field survives in the code, default off, as a rendered affordance diagnostic · DexJoCo remains uninstalled-into-the-loop · VITRA 10 % mixture and partial observability never ran · E3 varies architecture AND parameter count (39M → 65M) so a width-matched control is owed.</p>
+    </div>
+  </div>
+  <p class="footnote">code ~/3d-wam/code · configs base_o6p512_1g · e1_contact_1g · e2c_partner_1g · e3_twostream_1g · a2_objmotion_1g · a3_condnoise_1g · a4_sharpa10_1g</p>
+</section>
+
+</main>
+</body>
+</html>
