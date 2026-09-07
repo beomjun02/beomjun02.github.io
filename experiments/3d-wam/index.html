@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>3D-WAM — Method</title>
+<title>3D-WAM — Related Work &amp; Method</title>
 <meta name="description" content="Method draft: scene and embodiment as one labeled 3D point set, a language-conditioned flow-matching video-DiT over total scene flow, contact-correspondence supervision, and decoding to robot joints.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,8 +41,9 @@
 
 <header class="top">
   <div class="wrap">
-    <div class="brand">3D-WAM <b>·</b> METHOD</div>
+    <div class="brand">3D-WAM <b>·</b> DRAFT</div>
     <nav>
+      <a href="#related">Related work</a>
       <a href="#representation">Representation</a>
       <a href="#model">Model</a>
       <a href="#contact">Contact</a>
@@ -56,8 +57,8 @@
 
 <div class="hero"><div class="wrap">
   <div class="reveal" style="max-width:820px">
-    <div class="eyebrow">PAPER DRAFT · METHOD SECTION · ICLR 2027 · 2026-09-07</div>
-    <h1>Method</h1>
+    <div class="eyebrow">PAPER DRAFT · ICLR 2027 · 2026-09-08</div>
+    <h1>Related work &amp; method</h1>
     <p class="lede">We model manipulation as the evolution of a single labeled 3D point set that contains
       the scene and the embodiment together. A language-conditioned flow-matching transformer predicts the
       displacement of every point over a short horizon; because the hand's points are part of the
@@ -67,10 +68,116 @@
       generative objective cannot express — <b>which part of the hand is touching which part of which
       object</b> — stated in a part vocabulary that human and robot hands share.</p>
     <div class="meta-line">
-      <span>Draft — notation and component descriptions are settled; §<b>3.4</b> is proposed and not yet trained</span>
+      <span>Draft — §2 is a detailed read of the nine closest systems; §3 notation and components are settled; §3.4 is running as of 2026-09-08</span>
     </div>
   </div>
 </div></div>
+
+<section id="related"><div class="wrap"><div class="paper">
+
+  <div class="sec-head reveal" style="margin-bottom:0">
+    <div class="eyebrow">2</div>
+    <h2>Related work, and what is actually ours</h2>
+  </div>
+
+  <p>Predicting future 3D point motion from human video, and using it to drive a robot, is an active
+    and crowded line of work. We read the nine closest systems in detail. The comparison below is not
+    a ranking — several of them report real-robot success rates we do not yet have — but an attempt to
+    say precisely which axis each one occupies, because on one axis the field is unanimous and we are
+    the exception.</p>
+
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead><tr><th>System</th><th>State</th><th>Is the embodiment <i>predicted</i>?</th><th>Dexterity</th><th>Training data</th></tr></thead>
+      <tbody>
+        <tr><td>PointWorld</td><td>scene point cloud</td><td><b>No</b> — gripper point flow is the action <i>input</i>; the scene is the output</td><td>gripper, 300–500 pts</td><td>~200 h real + ~1100 h sim robot</td></tr>
+        <tr><td>General Flow</td><td>3D points on objects of interest</td><td><b>No</b> — object flow only, drives a planner</td><td>n/a</td><td>RGBD human video</td></tr>
+        <tr><td>HumanEgo</td><td>29-D entity pose tokens</td><td>pose-level, not dense</td><td><b>parallel-jaw thumb–index pair</b></td><td>30 min human video <i>per task</i></td></tr>
+        <tr><td>EgoWAM</td><td>3D motion flow; action = 14-D EE</td><td><b>No</b></td><td>gripper</td><td>ego human + robot</td></tr>
+        <tr><td>ContactFlow</td><td>RGB video + contact-point track</td><td><b>No</b> — contact is <i>extracted</i>, never predicted</td><td>grasp points</td><td>multi-source</td></tr>
+        <tr><td>ContactGen</td><td>object points, static</td><td>hand pose generated</td><td>16 MANO parts</td><td>grasp datasets</td></tr>
+        <tr><td>ManiDext</td><td>object points → hand sequence</td><td>hand pose generated</td><td>778-vertex correspondence</td><td>GRAB / ARCTIC / HOI4D</td></tr>
+        <tr><td>iMaC</td><td>video WM + contact images</td><td><b>No</b> — contact is a control input</td><td>gripper</td><td>robot</td></tr>
+        <tr><td><b>3D-WAM (ours)</b></td><td><b>one labeled point set: scene <i>and</i> embodiment</b></td><td><b>Yes — jointly with the scene</b></td><td><b>16 MANO parts / 33 links, 512 pts</b></td><td><b>human only, no per-task data</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Sources: PointWorld arXiv 2601.03782 · General Flow arXiv 2401.11439 · HumanEgo arXiv 2605.24934 ·
+    EgoWAM arXiv 2607.08436 · ContactFlow arXiv 2607.26579 · ContactGen ICCV 2023 · ManiDext arXiv 2409.09300 ·
+    iMaC arXiv 2606.09813 · HACO arXiv 2505.11152 · ContactWorld arXiv 2606.13877.</p>
+
+  <h4>The prediction targets: object flow, and who owns it</h4>
+  <p><b>General Flow</b> is the strongest evidence that this family works: a language-conditioned 3D
+    flow model trained on RGBD human video reaches <b>81 % zero-shot human-to-robot success across 18
+    tasks in 6 scenes with no in-domain fine-tuning</b>, on rigid, articulated and soft objects. Its
+    flow is the future trajectory of points <i>on objects of interest</i> — the hand is not part of the
+    prediction, so the flow is guidance that a separate closed-loop policy must consume. <b>PointWorld</b>
+    scales the same idea to a 1B-parameter point transformer over ~2M trajectories, and its own ablation
+    finds that gripper point flows beat end-effector poses and joint positions as an action
+    parameterisation. But its robot points are an <i>input</i>: the model is asked what the scene does
+    <i>given</i> a gripper trajectory. Its stated limitations are candid and, for our purposes,
+    diagnostic — a static-initial-state assumption, no physics priors, drift under autoregressive
+    rollout, and "correlation vs causation," which is precisely the failure we measure as objects
+    floating toward a hand that has not closed.</p>
+
+  <h4>The embodiment: everyone abstracts it away</h4>
+  <p>This is the axis on which the field is unanimous. <b>EgoWAM</b> normalises human and robot into a
+    shared 14-dimensional end-effector space before training, and concludes that "our gains stay at the
+    context level; learning novel motion primitives from human data remains out of reach." <b>HumanEgo</b>
+    — the strongest real-world result in the group, 92.5 % across four tasks from 30 minutes of human
+    video each — achieves it by treating the human hand as a <b>parallel-jaw gripper, thumb and index
+    only</b>, and represents objects as 6-DoF poses rather than points. <b>ContactFlow</b> reduces the
+    hand to where force is applied, and extracts that with off-the-shelf HaMeR and HACO at both training
+    and inference, noting that HACO "is not reliable in predicting whether the hand makes contact at
+    all." Each abstraction is a reasonable engineering choice and each buys real robustness. Each also
+    makes finger-level dexterity unrepresentable by construction.</p>
+
+  <p>Our state contains the embodiment at part granularity and predicts it jointly with the scene, so
+    generation <i>is</i> the action and no separate policy, retargeter or inverse-dynamics model stands
+    between the prediction and the robot. That is the claim this paper has to earn, and it is the one
+    the table shows is unoccupied.</p>
+
+  <h4>Contact: prior art we do not contest</h4>
+  <p>Our contact supervision is <i>not</i> novel and we do not present it as such. <b>ContactGen</b>
+    already predicts, per object point, a contact probability, a <b>hand part map over B = 16 MANO
+    parts</b>, and a direction map. <b>ManiDext</b> replaces the discrete part label with continuous
+    geodesic correspondence embeddings over the 778 MANO vertices and reports it better on every metric,
+    arguing discrete labels "fall short in providing semantic information." Both are grasp
+    <i>synthesis</i>: ContactGen static, ManiDext conditioned on a given object trajectory. Neither
+    predicts scene dynamics, and neither is used to make a world model's rollout better.</p>
+  <p>What is unoccupied is the <i>placement</i>: contact identity as a per-frame auxiliary inside a
+    generative model of total scene flow. <b>iMaC</b> is the nearest attempt and uses contact as a
+    control <i>input</i> rather than a prediction, reporting a modest gain (FID 38.81 → 36.96,
+    FVD 523.94 → 489.51). We therefore treat contact supervision as a component with citable prior art
+    and a small expected effect, not as a contribution — and we report it against a control that has it
+    switched off.</p>
+
+  <h4>Two findings from this literature that changed our experiments</h4>
+  <p><b>Auxiliaries that work here are kinematic, not contact.</b> HumanEgo's ablation attributes
+    <b>+17.5 points to its object-motion objective</b>, +12.5 to latent consistency and +5 to a 2D
+    trace, +25 combined — and not one of its three auxiliaries involves contact. That is the opposite of
+    our campaign's bet, so rather than argue we imported the object-motion objective into our framework
+    as a controlled arm (§<b>5</b>). It is non-trivial here precisely because our state is dense points:
+    an object's rigid motion is nowhere in our output space, so the flow head can satisfy its per-point
+    loss without any token representing that the object rotated.</p>
+  <p><b>Our contact labels sit in the regime where plain cross-entropy fails.</b> HACO measures
+    non-contact to contact ratios of 2.7:1 on DexYCB, 19.5:1 on InterHand2.6M and 21.7:1 on Decaf, and
+    shows balanced sampling and a vertex-level class-balanced loss beating focal, CB and LDAM (+12.0
+    recall, +8.5 F1 on MOW). We measured <b>3.97 %</b> contacting points in our corpus — about 24:1 —
+    and confirmed the predicted failure directly: an unbalanced run reached 97.4 % accuracy with
+    <b>exactly zero</b> accuracy on contacting points. Our contact arms use a class-balanced objective
+    for this reason.</p>
+
+  <h4>Where we are behind, stated plainly</h4>
+  <p>General Flow reports 81 % zero-shot real-robot success and HumanEgo 92.5 %; our closed-loop GR-1
+    result is 0 of 3, with the hand stalling 15–20 cm short. PointWorld trains a 1B-parameter model on
+    ~2M trajectories; our fast-iteration rig is 39M parameters on 5,645 episodes. Those gaps are real
+    and are not closed by any argument about representation. What the representation buys has to show up
+    as dexterous behaviour those systems cannot express — bimanual, finger-level, contact-rich — and
+    demonstrating that, rather than matching a pick-and-place success rate, is the experiment this work
+    owes.</p>
+
+</div></div></section>
 
 <section id="representation"><div class="wrap"><div class="paper">
 
@@ -441,8 +548,8 @@
 
 <footer><div class="wrap">
   <div>
-    <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — method draft</div>
-    <div style="margin-top:6px">Internal page · ICLR 2027 · updated 2026-09-07</div>
+    <div style="color:var(--ink);font-weight:600;font-size:14px">3D-WAM — paper draft</div>
+    <div style="margin-top:6px">Internal page · ICLR 2027 · updated 2026-09-08</div>
   </div>
   <div class="paths">
     <div>code <code>~/3d-wam/code/wam/{data,model,train,eval}</code></div>
