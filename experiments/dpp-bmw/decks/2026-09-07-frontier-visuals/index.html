@@ -29,7 +29,7 @@
     <figure><video src="assets/ep0_allobj.mp4" poster="assets/ep0_allobj.jpg" autoplay loop muted playsinline preload="metadata"></video>
       <figcaption>ep0, full episode — left: ego RGB · right: the same viewpoint in points. Object orange (nearest of every SAM3 candidate), rejected slate, hands from seungjun's MANO solver</figcaption></figure>
   </div>
-  <p class="footnote">object on 217/217 frames · a hand on 95% · both hands on 88% · hands 21 metric keypoints each, in the ego-left camera frame</p>
+  <p class="footnote">object on 217/217 frames · a hand on 94%, both on 71% · depth-edge filtered clouds, wrist-gated hands · 21 keypoints per hand</p>
 </section>
 
 <!-- SECTION: results (1) -->
@@ -71,25 +71,42 @@
     <figure><video src="assets/train3d.mp4" poster="assets/train3d.jpg" autoplay loop muted playsinline preload="metadata"></video>
       <figcaption>ep0 · ep1 · ep2 in the static world frame — a following camera holds a 46 cm box and turns once every 16 s, then each episode's grasp instant turns through a full revolution</figcaption></figure>
   </div>
-  <p class="footnote">faint skeletons are held: carried where the hand last was while the head is turned away, never a fresh measurement · ep2 has no depth pass yet, so it shows hands only</p>
+  <p class="footnote">faint skeletons are held where the hand last was, not fresh measurements (14–21% of drawn) · ep2 has no depth pass, hands only</p>
 </section>
 
 <!-- SECTION: appendix -->
 <section class="slide s-appendix">
-  <h2>Appendix · what produced each frame</h2>
+  <h2>Appendix (1) · the object cloud</h2>
   <div class="cols">
     <div>
       <dl class="kv">
         <dt>Object</dt><dd class="mono">SAM3 keeps every instance of every prompt (<code>server/run_episode.sbatch</code>), then <code>viz/object_select.py</code> picks the one nearest the ego camera by VGGT metric depth — IoU-0.55 merge across prompts, 5 cm continuity credit. Coverage 81/217 → 217/217 on ep0, 254/255 on ep1.</dd>
-        <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline on the two eyes as a 2-view hoi session, left eye = world, baseline 66.4388 mm. Re-run without <code>--bbox_track</code> (job 160289, 12 min): kept hand-frames 38/28/30% → <b>77/79/79%</b>, per-side starvation gone (ep0 21.9/54.3 → 86.4/67.2), spans converge on 9.3/8.6 cm. Gated on his own <code>used</code>/<code>reproj_err</code>, then held 1 s: both hands 42→88%, 59→90%, 50→92%.</dd>
-        <dt>Render</dt><dd class="mono">viz/full_episode_viz.py (two-panel) · viz/hands3d_multi.py --append-turn (3D) · viz/overlay_sources.py (the two comparison strips) · viz/hold_hands.py (the hold) · caches viz/cache/&lt;ep&gt;_{objsel,hands_mano2_held}.npz</dd>
-        <dt>Not shown</dt><dd class="mono">ep2's object cloud (no depth pass) · episodes 3–79 · HaWoR and stereo hand sources · every chart and table: visualizations only, by request — numbers in the <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">09-03 record</a></dd>
+        <dt>Depth edges</dt><dd class="mono">NEW 09-07 — <code>lift()</code> now drops pixels whose depth gradient exceeds 2 cm/px and erodes the mask 1 px. At a silhouette the depth map ramps from object to background and every pixel on that ramp unprojects into empty space; farthest-point sampling <b>preferentially keeps</b> those, because being far from everything is what FPS selects for. Gradient at the object points runs p50 0.1, p99 2.9, p99.9 9.5 cm/px. Cloud depth span 21.3 → 18.7 cm on ep0, p90 35.4 → 29.4 cm on ep1, with no frame losing its cloud.</dd>
       </dl>
     </div>
     <div>
-      <ul>
-        <li>Previous records: <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">hand source adjudicated</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-all-objects-nearest/">all objects, nearest one</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/">policy rate &amp; SAM 3D</a></li>
-      </ul>
+      <p class="cut"><b>Every number on the slides is recomputed at render time</b> from the caches in <code>viz/cache/</code>; nothing here is transcribed by hand.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: appendix -->
+<section class="slide s-appendix">
+  <h2>Appendix (2) · the hands, and what produced each frame</h2>
+  <div class="cols">
+    <div>
+      <dl class="kv">
+        <dt>Hands</dt><dd class="mono">seungjun's MANO-pipeline, the two eyes as a 2-view hoi session, left eye = world, baseline 66.4388 mm. Re-run <b>without <code>--bbox_track</code></b> (job 160289, 12 min): kept hand-frames 38/28/30% → <b>77/79/79%</b> at an unchanged 5.5 px triangulation error, per-side starvation gone, spans converge on 9.3/8.6 cm. Then gated on his own <code>used</code>/<code>reproj_err</code> and held 1 s across gaps.</dd>
+        <dt>Ego gate</dt><dd class="mono">NEW 09-07 — <code>viz/ego_gate.py</code> drops a hand more than 400 px from both projected stored wrists. The person opposite is 1.6–6.0% of stereo-matched detections; own hands sit <b>66–129 px</b> from the nearest stored wrist, theirs <b>866–1080 px</b>, so one threshold keeps 99–100% of own and cuts 100% of theirs. A poor ruler (~130 px off, being retargeting IK) and an excellent discriminator — it also catches the solver's own misplacements: on-hand 71→78, 72→79, 64→75%.</dd>
+      </dl>
+    </div>
+    <div>
+      <dl class="kv">
+        <dt>No human hand tracking</dt><dd class="mono">Checked 09-07: the Quest emits 26 OpenXR joints per hand (<code>tracking.jsonl</code>) but <b>0 of the 160 released human episodes carry it</b> — both merge manifests name already-converted sources, so the raw stream was consumed by retargeting. It survives only for a 2-episode, 3.6 s pilot on 260812.</dd>
+        <dt>Render</dt><dd class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py <code>--append-turn --obj-suffix _filt_objsel</code> · viz/overlay_sources.py · viz/hold_hands.py · viz/ego_gate.py</dd>
+        <dt>Not shown</dt><dd class="mono">ep2's object cloud · episodes 3–79 · HaWoR and stereo hand sources · charts and tables — numbers in the <a href="/experiments/dpp-bmw/decks/2026-09-03-hand-source-decided/">09-03 record</a></dd>
+      </dl>
+      <p class="cut">Caches: <code>viz/cache/&lt;ep&gt;_{filt_objsel, hands_mano2_held_ego}.npz</code> · earlier records: <a href="/experiments/dpp-bmw/decks/2026-09-02-all-objects-nearest/">all objects</a> · <a href="/experiments/dpp-bmw/decks/2026-09-02-policy-rate-and-sam3d/">policy rate</a></p>
     </div>
   </div>
 </section>
