@@ -97,32 +97,57 @@
 
 <!-- SECTION: method (run it) -->
 <section class="slide s-method">
-  <h2>Run it — paste this</h2>
+  <h2>Run it — on the cluster</h2>
   <div class="band">
-<pre><i># 0 · every line below runs from here; the cluster key is passphrase-locked</i>
+<pre><i># 0 · rlwrld-1 is a login node and takes sbatch directly
+#     (slurm-master routes through alindev, which is usually down)</i>
+ssh rlwrld-1
+cd /virtual_lab/sjw_alinlab/beomjun/hmd_object_demo
+EP=ep0; IDX=000000; CK=/rlwrld-unified-checkpoints/beomjun
+
+<i># 1 · geometry, ~15 min on one GPU: frames → VGGT depth → SAM3 masks</i>
+sbatch --job-name=frontier_hmd_episode_geometry_depth_and_masks_${EP}_${IDX} \
+  --export=ALL,MODEL_OUTPUT_DIR=$CK/frontier_$EP,EP=$EP,IDX=$IDX run_episode.sbatch
+
+<i># 2 · hands, ~15 min: seungjun's MANO solver with --bbox_track OFF
+#     (builds its own 2-view hoi sessions for ep0/ep1/ep2 from the mirrored tree)</i>
+sbatch --job-name=frontier_hmd_seungjun_mano_no_bbox_track_retriangulate_ep0_ep1_ep2 \
+  --export=ALL,MODEL_OUTPUT_DIR=$CK/frontier_mano_notrack run_mano_notrack.sbatch
+
+<i># 3 · verify (SLURM mails END,FAIL to bullbum1126@kaist.ac.kr — do not poll)</i>
+squeue -u beomjun
+ls -l $EP/vggt/vggt.npz $EP/sam3_multi/masks_multi.npz
+ls -l mano_sessions/frontier_notrack/$EP/processed/hand_pose_solver/joints_m.npy
+cat  mano_sessions/frontier_notrack/compare.json          <i># tracked vs untracked support</i></pre>
+  </div>
+  <p class="footnote">both sbatch files are staged in that directory · job names ≥50 chars and <code>MODEL_OUTPUT_DIR</code> are mandatory, or the submit plugin refuses before queueing</p>
+</section>
+
+<!-- SECTION: method (cpu half) -->
+<section class="slide s-method">
+  <h2>The CPU half — and why it is not on the cluster</h2>
+  <div class="band">
+<pre><i># The two jobs above write depth, masks and MANO joints. Everything after that is
+# CPU-only seconds: object selection, hand post-processing, the work surface, clips.
+# It does NOT run on the cluster yet — probed 09-08:</i>
+#
+#   envs/{point-policy, sam3, vggt_omega, hawor}   numpy ok · cv2 ok · matplotlib ok
+#                                                  <b>pyarrow MISSING in all four</b>
+#   ffmpeg                                         /usr/bin/ffmpeg, present
+#
+<i># The LeRobot camera poses come out of a parquet, so pyarrow is the one blocker.
+# Either install it once and stage viz/ …</i>
+/sjw_alinlab2/home/beomjun/miniconda3/envs/point-policy/bin/pip install pyarrow
+
+<i># … or pull the two files to the Mac and run the CPU half there (unchanged today):</i>
+W=/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo; EP=ep0
 cd /Users/beomjun/claude-code-rc/BMW-Frontier
 export SSH_AUTH_SOCK=$(server/ssh-agent-sock.sh)
-W=/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo; EP=ep0; IDX=000000
-
-<i># 1 · GPU, ~15 min: frames → VGGT depth → SAM3 masks</i>
-ssh rlwrld-1 "sbatch --job-name=frontier_hmd_episode_geometry_depth_and_masks_${EP}_${IDX} \
-  --export=ALL,MODEL_OUTPUT_DIR=/rlwrld-unified-checkpoints/beomjun/frontier_$EP,EP=$EP,IDX=$IDX $W/run_episode.sbatch"
-
-<i># 2 · pull the two files it wrote</i>
 mkdir -p "pull$W" &amp;&amp; ssh rlwrld-1 "cd $W &amp;&amp; tar cf - $EP/vggt/vggt.npz $EP/sam3_multi/masks_multi.npz" | tar xf - -C "pull$W"
-
-<i># 3 · GPU: seungjun's solver without --bbox_track, then pull + convert + render</i>
-ssh rlwrld-1 "sbatch --job-name=frontier_hmd_seungjun_mano_no_bbox_track_retriangulate_ep0_ep1_ep2 \
-  --export=ALL,MODEL_OUTPUT_DIR=/rlwrld-unified-checkpoints/beomjun/frontier_mano_notrack $W/run_mano_notrack.sbatch"
-viz/run_mano_render.sh
-<i># 4 · local, seconds: object cloud, hand post-processing, surface, clips</i>
-viz/run_episode_local.sh $EP $IDX --hands mano
-.venv/bin/python viz/tabletop.py   --tag $EP
-.venv/bin/python viz/hold_hands.py --tag $EP --src _hands_mano2 &amp;&amp; .venv/bin/python viz/ego_gate.py --tag $EP --src _hands_mano2_held
-.venv/bin/python viz/hands3d_multi.py --eps $EP --preset right-front --tabletop --dpi 170 --panel-h 760 \
-  --hands-suffix _hands_mano2_held_ego --obj-suffix _filt_objsel --out viz/out_bmwstyle/$EP.mp4</pre>
+viz/run_mano_render.sh                                    <i># pull + convert + render, all episodes</i>
+viz/run_episode_local.sh $EP 000000 --hands mano           <i># one episode end to end</i></pre>
   </div>
-  <p class="footnote">the sbatch files are already staged in <code>$W</code> — re-upload with <code>cat server/X.sbatch | ssh rlwrld-1 "cat &gt; $W/X.sbatch"</code> after editing them</p>
+  <p class="footnote">every stage, its script and its output are on the previous slide · full map, cache formats and per-view commands in <code>BMW-Frontier/README.md</code></p>
 </section>
 
 <!-- SECTION: appendix -->
