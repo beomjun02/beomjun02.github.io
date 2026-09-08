@@ -49,12 +49,23 @@
    "project": "3d-wam",
    "date": "2026-09-08",
    "slug": "auxiliary-campaign",
-   "format": "deck",
-   "status": "done",
+   "format": "log",
+   "status": "running",
    "updated": "2026-09-08",
-   "title": "What improves a point-flow world model: contact, kinematics, or neither? (deck #21)",
+   "title": "Contact identity buys interaction, robot co-training buys accuracy, added structure costs both",
+   "path": "3d-wam/logs/2026-09-08-auxiliary-campaign/",
+   "tldr": "Eleven arms from scratch on one byte-identical rig, each one variable against an identically trained control, each read on three benchmarks and presented ARM-MAJOR: 5 s open-loop rollout, GR-1 closed loop, DexJoCo. Matched at ckpt_0020000 because a 6 h wall-clock cap truncated three arms. Zero predictor 18.99 cm. A5 Sharpa 25 % best open loop (16.32 cm); E2 partner identity best closed loop (median 12.86 cm vs the control's 17.37) and it won the same comparison independently at 30k on the older code path; A5 also lowest OMWC (0.513). Both structural arms cost accuracy (E3 -0.27, A3 -1.70) and A2 -- the object-motion auxiliary HumanEgo credits with +17.5 points -- is null here (-0.09), which is a controlled cross-check of a published claim on a different state representation. Caveats carried in the verdict: n = 3 per arm, E6 and E1 each had an episode diverge past 90 cm, and success is 0/3 everywhere. GR-1 was re-run after removing a MANO->Fourier translation layer from the decode so the robot's own 12 links are the part vocabulary. DexJoCo is an explicit not-built column."
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-09-08",
+   "slug": "auxiliary-campaign",
+   "format": "deck",
+   "status": "closed",
+   "updated": "2026-09-08",
+   "title": "What improves a point-flow world model (deck #21 · superseded by the log)",
    "path": "3d-wam/decks/2026-09-08-auxiliary-campaign/",
-   "tldr": "Seven arms, one byte-identical rig, read at a MATCHED 30,000-step checkpoint because a 6 h wall-clock cap truncated three of them (E3 at 35,322 steps, E2 at 49,165, A2 near 32,000; E3 and E2 wrote no final weights at all). Zero predictor 18.99 cm ADE on the 5 s autoregressive rollout. A4 Sharpa 10 % co-training is best on accuracy (15.88 cm, +0.67 vs control, delta_avg 49.2 %); E2 partner identity is best on interaction (OMWC 0.484 vs the control's 0.583, -17 %) and its head genuinely learned — entity accuracy on contacting points 5.7 % -> 71.3 %, at contact onset 6.0 % -> 78.6 %; E1 contact sits between (+0.29, OMWC 0.552) and its advantage GROWS with length (+1.23 and OMWC 0.399 at 50k on its own basis). Negative: A2, the object-motion auxiliary imported from HumanEgo — which credits it with +17.5 points, its largest — is null here (-0.20); E3 two-stream -1.11 and A3 conditioning noise -1.43. GR-1 closed loop for E1: 0/3, median final hand-object 19.67 cm, unchanged, because nothing in this campaign addressed reach. Reading: contact identity buys interaction, robot co-training buys accuracy, added structure costs both."
+   "tldr": "Superseded by the experiment log at /experiments/3d-wam/logs/2026-09-08-auxiliary-campaign/. The slide format could not hold eleven arms x three benchmarks: an 8-slide stage with a 6-row table cap forced the results to be split and re-cut repeatedly, and the per-arm clips had nowhere to go. Kept as an archive of the same campaign."
   },
   {
    "project": "3d-wam",

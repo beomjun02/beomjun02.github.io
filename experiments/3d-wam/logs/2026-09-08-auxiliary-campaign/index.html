@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-08 · Auxiliary campaign — 3D-WAM</title>
+<meta name="description" content="Eleven arms on one rig, each read on three benchmarks: 5 s open-loop rollout, GR-1 closed loop, DexJoCo.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/3d-wam/">3d-wam</a><span class="sep">/</span>
+      <span class="here">2026-09-08 · auxiliary campaign</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · 3D-WAM</p>
+    <h1>Contact identity buys interaction, robot co-training buys accuracy, added structure costs both</h1>
+    <p class="lede">Eleven arms trained from scratch on one byte-identical rig, each one variable against an
+      identically trained control, and each read on three benchmarks: the 5-second open-loop rollout on the
+      human hand&ndash;object corpora, the GR-1 closed loop, and DexJoCo.</p>
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-09-07 → 09-08</dd></div>
+      <div><dt>Outcome</dt><dd>A5 · 25 % Sharpa co-training best open loop (16.32 cm) · E2 · partner identity best closed loop (12.86 cm)</dd></div>
+      <div><dt>Env</dt><dd class="mono">iclr2027-gpu · 1×H100/arm · robocasa GR-1 tabletop</dd></div>
+      <div><dt>Basis</dt><dd class="mono">matched ckpt_0020000 · zero predictor 18.99 cm</dd></div>
+      <div><dt>Related work</dt><dd class="mono"><a href="/experiments/3d-wam/#related">paper draft §2</a> · nine systems</dd></div>
+    </dl>
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><b>E2 · partner identity</b> gets the robot closest &mdash; median 12.86 cm against the
+      control's 17.37 cm &mdash; and won the same comparison independently at a
+      30k checkpoint on the older code path. <b>A5 · 25 % Sharpa co-training</b> is best open loop at
+      16.32 cm, and <b>E5 · continuous correspondence</b> has the lowest object-motion-without-contact
+      at 0.503. Both structural additions (E3, A3) cost accuracy, and the object-motion
+      auxiliary that HumanEgo credits with +17.5 points is null here.
+      <b>Read every closed-loop number with three caveats:</b> n = 3 per arm, so each median is fragile;
+      E6 and E1 each had one episode diverge past 90 cm, which a median hides entirely; and success is
+      0/3 everywhere &mdash; no arm completes the task.</p>
+    </div>
+  </div>
+</header>
+<main>
+<section>
+  <div class="wrap">
+    <span class="n">01</span><h2>Control</h2>
+    <p class="sub">No change. The reference every other arm is read against.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.63 cm</td><td>zero 18.99 &middot; vs zero +1.36 &middot; vs control +0.00</td></tr>
+        <tr><td>OMWC</td><td>0.677</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>47.1 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>39.6 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 17.37 cm</td><td>episodes 11.2, 17.4, 29.8</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/base_o6p512_1g_heldout.gif" alt="Control &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>Control &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/base_o6p512_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>Control &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">02</span><h2>E1 · contact flag + head</h2>
+    <p class="sub">A frame-0 contact flag enters as an additive token embedding, and a head emits one contact logit per point per frame (BCE). Asks the model WHETHER a point is touching.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.40 cm</td><td>zero 18.99 &middot; vs zero +1.59 &middot; vs control +0.23</td></tr>
+        <tr><td>OMWC</td><td>0.633</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>46.2 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>38.4 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 27.13 cm</td><td>episodes 14.8, 27.1, 115.9</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/e1_contact_1g_heldout.gif" alt="E1 · contact flag + head &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>E1 · contact flag + head &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/e1_contact_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>E1 · contact flag + head &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">03</span><h2>E2 · partner identity</h2>
+    <p class="sub">Widens E1's question from whether to WHO: per point and frame, two softmaxes over the partner's entity (scored against each entity's own conditioning vector, so it is native to a variable object count) and the partner's part.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.41 cm</td><td>zero 18.99 &middot; vs zero +1.57 &middot; vs control +0.22</td></tr>
+        <tr><td>OMWC</td><td>0.607</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>47.1 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>38.6 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 12.86 cm</td><td>episodes 19.9, 12.9, 9.3</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/e2c_partner_1g_heldout.gif" alt="E2 · partner identity &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>E2 · partner identity &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/e2c_partner_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>E2 · partner identity &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">04</span><h2>E3 · two-stream blocks</h2>
+    <p class="sub">Hand and object tokens get their own norms, QKV and MLPs while attention stays one joint operation over all tokens. Doubled block parameters at the same FLOPs.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.90 cm</td><td>zero 18.99 &middot; vs zero +1.09 &middot; vs control -0.26</td></tr>
+        <tr><td>OMWC</td><td>0.786</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>48.4 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>40.6 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 24.66 cm</td><td>episodes 24.7, 30.9, 23.9</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/e3_twostream_1g_heldout.gif" alt="E3 · two-stream blocks &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>E3 · two-stream blocks &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/e3_twostream_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>E3 · two-stream blocks &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">05</span><h2>E5 · continuous correspondence</h2>
+    <p class="sub">E2 with the 34-way part CLASS replaced by a 3-D regression of the partner's canonical offset. Tests ManiDext's finding that continuous correspondence beats discrete part labels. <b>Open loop read at ckpt_0019983</b>, 17 steps short of the others: the 2.7 h wall-clock cap stopped it before 20,000.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>16.59 cm</td><td>zero 18.99 &middot; vs zero +2.40 &middot; vs control +1.04</td></tr>
+        <tr><td>OMWC</td><td>0.503</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>44.8 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>34.9 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 18.65 cm</td><td>episodes 24.5, 15.5, 18.7</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/e5_corresp_1g_heldout.gif" alt="E5 · continuous correspondence &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>E5 · continuous correspondence &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/e5_corresp_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>E5 · continuous correspondence &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">06</span><h2>E6 · E1 + E2 together</h2>
+    <p class="sub">Both contact mechanisms at once. They won on different axes alone; this asks whether the gains compose or overlap.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.10 cm</td><td>zero 18.99 &middot; vs zero +1.88 &middot; vs control +0.53</td></tr>
+        <tr><td>OMWC</td><td>0.605</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>46.3 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>37.7 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 17.39 cm</td><td>episodes 17.4, 16.3, 94.1</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/e6_e1e2_1g_heldout.gif" alt="E6 · E1 + E2 together &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>E6 · E1 + E2 together &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/e6_e1e2_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>E6 · E1 + E2 together &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">07</span><h2>A2 · object-motion auxiliary</h2>
+    <p class="sub">Each object patch predicts its own entity's rigid motion from frame 0 as (6-D rotation, translation). Imported from HumanEgo, which credits this objective with +17.5 points.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.54 cm</td><td>zero 18.99 &middot; vs zero +1.45 &middot; vs control +0.09</td></tr>
+        <tr><td>OMWC</td><td>0.680</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>46.8 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>38.0 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 13.56 cm</td><td>episodes 22.3, 11.6, 13.6</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/a2_objmotion_1g_heldout.gif" alt="A2 · object-motion auxiliary &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>A2 · object-motion auxiliary &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/a2_objmotion_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>A2 · object-motion auxiliary &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">08</span><h2>A3 · conditioning-frame noise</h2>
+    <p class="sub">The frame-0 conditioning state is noised (sigma up to ~1 cm). Targets the train/deploy gap: both benchmarks replan from the model's own previous prediction, training never does.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>19.33 cm</td><td>zero 18.99 &middot; vs zero -0.35 &middot; vs control -1.70</td></tr>
+        <tr><td>OMWC</td><td>0.688</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>44.2 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>38.8 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 31.62 cm</td><td>episodes 20.3, 31.6, 33.6</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/a3_condnoise_1g_heldout.gif" alt="A3 · conditioning-frame noise &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>A3 · conditioning-frame noise &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/a3_condnoise_1g_gr1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>A3 · conditioning-frame noise &middot; GR-1 PnPCanToBowl &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">09</span><h2>A4 · 10 % Sharpa co-training</h2>
+    <p class="sub">10 % of sampled chunks come from Sharpa-retargeted robot-hand episodes.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.42 cm</td><td>zero 18.99 &middot; vs zero +1.57 &middot; vs control +0.21</td></tr>
+        <tr><td>OMWC</td><td>0.677</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>47.4 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>40.2 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 21.40 cm</td><td>episodes 21.4, 21.5, 13.6</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/a4_sharpa10_1g_heldout.gif" alt="A4 · 10 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>A4 · 10 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">10</span><h2>A5 · 25 % Sharpa co-training</h2>
+    <p class="sub">The dose-response point: if co-training behaves like more data rather than a new domain, the gain should keep rising with the robot fraction.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>16.32 cm</td><td>zero 18.99 &middot; vs zero +2.67 &middot; vs control +1.31</td></tr>
+        <tr><td>OMWC</td><td>0.513</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>45.9 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>36.8 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 17.93 cm</td><td>episodes 15.8, 17.9, 20.4</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/a5_sharpa25_1g_heldout.gif" alt="A5 · 25 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>A5 · 25 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">11</span><h2>V1 · 10 % VITRA</h2>
+    <p class="sub">10 % in-the-wild VITRA (Ego4D / EPIC / SSv2, partially observed objects at 128 surface points) mixed into the six lab corpora. First run of a corpus built on 2026-09-06.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>value</th><th>reference</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; 5 s AR</td><td>ADE</td><td>17.24 cm</td><td>zero 18.99 &middot; vs zero +1.75 &middot; vs control +0.40</td></tr>
+        <tr><td>OMWC</td><td>0.540</td><td>ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>44.9 %</td><td>higher is better</td></tr>
+        <tr><td>survival</td><td>35.5 %</td><td>higher is better</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td><td>0 / 3</td><td>native-link decode</td></tr>
+        <tr><td>final hand&ndash;object</td><td>median 28.41 cm</td><td>episodes 31.2, 28.4, 20.8</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; installed and inventoried (11 tasks), but no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  <div class="frames">
+    <figure><img src="assets/v1_vitra10_1g_heldout.gif" alt="V1 · 10 % VITRA &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>V1 · 10 % VITRA &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">12</span><h2>Setup</h2>
+    <p class="sub">Shared by every arm; stated once so the sections above carry only what differs.</p>
+    <div class="tbl"><table>
+      <tbody>
+        <tr><td>Rig</td><td class="mono">no history · chunk_stride 4 · ≤6 objects × 512 pts + 2 hands × 512 · k = 8 part-major Hilbert patches · full 3-D attention · v-parameterisation · 16 Euler steps · EMA 0.999 · d512 / depth8 / heads8 ≈ 39.4 M</td></tr>
+        <tr><td>Optimiser</td><td class="mono">AdamW 3e-4, warmup 300, cosine to 0.1× · effective batch 32 · 1×H100 per arm</td></tr>
+        <tr><td>Corpus</td><td class="mono">v2: taco · arctic · dexycb · oakink2 · grab · hot3d · contact-window trim keeps 89.9 % (194,612 of 216,417 chunks)</td></tr>
+        <tr><td>Open loop</td><td class="mono">review/train/iroll.py --mode ar --max-chunks 5 · 10 episodes × 6 datasets · cfg 1.0 · the reporting basis</td></tr>
+        <tr><td>Closed loop</td><td class="mono">wam/eval/gr1_loop.py · PnPCanToBowl × 3 · replan every 4 executed frames · decode = per-link Procrustes + IK on the robot's OWN 12 links</td></tr>
+        <tr><td>Why 20k</td><td class="mono">a 6 h wall-clock cap (not a step target) truncated E3 at 35,322, E2 at 49,165 and A2 near 32,000; 20,000 is the largest checkpoint every arm has</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">13</span><h2>What this changes</h2>
+    <ul class="clean">
+      <li><span class="mk ok">✓</span><span><span class="lt">Contact identity is the closed-loop lever.</span><span class="ld">E2 wins GR-1 twice, on two bases and two code paths. Contact <i>presence</i> alone (E1) is worse than the control there.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">Co-training has not saturated.</span><span class="ld">25 % Sharpa beats 10 %, consistent with the earlier reading that it behaves like more data rather than a new domain. Confounded with more TACO — the retarget is TACO-only.</span></span></li>
+      <li><span class="mk warn">!</span><span><span class="lt">A published auxiliary did not transfer.</span><span class="ld">HumanEgo credits object motion with +17.5 points; it is null here. Their state IS a 6-DoF pose token, so the auxiliary reinforces their native variable; ours is a dense point set where rigid motion is derived.</span></span></li>
+      <li><span class="mk bad">✗</span><span><span class="lt">Nothing has moved the closed loop off zero.</span><span class="ld">0/3 on every arm. Reach remains the binding failure and no arm addressed it.</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">14</span><h2>Next</h2>
+    <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt">Attack reach directly</span><span class="ld">the only thing standing between us and a non-zero GR-1 number</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Build the DexJoCo integration</span><span class="ld">Allegro point sampler + policy-server wiring; the column is empty until then</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Budget steps, not hours</span><span class="ld">the wall-clock cap has silently truncated four arms across two nights</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">More GR-1 episodes</span><span class="ld">n = 3 cannot separate arms whose medians differ by a few centimetres</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">15</span><h2>Artifacts &amp; repro</h2>
+    <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt">Configs</span><span class="ld" class="mono">configs/{base_o6p512,e1_contact,e2c_partner,e3_twostream,e5_corresp,e6_e1e2,a2_objmotion,a3_condnoise,a4_sharpa10,a5_sharpa25,v1_vitra10}_1g.yaml</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Harvest</span><span class="ld">review/auto/matrix_0908.json · scripts/matrix.py</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Related work</span><span class="ld">nine systems read in detail — <a href="/experiments/3d-wam/#related">paper draft §2</a></span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Superseded</span><span class="ld">deck #21 (2026-09-08-auxiliary-campaign) — same campaign in the slide format, kept as an archive</span></span></li>
+    </ul>
+  </div>
+</section>
+</main>
+</body>
+</html>
