@@ -125,29 +125,21 @@ cat  mano_sessions/frontier_notrack/compare.json          <i># tracked vs untrac
 
 <!-- SECTION: method (cpu half) -->
 <section class="slide s-method">
-  <h2>The CPU half — and why it is not on the cluster</h2>
+  <h2>Then: caches and clips — three commands</h2>
   <div class="band">
-<pre><i># The two jobs above write depth, masks and MANO joints. Everything after that is
-# CPU-only seconds: object selection, hand post-processing, the work surface, clips.
-# It does NOT run on the cluster yet — probed 09-08:</i>
-#
-#   envs/{point-policy, sam3, vggt_omega, hawor}   numpy ok · cv2 ok · matplotlib ok
-#                                                  <b>pyarrow MISSING in all four</b>
-#   ffmpeg                                         /usr/bin/ffmpeg, present
-#
-<i># The LeRobot camera poses come out of a parquet, so pyarrow is the one blocker.
-# Either install it once and stage viz/ …</i>
-/sjw_alinlab2/home/beomjun/miniconda3/envs/point-policy/bin/pip install pyarrow
-
-<i># … or pull the two files to the Mac and run the CPU half there (unchanged today):</i>
-W=/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo; EP=ep0
-cd /Users/beomjun/claude-code-rc/BMW-Frontier
+<pre>cd /Users/beomjun/claude-code-rc/BMW-Frontier
 export SSH_AUTH_SOCK=$(server/ssh-agent-sock.sh)
-mkdir -p "pull$W" &amp;&amp; ssh rlwrld-1 "cd $W &amp;&amp; tar cf - $EP/vggt/vggt.npz $EP/sam3_multi/masks_multi.npz" | tar xf - -C "pull$W"
-viz/run_mano_render.sh                                    <i># pull + convert + render, all episodes</i>
-viz/run_episode_local.sh $EP 000000 --hands mano           <i># one episode end to end</i></pre>
+
+viz/run_episode_local.sh ep0 000000
+<i>#   1/6 hands       2/6 object cloud   3/6 work surface
+#   4/6 hold + ego gate                 5/6 two-panel clip   6/6 3D side view
+#   -> viz/out_bmwstyle/ep0_2panel_h264.mp4
+#      viz/out_bmwstyle/ep0_side_h264.mp4
+
+# all three episodes at once, pulling the solver output first:</i>
+viz/run_mano_render.sh</pre>
   </div>
-  <p class="footnote">every stage, its script and its output are on the previous slide · full map, cache formats and per-view commands in <code>BMW-Frontier/README.md</code></p>
+  <p class="footnote">runs on the Mac — the cluster envs lack only <code>pyarrow</code>, which the camera poses need; one <code>pip install</code> moves this to the cluster too</p>
 </section>
 
 <!-- SECTION: appendix -->
