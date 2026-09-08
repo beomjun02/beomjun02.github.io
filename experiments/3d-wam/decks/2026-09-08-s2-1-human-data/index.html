@@ -121,15 +121,15 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Corpus thin on target skills: add HOI4D, re-weight the mix</p>
+  <p class="thesis"><b>[TL;DR]</b> Seven datasets, one gravity frame, table at z = 0</p>
   <ul>
-    <li>8 datasets profiled: tasks, objects, size</li>
-    <li>HOI4D matches best, not on disk</li>
-    <li>Decide: mixture shares, HOI4D download</li>
+    <li>7 datasets final; VITRA dropped</li>
+    <li>HOI4D converted: 9 of 16 categories</li>
+    <li>Decide: mixture shares</li>
   </ul>
   <div class="band">
     <figure><img src="assets/hero_size_relevance.png" alt="Two bar charts: hours of 10 Hz motion per dataset, and the share of episodes whose text is a GR-1 or DexJoCo target skill">
-      <figcaption>Size in hours of 10 Hz motion (left) and share of episodes whose text is a GR-1 / DexJoCo target skill (right); HOI4D from its task table, counts pending download</figcaption></figure>
+      <figcaption>Size in hours of 10 Hz motion (left) and share of episodes whose text is a GR-1 / DexJoCo target skill (right); HOI4D now measured on its 1,683 converted episodes</figcaption></figure>
   </div>
   <p class="footnote">sources: v2 manifests server-mirror/pull4/manifests* · VITRA v2 manifest (Mac) · HOI4D task table github leolyliu/HOI4D-Instructions · HOI4D paper arXiv 2203.01577</p>
 </section>
@@ -158,6 +158,39 @@
   <p class="footnote">GR-1 = robocasa task families PnP / open-close / press-turn · DexJoCo = its 11 tasks (pick_bucket, microwave, hanoi, assembly, photograph, unlock_ipad, click_mouse, fold_glasses, hammer_nail, pinch_tongs, water_plant) · full regexes in the appendix</p>
 </section>
 
+<!-- SECTION: method (2) · gravity frame + handedness -->
+<section class="s-method">
+  <h2>Method (2): one gravity frame, and who is actually working</h2>
+  <p class="thesis">Every dataset put z-up with its table at z = 0, from its own evidence</p>
+  <ul>
+    <li>Ground truth where it exists</li>
+    <li>Fitted only where it does not</li>
+    <li>No plane drawn when unmeasured</li>
+  </ul>
+  <div class="band">
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>dataset</th><th>table from</th><th class="num">residual</th></tr></thead>
+      <tbody>
+        <tr><td>DexYCB</td><td>AprilTag board (calibration)</td><td class="num">0.0 mm</td></tr>
+        <tr><td>GRAB</td><td>table pose shipped per sequence</td><td class="num">0.0 cm</td></tr>
+        <tr><td>TACO / ARCTIC / OakInk2</td><td>resting-object plane, checked against frame 0</td><td class="num">&le; 0.2 cm</td></tr>
+        <tr><td>HOT3D</td><td>none &mdash; egocentric, many surfaces</td><td class="num">z-up only</td></tr>
+        <tr class="pend"><td>HOI4D</td><td>labelled scene cloud (table class)</td><td class="num">fitting<br>2026-09-09</td></tr>
+      </tbody></table><figcaption>Table source per dataset and the residual of the lowest resting object after the fix</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>dataset</th><th class="num">two hands active</th><th class="num">one hand</th></tr></thead>
+      <tbody>
+        <tr><td>ARCTIC / HOT3D / TACO</td><td class="num">98&ndash;99 %</td><td class="num">1&ndash;2 %</td></tr>
+        <tr><td>OakInk2</td><td class="num">91.8 %</td><td class="num">8.2 %</td></tr>
+        <tr><td>GRAB</td><td class="num">51.3 %</td><td class="num">47.0 %</td></tr>
+        <tr><td>HOI4D</td><td class="num">7.7 %</td><td class="num">91.4 %</td></tr>
+        <tr><td>DexYCB</td><td class="num">0.0 %</td><td class="num">99.8 %</td></tr>
+        <tr><td>mixture, chunk-weighted</td><td class="num">80.1 %</td><td class="num">19.6 %</td></tr>
+      </tbody></table><figcaption>Hands that actually touch an object, not hands that are annotated; requiring the weaker hand at &ge; 50 % engagement cuts the two-hand share to 68.6 %</figcaption></figure>
+  </div>
+  <p class="footnote">Method: per episode an affine <span class="mono">p&#8320; = R(p + origin) + T</span> with z up and the table at z = 0, shipped as a sidecar the loader reads; an episode that fails its check keeps the old hand-centred frame rather than a guessed plane. DexYCB's rotation independently confirmed by within-episode coplanarity (tilt &le; 1.8&deg;). GRAB's table moves per sequence (0.73&ndash;1.18 m), which is why a per-subject constant failed. Activity = &ge; 5 frames of 1 cm point contact &middot; full numbers in <span class="mono">season2/handedness/</span></p>
+</section>
+
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (1/8): GRAB · captions only, no interpretation -->
 <section class="slide s-viz fn2">
   <h2>Data (1/8): GRAB</h2>
@@ -175,11 +208,11 @@
         <tr><td>GR-1-relevant %</td><td class="num">65.3</td></tr>
         <tr><td>DexJoCo-relevant %</td><td class="num">67.2</td></tr>
       </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
-        <figure class="clip"><img src="assets/grab__grab_s10_bowl_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the bowl · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
-    <figure class="clip"><img src="assets/grab__grab_s10_cup_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the cup · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>no RGB exists (mocap-only dataset) · mesh render instead, lands 23:30</span></div><figcaption>Raw video · GRAB · mesh render instead of RGB · lands 2026-09-08 23:30 KST</figcaption></figure>
+        <figure class="clip"><img src="assets/grab__grab_s10_bowl_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the bowl · GT point set &middot; z-up; plane pending re-render &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_cup_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the cup · GT point set &middot; z-up; plane pending re-render &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>no RGB exists (mocap-only dataset)</span></div><figcaption>Raw video · GRAB · none exists: GRAB is mocap-only</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (2/8): OakInk2 · captions only, no interpretation -->
@@ -203,7 +236,7 @@
     <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__235ac519d522ceb4c947__2023-04-27-20-30-50__human.gif" alt="OakInk2: ground-truth point set, Pour something into the plate and grip something out of the plate." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__235ac519d522ceb4c947__2023-04-27-20-30-50__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour something into the plate and grip something out of the plate · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 5 objects</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · OakInk2 · RGB not on disk · unestimated</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (3/8): TACO · captions only, no interpretation -->
@@ -227,7 +260,7 @@
     <figure class="clip"><img src="assets/taco__taco_put_in__bowl__pan_20230926_014__human.gif" alt="TACO: ground-truth point set, put in the pan with the bowl" loading="lazy" style="background:url(assets/taco__taco_put_in__bowl__pan_20230926_014__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the pan with the bowl · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · TACO · RGB not on disk · unestimated</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (4/8): ARCTIC · captions only, no interpretation -->
@@ -251,7 +284,7 @@
     <figure class="clip"><img src="assets/arctic__dataset_s01_ketchup_grab_01__human.gif" alt="ARCTIC: ground-truth point set, grab the ketchup" loading="lazy" style="background:url(assets/arctic__dataset_s01_ketchup_grab_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · grab the ketchup · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · ARCTIC · RGB not on disk · unestimated</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (5/8): DexYCB · captions only, no interpretation -->
@@ -275,7 +308,7 @@
     <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_141841_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the master chef can" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_141841_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the master chef can · GT point set &middot; season-2 frame, table plane z = 0 &middot; 19 frames @ 10 Hz · 1 hand, 4 objects</figcaption></figure>
     <figure class="clip"><video src="assets/raw_dexycb__20200709_142853_932122062010.mp4" poster="assets/raw_dexycb__20200709_142853_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the tomato soup can"></video><figcaption>DexYCB · grasp the tomato soup can · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (6/8): HOT3D · captions only, no interpretation -->
@@ -299,37 +332,36 @@
     <figure class="clip"><img src="assets/hot3d__P0001_15c4300c__human.gif" alt="HOT3D: ground-truth point set, interact with the potato masher and the can tomato sauce" loading="lazy" style="background:url(assets/hot3d__P0001_15c4300c__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the potato masher and the can tomato sauce · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
     <figure class="clip"><video src="assets/raw_hot3d__P0001_10a27bf7.mp4" poster="assets/raw_hot3d__P0001_10a27bf7.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the mug white and the keyboard"></video><figcaption>HOT3D · P0001_10a27bf7 · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (7/8): HOI4D · captions only, no interpretation -->
 <section class="slide s-viz fn2">
   <h2>Data (7/8): HOI4D</h2>
-  <p class="thesis ctx">Egocentric RGB-D; pick-and-place for most categories; not yet on disk</p>
+  <p class="thesis ctx">Egocentric RGB-D, converted; pick-and-place dominant; 9 of 16 categories</p>
   <div class="vizgrid">
-    <figure><img src="assets/pie_task_hoi4d.png" alt="HOI4D: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets · weights = the official task table (one unit per category × task), sequence counts pending download</figcaption></figure>
-    <figure><img src="assets/pie_obj_hoi4d.png" alt="HOI4D: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects · weights = the official task table (one unit per category × task), sequence counts pending download</figcaption></figure>
+    <figure><img src="assets/pie_task_hoi4d.png" alt="HOI4D: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text &middot; 1,683 converted episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_hoi4d.png" alt="HOI4D: object categories, pie chart" loading="lazy"><figcaption>Object categories &middot; the 9 with released hand pose</figcaption></figure>
     <figure class="tb"><table class="fact">
       <thead><tr><th>quantity</th><th class="num">HOI4D</th></tr></thead>
       <tbody>
-        <tr><td>episodes</td><td class="num">4,000 (paper)</td></tr>
-        <tr><td>hours @ 10 Hz</td><td class="num">22.2 (paper)</td></tr>
-        <tr class="pend"><td>chunks (T = 10, stride 1, before validity)</td><td class="num">pending<br>2026-09-09</td></tr>
-        <tr><td>unique texts</td><td class="num">56 (task-table entries)</td></tr>
-        <tr><td>GR-1-relevant %</td><td class="num">83.9</td></tr>
-        <tr><td>DexJoCo-relevant %</td><td class="num">92.9</td></tr>
-      </tbody></table><figcaption>Size from the paper (4,000 sequences × 20 s), relevance from the task table</figcaption></figure>
-        <figure class="phold"><div class="pbox"><b>WILL UPDATE · 3D point set</b><span>after conversion · 2026-09-09</span></div><figcaption>3D point set · HOI4D · after conversion · 2026-09-09</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE · 3D point set</b><span>after conversion · 2026-09-09</span></div><figcaption>3D point set · HOI4D · after conversion · 2026-09-09</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB archive downloading now, 21.7 GB, lands 2026-09-09</span></div><figcaption>Raw video · HOI4D · RGB archive downloading (21.7 GB) · lands 2026-09-09</figcaption></figure>
+        <tr><td>episodes converted</td><td class="num">1,683</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">8.1</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">277,397</td></tr>
+        <tr><td>categories with hand pose</td><td class="num">9 of 16</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">86.8</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">96.7</td></tr>
+      </tbody></table><figcaption>Converted 2026-09-09 &middot; hand reprojection 0.65 px &middot; 249,094 chunks after validity</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE &middot; 3D point set</b><span>after the scene-table frame fit &middot; 2026-09-09</span></div><figcaption>3D point set &middot; HOI4D &middot; held until its gravity frame is fitted from the labelled scene cloud</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE &middot; raw video</b><span>RGB archive on disk (23.3 GB) &middot; 2026-09-09</span></div><figcaption>Raw video &middot; HOI4D &middot; RGB archive downloaded, clips not yet cut</figcaption></figure>
   </div>
-  <p class="footnote">source: github leolyliu/HOI4D-Instructions definitions/task/task_definitions.csv · arXiv 2203.01577 · not on disk · one unit per (category, task) of the task table, no manifest yet · counting = appendix A0 · buckets = A1</p>
+  <p class="footnote">⚠️ The released Hand_pose archive covers only 9 of 16 categories (right hand 464,909 files, left hand 32,367, Chair only). Storage Furniture, Safe, Bucket, Scissors, Pliers, Lamp and Stapler have object poses but NO hands (1,253 sequences) — that removes every drawer/door open-close source and the DexJoCo bucket analogue. Undocumented on the project page. Recovery plan: run HaWoR on the RGB we already hold &middot; counting = appendix A0</p>
 </section>
 
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (8/8): VITRA · captions only, no interpretation -->
 <section class="slide s-viz fn2">
-  <h2>Data (8/8): VITRA</h2>
-  <p class="thesis ctx">In-the-wild egocentric video; rich language; partial objects</p>
+  <h2>Data (8/8): VITRA &mdash; excluded</h2>
+  <p class="thesis ctx">Dropped from the corpus: object points too noisy to teach dynamics</p>
   <div class="vizgrid">
     <figure><img src="assets/pie_task_vitra.png" alt="VITRA: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 99,999 episodes</figcaption></figure>
     <figure><img src="assets/pie_obj_vitra.png" alt="VITRA: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
@@ -343,11 +375,11 @@
         <tr><td>GR-1-relevant %</td><td class="num">66.5</td></tr>
         <tr><td>DexJoCo-relevant %</td><td class="num">68.5</td></tr>
       </tbody></table><figcaption>Size and relevance · VITRA v2 manifest (Mac)</figcaption></figure>
-        <figure class="clip"><img src="assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.gif" alt="VITRA: ground-truth point set, pick up the cup" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the cup · GT point set, converted v2 corpus, 16 frames @ 10 Hz · 2 hands, 2 objects · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
-    <figure class="clip"><img src="assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.gif" alt="VITRA: ground-truth point set, pick up the can from the drawer" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the can from the drawer · GT point set, converted v2 corpus, 16 frames @ 10 Hz · 2 hands, 2 objects · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
+        <figure class="clip"><img src="assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.gif" alt="VITRA: ground-truth point set, pick up the cup" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the cup · 16 frames @ 10 Hz · partial 128-point objects; hand never within 5 cm of one</figcaption></figure>
+    <figure class="clip"><img src="assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.gif" alt="VITRA: ground-truth point set, pick up the can from the drawer" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the can from the drawer · 16 frames @ 10 Hz · partial 128-point objects; hand never within 5 cm of one</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>source videos (Ego4D / EPIC / SSv2) not on disk · unestimated</span></div><figcaption>Raw video · VITRA · source videos not on disk · unestimated</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: results (1) · size vs relevance -->
@@ -374,12 +406,12 @@
       <tbody>
         <tr><td>DexYCB</td><td class="num">0.7</td><td class="num">100.0</td><td class="num">100.0</td><td>mocap, full objects</td></tr>
         <tr><td>HOT3D</td><td class="num">7.8</td><td class="num">0.0</td><td class="num">0.0</td><td>Aria, tracked objects, no text</td></tr>
-        <tr><td>HOI4D</td><td class="num">22.2</td><td class="num">83.9</td><td class="num">92.9</td><td>annotated RGB-D, right hand</td></tr>
+        <tr><td>HOI4D</td><td class="num">8.1</td><td class="num">86.8</td><td class="num">96.7</td><td>GT objects, 9/16 categories</td></tr>
         <tr><td>VITRA</td><td class="num">40.5</td><td class="num">66.5</td><td class="num">68.5</td><td>monocular hands, partial objects</td></tr>
       </tbody></table>
-      <figcaption>The rest · HOI4D hours from the paper, relevance from its task table, sequence counts pending download</figcaption></figure>
+      <figcaption>The rest &middot; HOI4D measured on its 1,683 converted episodes</figcaption></figure>
   </div>
-  <p class="footnote">hours = Σ n_frames ÷ 10 Hz from the v2 manifests · HOI4D = 4,000 sequences × 20 s (paper) · HOT3D: no task text, 0 by construction · buckets A1 · counting A0</p>
+  <p class="footnote">hours = &Sigma; n_frames &divide; 10 Hz from the all-object manifests &middot; HOT3D: no task text, 0 by construction &middot; VITRA dropped (monocular hands, 128-point partial objects) &middot; buckets A1 &middot; counting A0</p>
 </section>
 
 <!-- SECTION: results (2) · ranking -->
@@ -422,11 +454,7 @@
     <figure class="tb"><table class="mix">
       <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
       <tbody>
-        <tr><td>GRAB</td><td class="num">21.0</td><td class="num">16.7</td><td class="num">12.3</td></tr>
-        <tr><td>OakInk2</td><td class="num">48.6</td><td class="num">25.4</td><td class="num">18.6</td></tr>
-        <tr><td>TACO</td><td class="num">16.7</td><td class="num">14.9</td><td class="num">10.9</td></tr>
-        <tr><td>ARCTIC</td><td class="num">11.0</td><td class="num">12.1</td><td class="num">8.9</td></tr>
-      </tbody></table></figure>
+        <tr><td>OakInk2</td><td class="num">285,075</td><td class="num">21.0</td></tr><tr><td>HOI4D</td><td class="num">277,397</td><td class="num">20.7</td></tr><tr><td>DexYCB</td><td class="num">15,432</td><td class="num">15.5</td></tr><tr><td>GRAB</td><td class="num">123,485</td><td class="num">13.8</td></tr><tr><td>TACO</td><td class="num">98,260</td><td class="num">12.3</td></tr><tr><td>ARCTIC</td><td class="num">64,514</td><td class="num">10.0</td></tr><tr><td>HOT3D</td><td class="num">277,905</td><td class="num">6.6</td></tr></tbody></table></figure>
     <figure class="tb"><table class="mix">
       <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
       <tbody>
@@ -544,14 +572,14 @@
 <section class="slide s-viz fn2">
   <h2>Appendix A4 · More clips (1/5): GRAB · OakInk2</h2>
   <div class="vizgrid more">
-        <figure class="clip"><img src="assets/grab__grab_s10_mug_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the mug" loading="lazy" style="background:url(assets/grab__grab_s10_mug_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the mug · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
-    <figure class="clip"><img src="assets/grab__grab_s10_bowl_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the bowl · GT point set &middot; z-up, no table plane &middot; 49 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
-    <figure class="clip"><img src="assets/grab__grab_s10_cup_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the cup · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+        <figure class="clip"><img src="assets/grab__grab_s10_mug_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the mug" loading="lazy" style="background:url(assets/grab__grab_s10_mug_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the mug · GT point set &middot; z-up; plane pending re-render &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_bowl_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the bowl · GT point set &middot; z-up; plane pending re-render &middot; 49 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_cup_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the cup · GT point set &middot; z-up; plane pending re-render &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
     <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__7653ff4f86a8707fe7f3__2023-04-27-20-22-16__human.gif" alt="OakInk2: ground-truth point set, Grip sugar cubes into the bowl and pour juice into the bowl." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__7653ff4f86a8707fe7f3__2023-04-27-20-22-16__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Grip sugar cubes into the bowl and pour juice into the bowl · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 5 objects</figcaption></figure>
     <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__8420fa617d0a08081df3__2023-04-27-20-42-15__human.gif" alt="OakInk2: ground-truth point set, Pour and scrape something into the plate." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__8420fa617d0a08081df3__2023-04-27-20-42-15__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour and scrape something into the plate · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 3 objects</figcaption></figure>
     <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__9588d8284630e2f14b82__2023-04-27-20-17-40__human.gif" alt="OakInk2: ground-truth point set, Pour juice into the bowl and stir it with the rod." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__9588d8284630e2f14b82__2023-04-27-20-17-40__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour juice into the bowl and stir it with the rod · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 3 objects</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: appendix A4 (2/5) · viz grid · remaining clips · captions only -->
@@ -565,7 +593,7 @@
     <figure class="clip"><img src="assets/arctic__dataset_s01_box_use_01__human.gif" alt="ARCTIC: ground-truth point set, use the box" loading="lazy" style="background:url(assets/arctic__dataset_s01_box_use_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · use the box · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
     <figure class="clip"><img src="assets/arctic__dataset_s01_capsulemachine_use_01__human.gif" alt="ARCTIC: ground-truth point set, use the capsulemachine" loading="lazy" style="background:url(assets/arctic__dataset_s01_capsulemachine_use_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · use the capsulemachine · GT point set &middot; season-2 frame, table plane z = 0 &middot; 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: appendix A4 (3/5) · viz grid · remaining clips · captions only -->
@@ -579,7 +607,7 @@
     <figure class="clip"><img src="assets/hot3d__P0001_83b755aa__human.gif" alt="HOT3D: ground-truth point set, interact with the mug patterned and the cellphone" loading="lazy" style="background:url(assets/hot3d__P0001_83b755aa__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the mug patterned and the cellphone · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
     <figure class="clip"><img src="assets/hot3d__P0001_8d136980__human.gif" alt="HOT3D: ground-truth point set, interact with the whiteboard eraser and the mug white" loading="lazy" style="background:url(assets/hot3d__P0001_8d136980__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the whiteboard eraser and the mug white · GT point set &middot; z-up, no table plane &middot; 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: appendix A4 (4/5) · viz grid · remaining clips · captions only -->
@@ -593,7 +621,7 @@
     <figure class="clip"><video src="assets/raw_dexycb__20200709_145837_932122062010.mp4" poster="assets/raw_dexycb__20200709_145837_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the pitcher base"></video><figcaption>DexYCB · grasp the pitcher base · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
     <figure class="clip"><video src="assets/raw_dexycb__20200709_150906_932122062010.mp4" poster="assets/raw_dexycb__20200709_150906_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the bowl"></video><figcaption>DexYCB · grasp the bowl · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
   </div>
-  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB and HOT3D have no consistent support surface, so they are shown z-up with NO plane. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
+  <p class="footnote">GT renders in the SEASON-2 FRAME (2026-09-09): per-episode gravity z-up with the table at z = 0, drawn as a translucent plane on DexYCB / TACO / ARCTIC / OakInk2 (object points rest within 1 cm of it). GRAB is now anchored from the table pose it ships per sequence (residual 0.0 cm, all 1,332 episodes) but these clips predate that fit, so no plane is drawn on them yet. HOT3D has no consistent support surface (egocentric, many surfaces) and stays z-up by design. Camera elev 22&deg;/azim &minus;60&deg;, window = up to 50 frames from 5 before the first hand&ndash;object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber</p>
 </section>
 
 <!-- SECTION: appendix A4 (5/5) · viz grid · remaining clips · captions only -->
