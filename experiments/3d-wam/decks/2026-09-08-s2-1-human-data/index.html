@@ -360,6 +360,35 @@
   <p class="footnote">⚠️ The released hand pose covers 9 of 16 categories. Storage Furniture, Safe, Bucket, Scissors, Pliers, Lamp and Stapler have object poses but no hands (1,253 sequences), which removes the drawer/door open-close sources and the DexJoCo bucket analogue. Undocumented upstream. Recovery: HaWoR on the RGB we hold.</p>
 </section>
 
+<!-- SECTION: viz grid (outside the cap) · HOI4D one clip per task family -->
+<section class="slide s-viz">
+  <h2>Data (7/8): HOI4D &mdash; one clip per task</h2>
+  <p class="thesis ctx">The five task families HOI4D actually contains</p>
+  <div class="vizgrid">
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human.gif" alt="HOI4D · pick and place the kettle" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human.jpg) center/contain no-repeat"><figcaption>pick and place &middot; pick and place the kettle</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C7_N16_S59_s02_T2__human.gif" alt="HOI4D · put the bowl in the drawer" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C7_N16_S59_s02_T2__human.jpg) center/contain no-repeat"><figcaption>put in drawer &middot; put the bowl in the drawer</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human.gif" alt="HOI4D · pour water from the kettle into a mug" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human.jpg) center/contain no-repeat"><figcaption>pour &middot; pour water from the kettle into a mug</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C14_N17_S158_s02_T1__human.gif" alt="HOI4D · open and close the trash can" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C14_N17_S158_s02_T1__human.jpg) center/contain no-repeat"><figcaption>open and close &middot; open and close the trash can</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human.gif" alt="HOI4D · cut apple with the knife" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human.jpg) center/contain no-repeat"><figcaption>cut &middot; cut apple with the knife</figcaption></figure>
+  </div>
+  <p class="footnote">7.5 Hz, exact stride 2 &middot; gravity z-up, no table plane (free workspace) &middot; 50 frames = 6.7 s</p>
+</section>
+
+<!-- SECTION: viz grid · raw vs smoothed, same window and camera -->
+<section class="slide s-viz">
+  <h2>HOI4D: raw vs lightly smoothed</h2>
+  <p class="thesis ctx">Same episode, same window, same camera &mdash; only the filter differs</p>
+  <div class="vizgrid">
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human__raw.gif" alt="raw &middot; pick and place the kettle" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human__raw.jpg) center/contain no-repeat"><figcaption>raw &middot; pick and place the kettle</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human__sg5.gif" alt="smoothed &middot; pick and place the kettle &middot; hand peak −3.0 %" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1__human__sg5.jpg) center/contain no-repeat"><figcaption>smoothed &middot; pick and place the kettle &middot; hand peak −3.0 %</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human__raw.gif" alt="raw &middot; pour into a mug" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human__raw.jpg) center/contain no-repeat"><figcaption>raw &middot; pour into a mug</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human__sg5.gif" alt="smoothed &middot; pour into a mug &middot; hand peak −1.8 %" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human__sg5.jpg) center/contain no-repeat"><figcaption>smoothed &middot; pour into a mug &middot; hand peak −1.8 %</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human__raw.gif" alt="raw &middot; cut apple with the knife" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human__raw.jpg) center/contain no-repeat"><figcaption>raw &middot; cut apple with the knife</figcaption></figure>
+    <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human__sg5.gif" alt="smoothed &middot; cut apple with the knife &middot; hand peak −0.5 %" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human__sg5.jpg) center/contain no-repeat"><figcaption>smoothed &middot; cut apple with the knife &middot; hand peak −0.5 %</figcaption></figure>
+  </div>
+  <p class="footnote">Savitzky-Golay over 5 source frames before the stride-2 decimation. On the shipped grid it costs 2&ndash;5 % of median step and at most 3 % of peak speed, while the acceleration correlation goes &minus;0.35 &rarr; &minus;0.19 (hand) and &minus;0.21 &rarr; &minus;0.03 (object).</p>
+</section>
+
 <!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (8/8): VITRA · captions only, no interpretation -->
 <section class="slide s-viz fn2">
   <h2>Data (8/8): VITRA &mdash; excluded</h2>
@@ -626,7 +655,7 @@
     <figure class="clip"><video src="assets/raw_hot3d__P0001_624f2ba9.mp4" poster="assets/raw_hot3d__P0001_624f2ba9.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the bowl and the spoon wooden"></video><figcaption>HOT3D · P0001_624f2ba9 · Aria RGB, 5 s</figcaption></figure>
     <figure class="clip"><video src="assets/raw_hot3d__P0001_83b755aa.mp4" poster="assets/raw_hot3d__P0001_83b755aa.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the mug patterned and the cellphone"></video><figcaption>HOT3D · P0001_83b755aa · Aria RGB, 5 s</figcaption></figure>
     <figure class="clip"><video src="assets/raw_hot3d__P0001_8d136980.mp4" poster="assets/raw_hot3d__P0001_8d136980.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the whiteboard eraser and the mug white"></video><figcaption>HOT3D · P0001_8d136980 · Aria RGB, 5 s</figcaption></figure>
-  <figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human.gif" alt="HOI4D · pour water from the kettle into a mug" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C12_N30_S200_s02_T2__human.jpg) center/contain no-repeat"><figcaption>HOI4D · pour water from the kettle into a mug · 50 frames @ 7.5 Hz</figcaption></figure><figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C14_N17_S158_s02_T1__human.gif" alt="HOI4D · open and close the trash can" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C14_N17_S158_s02_T1__human.jpg) center/contain no-repeat"><figcaption>HOI4D · open and close the trash can · 50 frames @ 7.5 Hz</figcaption></figure><figure><img src="assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human.gif" alt="HOI4D · cut apple with the knife" loading="lazy" style="background:url(assets/hoi4d__hoi4d_ZY20210800001_H1_C13_N12_S179_s03_T4__human.jpg) center/contain no-repeat"><figcaption>HOI4D · cut apple with the knife · 50 frames @ 7.5 Hz</figcaption></figure></div>
+  </div>
   <p class="footnote">raw RGB as decoded: DexYCB allocentric RealSense 640×480 @ 30 fps · HOT3D Aria RGB 640×640 @ 30 fps, last 5 s of each recording (object-pose clock alignment pending, ≈ 3 min rerun)</p>
 </section>
 
