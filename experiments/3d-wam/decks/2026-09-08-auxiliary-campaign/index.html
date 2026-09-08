@@ -154,8 +154,55 @@
         <tr><td>PointWorld ℓ2 at 1 s</td><td>3.00 cm</td><td>zero-shot, held-out real scenes</td><td>movers only, gripper given, 1B params</td></tr>
       </tbody>
     </table>
-  </div></div>
+  </div>
+    <figure><video src="assets/e1_gr1_ep02_pointflow.mp4" autoplay loop muted playsinline preload="metadata"></video>
+      <figcaption>E1 · 30,000 steps · GR-1 closed loop, PnPCanToBowl episode 2 · left: executed in sim · right: the model's prediction at each replan</figcaption></figure>
+  </div>
   <p class="footnote">last two rows share a horizon and a unit, NOT a protocol: PointWorld scores movers only and is handed the gripper trajectory; ours scores every valid point and must generate the hand</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Held-out rollouts (1): DexYCB</h2>
+  <div class="band">
+    <figure><img src="assets/base_o6p512_1g_dexycb_human_s12_c1042_k4.gif" alt="control, DexYCB held-out chunk">
+      <figcaption>control · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · DexYCB held-out</figcaption></figure>
+    <figure><img src="assets/e1_contact_1g_dexycb_human_s12_c1042_k4.gif" alt="E1 contact, DexYCB held-out chunk">
+      <figcaption>E1 contact · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · DexYCB held-out</figcaption></figure>
+  </div>
+  <p class="footnote">viz_vdit_c · ground truth left, generated right within each panel · same scene, same seed, same viewpoint · object orange · right hand green · left hand purple · CFG 1.0, mean of 4 · for the owner to verify</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Held-out rollouts (2): GRAB</h2>
+  <div class="band">
+    <figure><img src="assets/base_o6p512_1g_grab_human_s20_c2617_k4.gif" alt="control, GRAB held-out chunk">
+      <figcaption>control · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · GRAB held-out</figcaption></figure>
+    <figure><img src="assets/e1_contact_1g_grab_human_s20_c2617_k4.gif" alt="E1 contact, GRAB held-out chunk">
+      <figcaption>E1 contact · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · GRAB held-out</figcaption></figure>
+  </div>
+  <p class="footnote">viz_vdit_c · ground truth left, generated right within each panel · same scene, same seed, same viewpoint · object orange · right hand green · left hand purple · CFG 1.0, mean of 4 · for the owner to verify</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Held-out rollouts (3): OakInk2</h2>
+  <div class="band">
+    <figure><img src="assets/base_o6p512_1g_oakink2_human_s336_c7848_k4.gif" alt="control, OakInk2 held-out chunk">
+      <figcaption>control · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · OakInk2 held-out</figcaption></figure>
+    <figure><img src="assets/e1_contact_1g_oakink2_human_s336_c7848_k4.gif" alt="E1 contact, OakInk2 held-out chunk">
+      <figcaption>E1 contact · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · OakInk2 held-out</figcaption></figure>
+  </div>
+  <p class="footnote">viz_vdit_c · ground truth left, generated right within each panel · same scene, same seed, same viewpoint · object orange · right hand green · left hand purple · CFG 1.0, mean of 4 · for the owner to verify</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Held-out rollouts (4): TACO</h2>
+  <div class="band">
+    <figure><img src="assets/base_o6p512_1g_taco_human_s20_c10247_k4.gif" alt="control, TACO held-out chunk">
+      <figcaption>control · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · TACO held-out</figcaption></figure>
+    <figure><img src="assets/e1_contact_1g_taco_human_s20_c10247_k4.gif" alt="E1 contact, TACO held-out chunk">
+      <figcaption>E1 contact · 50,000 steps (8.2 ep) · teacher-forced 1 s chunk · TACO held-out</figcaption></figure>
+  </div>
+  <p class="footnote">viz_vdit_c · ground truth left, generated right within each panel · same scene, same seed, same viewpoint · object orange · right hand green · left hand purple · CFG 1.0, mean of 4 · for the owner to verify</p>
 </section>
 
 <section class="slide s-discuss">
