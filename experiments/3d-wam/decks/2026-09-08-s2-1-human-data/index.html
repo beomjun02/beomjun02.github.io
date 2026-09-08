@@ -89,10 +89,12 @@
   .deck table.mix th,.deck table.mix td{padding:.14em .4em;vertical-align:top}
   .deck table.mix th{white-space:nowrap}
   .deck table.mix td:first-child{font-weight:700}
-  .deck table.mix th:nth-child(1){width:20%}
-  .deck table.mix th:nth-child(2){width:36%}
-  .deck table.mix th:nth-child(3){width:22%}
-  .deck table.mix th:nth-child(4){width:22%}
+  .deck table.mix th:nth-child(1){width:22%}
+  .deck table.mix th:nth-child(2){width:18%}
+  .deck table.mix th:nth-child(3){width:12%}
+  .deck table.mix th:nth-child(4){width:16%}
+  .deck table.mix th:nth-child(5){width:16%}
+  .deck table.mix th:nth-child(6){width:16%}
   .deck p.tcap{font-style:italic;font-size:1.3em;color:var(--cap,#595959);text-align:center;margin:.25em 0 0;line-height:1.3}
   .deck .s-discuss.tight .subhead{margin:.2em 0 .02em}
   .deck .s-discuss.tight ol{line-height:1.2}
@@ -449,34 +451,25 @@
 <!-- SECTION: discussion-actions · mixture table (the one measured table) · 3 discussion · 4 actions · ETA strip -->
 <section class="slide s-discuss tight">
   <h2>Discussion &amp; Action items</h2>
-  <p class="thesis">Re-weight now, add HOI4D tomorrow, keep VITRA and HOT3D capped</p>
+  <p class="thesis">Seven datasets, one frame; ship at temperature 0.5</p>
   <div class="band mix">
     <figure class="tb"><table class="mix">
-      <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
-      <tbody>
-        <tr><td>OakInk2</td><td class="num">285,075</td><td class="num">21.0</td></tr><tr><td>HOI4D</td><td class="num">277,397</td><td class="num">20.7</td></tr><tr><td>DexYCB</td><td class="num">15,432</td><td class="num">15.5</td></tr><tr><td>GRAB</td><td class="num">123,485</td><td class="num">13.8</td></tr><tr><td>TACO</td><td class="num">98,260</td><td class="num">12.3</td></tr><tr><td>ARCTIC</td><td class="num">64,514</td><td class="num">10.0</td></tr><tr><td>HOT3D</td><td class="num">277,905</td><td class="num">6.6</td></tr></tbody></table></figure>
-    <figure class="tb"><table class="mix">
-      <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
-      <tbody>
-        <tr><td>DexYCB</td><td class="num">2.6</td><td class="num">5.9</td><td class="num">4.3</td></tr>
-        <tr><td>HOT3D</td><td class="num">0</td><td class="num">10</td><td class="num">10</td></tr>
-        <tr><td>VITRA</td><td class="num">0</td><td class="num">15</td><td class="num">15</td></tr>
-        <tr><td>HOI4D</td><td class="num">0</td><td class="num">0</td><td class="num">20</td></tr>
-      </tbody></table></figure>
+      <thead><tr><th>dataset</th><th class="num">chunks</th><th class="num">weight</th><th class="num">T = 0</th><th class="num">T = 0.5</th><th class="num">T = 1</th></tr></thead>
+      <tbody><tr><td>OakInk2</td><td class="num">285,075</td><td class="num">1&times;</td><td class="num">14.3</td><td class="num"><b>21.0</b></td><td class="num">27.7</td></tr><tr><td>HOT3D</td><td class="num">277,905</td><td class="num">0.1&times;</td><td class="num">14.3</td><td class="num"><b>6.6</b></td><td class="num">2.7</td></tr><tr><td>HOI4D</td><td class="num">277,397</td><td class="num">1&times;</td><td class="num">14.3</td><td class="num"><b>20.7</b></td><td class="num">26.9</td></tr><tr><td>GRAB</td><td class="num">123,485</td><td class="num">1&times;</td><td class="num">14.3</td><td class="num"><b>13.8</b></td><td class="num">12.0</td></tr><tr><td>TACO</td><td class="num">98,260</td><td class="num">1&times;</td><td class="num">14.3</td><td class="num"><b>12.3</b></td><td class="num">9.5</td></tr><tr><td>ARCTIC</td><td class="num">64,514</td><td class="num">1&times;</td><td class="num">14.3</td><td class="num"><b>10.0</b></td><td class="num">6.3</td></tr><tr><td>DexYCB</td><td class="num">15,432</td><td class="num">10&times;</td><td class="num">14.3</td><td class="num"><b>15.5</b></td><td class="num">15.0</td></tr></tbody></table></figure>
   </div>
-  <p class="tcap">Season-2 mixture · % of sampled chunks; proposed = temperature 0.5 over chunk counts for the five mocap sets, caps for VITRA and HOT3D, HOI4D pinned when it lands</p>
+  <p class="tcap">Share &prop; (chunks &times; weight)<sup>T</sup> &middot; T = 1 proportional, T = 0 uniform, T = 0.5 the square root. Weights: DexYCB 10&times; (sole GR-1 object set, 0.7 h), HOT3D 0.1&times; (no task labels, no support plane).</p>
   <p class="subhead">Discussion:</p>
   <ol>
-    <li><b>Season-2 mixture</b> — natural · temperature 0.5 + caps · HOI4D-heavy → temperature 0.5 + caps (owner)</li>
-    <li><b>HOI4D download</b> — Mac hub after freeing 14 GB · direct to the rlwrld data volume → rlwrld direct (owner)</li>
-    <li><b>VITRA hands</b> — both hands · right only until a left-hand clip is verified → right only (owner)</li>
+    <li><b>Mixture temperature</b> — T = 0 · <b>T = 0.5</b> · T = 1, with DexYCB 10&times; and HOT3D 0.1&times; &rarr; T = 0.5 (owner)</li>
+    <li><b>HOI4D missing hands</b> — ship 9 categories now · wait for HaWoR on the other 7 &rarr; ship 9 now (owner)</li>
+    <li><b>HOT3D</b> — drop it · keep at 6.6 % with gravity z-up and no table &rarr; keep (owner, decided 09-09)</li>
   </ol>
   <p class="subhead">Action items:</p>
   <ol>
-    <li>HOI4D download + adapter + conversion (subagent · lands 2026-09-09 09:00 KST, ≈ 8 h)</li>
-    <li>DexYCB raw clips and 3D clips into this deck (me · landed 2026-09-08 23:30 KST)</li>
-    <li>HOT3D raw RGB via VRS decode (me · 2026-09-09, ≈ 2 h)</li>
-    <li>Season-2 base config with the proposed mixture (me · 2026-09-08 23:00 KST)</li>
+    <li>HOI4D gravity frame from its labelled scene cloud (me &middot; 2026-09-09, &asymp; 1 h)</li>
+    <li>GRAB re-render with its table, HOI4D first clips (me &middot; 2026-09-09, &asymp; 1 h)</li>
+    <li>HaWoR hand pose for HOI4D&rsquo;s 7 hand-less categories (deferred &middot; after the base, &asymp; 1 d)</li>
+    <li>Season-2 base launch, 120 M on 4&times;H100 and 320 M on 8&times;H200, 24 h (me &middot; after the smoke test)</li>
   </ol>
   <p class="etabar"><b>ETA</b> · HOI4D pipeline <b>≈ 8 h → 2026-09-09 09:00 KST</b> · clips <b>landed 23:30 KST</b> · HOT3D clock fix <b>≈ 3 min</b> · TACO / ARCTIC / OakInk2 / VITRA raw RGB: <b>unestimated</b></p>
 </section>
