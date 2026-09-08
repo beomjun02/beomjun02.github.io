@@ -48,6 +48,24 @@
   {
    "project": "3d-wam",
    "date": "2026-09-08",
+   "slug": "s2-1-human-data",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-08",
+   "title": "Deck #2-1 · Human Data (season 2)",
+   "path": "3d-wam/decks/2026-09-08-s2-1-human-data/",
+   "tldr": "Eight human datasets (GRAB, OakInk2, TACO, ARCTIC, DexYCB, HOT3D, HOI4D, VITRA) profiled by task text, named objects and size against the GR-1 and DexJoCo target skills: the corpus is thin on target skills, which concentrate in the smallest set (DexYCB) and the one not yet on disk (HOI4D). Ranking puts HOI4D first and DexYCB up-weighted, with VITRA capped at 15 % and HOT3D at 10 % as a finetune test; the proposed season-2 mixture is temperature 0.5 over chunk counts for the five mocap sets with those caps and HOI4D pinned at 20 % when it lands. Ground-truth point-set clips for seven datasets and raw RGB for DexYCB and HOT3D are embedded; HOI4D download, HOT3D clock alignment and the DexJoCo scene frame are pending.",
+   "tags": [
+    "season-2",
+    "data",
+    "hoi4d",
+    "vitra",
+    "mixture"
+   ]
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-09-08",
    "slug": "p7-back-to-basics",
    "format": "log",
    "status": "running",

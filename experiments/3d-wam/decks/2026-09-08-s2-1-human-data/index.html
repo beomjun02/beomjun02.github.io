@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<!-- Deck #2-1 · Human Data (season 2) · 3D-WAM · built by season2/deck-2-1/build_deck.py from deck_numbers.json + render_list.json.
+     Structure = DECK-STYLE.md §3 / §4b: title · overview · method (1) · 8 viz-grid data slides (outside the ≤ 8 cap) ·
+     results ×2 · discussion & action items · appendix A0–A4 (last = cut list). Pending clips = figure.phold tiles. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-08 · Deck #2-1 · Human Data (season 2) — 3D-WAM</title>
+<meta name="description" content="Deck #2-1: eight human datasets profiled by task text, objects and size against the GR-1 and DexJoCo target skills; ranking and the season-2 mixture proposal.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* ---- pending visuals: dashed "WILL UPDATE" tiles (v5 §4b E) ---- */
+  .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.35em;align-items:center;justify-content:center;
+    text-align:center;min-height:4.5em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;line-height:1.35;
+    padding:.7em .9em;background:#FAFAFA;box-sizing:border-box}
+  .deck figure.phold .pbox b{color:#333}
+  .deck figure.phold .pbox span{overflow-wrap:anywhere}
+  /* ---- pending results: grey italic rows with a date (v5 §4b B) ---- */
+  .deck tr.pend td{color:#595959;font-style:italic}
+  .deck tr.pend td:first-child{color:#000;font-style:normal}
+  .deck tr.pend td.num{white-space:normal}
+  /* ---- ETA strip (v5 §4b F) ---- */
+  .deck p.etabar{margin:.5em 0 0;padding:.36em .8em;border-left:3px solid #0070C0;background:#F2F6FA;font-size:1.32em;color:#333;line-height:1.36}
+  .deck p.etabar b{color:#000}
+  /* ---- tables inside figures: caption under the table ---- */
+  .deck .band>figure.tb{justify-content:flex-start}
+  .deck .slide td.c,.deck .slide th.c{text-align:center}
+  /* ---- method (1): verb table · arena clip · placeholder ---- */
+  .deck .band.m1{gap:2em;margin-top:2.4em;align-items:flex-start}
+  .deck .band.m1>figure{justify-content:flex-start}
+  .deck .band.m1>figure.tb{flex:1.9 1 0}
+  .deck .band.m1>figure.arena{flex:0 0 25em}
+  .deck .band.m1>figure.phold{flex:.7 1 0}
+  .deck .band.m1>figure.arena>video{flex:0 0 auto;width:25em;height:15.625em;object-fit:contain}   /* 640×400 clip: explicit 1.6 box, no letterbox */
+  .deck .band.m1>figure.phold .pbox{flex:0 0 auto;height:15.6em}
+  .deck table.verbs{table-layout:fixed;width:100%}
+  .deck table.verbs th{white-space:nowrap}
+  .deck table.verbs td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.verbs th:nth-child(1){width:22%}
+  .deck table.verbs th:nth-child(2){width:47%}
+  .deck table.verbs th:nth-child(3){width:13%}
+  .deck table.verbs th:nth-child(4){width:18%}
+  .deck .slide.fn2{padding-bottom:4.8em}
+  .deck .slide.fn2 .footnote{white-space:normal;overflow:visible;text-overflow:clip;bottom:1.0em;line-height:1.28}
+  /* ---- data slides: 3-column grid, row 1 = task pie · object pie · fact table, row 2 = clip tiles ---- */
+  .deck .s-viz h2{margin-bottom:.3em}
+  .deck .s-viz .thesis{margin-bottom:.3em}
+  .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;
+    gap:.8em 1.6em;align-content:start;margin-top:.3em}
+  .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
+  .deck .vizgrid figure>img{flex:0 0 auto;width:100%;height:18em;object-fit:contain;object-position:center bottom}   /* explicit height: an img in an auto grid row collapses to 0 */
+  .deck .vizgrid figure.clip>img,.deck .vizgrid figure.clip>video{height:11em;object-fit:contain;object-position:center;background:transparent}
+  .deck .vizgrid.more figure.clip>img,.deck .vizgrid.more figure.clip>video{height:13.5em}
+  .deck .vizgrid.more{margin-top:1.2em;gap:1.0em 1.6em}
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.3em;font-size:1.3em;line-height:1.3;font-style:italic;color:var(--cap,#595959);text-align:center;text-wrap:pretty}
+  .deck .vizgrid figure.tb{justify-content:flex-end}
+  .deck .vizgrid table.fact{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.28}
+  .deck .vizgrid table.fact th,.deck .vizgrid table.fact td{padding:.2em .45em;vertical-align:top}
+  .deck .vizgrid table.fact th:first-child,.deck .vizgrid table.fact td:first-child{width:62%}
+  .deck .vizgrid figure.phold .pbox{flex:0 0 auto;height:8.6em;min-height:0;font-size:1.2em;line-height:1.35;padding:.5em .8em}
+  .deck .vizgrid.raw figure>img{height:15.5em}
+  /* ---- results: two 4-row tables side by side ---- */
+  .deck .band.res{gap:2.4em;margin-top:2.2em;align-items:flex-start}
+  .deck .band.res>figure.tb{flex:1 1 0;min-width:0}
+  .deck table.res{table-layout:fixed;width:100%}
+  .deck table.res th,.deck table.res td{padding:.2em .5em}
+  .deck table.res th{white-space:nowrap}
+  .deck table.res td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.res.sz th:nth-child(1){width:17%}
+  .deck table.res.sz th:nth-child(2){width:13%}
+  .deck table.res.sz th:nth-child(3){width:15%}
+  .deck table.res.sz th:nth-child(4){width:20%}
+  .deck table.res.sz th:nth-child(5){width:35%}
+  .deck table.res.rk td:first-child{font-weight:400}
+  .deck table.res.rk th:nth-child(1){width:11%}
+  .deck table.res.rk th:nth-child(2){width:19%}
+  .deck table.res.rk th:nth-child(3){width:42%}
+  .deck table.res.rk th:nth-child(4){width:28%}
+  /* ---- discussion & action items: mixture tables + one-line items + ETA strip ---- */
+  .deck .s-discuss.tight h2{margin-bottom:.35em}
+  .deck .s-discuss.tight .thesis{margin-bottom:.2em}
+  .deck .band.mix{flex:0 0 auto;margin-top:.15em;gap:1.6em;align-items:flex-start}
+  .deck .band.mix>figure.tb{flex:1 1 0;min-width:0}
+  .deck table.mix{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.26}
+  .deck table.mix th,.deck table.mix td{padding:.14em .4em;vertical-align:top}
+  .deck table.mix th{white-space:nowrap}
+  .deck table.mix td:first-child{font-weight:700}
+  .deck table.mix th:nth-child(1){width:20%}
+  .deck table.mix th:nth-child(2){width:36%}
+  .deck table.mix th:nth-child(3){width:22%}
+  .deck table.mix th:nth-child(4){width:22%}
+  .deck p.tcap{font-style:italic;font-size:1.3em;color:var(--cap,#595959);text-align:center;margin:.25em 0 0;line-height:1.3}
+  .deck .s-discuss.tight .subhead{margin:.2em 0 .02em}
+  .deck .s-discuss.tight ol{line-height:1.2}
+  .deck .s-discuss.tight ol>li{margin:.03em 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .deck .s-discuss.tight p.etabar{margin-top:.45em;padding:.3em .8em}
+  /* ---- appendix ---- */
+  .deck .s-appendix .kv{font-size:1.35em}
+  .deck .s-appendix table.rx td.rx{font-family:var(--mono);overflow-wrap:anywhere;word-break:break-all;font-size:.92em}
+  .deck .s-appendix table.rx td:first-child{white-space:nowrap;font-weight:700}
+  .deck .s-appendix table.rx th.c,.deck .s-appendix table.rx td.c{width:7%}
+  .deck .s-appendix p.note{font-size:1.35em;line-height:1.4;margin-top:.9em;overflow-wrap:anywhere}
+  .deck .s-appendix table.cav td:first-child{white-space:nowrap;font-weight:700;width:12%}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #2-1 · human data · season 2" data-date="2026-09-08">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Deck #2-1: Human Data</h1>
+  <p class="ctx">3D-WAM · season 2 · which human datasets lead to GR-1 and DexJoCo success</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 08<br>Presented by 김범준</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Corpus thin on target skills: add HOI4D, re-weight the mix</p>
+  <ul>
+    <li>8 datasets profiled: tasks, objects, size</li>
+    <li>HOI4D matches best, not on disk</li>
+    <li>Decide: mixture shares, HOI4D download</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/hero_size_relevance.png" alt="Two bar charts: hours of 10 Hz motion per dataset, and the share of episodes whose text is a GR-1 or DexJoCo target skill">
+      <figcaption>Size in hours of 10 Hz motion (left) and share of episodes whose text is a GR-1 / DexJoCo target skill (right); HOI4D from its task table, counts pending download</figcaption></figure>
+  </div>
+  <p class="footnote">sources: v2 manifests server-mirror/pull4/manifests* · VITRA v2 manifest (Mac) · HOI4D task table github leolyliu/HOI4D-Instructions · HOI4D paper arXiv 2203.01577</p>
+</section>
+
+<!-- SECTION: method (1) · verb buckets + the two arenas (GR-1 arena shown from its own record; DexJoCo pending) -->
+<section class="slide s-method fn2">
+  <h2>Method (1): what counts as GR-1 / DexJoCo-relevant</h2>
+  <p class="thesis">Task text is bucketed by verb; two arenas define relevance</p>
+  <div class="band m1">
+    <figure class="tb"><table class="compact verbs">
+      <thead><tr><th>bucket</th><th>verbs (examples)</th><th class="c">GR-1</th><th class="c">DexJoCo</th></tr></thead>
+      <tbody>
+        <tr><td>pick &amp; place</td><td>pick, place, put, lift, pass, insert</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>grasp / lift</td><td>grasp, grab, hold, grip</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>open / close</td><td>open, close, uncap; ARCTIC “use” = articulated actuation</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>pour / scoop</td><td>pour, fill, empty, scoop</td><td class="c">–</td><td class="c">✓</td></tr>
+        <tr><td>press / turn</td><td>press, push, click, turn, slide, pull</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>tool use</td><td>brush, cut, dust, stir, hammer, wipe …</td><td class="c">–</td><td class="c">–</td></tr>
+      </tbody></table>
+      <figcaption>Verb buckets in priority order, top to bottom · one bucket per episode · full regexes in appendix A1</figcaption></figure>
+    <figure class="arena"><video src="/experiments/3d-wam/logs/2026-09-08-p7-back-to-basics/assets/p7_gr1_ep0.mp4" autoplay loop muted playsinline preload="metadata" aria-label="GR-1 arena: robocasa PnPCanToBowl, simulator camera"></video>
+      <figcaption>GR-1 · robocasa PnPCanToBowl, simulator camera (p7 log, 2026-09-08)</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · DexJoCo scene image</b><span>pick_bucket · a simulator frame, once recorded</span></div>
+      <figcaption>DexJoCo · pick_bucket · simulator frame pending · 2026-09-09</figcaption></figure>
+  </div>
+  <p class="footnote">GR-1 = robocasa task families PnP / open-close / press-turn · DexJoCo = its 11 tasks (pick_bucket, microwave, hanoi, assembly, photograph, unlock_ipad, click_mouse, fold_glasses, hammer_nail, pinch_tongs, water_plant) · full regexes in the appendix</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (1/8): GRAB · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (1/8): GRAB</h2>
+  <p class="thesis ctx">Full-body mocap; lift and pass dominate; generic toy objects</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_grab.png" alt="GRAB: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 1,332 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_grab.png" alt="GRAB: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">GRAB</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">1,332</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">3.8</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">123,485</td></tr>
+        <tr><td>unique texts</td><td class="num">202</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">65.3</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">67.2</td></tr>
+      </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
+        <figure class="clip"><img src="assets/grab__grab_s10_bowl_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_cup_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the cup · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>no RGB exists (mocap-only dataset) · mesh render instead, lands 23:30</span></div><figcaption>Raw video · GRAB · mesh render instead of RGB · lands 2026-09-08 23:30 KST</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (2/8): OakInk2 · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (2/8): OakInk2</h2>
+  <p class="thesis ctx">Bimanual tabletop; place and pour into containers; long episodes</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_oakink2.png" alt="OakInk2: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 492 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_oakink2.png" alt="OakInk2: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">OakInk2</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">492</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">8.0</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">285,075</td></tr>
+        <tr><td>unique texts</td><td class="num">286</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">36.6</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">55.3</td></tr>
+      </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
+        <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__0b3d183d6b2e90eefd66__2023-04-27-20-38-16__human.gif" alt="OakInk2: ground-truth point set, Weigh something with scale by pouring it into the bowl." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__0b3d183d6b2e90eefd66__2023-04-27-20-38-16__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Weigh something with scale by pouring it into the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 3 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__235ac519d522ceb4c947__2023-04-27-20-30-50__human.gif" alt="OakInk2: ground-truth point set, Pour something into the plate and grip something out of the plate." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__235ac519d522ceb4c947__2023-04-27-20-30-50__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour something into the plate and grip something out of the plate · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 5 objects</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · OakInk2 · RGB not on disk · unestimated</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (3/8): TACO · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (3/8): TACO</h2>
+  <p class="thesis ctx">Tool-action-object; brush, dust, cut dominate; put-in is a minority</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_taco.png" alt="TACO: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 2,250 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_taco.png" alt="TACO: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">TACO</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">2,250</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">3.3</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">98,260</td></tr>
+        <tr><td>unique texts</td><td class="num">151</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">12.6</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">26.4</td></tr>
+      </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
+        <figure class="clip"><img src="assets/taco__taco_put_in__bowl__bowl_20230927_019__human.gif" alt="TACO: ground-truth point set, put in the bowl with the bowl" loading="lazy" style="background:url(assets/taco__taco_put_in__bowl__bowl_20230927_019__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the bowl with the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/taco__taco_put_in__bowl__pan_20230926_014__human.gif" alt="TACO: ground-truth point set, put in the pan with the bowl" loading="lazy" style="background:url(assets/taco__taco_put_in__bowl__pan_20230926_014__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the pan with the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · TACO · RGB not on disk · unestimated</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (4/8): ARCTIC · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (4/8): ARCTIC</h2>
+  <p class="thesis ctx">Articulated objects; every episode is grab or actuate</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_arctic.png" alt="ARCTIC: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 277 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_arctic.png" alt="ARCTIC: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">ARCTIC</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">277</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">1.9</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">64,514</td></tr>
+        <tr><td>unique texts</td><td class="num">28</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">100.0</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">100.0</td></tr>
+      </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
+        <figure class="clip"><img src="assets/arctic__dataset_s01_box_grab_01__human.gif" alt="ARCTIC: ground-truth point set, grab the box" loading="lazy" style="background:url(assets/arctic__dataset_s01_box_grab_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · grab the box · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/arctic__dataset_s01_ketchup_grab_01__human.gif" alt="ARCTIC: ground-truth point set, grab the ketchup" loading="lazy" style="background:url(assets/arctic__dataset_s01_ketchup_grab_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · grab the ketchup · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB not on disk · needs the dataset&#x27;s video archive · unestimated</span></div><figcaption>Raw video · ARCTIC · RGB not on disk · unestimated</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (5/8): DexYCB · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (5/8): DexYCB</h2>
+  <p class="thesis ctx">Single-hand grasp and lift; the GR-1 object set; short clips</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_dexycb.png" alt="DexYCB: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 1,000 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_dexycb.png" alt="DexYCB: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">DexYCB</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">1,000</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">0.7</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">15,432</td></tr>
+        <tr><td>unique texts</td><td class="num">20</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">100.0</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">100.0</td></tr>
+      </tbody></table><figcaption>Size and relevance · v2 manifest, human embodiment</figcaption></figure>
+        <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_142853_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the tomato soup can" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_142853_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the tomato soup can · GT point set, all-object corpus, 22 frames @ 10 Hz · 1 hand, 4 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_141841_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the master chef can" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_141841_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the master chef can · GT point set, all-object corpus, 19 frames @ 10 Hz · 1 hand, 4 objects</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_dexycb__20200709_142853_932122062010.mp4" poster="assets/raw_dexycb__20200709_142853_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the tomato soup can"></video><figcaption>DexYCB · grasp the tomato soup can · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (6/8): HOT3D · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (6/8): HOT3D</h2>
+  <p class="thesis ctx">Egocentric Aria; six tracked objects; no task text</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_hot3d.png" alt="HOT3D: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets · HOT3D has no task labels · a single “unlabeled” wedge · 294 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_hot3d.png" alt="HOT3D: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the auto-generated text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">HOT3D</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">294</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">7.8</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">277,905</td></tr>
+        <tr><td>unique texts</td><td class="num">0 · no task text</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">0.0</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">0.0</td></tr>
+      </tbody></table><figcaption>Size · all-object manifest · no task text, so relevance is 0 by construction</figcaption></figure>
+        <figure class="clip"><img src="assets/hot3d__P0001_10a27bf7__human.gif" alt="HOT3D: ground-truth point set, interact with the mug white and the keyboard" loading="lazy" style="background:url(assets/hot3d__P0001_10a27bf7__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the mug white and the keyboard · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/hot3d__P0001_15c4300c__human.gif" alt="HOT3D: ground-truth point set, interact with the potato masher and the can tomato sauce" loading="lazy" style="background:url(assets/hot3d__P0001_15c4300c__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the potato masher and the can tomato sauce · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_hot3d__P0001_10a27bf7.mp4" poster="assets/raw_hot3d__P0001_10a27bf7.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the mug white and the keyboard"></video><figcaption>HOT3D · P0001_10a27bf7 · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (7/8): HOI4D · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (7/8): HOI4D</h2>
+  <p class="thesis ctx">Egocentric RGB-D; pick-and-place for most categories; not yet on disk</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_hoi4d.png" alt="HOI4D: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets · weights = the official task table (one unit per category × task), sequence counts pending download</figcaption></figure>
+    <figure><img src="assets/pie_obj_hoi4d.png" alt="HOI4D: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects · weights = the official task table (one unit per category × task), sequence counts pending download</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">HOI4D</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">4,000 (paper)</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">22.2 (paper)</td></tr>
+        <tr class="pend"><td>chunks (T = 10, stride 1, before validity)</td><td class="num">pending<br>2026-09-09</td></tr>
+        <tr><td>unique texts</td><td class="num">56 (task-table entries)</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">83.9</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">92.9</td></tr>
+      </tbody></table><figcaption>Size from the paper (4,000 sequences × 20 s), relevance from the task table</figcaption></figure>
+        <figure class="phold"><div class="pbox"><b>WILL UPDATE · 3D point set</b><span>after conversion · 2026-09-09</span></div><figcaption>3D point set · HOI4D · after conversion · 2026-09-09</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · 3D point set</b><span>after conversion · 2026-09-09</span></div><figcaption>3D point set · HOI4D · after conversion · 2026-09-09</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>RGB archive downloading now, 21.7 GB, lands 2026-09-09</span></div><figcaption>Raw video · HOI4D · RGB archive downloading (21.7 GB) · lands 2026-09-09</figcaption></figure>
+  </div>
+  <p class="footnote">source: github leolyliu/HOI4D-Instructions definitions/task/task_definitions.csv · arXiv 2203.01577 · not on disk · one unit per (category, task) of the task table, no manifest yet · counting = appendix A0 · buckets = A1</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · Data (8/8): VITRA · captions only, no interpretation -->
+<section class="slide s-viz fn2">
+  <h2>Data (8/8): VITRA</h2>
+  <p class="thesis ctx">In-the-wild egocentric video; rich language; partial objects</p>
+  <div class="vizgrid">
+    <figure><img src="assets/pie_task_vitra.png" alt="VITRA: task buckets by episode text, pie chart" loading="lazy"><figcaption>Task buckets by episode text · 99,999 episodes</figcaption></figure>
+    <figure><img src="assets/pie_obj_vitra.png" alt="VITRA: objects named in the text, top 9, pie chart" loading="lazy"><figcaption>Objects named in the text · top 9</figcaption></figure>
+    <figure class="tb"><table class="fact">
+      <thead><tr><th>quantity</th><th class="num">VITRA</th></tr></thead>
+      <tbody>
+        <tr><td>episodes</td><td class="num">99,999 (selected)</td></tr>
+        <tr><td>hours @ 10 Hz</td><td class="num">40.5</td></tr>
+        <tr><td>chunks (T = 10, stride 1, before validity)</td><td class="num">556,250</td></tr>
+        <tr><td>unique texts</td><td class="num">68,024</td></tr>
+        <tr><td>GR-1-relevant %</td><td class="num">66.5</td></tr>
+        <tr><td>DexJoCo-relevant %</td><td class="num">68.5</td></tr>
+      </tbody></table><figcaption>Size and relevance · VITRA v2 manifest (Mac)</figcaption></figure>
+        <figure class="clip"><img src="assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.gif" alt="VITRA: ground-truth point set, pick up the cup" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_04041aaa-d309-42db-b65c-dcaf86b9f96c_ep_000462__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the cup · GT point set, converted v2 corpus, 16 frames @ 10 Hz · 2 hands, 2 objects · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
+    <figure class="clip"><img src="assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.gif" alt="VITRA: ground-truth point set, pick up the can from the drawer" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_056220c6-3c5c-419d-87b2-286e8a3c0706_ep_000086__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the can from the drawer · GT point set, converted v2 corpus, 16 frames @ 10 Hz · 2 hands, 2 objects · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE · raw video</b><span>source videos (Ego4D / EPIC / SSv2) not on disk · unestimated</span></div><figcaption>Raw video · VITRA · source videos not on disk · unestimated</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: results (1) · size vs relevance -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">Target skills are concentrated in the smallest and the missing datasets</p>
+  <ol class="agenda">
+    <li class="on">Size vs relevance
+      <ul><li>hours of 10 Hz motion against the share of target-skill episodes, per dataset</li></ul></li>
+    <li>Ranking</li>
+  </ol>
+  <div class="band res">
+    <figure class="tb"><table class="compact res sz">
+      <thead><tr><th>dataset</th><th class="num">hours</th><th class="num">GR-1 %</th><th class="num">DexJoCo %</th><th>quality note</th></tr></thead>
+      <tbody>
+        <tr><td>GRAB</td><td class="num">3.8</td><td class="num">65.3</td><td class="num">67.2</td><td>mocap, full objects</td></tr>
+        <tr><td>OakInk2</td><td class="num">8.0</td><td class="num">36.6</td><td class="num">55.3</td><td>mocap, full objects</td></tr>
+        <tr><td>TACO</td><td class="num">3.3</td><td class="num">12.6</td><td class="num">26.4</td><td>mocap, full objects</td></tr>
+        <tr><td>ARCTIC</td><td class="num">1.9</td><td class="num">100.0</td><td class="num">100.0</td><td>mocap, full objects</td></tr>
+      </tbody></table>
+      <figcaption>Mocap sets · hours at 10 Hz · relevance = share of episodes whose text bucket is a target skill</figcaption></figure>
+    <figure class="tb"><table class="compact res sz">
+      <thead><tr><th>dataset</th><th class="num">hours</th><th class="num">GR-1 %</th><th class="num">DexJoCo %</th><th>quality note</th></tr></thead>
+      <tbody>
+        <tr><td>DexYCB</td><td class="num">0.7</td><td class="num">100.0</td><td class="num">100.0</td><td>mocap, full objects</td></tr>
+        <tr><td>HOT3D</td><td class="num">7.8</td><td class="num">0.0</td><td class="num">0.0</td><td>Aria, tracked objects, no text</td></tr>
+        <tr><td>HOI4D</td><td class="num">22.2</td><td class="num">83.9</td><td class="num">92.9</td><td>annotated RGB-D, right hand</td></tr>
+        <tr><td>VITRA</td><td class="num">40.5</td><td class="num">66.5</td><td class="num">68.5</td><td>monocular hands, partial objects</td></tr>
+      </tbody></table>
+      <figcaption>The rest · HOI4D hours from the paper, relevance from its task table, sequence counts pending download</figcaption></figure>
+  </div>
+  <p class="footnote">hours = Σ n_frames ÷ 10 Hz from the v2 manifests · HOI4D = 4,000 sequences × 20 s (paper) · HOT3D: no task text, 0 by construction · buckets A1 · counting A0</p>
+</section>
+
+<!-- SECTION: results (2) · ranking -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">HOI4D first, DexYCB up-weighted, VITRA capped, HOT3D as a finetune</p>
+  <ol class="agenda">
+    <li>Size vs relevance</li>
+    <li class="on">Ranking
+      <ul><li>relevance share and the quality note decide each dataset's role in the season-2 mix</li></ul></li>
+  </ol>
+  <div class="band res">
+    <figure class="tb"><table class="compact res rk">
+      <thead><tr><th class="num">rank</th><th>dataset</th><th>why</th><th>role</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><b>HOI4D</b></td><td>pick-place + open/close, real poses</td><td>core, add first</td></tr>
+        <tr><td class="num">2</td><td><b>DexYCB</b></td><td>GR-1 objects, grasp + lift</td><td>core, up-weight</td></tr>
+        <tr><td class="num">3</td><td><b>GRAB</b></td><td>lift / pass, mocap quality</td><td>core</td></tr>
+        <tr><td class="num">4</td><td><b>OakInk2</b></td><td>place / pour into containers</td><td>core</td></tr>
+      </tbody></table>
+      <figcaption>Ranks 1–4 · why = task and object evidence of the data slides</figcaption></figure>
+    <figure class="tb"><table class="compact res rk">
+      <thead><tr><th class="num">rank</th><th>dataset</th><th>why</th><th>role</th></tr></thead>
+      <tbody>
+        <tr><td class="num">5</td><td><b>ARCTIC</b></td><td>articulated open / close</td><td>core</td></tr>
+        <tr><td class="num">6</td><td><b>VITRA</b></td><td>language + objects, weak dynamics</td><td>auxiliary ≤ 15 %</td></tr>
+        <tr><td class="num">7</td><td><b>TACO</b></td><td>tool use dominated</td><td>natural share</td></tr>
+        <tr><td class="num">8</td><td><b>HOT3D</b></td><td>unlabeled, noisy, six objects</td><td>auxiliary ≤ 10 %, finetune test</td></tr>
+      </tbody></table>
+      <figcaption>Ranks 5–8 · role = entry into the season-2 mixture (shares next slide)</figcaption></figure>
+  </div>
+  <p class="footnote">ranking = the owner's reading of the task, object and size evidence (data slides) plus the quality notes of the previous table</p>
+</section>
+
+<!-- SECTION: discussion-actions · mixture table (the one measured table) · 3 discussion · 4 actions · ETA strip -->
+<section class="slide s-discuss tight">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Re-weight now, add HOI4D tomorrow, keep VITRA and HOT3D capped</p>
+  <div class="band mix">
+    <figure class="tb"><table class="mix">
+      <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
+      <tbody>
+        <tr><td>GRAB</td><td class="num">21.0</td><td class="num">16.7</td><td class="num">12.3</td></tr>
+        <tr><td>OakInk2</td><td class="num">48.6</td><td class="num">25.4</td><td class="num">18.6</td></tr>
+        <tr><td>TACO</td><td class="num">16.7</td><td class="num">14.9</td><td class="num">10.9</td></tr>
+        <tr><td>ARCTIC</td><td class="num">11.0</td><td class="num">12.1</td><td class="num">8.9</td></tr>
+      </tbody></table></figure>
+    <figure class="tb"><table class="mix">
+      <thead><tr><th>dataset</th><th class="num">current (5-set natural)</th><th class="num">proposed now</th><th class="num">after HOI4D</th></tr></thead>
+      <tbody>
+        <tr><td>DexYCB</td><td class="num">2.6</td><td class="num">5.9</td><td class="num">4.3</td></tr>
+        <tr><td>HOT3D</td><td class="num">0</td><td class="num">10</td><td class="num">10</td></tr>
+        <tr><td>VITRA</td><td class="num">0</td><td class="num">15</td><td class="num">15</td></tr>
+        <tr><td>HOI4D</td><td class="num">0</td><td class="num">0</td><td class="num">20</td></tr>
+      </tbody></table></figure>
+  </div>
+  <p class="tcap">Season-2 mixture · % of sampled chunks; proposed = temperature 0.5 over chunk counts for the five mocap sets, caps for VITRA and HOT3D, HOI4D pinned when it lands</p>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>Season-2 mixture</b> — natural · temperature 0.5 + caps · HOI4D-heavy → temperature 0.5 + caps (owner)</li>
+    <li><b>HOI4D download</b> — Mac hub after freeing 14 GB · direct to the rlwrld data volume → rlwrld direct (owner)</li>
+    <li><b>VITRA hands</b> — both hands · right only until a left-hand clip is verified → right only (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>HOI4D download + adapter + conversion (subagent · lands 2026-09-09 09:00 KST, ≈ 8 h)</li>
+    <li>DexYCB raw clips and 3D clips into this deck (me · landed 2026-09-08 23:30 KST)</li>
+    <li>HOT3D raw RGB via VRS decode (me · 2026-09-09, ≈ 2 h)</li>
+    <li>Season-2 base config with the proposed mixture (me · 2026-09-08 23:00 KST)</li>
+  </ol>
+  <p class="etabar"><b>ETA</b> · HOI4D pipeline <b>≈ 8 h → 2026-09-09 09:00 KST</b> · clips <b>landed 23:30 KST</b> · HOT3D clock fix <b>≈ 3 min</b> · TACO / ARCTIC / OakInk2 / VITRA raw RGB: <b>unestimated</b></p>
+</section>
+
+<!-- SECTION: appendix A0 (1/2) · how the numbers were made -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A0 · How the numbers were made (1/2)</h2>
+  <dl class="kv">
+    <dt>Unit</dt><dd>one episode (human embodiment, train + val)</dd>
+    <dt>Sources</dt><dd>GRAB / OakInk2 / TACO / ARCTIC / DexYCB = the <code>text</code> field of our v2 corpus manifests (server-mirror/pull4/manifests/&lt;ds&gt;/manifest.json) · HOT3D = the all-object manifest; its text is auto-generated “interact with the X and the Y”, so tasks are UNLABELED and only object names are parsed · VITRA = the converted v2 manifest on the Mac (~/xfer_allobj/vitra_v2/vitra/manifest.json, 99,999 selected episodes; text = the per-hand VLM phrase) · HOI4D = NOT on disk — the official task table (16 categories × T1–T6, github leolyliu/HOI4D-Instructions definitions/task/task_definitions.csv), one unit per (category, task) pair, so its pies are weights, not sequence counts</dd>
+    <dt>Task pie</dt><dd>text-based regex matching on the lowercased text; one bucket per episode = the first match in the priority order pick &amp; place → open / close → pour / scoop → grasp / lift → press / turn → tool use → other (regexes in A1). Multi-step texts (OakInk2) therefore count once, by their first-priority verb</dd>
+    <dt>Relevance</dt><dd>GR-1-relevant % = share of episodes whose bucket is in {pick &amp; place, grasp / lift, open / close, press / turn}, taken from the robocasa GR-1 task families (PnP, open/close, press/turn) · DexJoCo-relevant % = share in {pick &amp; place, grasp / lift, open / close, pour / scoop, press / turn}, taken from the 11 DexJoCo task prompts · tool use counts for neither · ARCTIC “use the &lt;object&gt;” is mapped to open / close (articulated actuation) by decision</dd>
+  </dl>
+  <p class="footnote">scripts: /Users/beomjun/claude-code-rc/3D-WAM/season2/deck-2-1/{build_pies.py, build_hero.py, select_render_episodes.py, deck_numbers.json}</p>
+</section>
+
+<!-- SECTION: appendix A0 (2/2) -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A0 · How the numbers were made (2/2)</h2>
+  <dl class="kv">
+    <dt>Object pie</dt><dd>nouns parsed from the text with dataset-specific patterns (DexYCB: the phrase after “grasp the”; TACO: the target after “the” and the tool after “with the”; GRAB / ARCTIC: the last “the &lt;noun&gt;”; OakInk2 / HOT3D: a fixed household-object keyword list) · VITRA = the object ENTITY names stored in the episodes (VLM-labelled) · HOI4D = its 16 categories weighted by task count · top 9 shown, rest = other</dd>
+    <dt>Size</dt><dd>Σ n_frames from the manifests at 10 Hz → hours; chunks = Σ max(0, n_frames − 9) (T = 10, stride 1, BEFORE validity filtering) · HOI4D size = 4,000 sequences × 20 s at 15 fps from the paper · VITRA chunks after validity are lower (359,666 in the training index)</dd>
+    <dt>Mixture</dt><dd>temperature sampling: share<sub>i</sub> ∝ chunks<sub>i</sub><sup>0.5</sup> over the five mocap sets, renormalised into the pool left after the fixed caps (VITRA 15 %, HOT3D 10 %, HOI4D 20 % when it lands) · “current” = chunk-proportional over the five mocap sets as trained so far</dd>
+    <dt>Caveats</dt><dd>text matching misses tasks phrased without the verb · HOT3D and HOI4D task shares are not measured on our data · relevance is about the TASK TEXT, not about motion quality</dd>
+  </dl>
+  <p class="footnote">scripts: /Users/beomjun/claude-code-rc/3D-WAM/season2/deck-2-1/{build_pies.py, build_hero.py, select_render_episodes.py, deck_numbers.json}</p>
+</section>
+
+<!-- SECTION: appendix A1 · bucket regexes + relevance sets -->
+<section class="slide s-appendix">
+  <h2>Appendix A1 · Task buckets — regexes and relevance sets</h2>
+  <div class="band"><table class="dense rx">
+      <thead><tr><th>bucket</th><th>regex on the lowercased text (first match in this order wins)</th><th class="c">GR-1</th><th class="c">DexJoCo</th></tr></thead>
+      <tbody>
+        <tr><td>pick &amp; place</td><td class="rx">\b(pick|place|put|lift|take|move|carry|transfer|pass|hand over|offhand|set down|drop|throw|insert|remove|reposition|assemble)\b</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>open / close</td><td class="rx">\b(open|close|shut|unscrew|twist|use|uncap|cap)\b</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>pour / scoop</td><td class="rx">\b(pour|fill|empty|scoop|weigh)\b</td><td class="c">–</td><td class="c">✓</td></tr>
+        <tr><td>grasp / lift</td><td class="rx">\b(grasp|grab|hold|grip)\b</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>press / turn</td><td class="rx">\b(press|push|click|turn|switch|type|flip|toggle|slide|pull)\b</td><td class="c">✓</td><td class="c">✓</td></tr>
+        <tr><td>tool use</td><td class="rx">\b(brush|dust|cut|slice|chop|scrape|skim|stir|smear|hit|hammer|wipe|clean|scrub|paint|measure|stir-fry|screw|staple|peel|sew|knead|dip|drink|eat|browse|call|play|cook|read|write|squeeze|shake|heat|stamp|sharpen|fold|bind|clamp)\b</td><td class="c">–</td><td class="c">–</td></tr>
+        <tr><td>other / unlabeled</td><td class="rx">no match (HOT3D: no task text at all)</td><td class="c">–</td><td class="c">–</td></tr>
+      </tbody></table></div>
+  <p class="note">GR1 = {pick &amp; place, grasp / lift, open / close, press / turn} — the robocasa GR-1 task families PnP, open/close, press/turn · DEXJOCO = GR1 ∪ {pour / scoop} — the 11 DexJoCo prompts (pick_bucket, microwave, hanoi, assembly, photograph, unlock_ipad, click_mouse, fold_glasses, hammer_nail, pinch_tongs, water_plant) · ARCTIC “use the &lt;object&gt;” → open / close by decision (articulated actuation) · the object keyword list for OakInk2 / HOT3D (OBJKW, 101 nouns) stays in build_pies.py</p>
+  <p class="footnote">verbatim from build_pies.py (BUCKETS, GR1, DEXJOCO) · bucket() = first regex that matches, else “other / unlabeled”</p>
+</section>
+
+<!-- SECTION: appendix A2 · data-quality caveats -->
+<section class="slide s-appendix">
+  <h2>Appendix A2 · Data-quality caveats</h2>
+  <div class="band"><table class="dense cav">
+      <thead><tr><th>dataset</th><th>caveats carried into the ranking and the mixture</th></tr></thead>
+      <tbody>
+        <tr><td>HOI4D</td><td>right hand only · object pose annotated every 10 frames + linear interpolation in between · hand pose from the 20 % annotated frames · no gravity axis · 15 fps → 10 Hz resampling · not on disk yet (download + adapter + conversion pending, 2026-09-09)</td></tr>
+        <tr><td>VITRA</td><td>HaWoR monocular hands · objects = 128 visible points with centroid-only correspondence · up axis = −y guess · median episode 1.4 s · 23 % of episodes have zero contact frames · left-hand convention unverified (right-hand-only recommended until a left-hand clip is verified) · rendered clips: 4 of 5 episodes never come within 5 cm of a stored object point (ep_000082 does, at frame 10); ep_000462 text says cup, stored objects are pan and spoon</td></tr>
+        <tr><td>HOT3D</td><td>no task text (relevance 0 by construction) · 6 objects · dropped once for composition (i5_nohot3d) · raw RGB decoded from recording.vrs (projectaria_tools): the 5 s window is the END of each recording because the object-pose CSV clock was read as device time — fix = TIME_CODE domain, ≈ 3 min rerun</td></tr>
+      </tbody></table></div>
+  <p class="footnote">HOI4D: arXiv 2203.01577 + HOI4D-Instructions · VITRA: the local v2 conversion (Mac) · HOT3D: v2 all-object manifest + the i5 arm</p>
+</section>
+
+<!-- SECTION: appendix A3 (1/2) · sources and paths -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A3 · Sources and paths (1/2)</h2>
+  <dl class="kv">
+    <dt>v2 manifests</dt><dd>~/claude-code-rc/3D-WAM/server-mirror/pull4/manifests/&lt;ds&gt;/manifest.json (grab · oakink2 · taco · arctic · dexycb; human rows) · manifests_allobj/hot3d/ (auto-generated text)</dd>
+    <dt>VITRA</dt><dd>~/xfer_allobj/vitra_v2/vitra/manifest.json (Mac) · 99,999 selected episodes · text = per-hand VLM phrase · object entities = VLM-labelled names</dd>
+    <dt>HOI4D</dt><dd>task table github.com/leolyliu/HOI4D-Instructions → definitions/task/task_definitions.csv (local copy season2/deck-2-1/hoi4d_tasks.csv, 16 × T1–T6) · paper arXiv 2203.01577 (4,000 seq, 20 s, 15 fps) · NOT on disk</dd>
+    <dt>GR-1 arena clip</dt><dd>/experiments/3d-wam/logs/2026-09-08-p7-back-to-basics/assets/p7_gr1_ep0.mp4 (p7 log, robocasa PnPCanToBowl, simulator camera) — reused by absolute path</dd>
+    <dt>Raw-mesh clips</dt><dd>/experiments/3d-wam/decks/2026-08-25-point-budget/assets/&lt;ds&gt;_raw_vs_points.gif · deck #1 (2026-08-25), 15 Hz, N = 2048 · six datasets (next slide)</dd>
+    <dt>Scripts</dt><dd>season2/deck-2-1/: build_pies.py → pies + deck_numbers.json · build_hero.py → hero · select_render_episodes.py → render_list.json · clip_manifest.json (landed clips) · build_deck.py → this page</dd>
+    <dt>Clips</dt><dd>35 GT GIFs + posters (&lt;ds&gt;__&lt;episode&gt;.gif/.jpg) from the all-object 10 Hz corpus (episodes_allobj/10hz_N1024; VITRA: episodes_vitra), 512 pts/hand, 256/object · raw RGB: DexYCB ×5 (640×480 @ 30 fps) · HOT3D ×5 (Aria 640×640 @ 30 fps, last 5 s) · landed 2026-09-08 23:30 KST</dd>
+    <dt>Pending media</dt><dd>HOI4D RGB (21.7 GB) + conversion → 2026-09-09 09:00 KST (≈ 8 h) · HOT3D raw re-cut in the TIME_CODE domain (≈ 3 min) · DexJoCo scene frame 2026-09-09 · TACO / ARCTIC / OakInk2 / VITRA raw RGB unestimated</dd>
+  </dl>
+  <p class="footnote">deck folder /experiments/3d-wam/decks/2026-09-08-s2-1-human-data/assets/: 16 pies · hero · 35 GT GIFs + 35 posters · 10 raw mp4s + 10 posters = 107 files</p>
+</section>
+
+<!-- SECTION: appendix A3 (2/2) · viz grid · raw meshes vs 2048 points, deck #1 renders (older basis) · captions only -->
+<section class="slide s-viz">
+  <h2>Appendix A3 · Raw meshes vs 2048 points · deck #1 renders (2/2)</h2>
+  <p class="thesis ctx">Older-basis renders: 15 Hz corpus, N = 2048 per entity, 2026-08-25</p>
+  <div class="vizgrid raw">
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/taco_raw_vs_points.gif" alt="TACO: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>TACO · brush · roller · box · 20231104_019 · raw meshes left, 2048 points right</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/arctic_raw_vs_points.gif" alt="ARCTIC: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>ARCTIC · use · mixer · s02_mixer_use_02 · raw meshes left, 2048 points right</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/grab_raw_vs_points.gif" alt="GRAB: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>GRAB · drink · bowl · s10_bowl_drink_1 · raw meshes left, 2048 points right</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/oakink2_raw_vs_points.gif" alt="OakInk2: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>OakInk2 · “Scrape something from the plate into the mug.” · raw meshes left, 2048 points right</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/dexycb_raw_vs_points.gif" alt="DexYCB: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>DexYCB · grasp · subject-01 20200709_141754 · raw meshes left, 2048 points right</figcaption></figure>
+    <figure><img src="/experiments/3d-wam/decks/2026-08-25-point-budget/assets/hot3d_raw_vs_points.gif" alt="HOT3D: raw meshes left, 2048 sampled points per entity right" loading="lazy"><figcaption>HOT3D · P0003_c701bd11 (no task label) · raw meshes left, 2048 points right</figcaption></figure>
+  </div>
+  <p class="footnote">raw meshes left, sampled points right · deck #1 (2026-08-25) /experiments/3d-wam/decks/2026-08-25-point-budget/ · current corpus 10 Hz, 512 pts/entity · season-2 clips replace these</p>
+</section>
+
+
+<!-- SECTION: appendix A4 (1/5) · viz grid · remaining clips · captions only -->
+<section class="slide s-viz fn2">
+  <h2>Appendix A4 · More clips (1/5): GRAB · OakInk2</h2>
+  <div class="vizgrid more">
+        <figure class="clip"><img src="assets/grab__grab_s10_mug_lift_0__human.gif" alt="GRAB: ground-truth point set, lift the mug" loading="lazy" style="background:url(assets/grab__grab_s10_mug_lift_0__human.jpg) center/contain no-repeat"><figcaption>GRAB · lift the mug · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_bowl_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the bowl" loading="lazy" style="background:url(assets/grab__grab_s10_bowl_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the bowl · GT point set, all-object corpus, 49 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/grab__grab_s10_cup_pass_1__human.gif" alt="GRAB: ground-truth point set, pass the cup" loading="lazy" style="background:url(assets/grab__grab_s10_cup_pass_1__human.jpg) center/contain no-repeat"><figcaption>GRAB · pass the cup · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__7653ff4f86a8707fe7f3__2023-04-27-20-22-16__human.gif" alt="OakInk2: ground-truth point set, Grip sugar cubes into the bowl and pour juice into the bowl." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__7653ff4f86a8707fe7f3__2023-04-27-20-22-16__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Grip sugar cubes into the bowl and pour juice into the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 5 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__8420fa617d0a08081df3__2023-04-27-20-42-15__human.gif" alt="OakInk2: ground-truth point set, Pour and scrape something into the plate." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__8420fa617d0a08081df3__2023-04-27-20-42-15__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour and scrape something into the plate · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 3 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/oakink2__scene_01__A001++seq__9588d8284630e2f14b82__2023-04-27-20-17-40__human.gif" alt="OakInk2: ground-truth point set, Pour juice into the bowl and stir it with the rod." loading="lazy" style="background:url(assets/oakink2__scene_01__A001++seq__9588d8284630e2f14b82__2023-04-27-20-17-40__human.jpg) center/contain no-repeat"><figcaption>OakInk2 · Pour juice into the bowl and stir it with the rod · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 3 objects</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: appendix A4 (2/5) · viz grid · remaining clips · captions only -->
+<section class="slide s-viz fn2">
+  <h2>Appendix A4 · More clips (2/5): TACO · ARCTIC</h2>
+  <div class="vizgrid more">
+        <figure class="clip"><img src="assets/taco__taco_put_in__bowl__plate_20230927_015__human.gif" alt="TACO: ground-truth point set, put in the plate with the bowl" loading="lazy" style="background:url(assets/taco__taco_put_in__bowl__plate_20230927_015__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the plate with the bowl · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/taco__taco_put_in__spatula__bowl_20230926_005__human.gif" alt="TACO: ground-truth point set, put in the bowl with the spatula" loading="lazy" style="background:url(assets/taco__taco_put_in__spatula__bowl_20230926_005__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the bowl with the spatula · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/taco__taco_put_in__spatula__pan_20230930_001__human.gif" alt="TACO: ground-truth point set, put in the pan with the spatula" loading="lazy" style="background:url(assets/taco__taco_put_in__spatula__pan_20230930_001__human.jpg) center/contain no-repeat"><figcaption>TACO · put in the pan with the spatula · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 2 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/arctic__dataset_s01_laptop_grab_01__human.gif" alt="ARCTIC: ground-truth point set, grab the laptop" loading="lazy" style="background:url(assets/arctic__dataset_s01_laptop_grab_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · grab the laptop · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/arctic__dataset_s01_box_use_01__human.gif" alt="ARCTIC: ground-truth point set, use the box" loading="lazy" style="background:url(assets/arctic__dataset_s01_box_use_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · use the box · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/arctic__dataset_s01_capsulemachine_use_01__human.gif" alt="ARCTIC: ground-truth point set, use the capsulemachine" loading="lazy" style="background:url(assets/arctic__dataset_s01_capsulemachine_use_01__human.jpg) center/contain no-repeat"><figcaption>ARCTIC · use the capsulemachine · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 1 object</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: appendix A4 (3/5) · viz grid · remaining clips · captions only -->
+<section class="slide s-viz fn2">
+  <h2>Appendix A4 · More clips (3/5): DexYCB · HOT3D</h2>
+  <div class="vizgrid more">
+        <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_150906_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the bowl" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_150906_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the bowl · GT point set, all-object corpus, 20 frames @ 10 Hz · 1 hand, 3 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_150949_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the mug" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_150949_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the mug · GT point set, all-object corpus, 23 frames @ 10 Hz · 1 hand, 3 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/dexycb__dexycb_20200709-subject-01_20200709_145837_932122062010__human.gif" alt="DexYCB: ground-truth point set, grasp the pitcher base" loading="lazy" style="background:url(assets/dexycb__dexycb_20200709-subject-01_20200709_145837_932122062010__human.jpg) center/contain no-repeat"><figcaption>DexYCB · grasp the pitcher base · GT point set, all-object corpus, 25 frames @ 10 Hz · 1 hand, 4 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/hot3d__P0001_624f2ba9__human.gif" alt="HOT3D: ground-truth point set, interact with the bowl and the spoon wooden" loading="lazy" style="background:url(assets/hot3d__P0001_624f2ba9__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the bowl and the spoon wooden · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/hot3d__P0001_83b755aa__human.gif" alt="HOT3D: ground-truth point set, interact with the mug patterned and the cellphone" loading="lazy" style="background:url(assets/hot3d__P0001_83b755aa__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the mug patterned and the cellphone · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
+    <figure class="clip"><img src="assets/hot3d__P0001_8d136980__human.gif" alt="HOT3D: ground-truth point set, interact with the whiteboard eraser and the mug white" loading="lazy" style="background:url(assets/hot3d__P0001_8d136980__human.jpg) center/contain no-repeat"><figcaption>HOT3D · interact with the whiteboard eraser and the mug white · GT point set, all-object corpus, 50 frames @ 10 Hz · 2 hands, 6 objects</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: appendix A4 (4/5) · viz grid · remaining clips · captions only -->
+<section class="slide s-viz fn2">
+  <h2>Appendix A4 · More clips (4/5): VITRA · DexYCB raw RGB</h2>
+  <div class="vizgrid more">
+        <figure class="clip"><img src="assets/vitra__vitra_Ego4D_068c3c6b-fbbc-486f-bc4c-f56e26448a09_ep_000082__human.gif" alt="VITRA: ground-truth point set, pick up the bottle" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_068c3c6b-fbbc-486f-bc4c-f56e26448a09_ep_000082__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the bottle · GT point set, converted v2 corpus, 11 frames @ 10 Hz · 1 hand, 1 object</figcaption></figure>
+    <figure class="clip"><img src="assets/vitra__vitra_Ego4D_07a2ef8c-e9dd-4b53-a754-5dad076407aa_ep_000099__human.gif" alt="VITRA: ground-truth point set, pick up the bottle from the refrigerator shelf" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_07a2ef8c-e9dd-4b53-a754-5dad076407aa_ep_000099__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the bottle from the refrigerator shelf · GT point set, converted v2 corpus, 15 frames @ 10 Hz · 1 hand, 2 objects · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
+    <figure class="clip"><img src="assets/vitra__vitra_Ego4D_0ba47c77-96fe-4930-b167-340e62ab851c_ep_000050__human.gif" alt="VITRA: ground-truth point set, pick up the cup from the sink" loading="lazy" style="background:url(assets/vitra__vitra_Ego4D_0ba47c77-96fe-4930-b167-340e62ab851c_ep_000050__human.jpg) center/contain no-repeat"><figcaption>VITRA · pick up the cup from the sink · GT point set, converted v2 corpus, 15 frames @ 10 Hz · 2 hands, 1 object · partial 128-point objects; hand never within 5 cm of a stored object point</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_dexycb__20200709_141841_932122062010.mp4" poster="assets/raw_dexycb__20200709_141841_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the master chef can"></video><figcaption>DexYCB · grasp the master chef can · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_dexycb__20200709_145837_932122062010.mp4" poster="assets/raw_dexycb__20200709_145837_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the pitcher base"></video><figcaption>DexYCB · grasp the pitcher base · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_dexycb__20200709_150906_932122062010.mp4" poster="assets/raw_dexycb__20200709_150906_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the bowl"></video><figcaption>DexYCB · grasp the bowl · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
+  </div>
+  <p class="footnote">GT renders: fixed camera elev 22°/azim −60°, window = up to 50 frames from 5 frames before the first hand–object &lt; 5 cm frame; right hand green, left hand purple, objects orange/amber; VITRA from the converted v2 corpus</p>
+</section>
+
+<!-- SECTION: appendix A4 (5/5) · viz grid · remaining clips · captions only -->
+<section class="slide s-viz fn2">
+  <h2>Appendix A4 · More clips (5/5): raw RGB · DexYCB · HOT3D</h2>
+  <div class="vizgrid more">
+        <figure class="clip"><video src="assets/raw_dexycb__20200709_150949_932122062010.mp4" poster="assets/raw_dexycb__20200709_150949_932122062010.jpg" autoplay loop muted playsinline preload="metadata" aria-label="DexYCB raw RGB, grasp the mug"></video><figcaption>DexYCB · grasp the mug · allocentric RGB camera, 74 frames @ 30 fps</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_hot3d__P0001_15c4300c.mp4" poster="assets/raw_hot3d__P0001_15c4300c.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the potato masher and the can tomato sauce"></video><figcaption>HOT3D · P0001_15c4300c · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_hot3d__P0001_624f2ba9.mp4" poster="assets/raw_hot3d__P0001_624f2ba9.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the bowl and the spoon wooden"></video><figcaption>HOT3D · P0001_624f2ba9 · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_hot3d__P0001_83b755aa.mp4" poster="assets/raw_hot3d__P0001_83b755aa.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the mug patterned and the cellphone"></video><figcaption>HOT3D · P0001_83b755aa · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
+    <figure class="clip"><video src="assets/raw_hot3d__P0001_8d136980.mp4" poster="assets/raw_hot3d__P0001_8d136980.jpg" autoplay loop muted playsinline preload="metadata" aria-label="HOT3D raw RGB, interact with the whiteboard eraser and the mug white"></video><figcaption>HOT3D · P0001_8d136980 · Aria RGB, last 5 s of the recording (alignment to the object-pose clock pending)</figcaption></figure>
+  </div>
+  <p class="footnote">raw RGB as decoded: DexYCB allocentric RealSense 640×480 @ 30 fps · HOT3D Aria RGB 640×640 @ 30 fps, last 5 s of each recording (object-pose clock alignment pending, ≈ 3 min rerun)</p>
+</section>
+
+<!-- SECTION: appendix A5 · cut list (last appendix slide) -->
+<section class="slide s-appendix">
+  <h2>Appendix A5 · Cut list</h2>
+  <p class="cut"><b>Cut list</b> (dropped from this deck, kept in deck_numbers.json, clip_manifest.json, the manifests and the arena docs): the per-dataset text lists (all unique texts per dataset) · the 44 GR-1 task names · the DexJoCo prompts in full (11 tasks) · the per-source VITRA breakdown (Ego4D / EPIC-Kitchens / SSv2) · the object keyword list OBJKW (build_pies.py) · per-dataset top-12 object counts beyond the top-9 pies · per-clip metadata beyond the captions (episode length, window start, file sizes)</p>
+  <p class="footnote">deck #2-1 · season 2 · built 2026-09-08 · owner: 김범준</p>
+</section>
+
+</main>
+</body>
+</html>
