@@ -48,6 +48,17 @@
   {
    "project": "3d-wam",
    "date": "2026-09-08",
+   "slug": "p7-back-to-basics",
+   "format": "log",
+   "status": "running",
+   "updated": "2026-09-08",
+   "title": "Back to basics: the pre-campaign 120M model on today's harness",
+   "path": "3d-wam/logs/2026-09-08-p7-back-to-basics/",
+   "tldr": "p7 (p7_i5_long10ep ckpt_0180608) is C2's architecture -- d768/depth12/heads12, ~120M, history H=2 -- trained 180,608 steps (~10 effective epochs) on the 2-object corpus with hot3d dropped and lr 3e-5 flat. It predates the eleven-arm campaign, which ran at 39M and 1.6M samples, and had never been measured on the basis the campaign settled on. This puts it there: 5 s AR open loop at BOTH object caps (2 = p7's own distribution, 6 = comparable with the arms) and GR-1 PnPCanToBowl on the native-link decode. Also carries the measured retraining cost surface: 6 objects at full 512-point density with k=16 costs 0.280 s/step, exactly what p7's 2 objects cost at k=8, because attention pays for tokens not points -- three times the objects, no affordance discarded, 14.0 h on 2xH100 for the full 180,608 steps."
+  },
+  {
+   "project": "3d-wam",
+   "date": "2026-09-08",
    "slug": "auxiliary-campaign",
    "format": "log",
    "status": "running",

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-08 · p7, back to basics — 3D-WAM</title>
+<meta name="description" content="The pre-campaign 120M model re-evaluated on the current harness: 5 s open loop at both object caps, GR-1 PnPCanToBowl, native-link decode.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<script src="/experiments/assets/lab.js" defer></script>
+</head>
+<body>
+<nav class="topbar">
+  <div class="wrap">
+    <div class="crumbs">
+      <a href="/experiments/">experiments</a><span class="sep">/</span>
+      <a href="/experiments/3d-wam/">3d-wam</a><span class="sep">/</span>
+      <span class="here">2026-09-08 · p7 back to basics</span>
+    </div>
+    <button class="theme-btn" type="button">◑ dark</button>
+  </div>
+</nav>
+<header class="page">
+  <div class="wrap">
+    <p class="eyebrow">Experiment log · 3D-WAM</p>
+    <h1>Back to basics: the pre-campaign 120M model on today's harness</h1>
+    <p class="lede">Eleven arms this week were trained on a fast rig at 39 M parameters and 1.6 M samples,
+      and every one of them was read against a control built the same way. p7 is the model that came
+      before all of it &mdash; 120 M parameters, 3.5&times; the samples, 10 effective epochs &mdash; and it has
+      never been measured on the evaluation basis the campaign settled on. This puts it there.</p>
+    <dl class="record">
+      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Dates</dt><dd>2026-09-01 trained → 09-08 re-evaluated</dd></div>
+      <div><dt>Checkpoint</dt><dd class="mono">p7_i5_long10ep_20260901 / ckpt_0180608</dd></div>
+      <div><dt>Model</dt><dd class="mono">d768 · depth 12 · heads 12 ≈ 120 M · history H = 2</dd></div>
+      <div><dt>Trained on</dt><dd class="mono">2-object corpus · stride 1 · no jitter · lr 3e-5 flat</dd></div>
+      <div><dt>Campaign arms</dt><dd class="mono"><a href="/experiments/3d-wam/logs/2026-09-08-auxiliary-campaign/">eleven arms, 39 M, matched 20k</a></dd></div>
+    </dl>
+    <div class="verdict">
+      <p class="k">Verdict</p>
+      <p><i>Pending &mdash; the two evaluations are running (jobs 10573, 10574). The verdict is written after the numbers, not before.</i>
+      Whatever they say, one caveat governs the reading: <b>p7 was trained on a corpus capped at TWO
+      objects per scene</b> (measured: taco 3398/3398 episodes, hot3d 294/294), while every campaign
+      arm saw up to six. The open loop is therefore reported at <b>both</b> caps &mdash; cap 6 for
+      comparability with the eleven, cap 2 for a fair reading of p7 itself &mdash; and neither is
+      presented as "the" number.</p>
+    </div>
+  </div>
+</header>
+<main>
+
+<section>
+  <div class="wrap">
+    <span class="n">01</span><h2>p7 on the current basis</h2>
+    <p class="sub">Same harness as the eleven arms: 5 s autoregressive rollout on the kept-window basis,
+      and the GR-1 closed loop on the native-link decode. Zero-motion predictor 18.99 cm.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>benchmark</th><th>metric</th><th>p7</th><th>campaign control (39 M, 20k)</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4">Open loop &mdash; cap 2<br><span class="mono">p7's own distribution</span></td>
+            <td>ADE</td><td><i>pending</i></td><td class="mono">n/a &mdash; arms never read at cap 2</td></tr>
+        <tr><td>OMWC</td><td><i>pending</i></td><td class="mono">ground truth 0.074</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td><i>pending</i></td><td></td></tr>
+        <tr><td>survival</td><td><i>pending</i></td><td></td></tr>
+        <tr><td rowspan="4">Open loop &mdash; cap 6<br><span class="mono">comparable with the eleven</span></td>
+            <td>ADE</td><td><i>pending</i></td><td>17.63 cm</td></tr>
+        <tr><td>OMWC</td><td><i>pending</i></td><td>0.677</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td><i>pending</i></td><td>47.1 %</td></tr>
+        <tr><td>survival</td><td><i>pending</i></td><td>39.6 %</td></tr>
+        <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td>
+            <td><i>pending</i></td>
+            <td>0 / 3</td></tr>
+        <tr><td>final hand&ndash;object</td><td><i>pending</i></td>
+            <td>17.37 cm</td></tr>
+        <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">02</span><h2>What p7 actually is</h2>
+    <p class="sub">C2's architecture, three deliberate changes, one of them easy to misread.</p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>C2</th><th>p7</th></tr></thead>
+      <tbody>
+        <tr><td>architecture</td><td class="mono">d768 · depth 12 · heads 12 · H = 2</td><td class="mono">identical</td></tr>
+        <tr><td>datasets</td><td>6, including hot3d</td><td><b>5 &mdash; hot3d dropped</b> (the i5 composition)</td></tr>
+        <tr><td>steps</td><td>110,000</td><td><b>180,608</b> ≈ 10 effective epochs</td></tr>
+        <tr><td>learning rate</td><td>3e-4, cosine to 0.1&times;</td><td><b>3e-5 flat</b> (<span class="mono">min_lr_ratio 1.0</span>)</td></tr>
+        <tr><td>corpus</td><td>2 objects/scene</td><td>2 objects/scene</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="clean">
+      <li><span class="mk warn">!</span><span><span class="lt">The learning rate is the thing to check</span><span class="ld">3e-5 flat is a tenth of C2's peak with no decay, which reads like a resumed fine-tune rather than a fresh run. If p7 continued from a C2 checkpoint, its 180,608 steps are not comparable to a from-scratch 110,000, and "10 effective epochs" understates what it saw.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Dropping hot3d was the i5 finding</span><span class="ld">+0.019 paired &Delta;cos at 25k on the old basis, a gain that grew with training length.</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">03</span><h2>Why the comparison is not clean, and what it still answers</h2>
+    <ul class="clean">
+      <li><span class="mk bad">✗</span><span><span class="lt">Different scene difficulty</span><span class="ld">p7 saw 2 objects; the arms saw 6. Clutter is a first-order axis here &mdash; OMWC measures 0.005 on 1&ndash;2 object datasets against 0.29 on OakInk2 at 7.6.</span></span></li>
+      <li><span class="mk bad">✗</span><span><span class="lt">Different composition</span><span class="ld">p7 has no hot3d; the arms do.</span></span></li>
+      <li><span class="mk bad">✗</span><span><span class="lt">Different augmentation</span><span class="ld">p7 has no origin jitter; the arms jitter the scene origin by up to 1 m, which removes absolute position as a cue and makes the task harder.</span></span></li>
+      <li><span class="mk ok">✓</span><span><span class="lt">What it does answer</span><span class="ld">whether the campaign's fast rig &mdash; a third of the parameters and half the samples &mdash; was measuring anything the 120 M model would not have shown more clearly. If p7 beats the eleven on the shared benchmark, the auxiliaries were being read at a scale too small to see them.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">The clean version is already running</span><span class="ld">c4 puts C2's architecture and sample count on the v2 corpus with the object cap as the ONLY variable. That isolates clutter from scale.</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">04</span><h2>Cost, measured</h2>
+    <p class="sub">Retraining a p7-shaped model, 180,608 steps, effective batch 32 on 2&times;H100.
+      Every s/step below is measured on this rig today, not scaled.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>shape</th><th>scene points</th><th>tokens</th><th>s/step</th><th>180,608 steps</th></tr></thead>
+      <tbody>
+        <tr><td>p7 as trained &mdash; 2 obj &times; 512, k=8</td><td>2,048</td><td>2,560</td><td>0.280</td><td>14.0 h</td></tr>
+        <tr><td><b>6 obj &times; 512, k=16</b></td><td>4,096</td><td>2,560</td><td><b>0.280</b></td><td><b>14.0 h</b></td></tr>
+        <tr><td>6 obj &times; 256, k=8</td><td>2,560</td><td>3,200</td><td>0.301</td><td>15.1 h</td></tr>
+        <tr><td>6 obj &times; 512, k=8</td><td>4,096</td><td>5,120</td><td>0.613</td><td>30.8 h</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="clean">
+      <li><span class="mk ok">✓</span><span><span class="lt">Three times the objects for p7's exact cost</span><span class="ld">k=16 at full 512-point density is 0.280 s/step, the same as p7's two objects at k=8 &mdash; because attention pays for TOKENS, not points. No affordance is discarded: a handle is still sampled at ~1 cm.</span></span></li>
+      <li><span class="mk warn">!</span><span><span class="lt">k=16 coarsens the hand too</span><span class="ld">2 patches per MANO part instead of 4. Keeping the hand at k=8 while objects use 16 needs a mixed-k data contract (~150 lines: per-entity k, padded patch_idx, two head widths) and lands at ~320 tokens, ~17.5 h.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Attention is not the problem</span><span class="ld">at 5,120 tokens we sit just below the n &gt; 8d crossover where attention overtakes the MLP. Video DiTs run full 3-D attention at 30&ndash;80k tokens; entity-factorised attention would be cheaper but would sever object&ndash;object relations, which is where tool use lives.</span></span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="n">05</span><h2>Artifacts &amp; repro</h2>
+    <ul class="clean">
+      <li><span class="mk i">·</span><span><span class="lt">Checkpoint</span><span class="ld">rlwrld <span class="mono">/rlwrld-unified-checkpoints/beomjun/3d-wam/p7_i5_long10ep_20260901/ckpt_0180608.pt</span> (1.92 GB) → stripped to weights+EMA (959 MB) → iclr2027 <span class="mono">/s3ckpt/beomjun/3dwam/p7_i5_long10ep/</span></span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Config</span><span class="ld" >configs/p7_i5_long10ep.yaml</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Evaluation</span><span class="ld">sbatch/p7_openloop.sbatch (job 10573, both caps) · sbatch/gr1_only.sbatch (job 10574)</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Prior GR-1</span><span class="ld">2026-09-03, PnPAppleToDrawerClose, 0/3, 54→17 / 44→19 / 58→20 cm. Different task, and *Close tasks were later found structurally unreachable, so it is not comparable to this run.</span></span></li>
+    </ul>
+  </div>
+</section>
+</main>
+</body>
+</html>
