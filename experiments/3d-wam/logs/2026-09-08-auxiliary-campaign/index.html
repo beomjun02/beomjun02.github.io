@@ -23,29 +23,36 @@
 <header class="page">
   <div class="wrap">
     <p class="eyebrow">Experiment log · 3D-WAM</p>
-    <h1>Contact identity buys interaction, robot co-training buys accuracy, added structure costs both</h1>
+    <h1>Robot co-training buys accuracy, correspondence buys interaction, added structure costs both</h1>
     <p class="lede">Eleven arms trained from scratch on one byte-identical rig, each one variable against an
       identically trained control, and each read on three benchmarks: the 5-second open-loop rollout on the
       human hand&ndash;object corpora, the GR-1 closed loop, and DexJoCo.</p>
     <dl class="record">
       <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
       <div><dt>Dates</dt><dd>2026-09-07 → 09-08</dd></div>
-      <div><dt>Outcome</dt><dd>A5 · 25 % Sharpa co-training best open loop (16.32 cm) · E2 · partner identity best closed loop (12.86 cm)</dd></div>
+      <div><dt>Outcome</dt><dd>A5 &middot; 25 % Sharpa co-training best open loop (16.32 cm) &middot; E5 &middot; correspondence lowest OMWC (0.503) &middot; closed loop separates nothing (0 / 3 everywhere)</dd></div>
       <div><dt>Env</dt><dd class="mono">iclr2027-gpu · 1×H100/arm · robocasa GR-1 tabletop</dd></div>
       <div><dt>Basis</dt><dd class="mono">matched ckpt_0020000 · zero predictor 18.99 cm</dd></div>
       <div><dt>Related work</dt><dd class="mono"><a href="/experiments/3d-wam/#related">paper draft §2</a> · nine systems</dd></div>
     </dl>
     <div class="verdict">
       <p class="k">Verdict</p>
-      <p><b>E2 · partner identity</b> gets the robot closest &mdash; median 12.86 cm against the
-      control's 17.37 cm &mdash; and won the same comparison independently at a
-      30k checkpoint on the older code path. <b>A5 · 25 % Sharpa co-training</b> is best open loop at
-      16.32 cm, and <b>E5 · continuous correspondence</b> has the lowest object-motion-without-contact
-      at 0.503. Both structural additions (E3, A3) cost accuracy, and the object-motion
-      auxiliary that HumanEgo credits with +17.5 points is null here.
-      <b>Read every closed-loop number with three caveats:</b> n = 3 per arm, so each median is fragile;
-      E6 and E1 each had one episode diverge past 90 cm, which a median hides entirely; and success is
-      0/3 everywhere &mdash; no arm completes the task.</p>
+      <p><b>A5 &middot; 25 % Sharpa co-training</b> is best open loop at 16.32 cm, and
+      <b>E5 &middot; continuous correspondence</b> has the lowest object-motion-without-contact at
+      0.503. Both structural additions (E3, A3) cost accuracy, and the object-motion auxiliary that
+      HumanEgo credits with +17.5 points is null here. <b>E2 &middot; partner identity</b> has the
+      lowest GR-1 median, 12.86 cm against the control's 17.37 cm, and won the same comparison
+      independently at a 30k checkpoint on the older code path &mdash; that replication is the only
+      reason it is mentioned at all.</p>
+      <p style="border-left:3px solid var(--acc,#c66);padding-left:.9em;margin-top:.9em"><b>The GR-1 column does not rank these arms, and an earlier version of
+      this page read it as if it did.</b> Measured 2026-09-08 across all eleven arms plus p7
+      (36 episodes, zero successes): the three episodes of a single arm differ by 10.6 cm at the
+      median and 101 cm at worst, which exceeds the 18.7 cm separating the best arm median from the
+      worst. A permutation test on the difference of medians returns <i>p</i> = 1.00 for E2 against
+      the control, 1.00 for A5, and 0.20 even for A3, the worst arm on the board. At n = 3 the only
+      claim this benchmark supports is the one it makes uniformly: <b>success is 0 / 3 everywhere,
+      no model completes the task.</b> Arm-to-arm reading needs many more episodes per arm, or a task
+      some model can finish.</p>
     </div>
   </div>
 </header>
@@ -295,6 +302,7 @@
     <figure><img src="assets/a5_sharpa25_1g_heldout.gif" alt="A5 · 25 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>A5 · 25 % Sharpa co-training &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
     <figure><video src="assets/a5_sharpa25_1g_gr1_ep0.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 0 &mdash; final 15.8 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
     <figure><video src="assets/a5_sharpa25_1g_gr1_ep1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 1 &mdash; final 17.9 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+    <figure><video src="assets/a5_sharpa25_1g_gr1_ep2.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 2 &mdash; final 20.4 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
   </div>
   </div>
 </section>
@@ -317,6 +325,9 @@
     </table></div>
   <div class="frames">
     <figure><img src="assets/v1_vitra10_1g_heldout.gif" alt="V1 · 10 % VITRA &middot; held-out 1 s chunk &mdash; ground truth left, generated right" loading="lazy"><figcaption>V1 · 10 % VITRA &middot; held-out 1 s chunk &mdash; ground truth left, generated right</figcaption></figure>
+    <figure><video src="assets/v1_vitra10_1g_gr1_ep0.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 0 &mdash; final 31.2 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+    <figure><video src="assets/v1_vitra10_1g_gr1_ep1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 1 &mdash; final 28.4 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+    <figure><video src="assets/v1_vitra10_1g_gr1_ep2.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>GR-1 episode 2 &mdash; final 20.8 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
   </div>
   </div>
 </section>

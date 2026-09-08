@@ -29,7 +29,7 @@
       before all of it &mdash; 120 M parameters, 3.5&times; the samples, 10 effective epochs &mdash; and it has
       never been measured on the evaluation basis the campaign settled on. This puts it there.</p>
     <dl class="record">
-      <div><dt>Status</dt><dd><span class="pill acc"><span class="dot"></span>running</span></dd></div>
+      <div><dt>Status</dt><dd><span class="pill"><span class="dot"></span>closed</span></dd></div>
       <div><dt>Dates</dt><dd>2026-09-01 trained → 09-08 re-evaluated</dd></div>
       <div><dt>Checkpoint</dt><dd class="mono">p7_i5_long10ep_20260901 / ckpt_0180608</dd></div>
       <div><dt>Model</dt><dd class="mono">d768 · depth 12 · heads 12 ≈ 120 M · history H = 2</dd></div>
@@ -38,12 +38,14 @@
     </dl>
     <div class="verdict">
       <p class="k">Verdict</p>
-      <p><i>Pending &mdash; the two evaluations are running (jobs 10573, 10574). The verdict is written after the numbers, not before.</i>
-      Whatever they say, one caveat governs the reading: <b>p7 was trained on a corpus capped at TWO
-      objects per scene</b> (measured: taco 3398/3398 episodes, hot3d 294/294), while every campaign
-      arm saw up to six. The open loop is therefore reported at <b>both</b> caps &mdash; cap 6 for
-      comparability with the eleven, cap 2 for a fair reading of p7 itself &mdash; and neither is
-      presented as "the" number.</p>
+      <p><b>Back to basics does not pay.</b> p7 &mdash; 120 M parameters, 180,608 steps, roughly 10 effective epochs &mdash; reaches <b>18.32 cm</b> ADE on the 5 s rollout, beating its own zero-motion predictor by 0.65 cm. The campaign control, at 39 M parameters and 20 k steps, reaches 17.63 cm and beats the same reference by 1.36 cm &mdash; more than double the margin from a third of the parameters and a ninth of the steps. p7 is also below its zero reference on survival (36.6 % against 47.1 %). It wins on exactly one axis, and a real one: object-motion-without-contact, 0.519 against the control's 0.677 (ground truth 0.074) &mdash; p7 shoves objects it is not touching noticeably less often.</p>
+      <p>GR-1 landed, and it separates nothing. p7 is <b>0 / 3</b> with a median final hand&ndash;object distance of <b>27.07 cm</b> against the campaign control's 0 / 3 at 17.37 cm &mdash; a 9.7 cm difference of medians with a permutation <i>p</i> of 1.00. All twelve models measured this week are 0 / 3, and the episode-to-episode range inside a single arm (median 10.6 cm, worst 101 cm) is larger than the entire spread of arm medians (18.7 cm). At n = 3 <b>this benchmark cannot rank models</b>; it can only report that none of them solve the task.</p>
+      <p>One caveat does <i>not</i> govern this reading, and that is the interesting part:
+      p7 was trained on a corpus capped at two objects per scene while every campaign arm saw up to six,
+      so the open loop was run at <b>both</b> caps to keep that honest. The two runs came back
+      <b>byte-identical</b> &mdash; same md5 on <span class="mono">drift.json</span>, with the override
+      confirmed applied at 2 and at 6 in each log. The evaluation episodes never contain more than two
+      objects, so the cap is inert here and p7 is not being handicapped by it.</p>
     </div>
   </div>
 </header>
@@ -53,28 +55,36 @@
   <div class="wrap">
     <span class="n">01</span><h2>p7 on the current basis</h2>
     <p class="sub">Same harness as the eleven arms: 5 s autoregressive rollout on the kept-window basis,
-      and the GR-1 closed loop on the native-link decode. Zero-motion predictor 18.99 cm.</p>
+      and the GR-1 closed loop on the native-link decode. Each model is shown against its own zero-motion reference (p7 18.97 cm, control 18.99 cm).</p>
     <div class="tbl"><table>
       <thead><tr><th>benchmark</th><th>metric</th><th>p7</th><th>campaign control (39 M, 20k)</th></tr></thead>
       <tbody>
-        <tr><td rowspan="4">Open loop &mdash; cap 2<br><span class="mono">p7's own distribution</span></td>
-            <td>ADE</td><td><i>pending</i></td><td class="mono">n/a &mdash; arms never read at cap 2</td></tr>
-        <tr><td>OMWC</td><td><i>pending</i></td><td class="mono">ground truth 0.074</td></tr>
-        <tr><td>&delta;<sub>avg</sub></td><td><i>pending</i></td><td></td></tr>
-        <tr><td>survival</td><td><i>pending</i></td><td></td></tr>
-        <tr><td rowspan="4">Open loop &mdash; cap 6<br><span class="mono">comparable with the eleven</span></td>
-            <td>ADE</td><td><i>pending</i></td><td>17.63 cm</td></tr>
-        <tr><td>OMWC</td><td><i>pending</i></td><td>0.677</td></tr>
-        <tr><td>&delta;<sub>avg</sub></td><td><i>pending</i></td><td>47.1 %</td></tr>
-        <tr><td>survival</td><td><i>pending</i></td><td>39.6 %</td></tr>
+        <tr><td rowspan="6">Open loop &mdash; 5 s AR<br><span class="mono">50 episodes, 6 datasets</span></td>
+            <td>ADE</td><td>18.32 cm</td><td>17.63 cm</td></tr>
+        <tr><td>&nbsp;&nbsp;<i>vs its zero predictor</i></td>
+            <td><b>0.65 cm better</b></td><td><b>1.36 cm better</b></td></tr>
+        <tr><td>FDE @ 5 s</td><td>22.04 cm <span class="mono">(zero 24.66)</span></td><td class="mono">&mdash;</td></tr>
+        <tr><td>survival</td><td>36.6 % <span class="mono">(zero 47.1)</span></td><td>39.6 %</td></tr>
+        <tr><td>&delta;<sub>avg</sub></td><td>47.5 %</td><td>47.1 %</td></tr>
+        <tr><td>OMWC <span class="mono">(gt 0.074)</span></td>
+            <td><b>0.519</b></td><td>0.677</td></tr>
         <tr><td rowspan="2">GR-1 &mdash; PnPCanToBowl</td><td>success</td>
-            <td><i>pending</i></td>
+            <td>0 / 3</td>
             <td>0 / 3</td></tr>
-        <tr><td>final hand&ndash;object</td><td><i>pending</i></td>
+        <tr><td>final hand&ndash;object</td><td>27.07 cm &mdash; 27.3, 16.4, 27.1</td>
             <td>17.37 cm</td></tr>
         <tr><td>DexJoCo</td><td colspan="3"><i>not built &mdash; no Allegro point sampler, no link table, no policy-server wiring</i></td></tr>
       </tbody>
     </table></div>
+    <div class="verdict">
+      <p class="k">Read the GR-1 row as a floor, not a ranking</p>
+      <p>Twelve models have now run this task three times each: 36 episodes, <b>zero successes</b>. Arm medians run 12.9&ndash;31.6 cm and p7's 27.1 cm sits 9<sup>th</sup> of 12. That ordering is not evidence: the three episodes of a single arm differ by 10.6 cm at the median and by 101 cm at worst &mdash; more than the 18.7 cm that separates the best arm median from the worst. A permutation test on p7 against the control returns <i>p</i> = 1.00. Ranking arms here needs either many more episodes per arm or a task some model can actually complete; until then GR-1 answers one question &mdash; does anything transfer closed-loop &mdash; and the answer is still no.</p>
+    </div>
+  <div class="frames">
+    <figure><video src="assets/p7_gr1_ep0.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>p7 &middot; GR-1 PnPCanToBowl episode 0 &mdash; final 27.3 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+    <figure><video src="assets/p7_gr1_ep1.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>p7 &middot; GR-1 PnPCanToBowl episode 1 &mdash; final 16.4 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+    <figure><video src="assets/p7_gr1_ep2.mp4" autoplay loop muted playsinline preload="metadata"></video><figcaption>p7 &middot; GR-1 PnPCanToBowl episode 2 &mdash; final 27.1 cm &mdash; executed in sim left, model prediction right</figcaption></figure>
+  </div>
   </div>
 </section>
 
@@ -103,11 +113,11 @@
   <div class="wrap">
     <span class="n">03</span><h2>Why the comparison is not clean, and what it still answers</h2>
     <ul class="clean">
-      <li><span class="mk bad">✗</span><span><span class="lt">Different scene difficulty</span><span class="ld">p7 saw 2 objects; the arms saw 6. Clutter is a first-order axis here &mdash; OMWC measures 0.005 on 1&ndash;2 object datasets against 0.29 on OakInk2 at 7.6.</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Different scene difficulty &mdash; in training only</span><span class="ld">p7 trained on 2-object scenes; the arms trained on up to 6. Clutter is a first-order axis in training &mdash; OMWC measures 0.005 on 1&ndash;2 object datasets against 0.29 on OakInk2 at 7.6. But it does not separate them <i>here</i>: running the p7 rollout at cap 2 and cap 6 produced byte-identical output, so the evaluation episodes carry at most two objects and neither model is being read on clutter it did or did not train for.</span></span></li>
       <li><span class="mk bad">✗</span><span><span class="lt">Different composition</span><span class="ld">p7 has no hot3d; the arms do.</span></span></li>
       <li><span class="mk bad">✗</span><span><span class="lt">Different augmentation</span><span class="ld">p7 has no origin jitter; the arms jitter the scene origin by up to 1 m, which removes absolute position as a cue and makes the task harder.</span></span></li>
       <li><span class="mk ok">✓</span><span><span class="lt">What it does answer</span><span class="ld">whether the campaign's fast rig &mdash; a third of the parameters and half the samples &mdash; was measuring anything the 120 M model would not have shown more clearly. If p7 beats the eleven on the shared benchmark, the auxiliaries were being read at a scale too small to see them.</span></span></li>
-      <li><span class="mk i">·</span><span><span class="lt">The clean version is already running</span><span class="ld">c4 puts C2's architecture and sample count on the v2 corpus with the object cap as the ONLY variable. That isolates clutter from scale.</span></span></li>
+      <li><span class="mk bad">✗</span><span><span class="lt">The clean version has not run yet</span><span class="ld">c4 would put C2's architecture and sample count on the v2 corpus with the object cap as the ONLY variable, isolating clutter from scale. It died in 42 s: it asks for <span class="mono">validity_source: motion</span>, and v2 has no matching <span class="mono">motion_valid.npz</span>. Relaunching it means either recomputing those caches for v2 or accepting <span class="mono">stored</span> validity &mdash; and on this page's evidence the cap it was built to isolate is not what the evaluation measures anyway.</span></span></li>
     </ul>
   </div>
 </section>
@@ -140,7 +150,7 @@
     <ul class="clean">
       <li><span class="mk i">·</span><span><span class="lt">Checkpoint</span><span class="ld">rlwrld <span class="mono">/rlwrld-unified-checkpoints/beomjun/3d-wam/p7_i5_long10ep_20260901/ckpt_0180608.pt</span> (1.92 GB) → stripped to weights+EMA (959 MB) → iclr2027 <span class="mono">/s3ckpt/beomjun/3dwam/p7_i5_long10ep/</span></span></span></li>
       <li><span class="mk i">·</span><span><span class="lt">Config</span><span class="ld" >configs/p7_i5_long10ep.yaml</span></span></li>
-      <li><span class="mk i">·</span><span><span class="lt">Evaluation</span><span class="ld">sbatch/p7_openloop.sbatch (job 10573, both caps) · sbatch/gr1_only.sbatch (job 10574)</span></span></li>
+      <li><span class="mk i">·</span><span><span class="lt">Evaluation</span><span class="ld">sbatch/p7_openloop.sbatch (job 10580, run at cap 2 and cap 6) · sbatch/gr1_only.sbatch (job 10574, TAG p7_gr1n)</span></span></li>
       <li><span class="mk i">·</span><span><span class="lt">Prior GR-1</span><span class="ld">2026-09-03, PnPAppleToDrawerClose, 0/3, 54→17 / 44→19 / 58→20 cm. Different task, and *Close tasks were later found structurally unreachable, so it is not comparable to this run.</span></span></li>
     </ul>
   </div>
