@@ -205,6 +205,54 @@
   <p class="footnote">viz_vdit_c · ground truth left, generated right within each panel · same scene, same seed, same viewpoint · object orange · right hand green · left hand purple · CFG 1.0, mean of 4 · for the owner to verify</p>
 </section>
 
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Standard metrics, 5 s autoregressive rollout</li>
+    <li>Interaction metrics</li>
+    <li class="on">Every benchmark, matched 20,000 steps &mdash; today's arms
+      <ul><li>newest arms first; GR-1 re-run on native robot links</li></ul></li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>ADE cm</th><th>OMWC</th><th>GR-1</th><th>median cm</th><th>DexJoCo</th></tr></thead>
+      <tbody>
+        <tr><td>V1 VITRA 10 %</td><td>17.24</td><td>0.540</td><td>0/3</td><td>28.41</td><td><i>not built</i></td></tr>
+        <tr><td>A5 Sharpa 25 %</td><td>16.32</td><td>0.513</td><td>0/3</td><td>17.93</td><td><i>not built</i></td></tr>
+        <tr><td>E6 E1+E2</td><td>17.10</td><td>0.605</td><td>0/3</td><td>17.39</td><td><i>not built</i></td></tr>
+        <tr><td>E5 correspondence</td><td>&mdash;</td><td>&mdash;</td><td>0/3</td><td>18.65</td><td><i>not built</i></td></tr>
+        <tr><td><b>control</b></td><td>17.63</td><td>0.677</td><td>0/3</td><td>17.37</td><td><i>not built</i></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">open loop: 5 s AR, zero predictor 18.99 cm &middot; GR-1: PnPCanToBowl &times; 3, native-link decode &middot; E5 open loop pending (no 20k ckpt; the 2.7 h cap stopped it at 19,983) &middot; DexJoCo installed and inventoried, NOT integrated: no Allegro point sampler, no policy-server wiring</p>
+</section>
+
+<section class="slide s-results">
+  <h2>Results</h2>
+  <ol class="agenda">
+    <li>Standard metrics, 5 s autoregressive rollout</li>
+    <li>Interaction metrics</li>
+    <li class="on">Every benchmark, matched 20,000 steps &mdash; last night's arms
+      <ul><li>control repeated as the reference row</li></ul></li>
+  </ol>
+  <div class="band"><div class="tbl">
+    <table class="compact">
+      <thead><tr><th>arm</th><th>ADE cm</th><th>OMWC</th><th>GR-1</th><th>median cm</th><th>DexJoCo</th></tr></thead>
+      <tbody>
+        <tr><td>A4 Sharpa 10 %</td><td>17.42</td><td>0.677</td><td>0/3</td><td>21.40</td><td><i>not built</i></td></tr>
+        <tr><td>A3 cond. noise</td><td>19.33</td><td>0.688</td><td>0/3</td><td>31.62</td><td><i>not built</i></td></tr>
+        <tr><td>A2 object motion</td><td>17.54</td><td>0.680</td><td>0/3</td><td>13.56</td><td><i>not built</i></td></tr>
+        <tr><td>E2 partner id</td><td>17.41</td><td>0.607</td><td>0/3</td><td>12.86</td><td><i>not built</i></td></tr>
+        <tr><td>E3 two-stream</td><td>17.90</td><td>0.786</td><td>0/3</td><td>24.66</td><td><i>not built</i></td></tr>
+        <tr><td>E1 contact</td><td>17.40</td><td>0.633</td><td>0/3</td><td>27.13</td><td><i>not built</i></td></tr>
+        <tr><td><b>control</b></td><td>17.63</td><td>0.677</td><td>0/3</td><td>17.37</td><td><i>not built</i></td></tr>
+      </tbody>
+    </table>
+  </div></div>
+  <p class="footnote">same bases &middot; n = 3 makes every GR-1 median fragile, and E6 and E1 each had one episode diverge past 90 cm, which a median hides &middot; 0/3 everywhere: no arm has completed the task</p>
+</section>
+
 <section class="slide s-discuss">
   <h2>Discussion &amp; Action items</h2>
   <p class="thesis">Contact helps interaction, data helps accuracy, structure costs steps.</p>
