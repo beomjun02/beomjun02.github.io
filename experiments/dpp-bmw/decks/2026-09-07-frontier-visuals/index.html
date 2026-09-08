@@ -9,6 +9,15 @@
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
 <script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* a paste-able terminal block: full width, real monospace, its own frame */
+  .deck .s-method pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:1.05em;line-height:1.5;margin:0;padding:.75em .9em;width:100%;box-sizing:border-box;
+    background:#F6F8FA;border:1px solid #D6DBE2;border-radius:.4em;
+    white-space:pre;overflow-x:auto;color:#1F2328;text-align:left}
+  .deck .s-method pre i{color:#6A737D;font-style:normal}
+  .deck .s-method .band{display:block}
+</style>
 </head>
 <body class="deck-page">
 <main class="deck" data-project="BMW &amp; Frontier Demo" data-deck="frontier input pipeline, final" data-date="2026-09-07">
@@ -70,35 +79,50 @@
 
 <!-- SECTION: method (pipeline) -->
 <section class="slide s-method">
-  <h2>The whole extraction, stage by stage</h2>
+  <h2>The pipeline — one script per stage</h2>
   <div class="band">
     <table>
-      <tr><th>stage</th><th>where</th><th>what it does</th><th>writes</th></tr>
-      <tr><td>frames</td><td class="mono">GPU</td><td>decode both eyes at stride 2</td><td class="mono">ep/{left,right}/*.jpg</td></tr>
-      <tr><td>depth</td><td class="mono">GPU</td><td>VGGT-Omega, anchored on the 66.4388 mm baseline</td><td class="mono">vggt/vggt.npz</td></tr>
-      <tr><td>masks</td><td class="mono">GPU</td><td>SAM3, every instance of 5 text prompts</td><td class="mono">sam3_multi/masks_multi.npz</td></tr>
-      <tr><td><b>object</b></td><td class="mono">CPU</td><td>IoU-0.55 merge → depth rank + 5 cm continuity → nearest → lift with the depth-edge filter → FPS 2048</td><td class="mono">&lt;ep&gt;_filt_objsel.npz</td></tr>
-      <tr><td>hand fit</td><td class="mono">GPU</td><td>seungjun's MANO pipeline on the two eyes as one hoi session, <b>no <code>--bbox_track</code></b></td><td class="mono">hand_pose_solver/joints_m.npy</td></tr>
-      <tr><td><b>hand</b></td><td class="mono">CPU</td><td>gate on his <code>used</code>/<code>reproj_err</code> → slot swap → 90 cm reach gate → 1 s world-frame hold → ego gate</td><td class="mono">&lt;ep&gt;_hands_mano2_held_ego.npz</td></tr>
+      <tr><th>stage</th><th>runs</th><th>script</th><th>writes</th></tr>
+      <tr><td>frames + depth + masks</td><td class="mono">GPU</td><td class="mono">server/run_episode.sbatch</td><td class="mono">&lt;ep&gt;/vggt/vggt.npz · &lt;ep&gt;/sam3_multi/masks_multi.npz</td></tr>
+      <tr><td><b>object cloud</b></td><td class="mono">CPU</td><td class="mono">viz/object_select.py</td><td class="mono">&lt;ep&gt;_filt_objsel.npz</td></tr>
+      <tr><td>object class</td><td class="mono">CPU</td><td class="mono">viz/obj_label.py</td><td class="mono">burned into the clips</td></tr>
+      <tr><td>hand fit</td><td class="mono">GPU</td><td class="mono">server/run_mano_notrack.sbatch</td><td class="mono">hand_pose_solver/joints_m.npy</td></tr>
+      <tr><td><b>hand cache</b></td><td class="mono">CPU</td><td class="mono">viz/mano_hands.py → hold_hands.py → ego_gate.py</td><td class="mono">&lt;ep&gt;_hands_mano2_held_ego.npz</td></tr>
+      <tr><td>work surface</td><td class="mono">CPU</td><td class="mono">viz/tabletop.py</td><td class="mono">&lt;ep&gt;_tabletop.npz</td></tr>
+      <tr><td>clips</td><td class="mono">CPU</td><td class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py</td><td class="mono">viz/out_bmwstyle/*.mp4</td></tr>
     </table>
   </div>
   <p class="footnote">both outputs in the same ego-left frame, in metres · matches BMW on solver, VGGT-Omega, the 10 mm filter and FPS-2048 · differs: 2 views not 4, no RGB-D sensor, no contact labels</p>
 </section>
 
-<!-- SECTION: method (handoff) -->
+<!-- SECTION: method (run it) -->
 <section class="slide s-method">
-  <h2>Where the code is, and how to run it</h2>
+  <h2>Run it — paste this</h2>
   <div class="band">
-    <table>
-      <tr><th>&nbsp;</th><th>command</th></tr>
-      <tr><td>1 · server, per episode</td><td class="mono">sbatch --job-name=&lt;50+ chars&gt; --export=ALL,MODEL_OUTPUT_DIR=&lt;dir&gt;,EP=ep7,IDX=000007 server/run_episode.sbatch</td></tr>
-      <tr><td>2 · pull the two files</td><td class="mono">ssh rlwrld-1 "cd $W &amp;&amp; tar cf - ep7/{vggt/vggt.npz,sam3_multi/masks_multi.npz}" | tar xf - -C pull/…</td></tr>
-      <tr><td>3 · local, per episode</td><td class="mono">viz/run_episode_local.sh ep7 000007 [--hands mano]</td></tr>
-      <tr><td>4 · his hand fit</td><td class="mono">sbatch … server/run_mano_notrack.sbatch  →  viz/run_mano_render.sh</td></tr>
-      <tr><td>5 · any visualization</td><td class="mono">viz/full_episode_viz.py · viz/hands3d_multi.py --preset right · viz/overlay_sources.py · viz/two_eye_check.py — every view type with its exact flags is a table in the README</td></tr>
-    </table>
+<pre><i># 0 · every line below runs from here; the cluster key is passphrase-locked</i>
+cd /Users/beomjun/claude-code-rc/BMW-Frontier
+export SSH_AUTH_SOCK=$(server/ssh-agent-sock.sh)
+W=/virtual_lab/sjw_alinlab/beomjun/hmd_object_demo; EP=ep0; IDX=000000
+
+<i># 1 · GPU, ~15 min: frames → VGGT depth → SAM3 masks</i>
+ssh rlwrld-1 "sbatch --job-name=frontier_hmd_episode_geometry_depth_and_masks_${EP}_${IDX} \
+  --export=ALL,MODEL_OUTPUT_DIR=/rlwrld-unified-checkpoints/beomjun/frontier_$EP,EP=$EP,IDX=$IDX $W/run_episode.sbatch"
+
+<i># 2 · pull the two files it wrote</i>
+mkdir -p "pull$W" &amp;&amp; ssh rlwrld-1 "cd $W &amp;&amp; tar cf - $EP/vggt/vggt.npz $EP/sam3_multi/masks_multi.npz" | tar xf - -C "pull$W"
+
+<i># 3 · GPU: seungjun's solver without --bbox_track, then pull + convert + render</i>
+ssh rlwrld-1 "sbatch --job-name=frontier_hmd_seungjun_mano_no_bbox_track_retriangulate_ep0_ep1_ep2 \
+  --export=ALL,MODEL_OUTPUT_DIR=/rlwrld-unified-checkpoints/beomjun/frontier_mano_notrack $W/run_mano_notrack.sbatch"
+viz/run_mano_render.sh
+<i># 4 · local, seconds: object cloud, hand post-processing, surface, clips</i>
+viz/run_episode_local.sh $EP $IDX --hands mano
+.venv/bin/python viz/tabletop.py   --tag $EP
+.venv/bin/python viz/hold_hands.py --tag $EP --src _hands_mano2 &amp;&amp; .venv/bin/python viz/ego_gate.py --tag $EP --src _hands_mano2_held
+.venv/bin/python viz/hands3d_multi.py --eps $EP --preset right-front --tabletop --dpi 170 --panel-h 760 \
+  --hands-suffix _hands_mano2_held_ego --obj-suffix _filt_objsel --out viz/out_bmwstyle/$EP.mp4</pre>
   </div>
-  <p class="footnote"><code>viz/</code> local CPU · <code>server/</code> GPU jobs · <code>pull/</code> mirrors, never truth · if ssh denies the key: <code>export SSH_AUTH_SOCK=$(server/ssh-agent-sock.sh)</code></p>
+  <p class="footnote">the sbatch files are already staged in <code>$W</code> — re-upload with <code>cat server/X.sbatch | ssh rlwrld-1 "cat &gt; $W/X.sbatch"</code> after editing them</p>
 </section>
 
 <!-- SECTION: appendix -->
