@@ -84,7 +84,7 @@
   .deck table.res.r5 th:nth-child(3){width:25%}
   .deck table.res.r5 th:nth-child(4){width:25%}
   .deck table.res.r5 th:nth-child(5){width:13%}
-  .deck .band.res2>figure.tb figcaption{text-align:left;font-size:1.3em}
+  .deck .band.res2>figure.tb figcaption{text-align:left;font-size:1.12em;line-height:1.28}
   /* ---- viz grids (outside the cap): 5 columns, rows = arm (5 + 4 tiles each), captions only ---- */
   .deck .s-viz h2{margin-bottom:.3em}
   .deck .s-viz .thesis{margin-bottom:.3em}
@@ -230,7 +230,7 @@
         <figcaption>The one metric and its three analyses</figcaption></figure>
     </div>
     <figure class="fig"><img src="assets/loss_curve.png" alt="Training loss and learning rate of both arms against effective epoch">
-      <figcaption>left: training loss · <b>centre: held-out validation ADE every 2,500 steps on one fixed 192-chunk basis, each arm beside its own zero predictor</b> · right: learning rate · 120M (blue), 320M (red) · loss/fm = masked MSE on the flow target, log_every 20; bold = 50-point running median, faint = raw; dotted = resume / log boundary (120M: steps 9,213 → 2 GPU, 11,814 → 4 GPU; schedule extended to 67,200 at 11,814) · regenerated from season2/logs at every deck update</figcaption></figure>
+      <figcaption>left: training loss · <b>centre: held-out validation ADE &divide; each run&rsquo;s OWN zero predictor, every 2,500 steps (1.0 dashed = the zero predictor; below 1.0 would beat it &mdash; neither base ever does; dotted = an earlier validation basis, excluded)</b> · right: learning rate · 120M (blue), 320M (red) · loss/fm = masked MSE on the flow target, log_every 20; bold = 50-point running median, faint = raw; dotted = resume / log boundary (120M: steps 9,213 → 2 GPU, 11,814 → 4 GPU; schedule extended to 67,200 at 11,814) · regenerated from season2/logs at every deck update</figcaption></figure>
   </div>
   <p class="footnote">mEPE = EPE3D on the moving subset (after Chodosh 2023) with the zero-velocity reference (Martinez 2017); owner-confirmed 09-09 14:10 · TACO Je/Te/Re companion · training logs season2/logs/</p>
 </section>
@@ -256,7 +256,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 03:30 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 landed 03:24 (-0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+2.8 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.4 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.4 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 · zero = zero-velocity predictor · every epoch scored on the SAME 7 held-out clips (re-pooled 03:15) · clips on the next seven slides</p>
 </section>
@@ -284,7 +284,7 @@
     <figure><img src="assets/320m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -342,7 +342,7 @@
     <figure><img src="assets/320m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -400,7 +400,7 @@
     <figure><img src="assets/320m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -458,7 +458,7 @@
     <figure><img src="assets/320m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -516,7 +516,7 @@
     <figure><img src="assets/320m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -574,7 +574,7 @@
     <figure><img src="assets/320m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -632,7 +632,7 @@
     <figure><img src="assets/320m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><img src="assets/320m/ep06/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -691,7 +691,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 03:30 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 landed 03:24 (-0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+2.8 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.4 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.4 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">H = 4 replans, timestep-matched to the observed points; table-anchored origin · success = task success over 3 episodes · composites on the next slide</p>
 </section>
@@ -719,7 +719,7 @@
     <figure><video src="assets/320m/ep04/gr1/episode_00_composite.mp4" poster="assets/320m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep05/gr1/episode_00_composite.mp4" poster="assets/320m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep06/gr1/episode_00_composite.mp4" poster="assets/320m/ep06/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -778,7 +778,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 03:30 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 landed 03:24 (-0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+2.8 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.4 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.4 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">'—' = not measured (no GT object point moved > 2 cm), not zero error · H = 4 replans, timestep-matched · composites on the next slide</p>
 </section>
@@ -806,7 +806,7 @@
     <figure><video src="assets/320m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep06/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep06/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
     <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
@@ -853,18 +853,18 @@
     <figure class="tb run"><table class="sum run">
       <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
       <tbody>
-        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-2.5 h)</td></tr>
-        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 26,320 of 32,160 (6.55 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (+3.0 h)</td></tr>
-        <tr><td>C2 batch · job 11922</td><td>4× H100 (iclr2027-gpu)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>0.22 s/step</td><td>14:55 (+11.6 h)</td></tr>
+        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-2.6 h)</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 26,320 of 32,160 (6.55 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (+2.8 h)</td></tr>
+        <tr><td>C2 batch · job 11922</td><td>4× H100 (iclr2027-gpu)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>0.22 s/step</td><td>14:55 (+11.4 h)</td></tr>
         <tr><td>C2 batch + history (MLXP)</td><td>4× H200 (MLXP)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
         <tr><td>C2 batch + contact aux</td><td>4× GPU</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
       </tbody></table>
-      <figcaption>What is running · progress as of 03:20 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
+      <figcaption>What is running · progress as of 03:30 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
     <figure class="tb"><table class="sum due">
       <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
       <tbody>
-        <tr><td>320M base ep07 read</td><td>+0.8 h</td><td>04:10</td></tr>
-        <tr><td>320M base ep08 read</td><td>+3.7 h</td><td>07:00</td></tr>
+        <tr><td>320M base ep07 read</td><td>+0.7 h</td><td>04:10</td></tr>
+        <tr><td>320M base ep08 read</td><td>+3.5 h</td><td>07:00</td></tr>
         <tr><td>C2 batch ep01 read</td><td>unestimated</td><td>—</td></tr>
         <tr><td>C2 batch ep02 read</td><td>unestimated</td><td>—</td></tr>
         <tr><td>C2 batch ep03 read</td><td>unestimated</td><td>—</td></tr>
@@ -884,7 +884,7 @@
       <figcaption>C2 (last config that beat zero): batch 32 · history H=2 · stopped at 4.15 ep. The base: batch 128 · no history · 8.36 ep.</figcaption></figure>
   </div>
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 03:30 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 landed 03:24 (-0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+2.8 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.4 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.4 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
 </section>
 
