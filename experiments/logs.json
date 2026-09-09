@@ -51,7 +51,7 @@
    "slug": "s2-2-architecture-training",
    "format": "deck",
    "status": "running",
-   "updated": "2026-09-09",
+   "updated": "2026-09-10",
    "title": "Deck #2-2 · Architecture & Training (season 2)",
    "path": "3d-wam/decks/2026-09-09-s2-2-architecture-training/",
    "tldr": "The video-DiT is unchanged since 08-31 (120M: d 768, 12 blocks, k = 8 part-major Hilbert patches, full 3-D attention, rectified flow); what changed is the season-2 corpus — seven datasets in one gravity frame with the table at z = 0, subtask text spans, temperature-0.5 sampling with DexYCB ×10 and HOT3D ×0.1 — and the one metric, mEPE over points whose ground truth moved more than 2 cm, always beside a zero-velocity predictor. Two arms are compared on one axis (effective epoch): the 120M base on 4× H100 toward 67,200 steps (8.36 epochs) and a 320M arm on MLXP (24 h cap ≈ 8.35 epochs). Every checkpoint is read the same way — six owner-picked open-loop rollouts, GR-1 PnPCanToBowl and DexJoCo pick_bucket closed loops — and the deck regenerates per epoch (curves per analysis, latest-reads table, viz grids with rows = arm and columns = epoch); the 120M ep01 read is in, the rest land through the night; four owner decisions (metric, GR-1 scene, CFG, batch-size arm) are due before the ep02 read.",

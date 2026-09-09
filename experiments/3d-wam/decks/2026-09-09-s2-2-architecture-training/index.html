@@ -225,7 +225,7 @@
           <tr><td>reported</td><td>hand · object, each beside the zero predictor</td></tr>
           <tr><td>rollouts</td><td>H = 50 steps (5.0 s @10 Hz, 6.7 s @7.5 Hz)</td></tr>
           <tr><td>closed loop</td><td>H = 4 steps (0.4 s)</td></tr>
-          <tr><td>analyses</td><td>6 owner-picked 5-s AR clips · GR-1 PnPCanToBowl closed loop (3 ep, timestep-matched, can + bowl) · DexJoCo hammer_nail closed loop (3 ep, front camera; pick_bucket until 09-09 18:00)</td></tr>
+          <tr><td>analyses</td><td>7 owner-picked 5-s AR clips (one per dataset, deck-2-1 start frames; the held-out ones scored) · GR-1 PnPCanToBowl closed loop (3 ep, timestep-matched, can + bowl) · DexJoCo hammer_nail closed loop (3 ep, front camera; pick_bucket until 09-09 18:00)</td></tr>
         </tbody></table>
         <figcaption>The one metric and its three analyses</figcaption></figure>
     </div>
@@ -245,190 +245,218 @@
   <figure class="tb"><table class="compact res r4">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep05 · 5.00</td><td class="num">20.63 / 69.02</td><td class="num">19.88 / 25.66</td></tr>
-      <tr><td>120M</td><td>ep06 · 6.00</td><td class="num">20.20 / 69.02</td><td class="num">21.79 / 25.66</td></tr>
-      <tr class="pend"><td>120M</td><td>ep07 · 7.00</td><td class="pd" colspan="2">lands 22:39 · read ~23:10</td></tr>
-      <tr><td>320M</td><td>ep03 · 3.00</td><td class="num">26.25 / 69.02</td><td class="num">26.13 / 25.66</td></tr>
-      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">35.61 / 69.02</td><td class="num">37.03 / 25.66</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="2">landed 10:06 · read not planned</td></tr>
+      <tr><td>120M</td><td>ep07 · 7.00</td><td class="num">28.04 / 65.74</td><td class="num">24.46 / 24.26</td></tr>
+      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">28.81 / 65.74</td><td class="num">27.60 / 24.26</td></tr>
+      <tr><td>120M</td><td>final · 8.36</td><td class="num">29.05 / 65.74</td><td class="num">27.55 / 24.26</td></tr>
+      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">38.51 / 66.65</td><td class="num">34.78 / 26.75</td></tr>
+      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">43.35 / 66.65</td><td class="num">39.27 / 26.75</td></tr>
+      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="2">landed 10:06 Wed · read not planned</td></tr>
     </tbody></table>
-    <figcaption>Latest reads per arm (all epochs are in the curves) · six owner-picked chunks (2 ARCTIC · 2 GRAB · 2 HOI4D) · self-predicted AR · H = 50 · CFG 1.0 · 16 Euler steps · zero = the basis's own zero-velocity predictor</figcaption></figure>
+    <figcaption>Latest reads per arm (all epochs are in the curves) · 11 held-out clips (2 ARCTIC · 5 GRAB · 4 HOI4D) · 6 train-episode clips rendered, not scored · self-predicted AR · H = 50 · CFG 1.0 · 16 Euler steps · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 21:58 KST) · <b>120M</b> · ep07 lands 22:39 (+0.7 h) · read <b>~23:10</b> · 1 more, ~1.6 h apart · final 8.36 ep lands <b>00:48 Thu</b> (+2.8 h) → read <b>~01:20 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep05 landed 21:38 (-0.3 h) · read <b>~22:40</b> · 2 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
 <!-- /GEN -->
-  <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 (120M batch 128, 320M batch 256) · ckpt epNN = weights_epNN.pt · zero = zero-velocity predictor on the same points · clips on the next six slides</p>
+  <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 · zero = zero-velocity predictor · &#9888; basis mixed: ep01&ndash;ep06 = 11 clips, ep07+ = 7 (re-pool pending) · clips on the next seven slides</p>
 </section>
 
 <!-- SECTION: viz grids (outside the ≤ 8 cap) · six rollout clips, rows = arm, columns = epochs · GENERATED, captions only -->
 <!-- GEN:viz-roll -->
 <section class="slide s-viz">
-  <h2>Rollouts (1/6): arctic/206 per epoch, both arms</h2>
-  <p class="thesis ctx">arctic/206 · “use the microwave” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (1/7): dexycb per epoch, both arms</h2>
+  <p class="thesis ctx">“grasp the tomato soup can” · train episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · dexycb_20200709-subject-01_20200709_142853_932122062010 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 2.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
-  <h2>Rollouts (2/6): arctic/212 per epoch, both arms</h2>
-  <p class="thesis ctx">arctic/212 · “use the notebook” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (2/7): hoi4d per epoch, both arms</h2>
+  <p class="thesis ctx">“pick and place the kettle” · train episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
 </section>
 
 <section class="slide s-viz">
-  <h2>Rollouts (3/6): grab/613 per epoch, both arms</h2>
-  <p class="thesis ctx">grab/613 · “lift the wine glass” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (3/7): hot3d per epoch, both arms</h2>
+  <p class="thesis ctx">“interact with the potato masher and the can tomato sauce” · train episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · P0001_15c4300c · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
-  <h2>Rollouts (4/6): grab/894 per epoch, both arms</h2>
-  <p class="thesis ctx">grab/894 · “use the mouse” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (4/7): arctic per epoch, both arms</h2>
+  <p class="thesis ctx">“grab the box” · train episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · dataset_s01_box_grab_01 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
-  <h2>Rollouts (5/6): hoi4d/2734 per epoch, both arms</h2>
-  <p class="thesis ctx">hoi4d/2734 · “pick and place the toy car” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (5/7): grab per epoch, both arms</h2>
+  <p class="thesis ctx">“lift the cup” · held-out episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · grab_s10_cup_lift_0 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
-  <h2>Rollouts (6/6): hoi4d/2847 per epoch, both arms</h2>
-  <p class="thesis ctx">hoi4d/2847 · “open and close the display the laptop” · self-predicted AR · H = 50</p>
+  <h2>Rollouts (6/7): oakink2 per epoch, both arms</h2>
+  <p class="thesis ctx">“Weigh something with scale by pouring it into the bowl.” · train episode</p>
   <div class="vizgrid g5 roll">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep01/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · scene_01__A001++seq__0b3d183d6b2e90eefd66__2023-04-27-20-38-16 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+</section>
+
+<section class="slide s-viz">
+  <h2>Rollouts (7/7): taco per epoch, both arms</h2>
+  <p class="thesis ctx">“put in the pan with the bowl” · train episode</p>
+  <div class="vizgrid g5 roll">
+    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+  </div>
+  <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · taco_put_in__bowl__pan_20230926_014 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 <!-- /GEN -->
 
@@ -442,18 +470,18 @@
   <figure class="tb"><table class="compact res r5">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th><th class="num">success</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep05 · 5.00</td><td class="num">3.58 / 4.05</td><td class="num">8.44 / 7.65</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>ep06 · 6.00</td><td class="num">3.71 / 4.30</td><td class="num">7.13 / 5.76</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>120M</td><td>ep07 · 7.00</td><td class="pd" colspan="3">lands 22:39 · read ~23:10</td></tr>
-      <tr><td>320M</td><td>ep03 · 3.00</td><td class="num">3.67 / 4.00</td><td class="num">5.64 / 4.28</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>ep07 · 7.00</td><td class="num">3.87 / 4.61</td><td class="num">9.78 / 7.89</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">5.23 / 5.03</td><td class="num">8.38 / 7.87</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>120M</td><td>final · 8.36</td><td class="pd" colspan="3">re-read pending (hammer_nail · front camera)</td></tr>
       <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">4.06 / 4.12</td><td class="num">4.60 / 3.73</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 · read not planned</td></tr>
+      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">4.30 / 4.14</td><td class="num">5.63 / 4.00</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · GR-1 PnPCanToBowl · 3 episodes · H = 4 replans, timestep-matched · can + bowl in the scene · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 21:58 KST) · <b>120M</b> · ep07 lands 22:39 (+0.7 h) · read <b>~23:10</b> · 1 more, ~1.6 h apart · final 8.36 ep lands <b>00:48 Thu</b> (+2.8 h) → read <b>~01:20 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep05 landed 21:38 (-0.3 h) · read <b>~22:40</b> · 2 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
 <!-- /GEN -->
   <p class="footnote">H = 4 replans, timestep-matched to the observed points; table-anchored origin · success = task success over 3 episodes · composites on the next slide</p>
 </section>
@@ -471,18 +499,18 @@
     <figure><video src="assets/120m/ep04/gr1/episode_00_composite.mp4" poster="assets/120m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep05/gr1/episode_00_composite.mp4" poster="assets/120m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep06/gr1/episode_00_composite.mp4" poster="assets/120m/ep06/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep07/gr1/episode_00_composite.mp4" poster="assets/120m/ep07/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep08/gr1/episode_00_composite.mp4" poster="assets/120m/ep08/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>re-read pending (hammer_nail · front camera)</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep02/gr1/episode_00_composite.mp4" poster="assets/320m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep03/gr1/episode_00_composite.mp4" poster="assets/320m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep04/gr1/episode_00_composite.mp4" poster="assets/320m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep05/gr1/episode_00_composite.mp4" poster="assets/320m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/gr1/</p>
@@ -499,18 +527,18 @@
   <figure class="tb"><table class="compact res r5">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th><th class="num">success</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep05 · 5.00</td><td class="num">8.31 / 5.25</td><td class="num">10.22 / 10.13</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>ep06 · 6.00</td><td class="num">8.73 / 5.07</td><td class="num">10.36 / 10.27</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>120M</td><td>ep07 · 7.00</td><td class="pd" colspan="3">lands 22:39 · read ~23:10</td></tr>
-      <tr><td>320M</td><td>ep03 · 3.00</td><td class="num">7.65 / 4.50</td><td class="num">10.82 / 10.27</td><td class="num">0 / 3</td></tr>
-      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">7.79 / 4.82</td><td class="num">10.71 / 10.27</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 · read not planned</td></tr>
+      <tr class="pend"><td>120M</td><td>ep07 · 7.00</td><td class="pd" colspan="3">re-read pending (hammer_nail · front camera)</td></tr>
+      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">11.36 / 6.02</td><td class="num">9.87 / 9.78</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>final · 8.36</td><td class="num">16.01 / 6.50</td><td class="num">14.00 / 13.88</td><td class="num">0 / 3</td></tr>
+      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">14.86 / 3.93</td><td class="num">14.41 / 13.88</td><td class="num">0 / 3</td></tr>
+      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">10.91 / 6.39</td><td class="num">14.19 / 13.88</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · DexJoCo hammer_nail · 3 episodes · H = 4 replans, timestep-matched · front camera · '—' = no GT object point moved &gt; 2 cm · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 21:58 KST) · <b>120M</b> · ep07 lands 22:39 (+0.7 h) · read <b>~23:10</b> · 1 more, ~1.6 h apart · final 8.36 ep lands <b>00:48 Thu</b> (+2.8 h) → read <b>~01:20 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep05 landed 21:38 (-0.3 h) · read <b>~22:40</b> · 2 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
 <!-- /GEN -->
   <p class="footnote">'—' = not measured (no GT object point moved > 2 cm), not zero error · H = 4 replans, timestep-matched · composites on the next slide</p>
 </section>
@@ -528,18 +556,18 @@
     <figure><video src="assets/120m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep06/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep06/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:39 · ~23:10</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:14 Thu · ~00:45 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:48 Thu · ~01:20 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>re-read pending (hammer_nail · front camera)</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep08/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep08/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/final/dexjoco/episode_00_composite.mp4" poster="assets/120m/final/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
     <figure><video src="assets/320m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:38 · ~22:40</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/dexjoco/</p>
@@ -549,27 +577,24 @@
 <!-- SECTION: summary (last main slide) · running / due (GENERATED) · owner decisions (hand-written) · ETA (GENERATED) -->
 <section class="slide s-discuss s-summary">
   <h2>Summary</h2>
-  <p class="thesis">Two arms running; reads land through the night; four decisions pending</p>
+  <p class="thesis">Hand mEPE bottoms at ~6 ep, then degrades; 320M trails 120M (7 clips, 1 seed)</p>
   <!-- GEN:summary -->
 <div class="band sum">
     <figure class="tb run"><table class="sum run">
       <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
       <tbody>
-        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 52,280 of 67,200 (6.50 of 8.36 ep)</td><td>0.71 s/step</td><td>00:48 Thu (+2.8 h)</td></tr>
-        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 20,400 of 32,160 (5.07 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 Thu (+8.3 h)</td></tr>
+        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-1.7 h)</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 26,320 of 32,160 (6.55 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (+3.7 h)</td></tr>
       </tbody></table>
-      <figcaption>What is running · progress as of 21:58 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
+      <figcaption>What is running · progress as of 02:35 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
     <figure class="tb"><table class="sum due">
       <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
       <tbody>
-        <tr><td>320M ep05 read</td><td>+0.7 h</td><td>22:40</td></tr>
-        <tr><td>120M ep07 read</td><td>+1.2 h</td><td>23:10</td></tr>
-        <tr><td>120M ep08 read</td><td>+2.8 h</td><td>00:45 Thu</td></tr>
-        <tr><td>120M final read</td><td>+3.4 h</td><td>01:20 Thu</td></tr>
-        <tr><td>320M ep06 read</td><td>+3.9 h</td><td>01:51 Thu</td></tr>
-        <tr><td>320M ep08 read</td><td>+9.7 h</td><td>07:37 Thu</td></tr>
+        <tr><td>320M ep06 read</td><td>+0.4 h</td><td>03:00</td></tr>
+        <tr><td>320M ep07 read</td><td>+1.6 h</td><td>04:10</td></tr>
+        <tr><td>320M ep08 read</td><td>+4.4 h</td><td>07:00</td></tr>
       </tbody></table>
-      <figcaption>Results due, no input needed · 1 more on the viz tiles</figcaption></figure>
+      <figcaption>Results due, no input needed</figcaption></figure>
   </div>
 <!-- /GEN -->
   <div class="band sum2">
@@ -584,7 +609,7 @@
       <figcaption>Decisions the owner must make</figcaption></figure>
   </div>
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 21:58 KST) · <b>120M</b> · ep07 lands 22:39 (+0.7 h) · read <b>~23:10</b> · 1 more, ~1.6 h apart · final 8.36 ep lands <b>00:48 Thu</b> (+2.8 h) → read <b>~01:20 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep05 landed 21:38 (-0.3 h) · read <b>~22:40</b> · 2 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
 <!-- /GEN -->
 </section>
 
@@ -612,7 +637,7 @@
     <tbody>
       <tr><td>in-training A</td><td>val loss on 32 val chunks, up to step 9,213 (job 10981)</td><td>nowhere in this deck; a curve, not a read</td></tr>
       <tr><td>in-training B</td><td>val loss on 192 val chunks, from step 9,213 on (jobs 11153, 11270)</td><td>nowhere in this deck; a curve, not a read</td></tr>
-      <tr><td>read · rollouts</td><td>six owner-picked chunks, AR H = 50, CFG 1.0, 16 Euler steps, season-2 frame; zero predictor on the same points; TACO companion Je/Te/Re at H = 10 (no moving-set restriction)</td><td>Results (1) only — both arms, same chunks</td></tr>
+      <tr><td>read · rollouts</td><td>held-out clips (six clips6 picks + GRAB cup) scored; seven deck-2-1 clips rendered (six are train episodes); AR H = 50, CFG 1.0, 16 Euler steps, season-2 frame; zero predictor on the same points; TACO companion Je/Te/Re at H = 10 (no moving-set restriction)</td><td>Results (1) only — both arms, same chunks</td></tr>
       <tr><td>read · GR-1</td><td>PnPCanToBowl, 3 episodes, H = 4, can + bowl, timestep-matched; its own zero predictor (differs per arm: the observed trajectory is the arm's own)</td><td>Results (2) only</td></tr>
       <tr><td>read · DexJoCo</td><td>hammer_nail (owner 09-09; replaces pick_bucket), 3 episodes, H = 4, front camera; its own zero predictor; object row = hammer + nail + board points (nail moves only on hits)</td><td>Results (3) only</td></tr>
     </tbody></table></div>
