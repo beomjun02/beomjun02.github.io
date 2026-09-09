@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!-- Deck #2-2 · Architecture & Training (season 2) · 3D-WAM · base model 120M.
+     Structure = DECK-STYLE.md §3 / §4b: title · overview · method (1–3) · results ×2 (agenda stepper), each followed by a
+     viz-grid slide outside the ≤ 8 cap · summary (running / due / decisions) · appendix A0–A3 (last = cut list).
+     Pending results = tr.pend rows; ETA = p.etabar strips. Numbers: season2/RUN.md, reads ~/3d-wam/review/s2/s2_base_ep01_frame/. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-09 · Deck #2-2 · Architecture &amp; Training (season 2) — 3D-WAM</title>
+<meta name="description" content="Deck #2-2: the unchanged video-DiT on the season-2 corpus (gravity frame, subtask text), the 120M base training recipe, the one metric (mEPE), and the first 1-epoch reads on six rollouts, GR-1 and DexJoCo.">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  /* ---- pending visuals: dashed "WILL UPDATE" tiles (v5 §4b E) ---- */
+  .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.35em;align-items:center;justify-content:center;
+    text-align:center;min-height:4.5em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;line-height:1.35;
+    padding:.7em .9em;background:#FAFAFA;box-sizing:border-box}
+  .deck figure.phold .pbox b{color:#333}
+  .deck figure.phold .pbox span{overflow-wrap:anywhere}
+  /* ---- pending results: grey italic rows with a date (v5 §4b B) ---- */
+  .deck tr.pend td{color:#595959;font-style:italic}
+  .deck tr.pend td:first-child{color:#000;font-style:normal}
+  .deck tr.pend td.num{white-space:normal}
+  /* ---- ETA strip (v5 §4b F) ---- */
+  .deck p.etabar{margin:.5em 0 0;padding:.36em .8em;border-left:3px solid #0070C0;background:#F2F6FA;font-size:1.32em;color:#333;line-height:1.36}
+  .deck p.etabar b{color:#000}
+  /* ---- tables inside figures: caption under the table ---- */
+  .deck .band>figure.tb{justify-content:flex-start}
+  .deck .slide td.c,.deck .slide th.c{text-align:center}
+  .deck .slide.fn2{padding-bottom:4.8em}
+  .deck .slide.fn2 .footnote{white-space:normal;overflow:visible;text-overflow:clip;bottom:1.0em;line-height:1.28}
+  /* ---- method: figure + fact table ---- */
+  .deck .band.mt{gap:2.4em;margin-top:2.2em;align-items:flex-start}
+  .deck .band.mt>figure.fig{flex:1.45 1 0}
+  .deck .band.mt>figure.fig>img{flex:0 0 auto;height:auto;max-height:25em;object-fit:contain}
+  .deck .band.mt>figure.tb{flex:1 1 0;min-width:0}
+  .deck table.fact{table-layout:fixed;width:100%}
+  .deck table.fact th,.deck table.fact td{padding:.22em .5em;vertical-align:top}
+  .deck table.fact td:first-child{font-weight:700}
+  .deck table.fact th:nth-child(1){width:34%}
+  /* ---- method (3): training setup (top-left) + metric (bottom-left) stacked beside the loss curve ---- */
+  .deck .band.m3{gap:2em;margin-top:1.6em;align-items:flex-start}
+  .deck .band.m3>.col{flex:1.25 1 0;min-width:0;display:flex;flex-direction:column;gap:1.1em}
+  .deck .band.m3>.col>figure{margin:0;display:flex;flex-direction:column}
+  .deck .band.m3>figure.fig{flex:1 1 0;min-width:0}
+  .deck .band.m3>figure.fig>img{flex:0 0 auto;height:auto;max-height:30em;object-fit:contain}
+  .deck table.setup{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.26}
+  .deck table.setup th,.deck table.setup td{padding:.16em .4em;vertical-align:top}
+  .deck table.setup th{white-space:normal}
+  .deck table.setup td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.setup th:nth-child(1){width:9%}
+  .deck table.setup th:nth-child(2){width:23%}
+  .deck table.setup th:nth-child(3){width:19%}
+  .deck table.setup th:nth-child(4){width:27%}
+  .deck table.setup th:nth-child(5){width:22%}
+  .deck table.metric{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.26}
+  .deck table.metric th,.deck table.metric td{padding:.16em .4em;vertical-align:top}
+  .deck table.metric td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.metric th:nth-child(1){width:19%}
+  /* ---- results: reads table(s) ---- */
+  .deck .band.res{gap:2.2em;margin-top:1.4em;align-items:flex-start;flex:0 0 auto}
+  .deck .band.res>figure.tb{flex:1 1 0;min-width:0}
+  .deck table.res{table-layout:fixed;width:100%}
+  .deck table.res th,.deck table.res td{padding:.2em .45em}
+  .deck table.res th{white-space:normal;line-height:1.2;vertical-align:bottom}
+  .deck table.res td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.res.one th:nth-child(1){width:19%}
+  .deck table.res.one th:nth-child(2){width:11%}
+  .deck table.res.one th:nth-child(3){width:15%}
+  .deck table.res.one th:nth-child(4){width:15%}
+  .deck table.res.one th:nth-child(5){width:20%}
+  .deck table.res.one th:nth-child(6){width:20%}
+  .deck table.res.cl{font-size:1.3em}
+  .deck table.res.cl th:nth-child(1){width:20%}
+  .deck table.res.cl th:nth-child(2){width:10%}
+  .deck table.res.cl th:nth-child(3){width:12%}
+  .deck table.res.cl th:nth-child(4){width:12%}
+  .deck table.res.cl th:nth-child(5){width:14%}
+  .deck table.res.cl th:nth-child(6){width:14%}
+  .deck table.res.cl th:nth-child(7){width:18%}
+  .deck p.tcap{font-style:italic;font-size:1.3em;color:var(--cap,#595959);text-align:center;margin:.25em 0 0;line-height:1.3}
+  /* ---- viz grids (outside the cap): 3 columns × 2 rows, captions only ---- */
+  .deck .s-viz h2{margin-bottom:.3em}
+  .deck .s-viz .thesis{margin-bottom:.3em}
+  .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;
+    gap:1.0em 1.6em;align-content:start;margin-top:1.0em}
+  .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
+  .deck .vizgrid figure>img,.deck .vizgrid figure>video{flex:0 0 auto;width:100%;height:13.5em;object-fit:contain;object-position:center;background:transparent}
+  .deck .vizgrid.wide figure>video{height:12.5em}
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.3em;font-size:1.3em;line-height:1.3;font-style:italic;color:var(--cap,#595959);text-align:center;text-wrap:pretty}
+  /* ---- summary: running + due side by side, decisions full width, ETA strip ---- */
+  .deck .s-summary h2{margin-bottom:.5em}
+  .deck .s-summary .thesis{margin-bottom:.3em}
+  .deck .band.sum{flex:0 0 auto;margin-top:.4em;gap:2em;align-items:flex-start}
+  .deck .band.sum>figure.tb{flex:1 1 0;min-width:0}
+  .deck .band.sum>figure.tb.run{flex:1.6 1 0}
+  .deck .band.sum2{flex:0 0 auto;margin-top:.9em}
+  .deck .band.sum2>figure.tb{flex:1 1 0;min-width:0}
+  .deck table.sum{table-layout:fixed;width:100%;font-size:1.3em;line-height:1.26}
+  .deck table.sum th,.deck table.sum td{padding:.16em .4em;vertical-align:top}
+  .deck table.sum th{white-space:nowrap}
+  .deck table.sum td:first-child{font-weight:700}
+  .deck table.sum.run th:nth-child(1){width:20%}
+  .deck table.sum.run th:nth-child(2){width:14%}
+  .deck table.sum.run th:nth-child(3){width:36%}
+  .deck table.sum.run th:nth-child(4){width:13%}
+  .deck table.sum.run th:nth-child(5){width:17%}
+  .deck table.sum.due th:nth-child(1){width:34%}
+  .deck table.sum.due th:nth-child(2){width:26%}
+  .deck table.sum.due th:nth-child(3){width:40%}
+  .deck table.sum.dec th:nth-child(1){width:30%}
+  .deck table.sum.dec th:nth-child(2){width:16%}
+  .deck table.sum.dec th:nth-child(3){width:54%}
+  .deck .s-summary p.etabar{margin-top:.8em}
+  /* ---- appendix ---- */
+  .deck .s-appendix .kv{font-size:1.35em}
+  .deck .s-appendix p.note{font-size:1.35em;line-height:1.4;margin-top:.9em;overflow-wrap:anywhere}
+  .deck .s-appendix table.cav td:first-child{white-space:nowrap;font-weight:700;width:14%}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #2-2 · architecture &amp; training · season 2" data-date="2026-09-09">
+
+<!-- SECTION: title -->
+<section class="slide s-title">
+  <h1>Deck #2-2: Architecture &amp; Training</h1>
+  <p class="ctx">3D-WAM · season 2 · base model 120M</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 09<br>Presented by Beomjun Kim</p>
+</section>
+
+<!-- SECTION: overview -->
+<section class="slide s-overview">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Same DiT, new frame and text; base training, first reads tonight</p>
+  <ul>
+    <li>architecture unchanged since 08-31</li>
+    <li>gravity frame + subtask text</li>
+    <li>reads: ep02 · ep03 · final</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/arch_main.png" alt="3D-WAM architecture: labelled point set in, video-DiT over part-major Hilbert patches, scene flow out">
+      <figcaption>Architecture, unchanged from deck #8 (08-31): labelled points + text in, total scene flow out · figure reused from the 09-05 deck</figcaption></figure>
+  </div>
+  <p class="footnote">sources: season2/RUN.md · deck #8 (2026-08-31-evaluation) · deck #2-1 (2026-09-08-s2-1-human-data) · reads ~/3d-wam/review/s2/s2_base_ep01_frame/</p>
+</section>
+
+<!-- SECTION: method (1) · architecture -->
+<section class="slide s-method">
+  <h2>Method (1): Architecture</h2>
+  <p class="thesis">The plain video-DiT is kept; only data and frame changed</p>
+  <ul>
+    <li>one token per part-major patch</li>
+    <li>full 3-D attention over T = 10</li>
+    <li>rectified flow, v-parameterisation</li>
+  </ul>
+  <div class="band mt">
+    <figure class="fig"><img src="assets/arch_main.png" alt="3D-WAM architecture figure">
+      <figcaption>Labelled points → Hilbert patches → 12-block DiT → scene flow → joints</figcaption></figure>
+    <figure class="tb"><table class="compact fact">
+      <thead><tr><th>quantity</th><th>120M base</th></tr></thead>
+      <tbody>
+        <tr><td>params</td><td>119.9 M</td></tr>
+        <tr><td>d / depth / heads</td><td>768 / 12 / 12</td></tr>
+        <tr><td>tokens</td><td>k = 8 part-major Hilbert patches</td></tr>
+        <tr><td>attention</td><td>full 3-D, flash (padding-free)</td></tr>
+        <tr><td>positional</td><td>time-only RoPE</td></tr>
+        <tr><td>objective</td><td>rectified flow, v-parameterisation, no aux losses</td></tr>
+      </tbody></table>
+      <figcaption>Model facts · wam/model/vdit.py, configs/s2_base_120m</figcaption></figure>
+  </div>
+  <p class="footnote">history off (owner 09-07); every tested addition was null or negative (deck #8, 08-31)</p>
+</section>
+
+<!-- SECTION: method (2) · data recipe -->
+<section class="slide s-method">
+  <h2>Method (2): Data recipe</h2>
+  <p class="thesis">Seven datasets in one gravity frame, sampled at temperature 0.5</p>
+  <div class="band mt">
+    <figure class="fig"><img src="assets/mixture.png" alt="Bar chart: sampled share of training chunks per dataset">
+      <figcaption>Sampled share per dataset · temperature 0.5 over chunk counts; DexYCB ×10, HOT3D ×0.1 · grey = uniform</figcaption></figure>
+    <figure class="tb"><table class="compact fact">
+      <thead><tr><th>quantity</th><th>season-2 corpus</th></tr></thead>
+      <tbody>
+        <tr><td>train chunks</td><td>1,029,165 (7 datasets; 5 % of sequences held out)</td></tr>
+        <tr><td>frame</td><td>gravity z-up, table at z = 0 per episode sidecar</td></tr>
+        <tr><td>anchored episodes</td><td>1,678 / 1,683 HOI4D; DexYCB / GRAB / TACO / ARCTIC / OakInk2</td></tr>
+        <tr><td>subtask text</td><td>32,903 spans on 2,463 episodes (HOI4D, HOT3D, OakInk2)</td></tr>
+        <tr><td>HOI4D rate</td><td>7.5 Hz (exact stride 2)</td></tr>
+        <tr><td>augmentation</td><td>yaw, mirror x → −x, origin jitter 1 m in-plane</td></tr>
+      </tbody></table>
+      <figcaption>Corpus facts · frame_fix/&lt;ds&gt;.json, text_spans/&lt;ds&gt;.json sidecars</figcaption></figure>
+  </div>
+  <p class="footnote">VITRA excluded; HOT3D free-workspace (gravity only)</p>
+</section>
+
+<!-- SECTION: method (3) · training setup + the one metric + the loss curve (three evidence items) -->
+<section class="slide s-method">
+  <h2>Method (3): Training &amp; the one metric</h2>
+  <p class="thesis">Two arms at equal epochs; one metric, always beside the zero predictor</p>
+  <div class="band m3">
+    <div class="col">
+      <figure class="tb"><table class="setup">
+        <thead><tr><th>arm</th><th>compute</th><th>eff. batch</th><th>lr</th><th>target</th></tr></thead>
+        <tbody>
+          <tr><td>120M</td><td>4× H100 (iclr2027-gpu)</td><td>128 = 32×1×4</td><td>3e-4, warmup 1k, cosine → 3e-5</td><td>67,200 steps = 8.36 ep</td></tr>
+          <tr><td>320M</td><td>4× H200 (MLXP)</td><td>256 = 32×2×4</td><td>1e-4</td><td>24 h cap ≈ 33,600 steps = 8.35 ep</td></tr>
+          <tr><td>both</td><td colspan="4">AdamW wd 0.05 · EMA 0.999 · bf16 · hourly checkpoints</td></tr>
+        </tbody></table>
+        <figcaption>Setup of the two arms (setup only, not a comparison) · ep = effective epoch over 1,029,165 chunks</figcaption></figure>
+      <figure class="tb"><table class="metric">
+        <thead><tr><th>metric</th><th>definition</th></tr></thead>
+        <tbody>
+          <tr><td>mEPE@H</td><td>mean |pred − gt| over points whose GT moved &gt; 2 cm</td></tr>
+          <tr><td>reported</td><td>hand · object, each beside the zero predictor</td></tr>
+          <tr><td>rollouts</td><td>H = 50 steps (5.0 s @10 Hz, 6.7 s @7.5 Hz)</td></tr>
+          <tr><td>closed loop</td><td>H = 4 steps (0.4 s)</td></tr>
+          <tr><td>analyses</td><td>6 owner-picked 5-s AR clips · GR-1 PnPCanToBowl closed loop (3 ep, timestep-matched, can + bowl) · DexJoCo pick_bucket closed loop (3 ep)</td></tr>
+        </tbody></table>
+        <figcaption>The one metric and its three analyses</figcaption></figure>
+    </div>
+    <figure class="fig"><img src="assets/loss_curve.png" alt="Training loss and learning rate of the 120M base against effective epoch">
+      <figcaption>120M base · loss/fm = masked MSE on the flow target, log_every 20; smoothed (50-step running median); dotted = resumes at steps 9,213 (2 GPU) and 11,814 (4 GPU); the schedule extension to 67,200 steps applied at step 11,814 · right: learning rate</figcaption></figure>
+  </div>
+  <p class="footnote">EPE3D on the dynamic subset (Chodosh 2023) with the zero-velocity reference (Martinez 2017); NOT yet owner-confirmed · logs season2/logs/s2_base_120m_{10981,11153,11270}.log</p>
+</section>
+
+<!-- SECTION: results (1) · open-loop rollouts -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">First read at 1.00 epoch; ep02, ep03 and final follow tonight</p>
+  <ol class="agenda">
+    <li class="on">Open-loop rollouts — six owner-picked clips
+      <ul><li>self-predicted AR · H = 50 · chain start = conditioning frame · season-2 frame (table-anchored origins)</li>
+          <li>CFG 1.0 · 16 Euler steps · zero = zero-velocity predictor on the same points</li></ul></li>
+    <li>Closed loops — GR-1 and DexJoCo</li>
+  </ol>
+  <div class="band res">
+    <figure class="tb"><table class="compact res one">
+      <thead><tr><th>checkpoint</th><th class="num">eff. epoch</th><th class="num">hand mEPE cm</th><th class="num">hand zero cm</th><th class="num">object mEPE cm</th><th class="num">object zero cm</th></tr></thead>
+      <tbody>
+        <tr><td>weights_ep01</td><td class="num">1.00</td><td class="num">51.94</td><td class="num">72.78</td><td class="num">22.85</td><td class="num">26.25</td></tr>
+        <tr class="pend"><td>weights_ep02</td><td class="num">2.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">read ~15:10 KST</td></tr>
+        <tr class="pend"><td>weights_ep03</td><td class="num">3.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">read ~16:45 KST</td></tr>
+        <tr class="pend"><td>weights_final</td><td class="num">8.36</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">read ~02:00 Thu</td></tr>
+      </tbody></table>
+      <figcaption>Basis: six owner-picked chunks (2 ARCTIC · 2 GRAB · 2 HOI4D), AR, H = 50, mean over the six · zero = this basis's own zero predictor · ep01 read 13:00 KST, job 11154</figcaption></figure>
+  </div>
+  <p class="etabar"><b>ETA</b> · ep02 lands <b>~14:40 KST</b> (step 16,080; +0.8 h from 13:50) → read ≈ 25 min → <b>~15:10</b> · ep03 <b>~16:10</b> → read <b>~16:45</b> · final 8.36 ep <b>00:30–01:30 Thu</b> (+10.7–11.7 h) → read <b>~02:00 Thu</b></p>
+  <p class="footnote">eff. epoch = steps × 128 / 1,029,165 · ep01 = step 8,041 · clips on the next slide · read harness season2/RUN.md</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · six ep01 rollouts · captions only -->
+<section class="slide s-viz">
+  <h2>Rollouts (1/1): six owner-picked clips</h2>
+  <p class="thesis ctx">Six owner-picked chunks · weights_ep01 · self-predicted AR · H = 50</p>
+  <div class="vizgrid">
+    <figure><img src="assets/arctic_206_ar.gif" alt="ARCTIC episode 206: ground truth left, rollout right" loading="lazy" style="background:url(assets/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · arctic/206 · 5.0 s @10 Hz</figcaption></figure>
+    <figure><img src="assets/arctic_212_ar.gif" alt="ARCTIC episode 212: ground truth left, rollout right" loading="lazy" style="background:url(assets/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · arctic/212 · 5.0 s @10 Hz</figcaption></figure>
+    <figure><img src="assets/grab_613_ar.gif" alt="GRAB episode 613: ground truth left, rollout right" loading="lazy" style="background:url(assets/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · grab/613 · 5.0 s @10 Hz</figcaption></figure>
+    <figure><img src="assets/grab_894_ar.gif" alt="GRAB episode 894: ground truth left, rollout right" loading="lazy" style="background:url(assets/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · grab/894 · 5.0 s @10 Hz</figcaption></figure>
+    <figure><img src="assets/hoi4d_2734_ar.gif" alt="HOI4D episode 2734: ground truth left, rollout right" loading="lazy" style="background:url(assets/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · hoi4d/2734 · 6.7 s @7.5 Hz</figcaption></figure>
+    <figure><img src="assets/hoi4d_2847_ar.gif" alt="HOI4D episode 2847: ground truth left, rollout right" loading="lazy" style="background:url(assets/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,041 · 1.00 ep · self-predicted AR · H = 50 · hoi4d/2847 · 6.7 s @7.5 Hz</figcaption></figure>
+  </div>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple; same chunk, camera, seed across checkpoints</p>
+</section>
+
+<!-- SECTION: results (2) · closed loops -->
+<section class="slide s-results">
+  <h2>Results</h2>
+  <p class="thesis">Closed loop at 1.00 epoch: 0 of 3 on both arenas</p>
+  <ol class="agenda">
+    <li>Open-loop rollouts — six owner-picked clips</li>
+    <li class="on">Closed loops — GR-1 and DexJoCo
+      <ul><li>H = 4 replans, timestep-matched to the observed points; table-anchored origin</li>
+          <li>GR-1 PnPCanToBowl: can + bowl in the scene · DexJoCo pick_bucket</li></ul></li>
+  </ol>
+  <div class="band res">
+    <figure class="tb"><table class="compact res cl">
+      <thead><tr><th>checkpoint</th><th class="num">eff. ep</th><th class="num">hand cm</th><th class="num">hand zero</th><th class="num">object cm</th><th class="num">object zero</th><th class="num">success</th></tr></thead>
+      <tbody>
+        <tr><td>weights_ep01</td><td class="num">1.00</td><td class="num">4.10</td><td class="num">4.09</td><td class="num">7.53</td><td class="num">6.89</td><td class="num">0 / 3</td></tr>
+        <tr class="pend"><td>weights_ep02</td><td class="num">2.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~15:10</td></tr>
+        <tr class="pend"><td>weights_ep03</td><td class="num">3.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~16:45</td></tr>
+        <tr class="pend"><td>weights_final</td><td class="num">8.36</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~02:00 Thu</td></tr>
+      </tbody></table>
+      <figcaption>GR-1 PnPCanToBowl · 267 replans · H = 4 · 3 episodes · zero = this arena's own zero predictor</figcaption></figure>
+    <figure class="tb"><table class="compact res cl">
+      <thead><tr><th>checkpoint</th><th class="num">eff. ep</th><th class="num">hand cm</th><th class="num">hand zero</th><th class="num">object cm</th><th class="num">object zero</th><th class="num">success</th></tr></thead>
+      <tbody>
+        <tr><td>weights_ep01</td><td class="num">1.00</td><td class="num">6.69</td><td class="num">4.26</td><td class="num">—</td><td class="num">—</td><td class="num">0 / 3</td></tr>
+        <tr class="pend"><td>weights_ep02</td><td class="num">2.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~15:10</td></tr>
+        <tr class="pend"><td>weights_ep03</td><td class="num">3.00</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~16:45</td></tr>
+        <tr class="pend"><td>weights_final</td><td class="num">8.36</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">~02:00 Thu</td></tr>
+      </tbody></table>
+      <figcaption>DexJoCo pick_bucket · 57 replans · H = 4 · 3 episodes · object: no GT object point moved &gt; 2 cm, so not measured</figcaption></figure>
+  </div>
+  <p class="etabar"><b>ETA</b> · ep02 lands <b>~14:40 KST</b> (+0.8 h), read <b>~15:10</b> · ep03 <b>~16:10</b> → read <b>~16:45</b> · final <b>00:30–01:30 Thu</b> (+10.7–11.7 h) → read <b>~02:00 Thu</b> · GR-1 read <b>14–26 min</b>, DexJoCo <b>6 min</b></p>
+  <p class="footnote">'—' = not measured, not zero error · mEPE in cm, zero = zero-velocity predictor · ep01 read 13:00 KST, jobs 11155 / 11156 · composites on the next slide</p>
+</section>
+
+<!-- SECTION: viz grid (outside the ≤ 8 cap) · six closed-loop composites · captions only -->
+<section class="slide s-viz">
+  <h2>Closed loops (1/1): GR-1 and DexJoCo composites</h2>
+  <p class="thesis ctx">weights_ep01 · closed loop · H = 4 · three episodes per arena</p>
+  <div class="vizgrid wide">
+    <figure><video src="assets/gr1_ep00_composite.mp4" poster="assets/gr1_ep00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (GR-1 egoview) | observed points | predicted, matched timesteps · PnPCanToBowl · episode 0</figcaption></figure>
+    <figure><video src="assets/gr1_ep01_composite.mp4" poster="assets/gr1_ep01_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (GR-1 egoview) | observed points | predicted, matched timesteps · PnPCanToBowl · episode 1</figcaption></figure>
+    <figure><video src="assets/gr1_ep02_composite.mp4" poster="assets/gr1_ep02_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (GR-1 egoview) | observed points | predicted, matched timesteps · PnPCanToBowl · episode 2</figcaption></figure>
+    <figure><video src="assets/dexjoco_ep00_composite.mp4" poster="assets/dexjoco_ep00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (DexJoCo wrist) | observed points | predicted, matched timesteps · pick_bucket · episode 0</figcaption></figure>
+    <figure><video src="assets/dexjoco_ep01_composite.mp4" poster="assets/dexjoco_ep01_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (DexJoCo wrist) | observed points | predicted, matched timesteps · pick_bucket · episode 1</figcaption></figure>
+    <figure><video src="assets/dexjoco_ep02_composite.mp4" poster="assets/dexjoco_ep02_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,041 · 1.00 ep · closed loop · ego (DexJoCo wrist) | observed points | predicted, matched timesteps · pick_bucket · episode 2</figcaption></figure>
+  </div>
+  <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · 1800×600, H.264</p>
+</section>
+
+<!-- SECTION: summary (last main slide) · running / due / owner decisions + ETA at a glance -->
+<section class="slide s-discuss s-summary">
+  <h2>Summary</h2>
+  <p class="thesis">Two arms running; three reads due tonight; four decisions before ep02</p>
+  <div class="band sum">
+    <figure class="tb run"><table class="sum run">
+      <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
+      <tbody>
+        <tr><td>120M · job 11270</td><td>4× H100</td><td>step ~12,100 of 67,200 (1.5 of 8.36 ep)</td><td>0.70 s/step</td><td>00:30–01:30 Thu</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200</td><td>~1.9 ep at 13:50</td><td>—</td><td>07:14 Thu</td></tr>
+      </tbody></table>
+      <figcaption>What is running</figcaption></figure>
+    <figure class="tb"><table class="sum due">
+      <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
+      <tbody>
+        <tr><td>ep02 read</td><td>+1.3 h</td><td>~15:10 KST</td></tr>
+        <tr><td>ep03 read</td><td>+3 h</td><td>~16:45 KST</td></tr>
+        <tr><td>final read</td><td>+12 h</td><td>~02:00 Thu</td></tr>
+      </tbody></table>
+      <figcaption>Results due, no input needed</figcaption></figure>
+  </div>
+  <div class="band sum2">
+    <figure class="tb"><table class="sum dec">
+      <thead><tr><th>decision (owner)</th><th>deadline</th><th>recommendation</th></tr></thead>
+      <tbody>
+        <tr><td>mEPE as the one metric</td><td>before ep02 read</td><td>yes</td></tr>
+        <tr><td>GR-1 scene = can + bowl (<span class="mono">OBJECTS=two</span>)</td><td>before ep02 read</td><td>two</td></tr>
+        <tr><td>read CFG 1.0 vs 3.0</td><td>before ep02 read</td><td>1.0 now; 3.0 as a second read at final</td></tr>
+        <tr><td>batch-32 vs 128 arm at equal samples, after the base</td><td>after the base</td><td>yes, 1 epoch each</td></tr>
+      </tbody></table>
+      <figcaption>Decisions the owner must make</figcaption></figure>
+  </div>
+  <p class="etabar"><b>ETA at a glance</b> · ep02 read <b>~15:10 KST (+1.3 h)</b> · ep03 read <b>~16:45 (+3 h)</b> · 120M final <b>00:30–01:30 Thu (+10.7–11.7 h)</b> → read <b>~02:00 Thu (+12 h)</b> · 320M <b>07:14 Thu (+17.4 h)</b></p>
+</section>
+
+<!-- SECTION: appendix A0 · how the numbers were made -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A0 · How the numbers were made</h2>
+  <dl class="kv">
+    <dt>Plan</dt><dd>season2/RUN.md (Mac: ~/claude-code-rc/3D-WAM/season2/RUN.md) — arms, schedule, read protocol</dd>
+    <dt>Logs</dt><dd>season2/logs/s2_base_120m_{10981,11153,11270}.log — the relaunch chain of the 120M base; loss/fm and lr parsed from the "step N loss/fm=… lr=…" lines, log_every 20; duplicate step ranges dropped at the two resume points (9,213 · 11,814)</dd>
+    <dt>Reads</dt><dd>~/3d-wam/review/s2/s2_base_ep01_frame/ (iclr2027-gpu) — rollouts job 11154 · GR-1 job 11155 · DexJoCo job 11156; every npz records its frame provenance (season-2: gravity z-up, table-anchored origin)</dd>
+    <dt>Metric</dt><dd>mEPE@H = mean |pred − gt| over points whose GT displacement over the horizon exceeds 2 cm; hand and object separately; zero predictor = the same points held still; mpepe self-test passes (identity → 0, zero → the zero column)</dd>
+    <dt>Effective epoch</dt><dd>steps × 128 / 1,029,165 (season-2 train split) · ep01 = step 8,041 · ep02 = 16,080 · ep03 = 24,120 · final = 67,200 = 8.36 ep · 320M: steps × 256 / 1,029,165</dd>
+    <dt>Assets</dt><dd>six rollout GIFs + posters (season2/read_ep01_assets/roll/) · six closed-loop composites, H.264 1800×600 (read_ep01_assets/{gr1,dexjoco}/) · arch_main.png reused from decks/2026-09-05-new-base/ · loss_curve.png + mixture.png built 09-09 from the logs and the sampler shares</dd>
+  </dl>
+  <p class="footnote">deck folder /experiments/3d-wam/decks/2026-09-09-s2-2-architecture-training/assets/: 1 architecture figure · 2 charts · 6 GIFs + 6 posters · 6 mp4s + 6 posters = 27 files</p>
+</section>
+
+<!-- SECTION: appendix A1 · eval-basis note -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A1 · Eval bases (never mixed)</h2>
+  <div class="band"><table class="cav">
+    <thead><tr><th>basis</th><th>what</th><th>where it may appear</th></tr></thead>
+    <tbody>
+      <tr><td>in-training A</td><td>val loss on 32 val chunks, up to step 9,213 (job 10981)</td><td>nowhere in this deck; a curve, not a read</td></tr>
+      <tr><td>in-training B</td><td>val loss on 192 val chunks, from step 9,213 on (jobs 11153, 11270)</td><td>nowhere in this deck; a curve, not a read</td></tr>
+      <tr><td>read · rollouts</td><td>six owner-picked chunks, AR H = 50, CFG 1.0, 16 Euler steps, season-2 frame; zero predictor on the same points</td><td>Results (1) table only</td></tr>
+      <tr><td>read · GR-1</td><td>PnPCanToBowl, 3 episodes, 267 replans, H = 4, can + bowl, timestep-matched; its own zero predictor</td><td>Results (2) left table only</td></tr>
+      <tr><td>read · DexJoCo</td><td>pick_bucket, 3 episodes, 57 replans, H = 4; its own zero predictor; object not measurable (no GT object point &gt; 2 cm)</td><td>Results (2) right table only</td></tr>
+    </tbody></table></div>
+  <p class="note">The in-training curve changed its val set at the first resume (32 → 192 chunks), so it is two bases; neither is quoted as a result. Reads are the only numbers in the main deck, each table on one basis with its own zero-predictor columns.</p>
+  <p class="footnote">rule: DECK-STYLE §4b C — never two evaluation bases inside one table; name the basis and its own baseline wherever a number appears</p>
+</section>
+
+<!-- SECTION: appendix A2 · corrections on record -->
+<section class="slide s-appendix fn2">
+  <h2>Appendix A2 · Corrections on record (09-09)</h2>
+  <div class="band"><table class="cav">
+    <thead><tr><th>item</th><th>what was wrong</th><th>fix · cost</th></tr></thead>
+    <tbody>
+      <tr><td>read frame</td><td>the read harness scored the season-2 model in the season-1 frame (hand-centred z; dataset up-axis), so the first ep01 numbers were not comparable to the training frame</td><td>harness now applies the season-2 sidecar (gravity z-up, table-anchored origin); frame provenance written into every npz; ep01 re-read 13:00 KST — the numbers in this deck are the re-read</td></tr>
+      <tr><td>CPU starvation</td><td>the base ran 6 h on one CPU core (no --cpus-per-task), data loading bound: 2.35–6.5 s/step</td><td>relaunch chain 10981 → 11153 (2 GPU, from step 9,213) → 11270 (4 GPU, from step 11,814); ≈ 24 min + 11 min lost to the two restarts; 0.70 s/step since</td></tr>
+      <tr><td>schedule</td><td>the cosine schedule targeted the original step count</td><td>extension to 67,200 steps (8.36 ep) applied at step 11,814 — visible as the lr step in the loss-curve panel</td></tr>
+      <tr><td>val set</td><td>in-training val on 32 chunks (too few) up to step 9,213</td><td>192 chunks from the first resume on; treated as a second basis (A1)</td></tr>
+    </tbody></table></div>
+  <p class="footnote">sources: season2/RUN.md · sacct on iclr2027-gpu (user-requested check 13:50 KST) · logs season2/logs/</p>
+</section>
+
+<!-- SECTION: appendix A3 · cut list -->
+<section class="slide s-appendix">
+  <h2>Appendix A3 · Cut list</h2>
+  <p class="cut"><b>Cut list</b> (dropped from this deck, kept in season2/RUN.md, the logs and the read folders): per-clip mEPE for the six rollouts (the table carries the mean) · per-episode GR-1 / DexJoCo replan traces · the in-training val curves (two bases, A1) · grad-norm and s/step traces from the logs · the 320M arm's own loss curve (MLXP; no read yet) · contact and cross-embodiment metrics (deferred by owner direction 09-08) · the sampler's per-dataset chunk counts and weights (deck #2-1 discussion slide) · CFG 3.0 reads (second read at final) · the batch-32 arm (decision pending)</p>
+  <p class="footnote">deck #2-2 · season 2 · built 2026-09-09 · owner: 김범준</p>
+</section>
+
+</main>
+</body>
+</html>
