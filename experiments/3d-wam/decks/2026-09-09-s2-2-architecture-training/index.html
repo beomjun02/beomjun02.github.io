@@ -26,7 +26,7 @@
   .deck tr.pend td:first-child{color:#000;font-style:normal}
   .deck tr.pend td.num{white-space:normal}
   /* ---- ETA strip (v5 §4b F) ---- */
-  .deck p.etabar{margin:.5em 0 0;padding:.36em .8em;border-left:3px solid #0070C0;background:#F2F6FA;font-size:1.32em;color:#333;line-height:1.36}
+  .deck p.etabar{margin:.5em 0 0;padding:.36em .8em;border-left:3px solid #0070C0;background:#F2F6FA;font-size:1.0em;color:#333;line-height:1.36}
   .deck p.etabar b{color:#000}
   /* ---- tables inside figures: caption under the table ---- */
   .deck .band>figure.tb{justify-content:flex-start}
@@ -72,17 +72,17 @@
   .deck table.res{table-layout:fixed;width:100%}
   .deck table.res th,.deck table.res td{padding:.22em .45em}
   .deck table.res th{white-space:normal;line-height:1.2;vertical-align:bottom}
-  .deck table.res td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.res td:first-child{font-weight:700;white-space:normal;line-height:1.18}
   .deck table.res td:nth-child(2){white-space:nowrap}
-  .deck table.res td.pd{text-align:left;white-space:normal}
-  .deck table.res.r4 th:nth-child(1){width:14%}
-  .deck table.res.r4 th:nth-child(2){width:24%}
-  .deck table.res.r4 th:nth-child(3){width:31%}
-  .deck table.res.r4 th:nth-child(4){width:31%}
-  .deck table.res.r5 th:nth-child(1){width:13%}
-  .deck table.res.r5 th:nth-child(2){width:22%}
-  .deck table.res.r5 th:nth-child(3){width:26%}
-  .deck table.res.r5 th:nth-child(4){width:26%}
+  .deck table.res td.pd{text-align:left;white-space:normal;padding-left:.9em}
+  .deck table.res.r4 th:nth-child(1){width:21%}
+  .deck table.res.r4 th:nth-child(2){width:21%}
+  .deck table.res.r4 th:nth-child(3){width:29%}
+  .deck table.res.r4 th:nth-child(4){width:29%}
+  .deck table.res.r5 th:nth-child(1){width:20%}
+  .deck table.res.r5 th:nth-child(2){width:17%}
+  .deck table.res.r5 th:nth-child(3){width:25%}
+  .deck table.res.r5 th:nth-child(4){width:25%}
   .deck table.res.r5 th:nth-child(5){width:13%}
   .deck .band.res2>figure.tb figcaption{text-align:left;font-size:1.3em}
   /* ---- viz grids (outside the cap): 5 columns, rows = arm (5 + 4 tiles each), captions only ---- */
@@ -121,7 +121,7 @@
   .deck table.sum.dec th:nth-child(1){width:30%}
   .deck table.sum.dec th:nth-child(2){width:16%}
   .deck table.sum.dec th:nth-child(3){width:54%}
-  .deck .s-summary p.etabar{margin-top:.7em;margin-right:5.5em}
+  .deck .s-summary p.etabar{margin-top:.5em;margin-right:5.5em;font-size:.94em;line-height:1.3}
   /* ---- appendix ---- */
   .deck .s-appendix .kv{font-size:1.35em}
   .deck .s-appendix p.note{font-size:1.35em;line-height:1.4;margin-top:.9em;overflow-wrap:anywhere}
@@ -142,11 +142,11 @@
 <!-- SECTION: overview -->
 <section class="slide s-overview">
   <h2>Overview</h2>
-  <p class="thesis"><b>[TL;DR]</b> Same DiT, new frame and text; two arms read every epoch</p>
+  <p class="thesis"><b>[TL;DR]</b> The base overfits: held-out ADE bottoms at 3.4 ep and never beats zero</p>
   <ul>
-    <li>two models, sample-matched</li>
-    <li>results per epoch</li>
-    <li>three analyses</li>
+    <li>120M: val ADE 0.0744 @ 3.4 ep &rarr; 0.1032 @ 8.36 ep, while training loss falls 0.0067 &rarr; 0.0015 &mdash; zero predictor 0.0696, never beaten</li>
+    <li>320M behaves the same and is worse than 120M at every matched epoch (val best 0.1528 @ 4.4 ep vs its zero 0.1377)</li>
+    <li>three arms launched tonight isolate what C2 &mdash; the last config that beat zero &mdash; had and the base lost: batch, history, contact aux</li>
   </ul>
   <div class="band">
     <figure><img src="assets/arch_main.png" alt="3D-WAM architecture: labelled point set in, video-DiT over part-major Hilbert patches, scene flow out">
@@ -225,12 +225,12 @@
           <tr><td>reported</td><td>hand · object, each beside the zero predictor</td></tr>
           <tr><td>rollouts</td><td>H = 50 steps (5.0 s @10 Hz, 6.7 s @7.5 Hz)</td></tr>
           <tr><td>closed loop</td><td>H = 4 steps (0.4 s)</td></tr>
-          <tr><td>analyses</td><td>7 owner-picked 5-s AR clips (one per dataset, deck-2-1 start frames; the held-out ones scored) · GR-1 PnPCanToBowl closed loop (3 ep, timestep-matched, can + bowl) · DexJoCo hammer_nail closed loop (3 ep, front camera; pick_bucket until 09-09 18:00)</td></tr>
+          <tr><td>analyses</td><td>7 owner-picked 5-s AR clips (deck-2-1 starts; held-out ones scored) · GR-1 PnPCanToBowl · DexJoCo hammer_nail (front camera), 3 episodes each</td></tr>
         </tbody></table>
         <figcaption>The one metric and its three analyses</figcaption></figure>
     </div>
     <figure class="fig"><img src="assets/loss_curve.png" alt="Training loss and learning rate of both arms against effective epoch">
-      <figcaption>120M (blue) and 320M (red, once its pod log is pulled) · loss/fm = masked MSE on the flow target, log_every 20; bold = 50-point running median, faint = raw; dotted = resume / log boundary (120M: steps 9,213 → 2 GPU, 11,814 → 4 GPU; schedule extended to 67,200 at 11,814) · right: learning rate · regenerated from season2/logs at every deck update</figcaption></figure>
+      <figcaption>left: training loss · <b>centre: held-out validation ADE every 2,500 steps on one fixed 192-chunk basis, each arm beside its own zero predictor</b> · right: learning rate · 120M (blue), 320M (red) · loss/fm = masked MSE on the flow target, log_every 20; bold = 50-point running median, faint = raw; dotted = resume / log boundary (120M: steps 9,213 → 2 GPU, 11,814 → 4 GPU; schedule extended to 67,200 at 11,814) · regenerated from season2/logs at every deck update</figcaption></figure>
   </div>
   <p class="footnote">mEPE = EPE3D on the moving subset (after Chodosh 2023) with the zero-velocity reference (Martinez 2017); owner-confirmed 09-09 14:10 · TACO Je/Te/Re companion · training logs season2/logs/</p>
 </section>
@@ -245,20 +245,20 @@
   <figure class="tb"><table class="compact res r4">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep07 · 7.00</td><td class="num">28.04 / 65.74</td><td class="num">24.46 / 24.26</td></tr>
-      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">28.81 / 65.74</td><td class="num">27.60 / 24.26</td></tr>
-      <tr><td>120M</td><td>final · 8.36</td><td class="num">29.05 / 65.74</td><td class="num">27.55 / 24.26</td></tr>
-      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">38.51 / 66.65</td><td class="num">34.78 / 26.75</td></tr>
-      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">43.35 / 66.65</td><td class="num">39.27 / 26.75</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="2">landed 10:06 Wed · read not planned</td></tr>
+      <tr><td>120M base</td><td>final · 8.36</td><td class="num">29.05 / 65.74</td><td class="num">27.55 / 24.26</td></tr>
+      <tr><td>320M base</td><td>ep06 · 6.00</td><td class="num">45.15 / 65.74</td><td class="num">38.13 / 24.26</td></tr>
+      <tr class="pend"><td>320M base</td><td>ep01 · 1.00</td><td class="pd" colspan="2">landed 10:06 Wed · read not planned</td></tr>
+      <tr class="pend"><td>C2 batch</td><td>ep01 · 1.00</td><td class="pd" colspan="2">lands 04:55 · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + history</td><td>ep01 · 1.00</td><td class="pd" colspan="2">lands — · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + contact aux</td><td>ep01 · 1.00</td><td class="pd" colspan="2">lands — · read unestimated</td></tr>
     </tbody></table>
-    <figcaption>Latest reads per arm (all epochs are in the curves) · 11 held-out clips (2 ARCTIC · 5 GRAB · 4 HOI4D) · 6 train-episode clips rendered, not scored · self-predicted AR · H = 50 · CFG 1.0 · 16 Euler steps · zero = the basis's own zero-velocity predictor</figcaption></figure>
+    <figcaption>Latest reads per arm (all epochs are in the curves) · 7 held-out clips (2 ARCTIC · 3 GRAB · 2 HOI4D) · 6 train-episode clips rendered, not scored · self-predicted AR · H = 50 · CFG 1.0 · 16 Euler steps · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
+<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
-  <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 · zero = zero-velocity predictor · &#9888; basis mixed: ep01&ndash;ep06 = 11 clips, ep07+ = 7 (re-pool pending) · clips on the next seven slides</p>
+  <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 · zero = zero-velocity predictor · every epoch scored on the SAME 7 held-out clips (re-pooled 03:15) · clips on the next seven slides</p>
 </section>
 
 <!-- SECTION: viz grids (outside the ≤ 8 cap) · six rollout clips, rows = arm, columns = epochs · GENERATED, captions only -->
@@ -267,26 +267,56 @@
   <h2>Rollouts (1/7): dexycb per epoch, both arms</h2>
   <p class="thesis ctx">“grasp the tomato soup can” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/dexycb_292_ar.gif" alt="dexycb “grasp the tomato soup can”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/dexycb_292_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · dexycb_20200709-subject-01_20200709_142853_932122062010 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 2.0 s @10 Hz</p>
 </section>
@@ -295,26 +325,56 @@
   <h2>Rollouts (2/7): hoi4d per epoch, both arms</h2>
   <p class="thesis ctx">“pick and place the kettle” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/hoi4d_2613_ar.gif" alt="hoi4d “pick and place the kettle”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/hoi4d_2613_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · hoi4d_ZY20210800001_H1_C12_N27_S165_s01_T1 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
 </section>
@@ -323,26 +383,56 @@
   <h2>Rollouts (3/7): hot3d per epoch, both arms</h2>
   <p class="thesis ctx">“interact with the potato masher and the can tomato sauce” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/hot3d_4293_ar.gif" alt="hot3d “interact with the potato masher and the can tomato sauce”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/hot3d_4293_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · P0001_15c4300c · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
@@ -351,26 +441,56 @@
   <h2>Rollouts (4/7): arctic per epoch, both arms</h2>
   <p class="thesis ctx">“grab the box” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/arctic_0_ar.gif" alt="arctic “grab the box”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/arctic_0_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · dataset_s01_box_grab_01 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
@@ -379,26 +499,56 @@
   <h2>Rollouts (5/7): grab per epoch, both arms</h2>
   <p class="thesis ctx">“lift the cup” · held-out episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/grab_1312_ar.gif" alt="grab “lift the cup”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/grab_1312_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · grab_s10_cup_lift_0 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
@@ -407,26 +557,56 @@
   <h2>Rollouts (6/7): oakink2 per epoch, both arms</h2>
   <p class="thesis ctx">“Weigh something with scale by pouring it into the bowl.” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/oakink2_4588_ar.gif" alt="oakink2 “Weigh something with scale by pouring it into the bowl.”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/oakink2_4588_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · scene_01__A001++seq__0b3d183d6b2e90eefd66__2023-04-27-20-38-16 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
@@ -435,26 +615,56 @@
   <h2>Rollouts (7/7): taco per epoch, both arms</h2>
   <p class="thesis ctx">“put in the pan with the bowl” · train episode</p>
   <div class="vizgrid g5 roll">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><img src="assets/120m/ep01/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep06/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep07/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/ep08/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><img src="assets/120m/final/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M, final)" loading="lazy" style="background:url(assets/120m/final/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><img src="assets/320m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><img src="assets/120m/ep01/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep05)" loading="lazy" style="background:url(assets/120m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep06/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep06)" loading="lazy" style="background:url(assets/120m/ep06/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep07/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep07)" loading="lazy" style="background:url(assets/120m/ep07/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep08/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, ep08)" loading="lazy" style="background:url(assets/120m/ep08/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/final/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (120M base, final)" loading="lazy" style="background:url(assets/120m/final/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep02/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep02)" loading="lazy" style="background:url(assets/320m/ep02/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep03/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep03)" loading="lazy" style="background:url(assets/320m/ep03/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep04/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep04)" loading="lazy" style="background:url(assets/320m/ep04/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep05/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep05)" loading="lazy" style="background:url(assets/320m/ep05/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><img src="assets/320m/ep06/roll/taco_7606_ar.gif" alt="taco “put in the pan with the bowl”: ground truth left, rollout right (320M base, ep06)" loading="lazy" style="background:url(assets/320m/ep06/roll/taco_7606_ar.jpg) center/contain no-repeat"><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">left = ground truth, right = self-predicted AR rollout (H = 50) · taco_put_in__bowl__pan_20230926_014 · clip starts 5 frames before the hand first comes within 5 cm of an object (deck #2-1 window) · object orange · right hand green · left hand purple · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · train episode = seen in training, rendered only; held-out clips alone enter the metric · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
@@ -470,18 +680,18 @@
   <figure class="tb"><table class="compact res r5">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th><th class="num">success</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep07 · 7.00</td><td class="num">3.87 / 4.61</td><td class="num">9.78 / 7.89</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">5.23 / 5.03</td><td class="num">8.38 / 7.87</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>120M</td><td>final · 8.36</td><td class="pd" colspan="3">re-read pending (hammer_nail · front camera)</td></tr>
-      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">4.06 / 4.12</td><td class="num">4.60 / 3.73</td><td class="num">0 / 3</td></tr>
-      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">4.30 / 4.14</td><td class="num">5.63 / 4.00</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
+      <tr class="pend"><td>120M base</td><td>final · 8.36</td><td class="pd" colspan="3">re-read pending (hammer_nail · front camera)</td></tr>
+      <tr><td>320M base</td><td>ep06 · 6.00</td><td class="num">4.33 / 4.51</td><td class="num">6.32 / 4.11</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>320M base</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
+      <tr class="pend"><td>C2 batch</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands 04:55 · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + history</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands — · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + contact aux</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands — · read unestimated</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · GR-1 PnPCanToBowl · 3 episodes · H = 4 replans, timestep-matched · can + bowl in the scene · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
+<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">H = 4 replans, timestep-matched to the observed points; table-anchored origin · success = task success over 3 episodes · composites on the next slide</p>
 </section>
@@ -492,26 +702,56 @@
   <h2>Closed loops (1/2): GR-1 PnPCanToBowl per epoch, both arms</h2>
   <p class="thesis ctx">GR-1 · PnPCanToBowl · episode 0 · closed loop · H = 4 · ego | observed | predicted</p>
   <div class="vizgrid g5 loop">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><video src="assets/120m/ep01/gr1/episode_00_composite.mp4" poster="assets/120m/ep01/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep02/gr1/episode_00_composite.mp4" poster="assets/120m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep03/gr1/episode_00_composite.mp4" poster="assets/120m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep04/gr1/episode_00_composite.mp4" poster="assets/120m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep05/gr1/episode_00_composite.mp4" poster="assets/120m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep06/gr1/episode_00_composite.mp4" poster="assets/120m/ep06/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep07/gr1/episode_00_composite.mp4" poster="assets/120m/ep07/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep08/gr1/episode_00_composite.mp4" poster="assets/120m/ep08/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>re-read pending (hammer_nail · front camera)</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep02/gr1/episode_00_composite.mp4" poster="assets/320m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep03/gr1/episode_00_composite.mp4" poster="assets/320m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep04/gr1/episode_00_composite.mp4" poster="assets/320m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep05/gr1/episode_00_composite.mp4" poster="assets/320m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><video src="assets/120m/ep01/gr1/episode_00_composite.mp4" poster="assets/120m/ep01/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep02/gr1/episode_00_composite.mp4" poster="assets/120m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep03/gr1/episode_00_composite.mp4" poster="assets/120m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep04/gr1/episode_00_composite.mp4" poster="assets/120m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep05/gr1/episode_00_composite.mp4" poster="assets/120m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep06/gr1/episode_00_composite.mp4" poster="assets/120m/ep06/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep07/gr1/episode_00_composite.mp4" poster="assets/120m/ep07/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep08/gr1/episode_00_composite.mp4" poster="assets/120m/ep08/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>re-read pending (hammer_nail · front camera)</span></div><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep02/gr1/episode_00_composite.mp4" poster="assets/320m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep03/gr1/episode_00_composite.mp4" poster="assets/320m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep04/gr1/episode_00_composite.mp4" poster="assets/320m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep05/gr1/episode_00_composite.mp4" poster="assets/320m/ep05/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep06/gr1/episode_00_composite.mp4" poster="assets/320m/ep06/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/gr1/</p>
 </section>
@@ -527,18 +767,18 @@
   <figure class="tb"><table class="compact res r5">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th><th class="num">success</th></tr></thead>
     <tbody>
-      <tr class="pend"><td>120M</td><td>ep07 · 7.00</td><td class="pd" colspan="3">re-read pending (hammer_nail · front camera)</td></tr>
-      <tr><td>120M</td><td>ep08 · 8.00</td><td class="num">11.36 / 6.02</td><td class="num">9.87 / 9.78</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>final · 8.36</td><td class="num">16.01 / 6.50</td><td class="num">14.00 / 13.88</td><td class="num">0 / 3</td></tr>
-      <tr><td>320M</td><td>ep04 · 4.00</td><td class="num">14.86 / 3.93</td><td class="num">14.41 / 13.88</td><td class="num">0 / 3</td></tr>
-      <tr><td>320M</td><td>ep05 · 5.00</td><td class="num">10.91 / 6.39</td><td class="num">14.19 / 13.88</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
+      <tr><td>120M base</td><td>final · 8.36</td><td class="num">16.01 / 6.50</td><td class="num">14.00 / 13.88</td><td class="num">0 / 3</td></tr>
+      <tr><td>320M base</td><td>ep06 · 6.00</td><td class="num">13.15 / 6.05</td><td class="num">14.41 / 13.88</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>320M base</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 Wed · read not planned</td></tr>
+      <tr class="pend"><td>C2 batch</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands 04:55 · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + history</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands — · read unestimated</td></tr>
+      <tr class="pend"><td>C2 batch + contact aux</td><td>ep01 · 1.00</td><td class="pd" colspan="3">lands — · read unestimated</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · DexJoCo hammer_nail · 3 episodes · H = 4 replans, timestep-matched · front camera · '—' = no GT object point moved &gt; 2 cm · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
+<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">'—' = not measured (no GT object point moved > 2 cm), not zero error · H = 4 replans, timestep-matched · composites on the next slide</p>
 </section>
@@ -549,26 +789,56 @@
   <h2>Closed loops (2/2): DexJoCo hammer_nail per epoch, both arms</h2>
   <p class="thesis ctx">DexJoCo · hammer_nail · episode 0 · closed loop · H = 4 · front camera | observed | predicted</p>
   <div class="vizgrid g5 loop">
-    <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
-    <figure><video src="assets/120m/ep01/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep01/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep06/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep06/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>re-read pending (hammer_nail · front camera)</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/ep08/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep08/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
-    <figure><video src="assets/120m/final/dexjoco/episode_00_composite.mp4" poster="assets/120m/final/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
-    <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
-    <figure><video src="assets/320m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 00:30 · ~03:00</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#0070C0">120M base · eff. batch 128</div>
+    <figure><video src="assets/120m/ep01/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep01/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 8,040 · 1.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 16,080 · 2.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 24,120 · 3.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep06/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep06/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>composite re-render pending (metric measured)</span></div><figcaption>120M base · step 56,280 · 7.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep08/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep08/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 64,320 · 8.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/final/dexjoco/episode_00_composite.mp4" poster="assets/120m/final/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M base · step 67,200 · 8.36 ep</figcaption></figure>
+    <div class="rowlab" style="color:#C00000">320M base · eff. batch 256</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 Wed · read n/a</span></div><figcaption>320M base · step 4,020 · 1.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep05/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep05/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 20,100 · 5.00 ep</figcaption></figure>
+    <figure><video src="assets/320m/ep06/dexjoco/episode_00_composite.mp4" poster="assets/320m/ep06/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>320M base · step 24,120 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 · ~04:10</span></div><figcaption>320M base · step 28,140 · 7.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 · ~07:00</span></div><figcaption>320M base · step 32,160 · 8.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M base · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#2a9d4f">C2 batch · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 04:55</span></div><figcaption>C2 batch · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:55</span></div><figcaption>C2 batch · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 08:55</span></div><figcaption>C2 batch · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 10:55</span></div><figcaption>C2 batch · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 12:55</span></div><figcaption>C2 batch · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 14:55</span></div><figcaption>C2 batch · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#7a3fb8">C2 batch + history · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + history · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + history · final · not scheduled</figcaption></figure>
+    <div class="rowlab" style="color:#f28e2b">C2 batch + contact aux · eff. batch 32</div>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 32,161 · 1.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 64,322 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 96,483 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 128,644 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 160,805 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands —</span></div><figcaption>C2 batch + contact aux · step 192,966 · 6.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep07 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · ep08 · not scheduled</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>not scheduled</span></div><figcaption>C2 batch + contact aux · final · not scheduled</figcaption></figure>
   </div>
   <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/dexjoco/</p>
 </section>
@@ -583,33 +853,38 @@
     <figure class="tb run"><table class="sum run">
       <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
       <tbody>
-        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-1.7 h)</td></tr>
-        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 26,320 of 32,160 (6.55 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (+3.7 h)</td></tr>
+        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-2.5 h)</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 26,320 of 32,160 (6.55 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (+3.0 h)</td></tr>
+        <tr><td>C2 batch · job 11922</td><td>4× H100 (iclr2027-gpu)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>0.22 s/step</td><td>14:55 (+11.6 h)</td></tr>
+        <tr><td>C2 batch + history (MLXP)</td><td>4× H200 (MLXP)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
+        <tr><td>C2 batch + contact aux</td><td>4× GPU</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
       </tbody></table>
-      <figcaption>What is running · progress as of 02:35 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
+      <figcaption>What is running · progress as of 03:20 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
     <figure class="tb"><table class="sum due">
       <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
       <tbody>
-        <tr><td>320M ep06 read</td><td>+0.4 h</td><td>03:00</td></tr>
-        <tr><td>320M ep07 read</td><td>+1.6 h</td><td>04:10</td></tr>
-        <tr><td>320M ep08 read</td><td>+4.4 h</td><td>07:00</td></tr>
+        <tr><td>320M base ep07 read</td><td>+0.8 h</td><td>04:10</td></tr>
+        <tr><td>320M base ep08 read</td><td>+3.7 h</td><td>07:00</td></tr>
+        <tr><td>C2 batch ep01 read</td><td>unestimated</td><td>—</td></tr>
+        <tr><td>C2 batch ep02 read</td><td>unestimated</td><td>—</td></tr>
+        <tr><td>C2 batch ep03 read</td><td>unestimated</td><td>—</td></tr>
+        <tr><td>C2 batch + contact aux ep06 read</td><td>unestimated</td><td>—</td></tr>
       </tbody></table>
-      <figcaption>Results due, no input needed</figcaption></figure>
+      <figcaption>Results due, no input needed · 14 more on the viz tiles</figcaption></figure>
   </div>
 <!-- /GEN -->
   <div class="band sum2">
     <figure class="tb"><table class="sum dec">
-      <thead><tr><th>decision (owner)</th><th>deadline</th><th>recommendation</th></tr></thead>
+      <thead><tr><th>launched tonight (6.2 ep each)</th><th>isolates</th><th>first read</th></tr></thead>
       <tbody>
-        <tr><td>mEPE as the one metric</td><td>before ep02 read</td><td>yes</td></tr>
-        <tr><td>GR-1 scene = can + bowl (<span class="mono">OBJECTS=two</span>)</td><td>before ep02 read</td><td>two</td></tr>
-        <tr><td>read CFG 1.0 vs 3.0</td><td>before ep02 read</td><td>1.0 now; 3.0 as a second read at final</td></tr>
-        <tr><td>batch-32 vs 128 arm at equal samples, after the base</td><td>after the base</td><td>yes, 1 epoch each</td></tr>
+        <tr><td><b>11922</b> c2b_nohist · batch 32, no history</td><td>BATCH (noise 2.3e-6 &rarr; 9.4e-6)</td><td>~04:55, 2.0 h/ep</td></tr>
+        <tr><td>c2b_hist (MLXP) · batch 32, <b>history H=2</b></td><td>HISTORY at C2's noise scale</td><td>starts ~07:14</td></tr>
+        <tr><td>contact-map auxiliary loss</td><td>contact supervision</td><td>id pending</td></tr>
       </tbody></table>
-      <figcaption>Decisions the owner must make</figcaption></figure>
+      <figcaption>C2 (last config that beat zero): batch 32 · history H=2 · stopped at 4.15 ep. The base: batch 128 · no history · 8.36 ep.</figcaption></figure>
   </div>
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 02:35 KST) · <b>120M</b>: all reads in &nbsp;|&nbsp; <b>320M</b> · ep06 landed 00:30 (-2.1 h) · read <b>~03:00</b> · 1 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17</b> (+3.7 h) → read <b>~07:00</b></p>
+<p class="etabar"><b>ETA</b> (from 03:20 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b> · ep07 lands 03:24 (+0.1 h) · read <b>~04:10</b> · ep08 8.00 ep lands <b>06:17</b> (+3.0 h) → read <b>~07:00</b> &nbsp;|&nbsp; <b>C2 batch</b> · ep01 lands 04:55 (+1.6 h) · read unestimated</b> · 4 more, ~2.0 h apart · ep06 6.00 ep lands <b>14:55</b> (+11.6 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
 </section>
 
