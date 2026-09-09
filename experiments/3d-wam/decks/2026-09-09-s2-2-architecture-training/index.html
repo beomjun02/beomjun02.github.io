@@ -245,17 +245,18 @@
   <figure class="tb"><table class="compact res r4">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep01 · 1.00</td><td class="num">51.94 / 72.78</td><td class="num">22.85 / 26.25</td></tr>
-      <tr><td>120M</td><td>ep02 · 2.00</td><td class="num">38.88 / 72.78</td><td class="num">24.57 / 26.25</td></tr>
-      <tr><td>120M</td><td>ep03 · 3.00</td><td class="num">24.75 / 72.78</td><td class="num">22.76 / 26.25</td></tr>
-      <tr class="pend"><td>120M</td><td>ep04 · 4.00</td><td class="pd" colspan="2">landed 17:53 · read ~18:23</td></tr>
+      <tr><td>120M</td><td>ep01 · 1.00</td><td class="num">46.72 / 69.02</td><td class="num">22.76 / 25.66</td></tr>
+      <tr><td>120M</td><td>ep02 · 2.00</td><td class="num">33.88 / 69.02</td><td class="num">24.14 / 25.66</td></tr>
+      <tr><td>120M</td><td>ep03 · 3.00</td><td class="num">22.56 / 69.02</td><td class="num">22.12 / 25.66</td></tr>
+      <tr><td>120M</td><td>ep04 · 4.00</td><td class="num">30.15 / 69.02</td><td class="num">22.81 / 25.66</td></tr>
+      <tr class="pend"><td>120M</td><td>ep05 · 5.00</td><td class="pd" colspan="2">landed 19:28 · read ~21:45</td></tr>
       <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="2">landed 10:06 · read not planned</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · six owner-picked chunks (2 ARCTIC · 2 GRAB · 2 HOI4D) · self-predicted AR · H = 50 · CFG 1.0 · 16 Euler steps · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 17:58 KST) · <b>120M</b> · ep04 landed 17:53 (-0.1 h) · read <b>~18:23</b> · 4 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+7.0 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-5.0 h) · read <b>~18:40</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+12.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 21:25 KST) · <b>120M</b> · ep05 landed 19:28 (-1.9 h) · read <b>~21:45</b> · 3 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+3.6 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-8.4 h) · read <b>~21:50</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.9 h) → read <b>~07:37 Thu</b></p>
 <!-- /GEN -->
   <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 (120M batch 128, 320M batch 256) · ckpt epNN = weights_epNN.pt · zero = zero-velocity predictor on the same points · clips on the next six slides</p>
 </section>
@@ -270,24 +271,24 @@
     <figure><img src="assets/120m/ep01/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/arctic_206_ar.gif" alt="arctic 206: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_206_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
@@ -298,24 +299,24 @@
     <figure><img src="assets/120m/ep01/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/arctic_212_ar.gif" alt="arctic 212: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/arctic_212_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
@@ -326,24 +327,24 @@
     <figure><img src="assets/120m/ep01/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/grab_613_ar.gif" alt="grab 613: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_613_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
@@ -354,24 +355,24 @@
     <figure><img src="assets/120m/ep01/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/grab_894_ar.gif" alt="grab 894: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/grab_894_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 5.0 s @10 Hz</p>
 </section>
 
 <section class="slide s-viz">
@@ -382,24 +383,24 @@
     <figure><img src="assets/120m/ep01/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hoi4d_2734_ar.gif" alt="hoi4d 2734: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2734_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
 </section>
 
 <section class="slide s-viz">
@@ -410,24 +411,24 @@
     <figure><img src="assets/120m/ep01/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep01)" loading="lazy" style="background:url(assets/120m/ep01/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep02/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep02)" loading="lazy" style="background:url(assets/120m/ep02/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><img src="assets/120m/ep03/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep03)" loading="lazy" style="background:url(assets/120m/ep03/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><img src="assets/120m/ep04/roll/hoi4d_2847_ar.gif" alt="hoi4d 2847: ground truth left, rollout right (120M, ep04)" loading="lazy" style="background:url(assets/120m/ep04/roll/hoi4d_2847_ar.jpg) center/contain no-repeat"><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · same chunk, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
+  <p class="footnote">left = ground truth, right = rollout; object orange · right hand green · left hand purple · clip starts 1 s before first hand–object contact (since 09-09) · grey plane = table (z = 0), triad = gravity frame, box fixed on the ground truth · same start, camera and seed across checkpoints and arms · 6.7 s @7.5 Hz</p>
 </section>
 <!-- /GEN -->
 
@@ -444,14 +445,15 @@
       <tr><td>120M</td><td>ep01 · 1.00</td><td class="num">4.10 / 4.09</td><td class="num">7.53 / 6.89</td><td class="num">0 / 3</td></tr>
       <tr><td>120M</td><td>ep02 · 2.00</td><td class="num">3.48 / 4.22</td><td class="num">4.73 / 3.29</td><td class="num">0 / 3</td></tr>
       <tr><td>120M</td><td>ep03 · 3.00</td><td class="num">3.41 / 4.06</td><td class="num">6.78 / 5.91</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>120M</td><td>ep04 · 4.00</td><td class="pd" colspan="3">landed 17:53 · read ~18:23</td></tr>
+      <tr><td>120M</td><td>ep04 · 4.00</td><td class="num">3.43 / 3.98</td><td class="num">6.66 / 5.89</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>120M</td><td>ep05 · 5.00</td><td class="pd" colspan="3">landed 19:28 · read ~21:45</td></tr>
       <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 · read not planned</td></tr>
     </tbody></table>
     <figcaption>Latest reads per arm (all epochs are in the curves) · GR-1 PnPCanToBowl · 3 episodes · H = 4 replans, timestep-matched · can + bowl in the scene · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 17:58 KST) · <b>120M</b> · ep04 landed 17:53 (-0.1 h) · read <b>~18:23</b> · 4 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+7.0 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-5.0 h) · read <b>~18:40</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+12.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 21:25 KST) · <b>120M</b> · ep05 landed 19:28 (-1.9 h) · read <b>~21:45</b> · 3 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+3.6 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-8.4 h) · read <b>~21:50</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.9 h) → read <b>~07:37 Thu</b></p>
 <!-- /GEN -->
   <p class="footnote">H = 4 replans, timestep-matched to the observed points; table-anchored origin · success = task success over 3 episodes · composites on the next slide</p>
 </section>
@@ -466,48 +468,49 @@
     <figure><video src="assets/120m/ep01/gr1/episode_00_composite.mp4" poster="assets/120m/ep01/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep02/gr1/episode_00_composite.mp4" poster="assets/120m/ep02/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep03/gr1/episode_00_composite.mp4" poster="assets/120m/ep03/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep04/gr1/episode_00_composite.mp4" poster="assets/120m/ep04/gr1/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/gr1/</p>
+  <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/gr1/</p>
 </section>
 <!-- /GEN -->
 
 <!-- SECTION: results (3) · DexJoCo closed loop · band = GENERATED (curves + latest-reads table) -->
 <section class="slide s-results">
   <h2>Results (3): DexJoCo closed loop</h2>
-  <p class="thesis">DexJoCo pick_bucket closed loop, H = 4: each arm beside its zero</p>
+  <p class="thesis">DexJoCo hammer_nail closed loop (front camera), H = 4: each arm beside its zero</p>
   <!-- GEN:results-dexjoco -->
 <div class="band res2">
-  <figure class="fig"><img src="assets/curve_dexjoco.png" alt="DexJoCo pick_bucket: mEPE hand and object, then TACO Je, Te, Re, against effective epoch — 120M and 320M with their zero predictors"><figcaption>mEPE@4 (cm) hand | object (top) · TACO companion @4: Je hand (mm) | Te object (mm) | Re object (deg) (bottom) · solid = arm, dashed hollow = its own zero predictor · light ticks = pending epochs</figcaption></figure>
+  <figure class="fig"><img src="assets/curve_dexjoco.png" alt="DexJoCo hammer_nail: mEPE hand and object, then TACO Je, Te, Re, against effective epoch — 120M and 320M with their zero predictors"><figcaption>mEPE@4 (cm) hand | object (top) · TACO companion @4: Je hand (mm) | Te object (mm) | Re object (deg) (bottom) · solid = arm, dashed hollow = its own zero predictor · light ticks = pending epochs</figcaption></figure>
   <figure class="tb"><table class="compact res r5">
     <thead><tr><th>arm</th><th>ckpt · eff. ep</th><th class="num">hand mEPE / zero cm</th><th class="num">object mEPE / zero cm</th><th class="num">success</th></tr></thead>
     <tbody>
-      <tr><td>120M</td><td>ep01 · 1.00</td><td class="num">6.69 / 4.26</td><td class="num">— / —</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>ep02 · 2.00</td><td class="num">7.64 / 4.62</td><td class="num">— / —</td><td class="num">0 / 3</td></tr>
-      <tr><td>120M</td><td>ep03 · 3.00</td><td class="num">6.89 / 4.25</td><td class="num">— / —</td><td class="num">0 / 3</td></tr>
-      <tr class="pend"><td>120M</td><td>ep04 · 4.00</td><td class="pd" colspan="3">landed 17:53 · read ~18:23</td></tr>
+      <tr><td>120M</td><td>ep01 · 1.00</td><td class="num">7.30 / 4.47</td><td class="num">10.40 / 10.27</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>ep02 · 2.00</td><td class="num">8.58 / 4.73</td><td class="num">10.38 / 10.27</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>ep03 · 3.00</td><td class="num">7.90 / 4.53</td><td class="num">10.38 / 10.27</td><td class="num">0 / 3</td></tr>
+      <tr><td>120M</td><td>ep04 · 4.00</td><td class="num">7.71 / 4.77</td><td class="num">10.39 / 10.27</td><td class="num">0 / 3</td></tr>
+      <tr class="pend"><td>120M</td><td>ep05 · 5.00</td><td class="pd" colspan="3">landed 19:28 · read ~21:45</td></tr>
       <tr class="pend"><td>320M</td><td>ep01 · 1.00</td><td class="pd" colspan="3">landed 10:06 · read not planned</td></tr>
     </tbody></table>
-    <figcaption>Latest reads per arm (all epochs are in the curves) · DexJoCo pick_bucket · 3 episodes · H = 4 replans, timestep-matched · '—' = no GT object point moved &gt; 2 cm · zero = the basis's own zero-velocity predictor</figcaption></figure>
+    <figcaption>Latest reads per arm (all epochs are in the curves) · DexJoCo hammer_nail · 3 episodes · H = 4 replans, timestep-matched · front camera · '—' = no GT object point moved &gt; 2 cm · zero = the basis's own zero-velocity predictor</figcaption></figure>
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 17:58 KST) · <b>120M</b> · ep04 landed 17:53 (-0.1 h) · read <b>~18:23</b> · 4 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+7.0 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-5.0 h) · read <b>~18:40</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+12.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 21:25 KST) · <b>120M</b> · ep05 landed 19:28 (-1.9 h) · read <b>~21:45</b> · 3 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+3.6 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-8.4 h) · read <b>~21:50</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.9 h) → read <b>~07:37 Thu</b></p>
 <!-- /GEN -->
   <p class="footnote">'—' = not measured (no GT object point moved > 2 cm), not zero error · H = 4 replans, timestep-matched · composites on the next slide</p>
 </section>
@@ -515,31 +518,31 @@
 <!-- SECTION: viz grids (outside the ≤ 8 cap) · DexJoCo episode-0 composites · GENERATED, captions only -->
 <!-- GEN:viz-dexjoco -->
 <section class="slide s-viz">
-  <h2>Closed loops (2/2): DexJoCo pick_bucket per epoch, both arms</h2>
-  <p class="thesis ctx">DexJoCo · pick_bucket · episode 0 · closed loop · H = 4 · ego (wrist) | observed | predicted</p>
+  <h2>Closed loops (2/2): DexJoCo hammer_nail per epoch, both arms</h2>
+  <p class="thesis ctx">DexJoCo · hammer_nail · episode 0 · closed loop · H = 4 · front camera | observed | predicted</p>
   <div class="vizgrid g5 loop">
     <div class="rowlab" style="color:#0070C0">120M · eff. batch 128</div>
     <figure><video src="assets/120m/ep01/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep01/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 8,040 · 1.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep02/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep02/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 16,080 · 2.00 ep</figcaption></figure>
     <figure><video src="assets/120m/ep03/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep03/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 24,120 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 17:53 · ~18:23</span></div><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 19:31 · ~20:01</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:09 · ~21:39</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
+    <figure><video src="assets/120m/ep04/dexjoco/episode_00_composite.mp4" poster="assets/120m/ep04/dexjoco/episode_00_composite.jpg" autoplay loop muted playsinline preload="metadata"></video><figcaption>120M · step 32,160 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 19:28 · ~21:45</span></div><figcaption>120M · step 40,200 · 5.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 21:04 · ~21:45</span></div><figcaption>120M · step 48,240 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 22:48 · ~23:18</span></div><figcaption>120M · step 56,280 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:26 Thu · ~00:56 Thu</span></div><figcaption>120M · step 64,320 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 01:01 Thu · ~01:31 Thu</span></div><figcaption>120M · step 67,200 · 8.36 ep</figcaption></figure>
     <div class="rowlab" style="color:#C00000">320M · eff. batch 256</div>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 10:06 · read n/a</span></div><figcaption>320M · step 4,020 · 1.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~18:40</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~18:40</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
-    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 18:45 · ~20:05</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 12:59 · ~21:50</span></div><figcaption>320M · step 8,040 · 2.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 15:52 · ~21:50</span></div><figcaption>320M · step 12,060 · 3.00 ep</figcaption></figure>
+    <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>landed 18:45 · ~21:50</span></div><figcaption>320M · step 16,080 · 4.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 21:38 · ~22:58</span></div><figcaption>320M · step 20,100 · 5.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 00:31 Thu · ~01:51 Thu</span></div><figcaption>320M · step 24,120 · 6.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 03:24 Thu · ~04:44 Thu</span></div><figcaption>320M · step 28,140 · 7.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>lands 06:17 Thu · ~07:37 Thu</span></div><figcaption>320M · step 32,160 · 8.00 ep</figcaption></figure>
     <figure class="phold"><div class="pbox"><b>WILL UPDATE</b><span>no checkpoint (24 h cap)</span></div><figcaption>320M · final · not scheduled</figcaption></figure>
   </div>
-  <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/dexjoco/</p>
+  <p class="footnote">composite = simulator camera | observed labelled points | model prediction at the same env step · grey plane = table surface, triad = gravity frame, box fixed on the reset scene (since 09-09) · 1800×600, H.264 · episodes 1–2 of every read are in assets/&lt;arm&gt;/&lt;ep&gt;/dexjoco/</p>
 </section>
 <!-- /GEN -->
 
@@ -552,21 +555,21 @@
     <figure class="tb run"><table class="sum run">
       <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
       <tbody>
-        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 31,920 of 67,200 (3.97 of 8.36 ep)</td><td>0.73 s/step</td><td>01:01 Thu (+7.0 h)</td></tr>
-        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 14,800 of 32,160 (3.68 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 Thu (+12.3 h)</td></tr>
+        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 48,320 of 67,200 (6.01 of 8.36 ep)</td><td>0.73 s/step</td><td>01:01 Thu (+3.6 h)</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 19,700 of 32,160 (4.90 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 Thu (+8.9 h)</td></tr>
       </tbody></table>
-      <figcaption>What is running · progress as of 17:58 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
+      <figcaption>What is running · progress as of 21:25 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
     <figure class="tb"><table class="sum due">
       <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
       <tbody>
-        <tr><td>120M ep04 read</td><td>+0.4 h</td><td>18:23</td></tr>
-        <tr><td>320M ep02 read</td><td>+0.7 h</td><td>18:40</td></tr>
-        <tr><td>320M ep03 read</td><td>+0.7 h</td><td>18:40</td></tr>
-        <tr><td>120M ep05 read</td><td>+2.0 h</td><td>20:01</td></tr>
-        <tr><td>320M ep04 read</td><td>+2.1 h</td><td>20:05</td></tr>
-        <tr><td>320M ep08 read</td><td>+13.7 h</td><td>07:37 Thu</td></tr>
+        <tr><td>120M ep05 read</td><td>+0.3 h</td><td>21:45</td></tr>
+        <tr><td>120M ep06 read</td><td>+0.3 h</td><td>21:45</td></tr>
+        <tr><td>320M ep02 read</td><td>+0.4 h</td><td>21:50</td></tr>
+        <tr><td>320M ep03 read</td><td>+0.4 h</td><td>21:50</td></tr>
+        <tr><td>320M ep04 read</td><td>+0.4 h</td><td>21:50</td></tr>
+        <tr><td>320M ep08 read</td><td>+10.2 h</td><td>07:37 Thu</td></tr>
       </tbody></table>
-      <figcaption>Results due, no input needed · 7 more on the viz tiles</figcaption></figure>
+      <figcaption>Results due, no input needed · 6 more on the viz tiles</figcaption></figure>
   </div>
 <!-- /GEN -->
   <div class="band sum2">
@@ -581,7 +584,7 @@
       <figcaption>Decisions the owner must make</figcaption></figure>
   </div>
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 17:58 KST) · <b>120M</b> · ep04 landed 17:53 (-0.1 h) · read <b>~18:23</b> · 4 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+7.0 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-5.0 h) · read <b>~18:40</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+12.3 h) → read <b>~07:37 Thu</b></p>
+<p class="etabar"><b>ETA</b> (from 21:25 KST) · <b>120M</b> · ep05 landed 19:28 (-1.9 h) · read <b>~21:45</b> · 3 more, ~1.6 h apart · final 8.36 ep lands <b>01:01 Thu</b> (+3.6 h) → read <b>~01:31 Thu</b> &nbsp;|&nbsp; <b>320M</b> · ep02 landed 12:59 (-8.4 h) · read <b>~21:50</b> · 5 more, ~2.9 h apart · ep08 8.00 ep lands <b>06:17 Thu</b> (+8.9 h) → read <b>~07:37 Thu</b></p>
 <!-- /GEN -->
 </section>
 
