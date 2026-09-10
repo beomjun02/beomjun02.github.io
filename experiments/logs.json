@@ -47,6 +47,17 @@
  "logs": [
   {
    "project": "3d-wam",
+   "date": "2026-09-10",
+   "slug": "s2-3-method-text-data",
+   "format": "deck",
+   "status": "running",
+   "updated": "2026-09-10",
+   "title": "Deck #2-3 · Method: Text Conditioning & Data Filtering (season 2)",
+   "path": "3d-wam/decks/2026-09-10-s2-3-method-text-data/",
+   "tldr": "How text reaches the point tokens today (sentence cross-attention + a mean-pooled phrase added as a constant per entity), why that cannot tell two objects apart, how multimodal generators condition on text, the proposed entity tokens with a text-only self-attention, and the data audit: approach frames are trained, OakInk2 phrases are the word 'object' and a quarter of its frames carry the episode text, DexYCB parked hands are filtered, augmentation is now re-drawn every pass. Three owner decisions: z convention, text structure, approach frames."
+  },
+  {
+   "project": "3d-wam",
    "date": "2026-09-09",
    "slug": "s2-2-architecture-training",
    "format": "deck",

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- Deck #2-3 · Method: text conditioning + data filtering · 3D-WAM · built by season2/deck-2-3/build.py (figures.py). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2026-09-10 · Deck #2-3 · Method: Text Conditioning &amp; Data Filtering — 3D-WAM</title>
+<meta name="description" content="Deck #2-3: how the task sentence and per-entity phrases reach the point tokens today, how multimodal generators condition on text, the proposed entity-token structure, and the data filtering audit (spans, approach frames, DexYCB, per-pass augmentation).">
+<link rel="stylesheet" href="/experiments/assets/lab.css">
+<link rel="stylesheet" href="/experiments/assets/deck.css">
+<script src="/experiments/assets/deck.js" defer></script>
+<style>
+  .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.35em;align-items:center;justify-content:center;
+    text-align:center;min-height:4.5em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;line-height:1.35;
+    padding:.7em .9em;background:#FAFAFA;box-sizing:border-box}
+  .deck figure.phold .pbox b{color:#333}
+  .deck p.etabar{margin:.5em 0 0;padding:.36em .8em;border-left:3px solid #0070C0;background:#F2F6FA;font-size:1.32em;color:#333;line-height:1.36}
+  .deck p.etabar b{color:#000}
+  .deck .band>figure.tb{justify-content:flex-start}
+  .deck .slide td.c,.deck .slide th.c{text-align:center}
+  .deck .slide td.ok{color:#2CA02C;font-weight:700}.deck .slide td.bad{color:#C0392B;font-weight:700}.deck .slide td.mid{color:#B8860B;font-weight:700}
+  .deck .slide.fn2{padding-bottom:4.8em}
+  .deck .slide.fn2 .footnote{white-space:normal;overflow:visible;text-overflow:clip;bottom:1.0em;line-height:1.28}
+  .deck .band.wide{margin-top:1.2em}
+  .deck .band.wide>figure>img{flex:0 0 auto;width:100%;height:30em;object-fit:contain}
+  .deck .band.two{margin-top:1.2em;gap:2em;align-items:flex-start}
+  .deck .band.two>figure.img{flex:1.15 1 0;min-width:0}.deck .band.two>figure.tb{flex:1.25 1 0;min-width:0}
+  /* deck.css gives .band>figure>img flex:1 1 0; inside align-items:flex-start that collapses to 0 height */
+  .deck .band.two>figure>img{flex:0 0 auto;display:block;width:100%;height:24em;object-fit:contain}
+  .deck table.compact td,.deck table.compact th{padding:.22em .5em;font-size:1.12em;line-height:1.22;white-space:normal;text-align:left}
+  .deck table.compact td:first-child{font-weight:700;white-space:nowrap}
+  .deck table.compact th{white-space:nowrap}
+  .deck .s-discuss ol li{font-size:1.12em;line-height:1.26;margin:.05em 0}
+  .deck .s-discuss p.subhead{margin:.35em 0 .1em;font-size:1.3em}
+  .deck .s-discuss .thesis{margin-bottom:.3em}
+</style>
+</head>
+<body class="deck-page">
+<main class="deck" data-project="3D-WAM" data-deck="deck #2-3 · method · text conditioning &amp; data filtering · season 2" data-date="2026-09-10">
+<section class="slide s-title">
+  <h1>Deck #2-3: Method — Text Conditioning and Data Filtering</h1>
+  <p class="ctx">3D-WAM · season 2 · what the audit changed, and the structure the next experiments use</p>
+  <p class="venue"><b>Lab meeting</b></p>
+  <p class="when">2026. 09. 10<br>Presented by 김범준</p>
+</section>
+<section class="slide s-overview ">
+  <h2>Overview</h2>
+  <p class="thesis"><b>[TL;DR]</b> Text reaches points as a pooled constant; two objects cannot be told apart</p>
+  <ul><li>Done: audit fixes, tests green</li><li>Propose: entity tokens attend text</li><li>Decide: z frame, approach frames</li></ul>
+  <div class="band wide"><figure class="img"><img src="assets/text_paths.png" alt="Today (left) vs proposed (right): how the task sentence and the per-entity phrases reach the point tokens"><figcaption>Today (left) vs proposed (right): how the task sentence and the per-entity phrases reach the point tokens</figcaption></figure></div>
+  <p class="footnote">sources: code-iclr27/wam/model/vdit_c.py (CrossAttention, entity bias) · wam/data/text.py · audits 2026-09-10 (RUN.md 17:35–18:35) · numbers: season2/reads, manifests_final, text_spans</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (1): how text is conditioned today, step by step</h2>
+  <p class="thesis">Sentence is attended; phrases are a per-patch bias; the two never meet</p>
+  
+  <div class="band two"><figure class="tb"><table class="compact"><thead><tr><th>step</th><th class="c">what happens</th></tr></thead><tbody><tr><td class="">1 sentence</td><td class="c">frozen T5-base → tokens (L × 768), kept as a sequence</td></tr><tr><td class="">2 phrase</td><td class="c">one phrase per entity (“hammer”) → T5 → <b>mean-pool</b> → 768</td></tr><tr><td class="">3 bias</td><td class="c">Linear → <b>added to every patch of that entity</b>, all frames</td></tr><tr><td class="">4 cross-attn</td><td class="c">every block: patches attend the sentence tokens</td></tr><tr><td class="">5 link</td><td class="c"><b>none</b> — “the hammer” and “hammer” share no parameter</td></tr><tr><td class="">6 evidence</td><td class="c">text swap moved flow 2–6 mm (P4); hammer_nail → nail (right)</td></tr></tbody></table><figcaption>The current path, one row per step</figcaption></figure><figure class="img"><img src="assets/hammer_nail_dist.png" alt="DexJoCo hammer_nail: hand-to-hammer (orange) vs hand-to-nail (grey) distance per replan; the sentence names the hammer, the hand approaches the nail"><figcaption>DexJoCo hammer_nail: hand-to-hammer (orange) vs hand-to-nail (grey) distance per replan; the sentence names the hammer, the hand approaches the nail</figcaption></figure></div>
+  <p class="footnote">step 3: vdit_c.py `x = content + (cond + e)` with e gathered per patch · step 4: CrossAttention(ctx = sentence tokens) · P4 = 08-26 text-swap probe on pilot_fast · hammer_nail reads: measlat/final, reads/c2b_hist/ep01</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (2): how multimodal generators condition on text</h2>
+  <p class="thesis">Standard practice puts text and content tokens in one attention</p>
+  <ul><li>Pooled adaLN: global only</li><li>Cross-attn: content reads text</li><li>Joint attention: both ways</li></ul>
+  <div class="band wide"><figure class="img"><img src="assets/conditioning_landscape.png" alt="Four conditioning patterns: pooled adaLN (DiT, PixArt-α) · cross-attention to text tokens (Stable Diffusion, Wan 2.1, ours) · joint attention over one sequence (SD3 / FLUX MM-DiT, CogVideoX) · proposed entity tokens with a text-only self-attention"><figcaption>Four conditioning patterns: pooled adaLN (DiT, PixArt-α) · cross-attention to text tokens (Stable Diffusion, Wan 2.1, ours) · joint attention over one sequence (SD3 / FLUX MM-DiT, CogVideoX) · proposed entity tokens with a text-only self-attention</figcaption></figure></div>
+  <p class="footnote">refs verified in paper/related/05: DiT arXiv 2212.09748 · SD3 (MM-DiT) 2403.03206 · CogVideoX 2408.06072 · Wan 2503.20314 · HunyuanVideo 2412.03603 · Stable Diffusion (Rombach 2022) and PixArt-α cited from memory, verify before the paper</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (3): proposed — entity tokens that attend the sentence</h2>
+  <p class="thesis">Phrases join the text sequence; the bias becomes sentence-aware</p>
+  <ul><li>One text self-attention layer</li><li>ctx = [sentence ; entities]</li><li>Bias from the contextualised phrase</li></ul>
+  <div class="band two"><figure class="tb"><table class="compact"><thead><tr><th>design</th><th class="c">text↔entity</th><th class="c">grounding</th><th class="c">cost</th></tr></thead><tbody><tr><td class="">ours today</td><td class="bad">none</td><td class="c">pooled bias</td><td class="c">0</td></tr><tr><td class="">joint attention (MM-DiT)</td><td class="ok">full</td><td class="c">none, global</td><td class="c">(N+L)²/block</td></tr><tr><td class="">Dex Point Policy obj token</td><td class="mid">n/a</td><td class="c">1 token / object</td><td class="c">+E tokens</td></tr><tr><td class="">proposed</td><td class="ok">1 layer</td><td class="c">bias + attention</td><td class="c">≈7M, 1 layer</td></tr></tbody></table><figcaption>How the alternatives link text to entities and entities to points</figcaption></figure><figure class="img"><img src="assets/text_proposed.png" alt="The proposed path, in one text-only self-attention layer"><figcaption>The proposed path, in one text-only self-attention layer</figcaption></figure></div>
+  <p class="footnote">Dex Point Policy row from the owner's description (a separate object token from the object cloud, `use_object_cond`) — not re-verified from DPP code on this Mac · the proposed change reuses CrossAttention unchanged: ctx construction + one layer + the gather source (≈30 lines)</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (4): data — phrases, spans and approach frames</h2>
+  <p class="thesis">OakInk2 phrases say “object”; a quarter of its frames carry the wrong text</p>
+  <ul><li>Approach frames are trained</li><li>Span-outside chunks inherit episode text</li><li>DexYCB parked hands are filtered</li></ul>
+  <div class="band wide"><figure class="img"><img src="assets/data_issues.png" alt="Left: share of frames with no hand–object contact per dataset (approach / retreat proxy) · middle: OakInk2 frames inside vs outside any subtask span · right: DexYCB episodes with a leading untracked-hand run"><figcaption>Left: share of frames with no hand–object contact per dataset (approach / retreat proxy) · middle: OakInk2 frames inside vs outside any subtask span · right: DexYCB episodes with a leading untracked-hand run</figcaption></figure></div>
+  <p class="footnote">phrase rule (wam/data/text.py object_phrase): taco = tool word · dexycb = YCB name · arctic = object · grab = object · hot3d = instance name · oakink2 = literal “object” (opaque ids) · contact-free % from manifests_final contact_frames_frac · spans from text_spans/{oakink2,hot3d}.json · DexYCB from motion_valid.npz (stored validity)</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (5): data filtering — what is in place, what changed, what is not filtered</h2>
+  <p class="thesis">Tracking failures are filtered; real approach motion is not</p>
+  <ul><li>Stored validity from source flags</li><li>Augmentation re-drawn per pass</li><li>Approach trim is a decision</li></ul>
+  <div class="band wide"><figure class="img"><img src="assets/filter_pipeline.png" alt="Where each filter acts, from the source parquet to the per-chunk text: green in place · blue changed on 2026-09-10 (local, deployed to the next launch) · orange proposed · red not filtered"><figcaption>Where each filter acts, from the source parquet to the per-chunk text: green in place · blue changed on 2026-09-10 (local, deployed to the next launch) · orange proposed · red not filtered</figcaption></figure></div>
+  <p class="footnote">changed 09-10 (tests 269 pass): augmentation keyed on (seed, chunk, pass) · resume offsets RNG and order by step · origin jitter xy-only · frame_fix sidecar missing → error · contact-map hand rows not double counted · iroll NaN hold · pooler splits GR-1 by hands</p>
+</section>
+<section class="slide s-method fn2 ">
+  <h2>Method (6): EPIC-Contact as training data or as a tool</h2>
+  <p class="thesis">Correspondence annotations we want; not a motion corpus</p>
+  <ul><li>Bijective contact = our target label</li><li>62K frames ≈ 20 min</li><li>Camera space, stable grasps only</li></ul>
+  <div class="band two"><figure class="phold"><div class="pbox"><b>WILL UPDATE · EPIC-Contact fit matrix</b><span>analysis agent running · tonight</span></div><figcaption>Requirement-vs-provided matrix, pending</figcaption></figure><figure class="tb"><table class="compact"><thead><tr><th>fact</th><th class="c">value</th></tr></thead><tbody><tr><td class="">clips / frames</td><td class="c">2.3K / 62.3K</td></tr><tr><td class="">objects</td><td class="c">9 kitchen categories, template meshes</td></tr><tr><td class="">contact</td><td class="c">dense bijective hand↔object, 3,106-vertex MANO</td></tr><tr><td class="">frame</td><td class="c">camera space, no gravity / table</td></tr><tr><td class="">clips are</td><td class="c">stable-grasp only (no approach / release)</td></tr><tr><td class="">license</td><td class="c">CC BY-NC 4.0</td></tr></tbody></table><figcaption>EPIC-Contact facts read from the paper abstract and dataset card (2026-09-10)</figcaption></figure></div>
+  <p class="footnote">sources: arXiv 2606.30598 (ECCV 2026) · huggingface.co/datasets/Sid2697/epic-contact · github.com/Sid2697/HOPformer · full analysis lands in the appendix when the agent finishes</p>
+</section>
+<section class="slide s-discuss fn2">
+  <h2>Discussion &amp; Action items</h2>
+  <p class="thesis">Three decisions gate the next launches; the code for each is small</p>
+  <p class="subhead">Decided:</p>
+  <ol><li>Audit fixes go into every NEW launch; running arms keep their code (owner, 18:35)</li></ol>
+  <p class="subhead">Discussion:</p>
+  <ol>
+    <li><b>z convention</b> — A mixed · B anchored flag · C all hand-centred · D table z, drop HOI4D+HOT3D → D first, then B (owner)</li>
+    <li><b>text structure</b> — bias-only · joint attention · entity tokens + 1 text layer → entity tokens, after a phrase-swap read (owner)</li>
+    <li><b>approach frames</b> — as is · null text outside spans · trim before first contact, keep 1 s → null text + trim (owner)</li>
+  </ol>
+  <p class="subhead">Action items:</p>
+  <ol>
+    <li>Base 120M re-run, per-pass augmentation only — re-tests the overfitting headline (A1 · next free 4-GPU slot)</li>
+    <li>Entity-token text layer + tests, behind a config flag (A2 · agent · 09-11)</li>
+    <li>OakInk2 phrases from sentence nouns; outside-span chunks → null text (A3 · agent · 09-11)</li>
+  </ol>
+  <p class="footnote">arms live now: history 12201 → 12258 (iclr27) · contact aux + batch continuation (MLXP 2× H200) · results deck = #2-2 · this deck = method for the next experiments</p>
+</section>
+<section class="slide s-appendix fn2">
+  <h2>Appendix A1 · evidence and code paths</h2>
+  <table class="kv">
+    <tr><td>text path</td><td>code-iclr27/wam/model/vdit_c.py: CrossAttention (ctx = sentence tokens) · `ent = self.entity(entity_emb)` · `x = content + (cond + e)` · phrases: wam/data/text.py object_phrase / hand_phrase / entity_phrases · cache: scripts/cache_text_embeddings.py (pool=True for phrases)</td></tr>
+    <tr><td>text-swap probe</td><td>08-26 P4 on pilot_fast_N1024 ckpt 6k: relabelled text changed generated flow by 2–6 mm (memory 3d-wam-project.md)</td></tr>
+    <tr><td>hammer_nail</td><td>season2/measlat/final/dexjoco/results.json (120M final) · season2/reads/c2b_hist/ep01/dexjoco/results.json · replan_log[hand_obj_dist_cm, hand_obj2_dist_cm] · phrases hit the T5 prompt cache exactly (text_note)</td></tr>
+    <tr><td>filters</td><td>wam/data/motion_filter.py (source=stored, chunk_keep_mask: frame-0 valid, ≤ 20 % invalid) · wam/data/sources/chord_parquet.py raw_untracked_frames (DexYCB pose_m == 0) · wam/data/chunks.py attach_text_spans (fallback = episode text)</td></tr>
+    <tr><td>audit fixes 09-10</td><td>wam/data/dataset.py (pass_no, aug key, xy jitter, frame_fix error) · wam/train/loaders.py (BucketBatchSampler.set_epoch/_stamp, start_step) · wam/train/train_v_c.py (data_pass, resume seed) · wam/train/contact_map.py (pad_ok) · review-iclr27/train/iroll.py (NaN hold) · tests: test_dataset.py::test_augmentation_is_redrawn_per_pass, test_bucket_sampler.py::test_set_epoch_stamps_pass_into_indices_and_reseeds_aligned_keys</td></tr>
+    <tr><td>audit reports</td><td>season2/RUN.md 2026-09-10 17:35–18:35 (three read-only audits: frames · model/loss/trainer · data/eval — the third died on a rate limit and was not re-run)</td></tr>
+  </table>
+  <p class="footnote">All local: /Users/beomjun/claude-code-rc/3D-WAM · nothing here was deployed to a cluster training tree; the pooler (review/train/mpepe.py) is the only deployed change</p>
+</section>
+<section class="slide s-appendix fn2">
+  <h2>Appendix A2 · coordinate-frame audit, what was cleared and what was not</h2>
+  <table class="kv">
+    <tr><td>cleared</td><td>per-chunk origin = hand centroid xy, z = table plane when anchored; identical in training (dataset.py 430–460), iroll (126–137), GR-1 loop (686–697), DexJoCo loop (404–417) · history (t−1, t−2) same origin, consumed as hist − x0 · one global pos_scale restored from the checkpoint · labels remap and phrase order agree · mirror swaps side labels + phrases; no task text contains left/right · float16 storage ulp ≤ 1 mm</td></tr>
+    <tr><td>design inconsistency</td><td>z means table height on anchored datasets (76 % of the mixture) and hand-centred height on HOI4D + HOT3D (24 %); no input tells the model which; closed loops always send table z → decision 1 above</td></tr>
+    <tr><td>fixed</td><td>3-D jitter ball (1 m) on un-anchored episodes → xy only · iroll fed NaN for untracked frames → held · missing frame_fix sidecar fell back silently → error</td></tr>
+    <tr><td>fragile</td><td>closed-loop table_z = support under the pick object (a fixture would offset the frame) · iroll keeps the frame-0 point set for the whole chain</td></tr>
+  </table>
+  <p class="footnote">verification numbers to compute before the z decision: per-dataset histogram of hand-centroid z in train chunks; teacher-forced ADE on anchored val with the z origin shifted ± 0.2 m</p>
+</section>
+<section class="slide s-appendix">
+  <h2>Appendix A3 · cut list</h2>
+  <p class="cut">cut: per-dataset phrase table (rule in the Method (4) footnote) · full list of the 80 remaining ruff findings (36 one-line semicolons, 9 loop-variable closures in iroll, 8 open() without context manager …) · the third audit (data pipeline / eval) — not run, rate limit · Play2Perfect and correspondence specs (season2/specs/) — separate decks when launched</p>
+</section>
+</main>
+</body>
+</html>
