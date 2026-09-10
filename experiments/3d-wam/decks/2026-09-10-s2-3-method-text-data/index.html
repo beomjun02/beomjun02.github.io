@@ -28,6 +28,8 @@
   .deck .band.two>figure.img{flex:1.15 1 0;min-width:0}.deck .band.two>figure.tb{flex:1.25 1 0;min-width:0}
   /* deck.css gives .band>figure>img flex:1 1 0; inside align-items:flex-start that collapses to 0 height */
   .deck .band.two>figure>img{flex:0 0 auto;display:block;width:100%;height:24em;object-fit:contain}
+  .deck .band.epic>figure.img{flex:2.2 1 0}.deck .band.epic>figure.tb{flex:1 1 0}
+  .deck .band.epic>figure>img{height:19em}
   .deck table.compact td,.deck table.compact th{padding:.22em .5em;font-size:1.12em;line-height:1.22;white-space:normal;text-align:left}
   .deck table.compact td:first-child{font-weight:700;white-space:nowrap}
   .deck table.compact th{white-space:nowrap}
@@ -88,10 +90,10 @@
 </section>
 <section class="slide s-method fn2 ">
   <h2>Method (6): EPIC-Contact as training data or as a tool</h2>
-  <p class="thesis">Correspondence annotations we want; not a motion corpus</p>
-  <ul><li>Bijective contact = our target label</li><li>62K frames ≈ 20 min</li><li>Camera space, stable grasps only</li></ul>
-  <div class="band two"><figure class="phold"><div class="pbox"><b>WILL UPDATE · EPIC-Contact fit matrix</b><span>analysis agent running · tonight</span></div><figcaption>Requirement-vs-provided matrix, pending</figcaption></figure><figure class="tb"><table class="compact"><thead><tr><th>fact</th><th class="c">value</th></tr></thead><tbody><tr><td class="">clips / frames</td><td class="c">2.3K / 62.3K</td></tr><tr><td class="">objects</td><td class="c">9 kitchen categories, template meshes</td></tr><tr><td class="">contact</td><td class="c">dense bijective hand↔object, 3,106-vertex MANO</td></tr><tr><td class="">frame</td><td class="c">camera space, no gravity / table</td></tr><tr><td class="">clips are</td><td class="c">stable-grasp only (no approach / release)</td></tr><tr><td class="">license</td><td class="c">CC BY-NC 4.0</td></tr></tbody></table><figcaption>EPIC-Contact facts read from the paper abstract and dataset card (2026-09-10)</figcaption></figure></div>
-  <p class="footnote">sources: arXiv 2606.30598 (ECCV 2026) · huggingface.co/datasets/Sid2697/epic-contact · github.com/Sid2697/HOPformer · full analysis lands in the appendix when the agent finishes</p>
+  <p class="thesis">The grasp is frozen: a rigid hand+object body being carried</p>
+  <ul><li>Relative pose broadcast from one frame</li><li>0.5–3.1 mm hand motion in object frame</li><li>0.47 h usable, no approach phase</li></ul>
+  <div class="band two epic"><figure class="img"><img src="assets/epic_contact_fit.png" alt="What our pipeline needs vs what the release provides"><figcaption>What our pipeline needs vs what the release provides</figcaption></figure><figure class="tb"><table class="compact"><thead><tr><th>use</th><th class="c">verdict</th></tr></thead><tbody><tr><td class="">Training data</td><td class="c"><b>no</b> — grasp frozen by propagation, camera-space</td></tr><tr><td class="">Tool</td><td class="c"><b>partial</b> — single-RGB, 9 kitchen templates only</td></tr><tr><td class="">Evaluation</td><td class="c"><b>partial</b> — metric and GT pairs shipped</td></tr></tbody></table><figcaption>Verdict per use (analysis: season2/deck-2-3/epic_contact/REPORT.md)</figcaption></figure></div>
+  <p class="footnote">Training data: no — grasp frozen by propagation, camera-space, ~650 usable 1 s chunks · Tool: partial — single-RGB, 9 kitchen templates only, camera-space non-metric output · Evaluation: partial — metric and GT pairs shipped; needs mesh-indexed output in camera frame · sources: arXiv 2606.30598 (ECCV 2026) · huggingface.co/datasets/Sid2697/epic-contact (CC BY-NC 4.0)</p>
 </section>
 <section class="slide s-discuss fn2">
   <h2>Discussion &amp; Action items</h2>
