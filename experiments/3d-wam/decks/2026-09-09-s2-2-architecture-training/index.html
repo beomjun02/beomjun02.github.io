@@ -17,7 +17,7 @@
 <style>
   /* ---- pending visuals: dashed "WILL UPDATE" tiles (v5 §4b E) ---- */
   .deck figure.phold .pbox{flex:1 1 auto;display:flex;flex-direction:column;gap:.35em;align-items:center;justify-content:center;
-    text-align:center;min-height:4.5em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:1.4em;line-height:1.35;
+    text-align:center;min-height:3.2em;border:2px dashed #B3B3B3;border-radius:4px;color:#595959;font-size:0.85em;line-height:1.2;
     padding:.7em .9em;background:#FAFAFA;box-sizing:border-box}
   .deck figure.phold .pbox b{color:#333}
   .deck figure.phold .pbox span{overflow-wrap:anywhere}
@@ -32,9 +32,9 @@
   .deck .band>figure.tb{justify-content:flex-start}
   .deck .slide td.c,.deck .slide th.c{text-align:center}
   .deck .slide.fn2{padding-bottom:4.8em}
-  .deck .slide.fn2 .footnote{white-space:normal;overflow:visible;text-overflow:clip;bottom:1.0em;line-height:1.28}
+  .deck .slide.fn2 .footnote{white-space:normal;overflow:visible;text-overflow:clip;bottom:1.0em;line-height:1.2;font-size:0.8em}
   .deck .slide.fnflow .band.res2>figure.tb figcaption{max-height:4.0em;overflow:hidden}
-  .deck .slide.fnflow .footnote{position:static;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.26;margin:.3em 5.5em 0 0;font-size:1.02em}
+  .deck .slide.fnflow .footnote{position:static;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.2;margin:.25em 5.5em 0 0;font-size:0.8em}
   /* ---- method: figure + fact table ---- */
   .deck .band.mt{gap:2.4em;margin-top:2.2em;align-items:flex-start}
   .deck .band.mt>figure.fig{flex:1.45 1 0}
@@ -69,7 +69,7 @@
   .deck .band.res2{gap:1.8em;margin-top:.8em;align-items:stretch}
   .deck .band.res2>figure.fig{flex:1.5 1 0;min-width:0;min-height:0}
   .deck .band.res2>figure.fig>img{flex:1 1 0;min-height:0;width:100%;height:100%;object-fit:contain;object-position:left top}
-  .deck .band.res2>figure.fig>figcaption{flex:0 0 auto;font-style:italic;font-size:1.3em;color:var(--cap,#595959);text-align:left;margin-top:.2em;line-height:1.3}
+  .deck .band.res2>figure.fig>figcaption{flex:0 0 auto;font-style:italic;font-size:0.9em;color:var(--cap,#595959);text-align:left;margin-top:.2em;line-height:1.3}
   .deck .band.res2>figure.tb{flex:1 1 0;min-width:0;justify-content:flex-start}
   .deck table.res{table-layout:fixed;width:100%}
   .deck table.res th,.deck table.res td{padding:.22em .45em}
@@ -86,20 +86,20 @@
   .deck table.res.r5 th:nth-child(3){width:25%}
   .deck table.res.r5 th:nth-child(4){width:25%}
   .deck table.res.r5 th:nth-child(5){width:13%}
-  .deck .band.res2>figure.tb figcaption{text-align:left;font-size:1.12em;line-height:1.28}
+  .deck .band.res2>figure.tb figcaption{text-align:left;font-size:0.86em;line-height:1.2}
   /* ---- viz grids (outside the cap): 5 columns, rows = arm (5 + 4 tiles each), captions only ---- */
   .deck .s-viz h2{margin-bottom:.3em}
   .deck .s-viz .thesis{margin-bottom:.3em}
   .deck .vizgrid{flex:1 1 auto;min-height:0;width:100%;display:grid;grid-template-columns:repeat(5,1fr);
     gap:.55em 1.2em;align-content:start;margin-top:.6em}
-  .deck .vizgrid .rowlab{grid-column:1 / -1;font-size:1.4em;font-weight:700;line-height:1.2;margin-top:.15em}
+  .deck .vizgrid .rowlab{grid-column:1 / -1;font-size:0.95em;font-weight:700;line-height:1.15;margin-top:.1em}
   .deck .vizgrid figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column}
   .deck .vizgrid figure>img,.deck .vizgrid figure>video,.deck .vizgrid figure>.pbox{flex:0 0 auto;width:100%;object-fit:contain;object-position:center;background:transparent}
-  .deck .vizgrid.roll figure>img,.deck .vizgrid.roll figure>.pbox{height:6.4em}
-  .deck .vizgrid.loop figure>video,.deck .vizgrid.loop figure>.pbox{height:5.9em}
-  .deck .vizgrid figure.phold .pbox{min-height:0;font-size:1em;padding:.35em .6em;gap:.2em;line-height:1.3}
-  .deck .vizgrid figure.phold .pbox b,.deck .vizgrid figure.phold .pbox span{font-size:1.15em}
-  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.2em;font-size:1.3em;line-height:1.3;font-style:italic;color:var(--cap,#595959);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .deck .vizgrid.roll figure>img,.deck .vizgrid.roll figure>.pbox{height:5.0em}
+  .deck .vizgrid.loop figure>video,.deck .vizgrid.loop figure>.pbox{height:4.7em}
+  .deck .vizgrid figure.phold .pbox{min-height:0;font-size:0.85em;padding:.25em .45em;gap:.15em;line-height:1.2}
+  .deck .vizgrid figure.phold .pbox b,.deck .vizgrid figure.phold .pbox span{font-size:0.95em}
+  .deck .vizgrid figcaption{flex:0 0 auto;margin-top:.12em;font-size:0.78em;line-height:1.18;font-style:italic;color:var(--cap,#595959);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* ---- summary: running + due side by side, decisions full width, ETA strip ---- */
   .deck .s-summary h2{margin-bottom:.5em}
   .deck .s-summary .thesis{margin-bottom:.3em}
@@ -258,7 +258,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 14:42 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-6.4 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-3.8 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+1.5 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.9 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 15:25 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-7.2 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-4.5 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+0.8 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.2 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">eff. epoch = steps × eff. batch / 1,029,165 · zero = zero-velocity predictor · every epoch scored on the SAME 7 held-out clips (re-pooled 03:15) · clips on the next seven slides</p>
 </section>
@@ -553,7 +553,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 14:42 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-6.4 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-3.8 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+1.5 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.9 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 15:25 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-7.2 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-4.5 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+0.8 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.2 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">Protocol in Appendix A1 (H = 4 is GR00T N1.7's official 8 env steps). <b>Zero moves with the checkpoint</b> (3.98–5.03 cm): closed-loop truth is the sim under the <i>model's own</i> actions, so the 2 cm moving set — and the baseline — are checkpoint-dependent. <b>Each row is one measurement, not a trend.</b> Margins ep01→final: −0.01, +0.75, +0.65, +0.56, +0.48, +0.59, +0.75, −0.19, +0.75 (mean +0.48, sd 0.33); ep08 is an outlier, not a decline.</p>
 </section>
@@ -620,7 +620,7 @@
 </div>
 <!-- /GEN -->
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 14:42 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-6.4 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-3.8 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+1.5 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.9 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 15:25 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-7.2 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-4.5 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+0.8 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.2 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
   <p class="footnote">Protocol + reference points (&pi;0.5 84.7 % · GR00T N1.5 67.3 %) in Appendix A2. <b>Base column = auto-latency; ARM reads = pinned 650 ms — NOT comparable</b> (node class ~2× on decode, spread 1.65×). The only valid base-vs-arm comparison is the <b>120M final at the pinned basis</b>; 120M ep01/ep02 are pinned too. Lines are the plotter's, not a trend.</p>
 </section>
@@ -667,7 +667,7 @@
 <!-- /GEN -->
 
 <!-- SECTION: summary (last main slide) · running / due (GENERATED) · owner decisions (hand-written) · ETA (GENERATED) -->
-<section class="slide s-discuss s-summary">
+<section class="slide s-discuss s-summary fn2">
   <h2>Summary</h2>
   <p class="thesis">Overfitting on both fixed-basis signals; 320M trails 120M (7 clips, 1 seed)</p>
   <!-- GEN:summary -->
@@ -675,13 +675,13 @@
     <figure class="tb run"><table class="sum run">
       <thead><tr><th>running</th><th>compute</th><th>progress</th><th>rate</th><th>lands</th></tr></thead>
       <tbody>
-        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-13.8 h)</td></tr>
-        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 32,160 of 32,160 (8.00 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (-8.4 h)</td></tr>
-        <tr><td>C2 batch · job 11922</td><td>4× H100 (iclr2027-gpu)</td><td>step 142,320 of 128,644 (4.43 of 4.00 ep)</td><td>0.30 s/step</td><td>13:38 (-1.1 h)</td></tr>
-        <tr><td>C2 batch + history (MLXP)</td><td>4× H200 (MLXP)</td><td>step 12,960 of 192,966 (0.40 of 6.00 ep)</td><td>0.30 s/step</td><td>05:38 Fri (+14.9 h)</td></tr>
-        <tr><td>C2 batch + contact aux</td><td>4× GPU</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
+        <tr><td>120M · job 11270</td><td>4× H100 (iclr2027-gpu)</td><td>step 67,200 of 67,200 (8.36 of 8.36 ep)</td><td>0.71 s/step</td><td>00:53 (-14.5 h)</td></tr>
+        <tr><td>320M (MLXP)</td><td>4× H200 (MLXP)</td><td>step 32,160 of 32,160 (8.00 of 8.00 ep) · 24 h cap</td><td>2.57 s/step</td><td>06:17 (-9.1 h)</td></tr>
+        <tr><td>C2 batch · job 11922, STOPPED at 4.42 ep</td><td>4× H100 (iclr2027-gpu)</td><td>step 142,320 of 128,644 (4.43 of 4.00 ep)</td><td>0.30 s/step</td><td>13:38 (-1.8 h)</td></tr>
+        <tr><td>C2 batch + history · job 12201, RUNNING</td><td>4× H100 (iclr2027-gpu)</td><td>step 14,500 of 192,966 (0.45 of 6.00 ep)</td><td>0.30 s/step</td><td>05:38 Fri (+14.2 h)</td></tr>
+        <tr><td>C2 batch + contact aux · job 12202, queued</td><td>4× H100 (iclr2027-gpu)</td><td>step 0 of 192,966 (0.00 of 6.00 ep)</td><td>—</td><td>— (unestimated)</td></tr>
       </tbody></table>
-      <figcaption>What is running · progress as of 14:42 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
+      <figcaption>What is running · progress as of 15:25 KST · eff. epoch = steps × eff. batch ÷ 1,029,165</figcaption></figure>
     <figure class="tb"><table class="sum due">
       <thead><tr><th>due (no input)</th><th>hours</th><th>when</th></tr></thead>
       <tbody>
@@ -696,17 +696,10 @@
   </div>
 <!-- /GEN -->
   <div class="band sum2">
-    <figure class="tb"><table class="sum dec">
-      <thead><tr><th>the three arms</th><th>isolates</th><th>state at 14:40</th></tr></thead>
-      <tbody>
-        <tr><td><b>11922</b> c2b_nohist · batch 32, no history</td><td>BATCH (noise 2.3e-6 &rarr; 9.4e-6)</td><td><b>stopped at 4.42 ep</b> (13:34) — its 4 H100s went to the history arm; ep01 + ep04 read</td></tr>
-        <tr><td><b>12201</b> c2b_hist · batch 32, <b>history H=2</b></td><td>HISTORY at C2's batch</td><td><b>RUNNING on h100</b> since 13:34 (moved off MLXP, unschedulable 9 h); ep01 ~16:14</td></tr>
-        <tr><td><b>12202</b> contact-map auxiliary loss</td><td>contact supervision</td><td>pending on h100</td></tr>
-      </tbody></table>
-      <figcaption>C2 (last config that beat zero): batch 32 · history H=2 · stopped at 4.15 ep. The base: batch 128 · no history · 8.36 ep. — <b>Overfitting rests on the two FIXED-basis signals only</b>: in-training validation (192 chunks) and the seven-clip rollouts. <b>GR-1 is excluded</b> (its zero moves with the checkpoint); DexJoCo reports per checkpoint.</figcaption></figure>
+    <p class="footnote"><b>C2</b> (last config that beat zero): batch 32 · history H=2 · stopped at 4.15 ep; the base: batch 128 · no history · 8.36 ep. Arms isolate <b>batch</b> (11922, retired at 4.42 ep), <b>history</b> (12201, running) and <b>contact aux</b> (12251, background QoS). <b>Overfitting rests on the two FIXED-basis signals only</b> — in-training validation (192 chunks) and the seven-clip rollouts; <b>GR-1 is excluded</b> (its zero moves with the checkpoint) and DexJoCo reports per checkpoint.</p>
   </div>
   <!-- GEN:etabar -->
-<p class="etabar"><b>ETA</b> (from 14:42 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-6.4 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-3.8 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+1.5 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.9 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
+<p class="etabar"><b>ETA</b> (from 15:25 KST) · <b>120M base</b>: all reads in &nbsp;|&nbsp; <b>320M base</b>: all reads in &nbsp;|&nbsp; <b>C2 batch</b> · ep02 landed 08:16 (-7.2 h) · read unestimated</b> · ep03 3.00 ep lands <b>10:57</b> (-4.5 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + history</b> · ep01 lands 16:14 (+0.8 h) · read unestimated</b> · 4 more, ~2.7 h apart · ep06 6.00 ep lands <b>05:38 Fri</b> (+14.2 h) → read <b>~—</b> &nbsp;|&nbsp; <b>C2 batch + contact aux</b> · ep01 lands — (unestimated) · read unestimated</b> · 4 more · ep06 6.00 ep lands <b>—</b> (unestimated) → read <b>~—</b></p>
 <!-- /GEN -->
 </section>
 
