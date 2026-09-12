@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<!-- Deck: dex-pointwam dataset usage guide. Deliberately minimal (owner, 2026-08-31): paths,
+<!-- Deck: dex-pointwam dataset usage guide.
+     2026-09-11 update (owner): EgoDex A.7 caption upgrade closed (32/32 shards); added the
+     caption-generation comparison slide; removed the HOI residue (6,793) still left in the
+     totals row by the 09-07 drop; selector rows collapsed because one generation now covers all. Deliberately minimal (owner, 2026-08-31): paths,
      the minimal set of keys to read, and the sample visualisations. The 2026-08-27 log stays the
      full reference. Structure per _template/DECK-STYLE.md §3; caps §4.
      2026-09-07 update (owner): VITRA curation finished, so the corpus scale, the vitra_full path
@@ -13,7 +16,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>2026-09-07 · Dataset usage guide — dex-pointwam</title>
+<title>2026-09-11 · Dataset usage guide — dex-pointwam</title>
 <meta name="description" content="Deck: the EgoDex and VITRA human corpus — scale, paths, keys and a load snippet for the 3D encoder and PointWAM.">
 <link rel="stylesheet" href="/experiments/assets/lab.css">
 <link rel="stylesheet" href="/experiments/assets/deck.css">
@@ -26,14 +29,14 @@
 </style>
 </head>
 <body class="deck-page">
-<main class="deck" data-project="Dex-PointWAM" data-deck="dataset usage guide" data-date="2026-09-07">
+<main class="deck" data-project="Dex-PointWAM" data-deck="dataset usage guide" data-date="2026-09-11">
 
 <!-- SECTION: title -->
 <section class="slide s-title">
   <h1>Dataset usage guide — the human corpus for PointWAM</h1>
   <p class="ctx">Dex-PointWAM · scale, paths, keys, and how to load it</p>
   <p class="venue"><b>Lab meeting</b></p>
-  <p class="when">2026. 09. 07<br>Presented by beomjun</p>
+  <p class="when">2026. 09. 11<br>Presented by beomjun</p>
 </section>
 
 <!-- SECTION: overview -->
@@ -55,15 +58,15 @@
 <!-- SECTION: results (0) -->
 <section class="slide s-results">
   <h2>How far the corpus scaled</h2>
-  <p class="thesis">VITRA closed 09-07; 1.15M episodes curated across two sources.</p>
+  <p class="thesis">Both sources closed; 1.15M episodes on one caption generation.</p>
   <div class="band">
     <div class="tbl">
       <table class="compact">
         <thead><tr><th>source</th><th>episodes</th><th>sidecars</th><th>caption generation</th></tr></thead>
         <tbody>
-          <tr><td>EgoDex</td><td>324,167</td><td>324,167 · 100%</td><td>A.7 62.8% — upgrade in flight</td></tr>
+          <tr><td>EgoDex</td><td>324,167</td><td>324,167 · 100%</td><td>A.7 complete — 09-11</td></tr>
           <tr><td>VITRA</td><td>825,935</td><td>824,157 · 99.8%</td><td>A.7 complete</td></tr>
-          <tr><td><b>total</b></td><td><b>1,156,895</b></td><td><b>1,155,117</b></td><td>&mdash;</td></tr>
+          <tr><td><b>total</b></td><td><b>1,150,102</b></td><td><b>1,148,324</b></td><td>&mdash;</td></tr>
         </tbody>
       </table>
     </div>
@@ -78,10 +81,34 @@
       </table>
     </div>
   </div>
-  <p class="etabar"><b>In flight</b> — EgoDex A.7 caption upgrade, 120,715 episodes, 32 shards
-     (part2 &times;22, part3 &times;10). ~10 h per shard at the measured 390 eps/h/GPU, ~310 GPU-h total;
-     lands <b>2026-09-08</b> if concurrency holds, later if the queue stays at ~7 GPUs.</p>
-  <p class="footnote">1,778 VITRA episodes (0.2%) failed per-episode and were not chased · EgoDex coverage closed 08-30; only its caption generation is still being homogenised</p>
+  <p class="etabar"><b>Closed 2026-09-11</b> &mdash; EgoDex A.7 upgrade, 120,715 episodes (37.2% of EgoDex) over 32 shards, 32/32 COMPLETED, 0 failed. Both sources now carry a <b>single caption generation</b>; no subset filter is needed any more.</p>
+  <p class="footnote">1,778 VITRA episodes (0.2%) failed per-episode and were not chased · EgoDex coverage closed 08-30, its caption homogenisation 09-11 · totals here are EgoDex + VITRA only</p>
+</section>
+
+<!-- SECTION: results (0b) -->
+<section class="slide s-results">
+  <h2>What the caption upgrade changed</h2>
+  <p class="thesis">Same instance, three captioners: tags and contradictions became one description.</p>
+  <ul>
+    <li>Instance ids verified identical</li>
+    <li>Old generations contradict each other</li>
+    <li>Caption is the encoder&rsquo;s target</li>
+  </ul>
+  <div class="band">
+    <figure><img src="assets/cap_jenga.jpg" alt="Anchor frame of the assemble_jenga episode used for the caption comparison">
+      <figcaption><code>assemble_jenga__188</code> &mdash; anchor frame; the row below describes instance <code>id2</code></figcaption></figure>
+    <div class="tbl">
+      <table class="compact">
+        <thead><tr><th>generation</th><th>caption written for <code>id2</code></th></tr></thead>
+        <tbody>
+          <tr><td><code>v02_bbox_legacy</code></td><td>wooden blocks: rectangular, light brown, wood</td></tr>
+          <tr><td><code>v3_maskedcrop_qwen3vl</code></td><td>fabric: curved, brown, soft textile</td></tr>
+          <tr><td><b><code>sf_gemma3_pass2_v1</code></b></td><td>A small, roughly rectangular structure composed of light-brown wooden blocks. The blocks are arranged in a stacked, somewhat haphazard fashion, creating a low, uneven tower. It is being held by two hands.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="footnote">byte-identical <code>camera_0_instance_id</code> across the three, so the rows describe the <b>same points</b> · one illustrative instance, not a measured rate</p>
 </section>
 
 <!-- SECTION: method (1) -->
@@ -173,14 +200,13 @@ tgt = emb[iid[iid &gt; 0] - 1]                       # per-point target</code></
       <table class="compact">
         <thead><tr><th>to select</th><th>use</th></tr></thead>
         <tbody>
-          <tr><td>EgoDex + VITRA, one generation</td><td><code>attrs["caption_style"] == "sf_gemma3_pass2_v1"</code></td></tr>
-          <tr><td>the same, by manifest</td><td><code>stem in a7_stems.txt</code></td></tr>
+          <tr><td>a caption generation</td><td>no filter &mdash; every sidecar is <code>sf_gemma3_pass2_v1</code></td></tr>
           <tr><td>objects only, drop hands</td><td><code>attrs["global_is_agent"]</code> &rarr; drop true ids</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">both handles use the <b>same</b> clip key — that is what makes the join valid · <code>caption_style</code> is reliable only after the 08-30 backfill</p>
+  <p class="footnote">both handles use the <b>same</b> clip key — that is what makes the join valid · <code>a7_stems.txt</code> and <code>generation_index.tsv</code> are now redundant</p>
 </section>
 
 <!-- SECTION: results (1) -->
