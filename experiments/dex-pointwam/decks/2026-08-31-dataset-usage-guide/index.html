@@ -88,14 +88,12 @@
 <!-- SECTION: results (0b) -->
 <section class="slide s-results">
   <h2>What the caption upgrade changed</h2>
-  <p class="thesis">Same episode, same points &mdash; the supervision text was replaced.</p>
+  <p class="thesis">Read down a column: the same points, described three ways.</p>
   <div class="band">
-    <figure><img src="assets/cap_gen_v02.jpg" alt="Four instances of the clean_cups episode captioned by the retired bbox-crop generation">
-      <figcaption><b>before</b> &mdash; <code>v02_bbox_legacy</code>, the retired bbox crop</figcaption></figure>
-    <figure><img src="assets/cap_gen_a7.jpg" alt="The same four instances captioned by the shipped SpaceFormer A.7 Gemma-3 generation">
-      <figcaption><b>after</b> &mdash; <code>sf_gemma3_pass2_v1</code>, shipped across all 1,148,324 sidecars</figcaption></figure>
+    <figure><img src="assets/cap_generations.jpg" alt="Three instances of one EgoDex episode across the top; beneath them one row per caption generation, showing what each captioner wrote for the same points">
+      <figcaption>each column is one instance &mdash; the tile is the points, the rows are what the three captioners wrote about them</figcaption></figure>
   </div>
-  <p class="footnote"><code>clean_cups__1828</code> clip <code>0:11</code> &middot; tiles are the same points &mdash; <code>camera_0_instance_id</code> is SHA256-identical across generations &middot; <code>global_siglip2</code> changed with the text</p>
+  <p class="footnote"><b>identical</b>: the points and <code>camera_0_instance_id</code>, SHA256-equal &middot; <b>changed</b>: the caption and <code>global_siglip2</code>, the encoder&rsquo;s target</p>
 </section>
 
 <!-- SECTION: method (1) -->
