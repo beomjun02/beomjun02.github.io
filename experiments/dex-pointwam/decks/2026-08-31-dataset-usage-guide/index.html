@@ -88,27 +88,12 @@
 <!-- SECTION: results (0b) -->
 <section class="slide s-results">
   <h2>What the caption upgrade changed</h2>
-  <p class="thesis">Same instance, three captioners: tags and contradictions became one description.</p>
-  <ul>
-    <li>Instance ids verified identical</li>
-    <li>Old generations contradict each other</li>
-    <li>Caption is the encoder&rsquo;s target</li>
-  </ul>
+  <p class="thesis">Same points, same instance ids &mdash; only the caption text moved.</p>
   <div class="band">
-    <figure><img src="assets/cap_jenga.jpg" alt="Anchor frame of the assemble_jenga episode used for the caption comparison">
-      <figcaption><code>assemble_jenga__188</code> &mdash; anchor frame; the row below describes instance <code>id2</code></figcaption></figure>
-    <div class="tbl">
-      <table class="compact">
-        <thead><tr><th>generation</th><th>caption written for <code>id2</code></th></tr></thead>
-        <tbody>
-          <tr><td><code>v02_bbox_legacy</code></td><td>wooden blocks: rectangular, light brown, wood</td></tr>
-          <tr><td><code>v3_maskedcrop_qwen3vl</code></td><td>fabric: curved, brown, soft textile</td></tr>
-          <tr><td><b><code>sf_gemma3_pass2_v1</code></b></td><td>A small, roughly rectangular structure composed of light-brown wooden blocks. The blocks are arranged in a stacked, somewhat haphazard fashion, creating a low, uneven tower. It is being held by two hands.</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <figure><img src="assets/cap_generations.jpg" alt="Four instances of one EgoDex episode; under each tile the captions written by the three generations, stacked">
+      <figcaption><code>clean_cups__1828</code> &middot; clip <code>0:11</code> &mdash; four instances, each with all three generations&rsquo; captions beneath the same tile</figcaption></figure>
   </div>
-  <p class="footnote">byte-identical <code>camera_0_instance_id</code> across the three, so the rows describe the <b>same points</b> · one illustrative instance, not a measured rate</p>
+  <p class="footnote">byte-identical <code>camera_0_instance_id</code> in all three, so every tile is the <b>same points</b> &mdash; the disagreement is in the text, not the segmentation</p>
 </section>
 
 <!-- SECTION: method (1) -->
