@@ -88,12 +88,14 @@
 <!-- SECTION: results (0b) -->
 <section class="slide s-results">
   <h2>What the caption upgrade changed</h2>
-  <p class="thesis">Same points, same instance ids &mdash; only the caption text moved.</p>
+  <p class="thesis">Same episode, same points &mdash; the supervision text was replaced.</p>
   <div class="band">
-    <figure><img src="assets/cap_generations.jpg" alt="Four instances of one EgoDex episode; under each tile the captions written by the three generations, stacked">
-      <figcaption><code>clean_cups__1828</code> &middot; clip <code>0:11</code> &mdash; four instances, each with all three generations&rsquo; captions beneath the same tile</figcaption></figure>
+    <figure><img src="assets/cap_gen_v02.jpg" alt="Four instances of the clean_cups episode captioned by the retired bbox-crop generation">
+      <figcaption><b>before</b> &mdash; <code>v02_bbox_legacy</code>, the retired bbox crop</figcaption></figure>
+    <figure><img src="assets/cap_gen_a7.jpg" alt="The same four instances captioned by the shipped SpaceFormer A.7 Gemma-3 generation">
+      <figcaption><b>after</b> &mdash; <code>sf_gemma3_pass2_v1</code>, shipped across all 1,148,324 sidecars</figcaption></figure>
   </div>
-  <p class="footnote">byte-identical <code>camera_0_instance_id</code> in all three, so every tile is the <b>same points</b> &mdash; the disagreement is in the text, not the segmentation</p>
+  <p class="footnote"><code>clean_cups__1828</code> clip <code>0:11</code> &middot; tiles are the same points &mdash; <code>camera_0_instance_id</code> is SHA256-identical across generations &middot; <code>global_siglip2</code> changed with the text</p>
 </section>
 
 <!-- SECTION: method (1) -->
