@@ -99,11 +99,10 @@
 <!-- SECTION: method (1) -->
 <section class="slide s-method">
   <h2>Method (1): Where the data is</h2>
-  <p class="thesis">Flows, sidecars and the subset manifests sit under one root.</p>
+  <p class="thesis">Flows and sidecars under one root; nothing needs filtering.</p>
   <ul>
     <li>Absolute paths on the shared filesystem</li>
     <li>EgoDex spans seven part dirs</li>
-    <li>Manifests pick a caption subset</li>
   </ul>
   <div class="band">
     <div class="tbl">
@@ -114,12 +113,12 @@
           <tr><td>VITRA flow H5 — PointWAM</td><td><code>/virtual_lab/sjw_alinlab/beomjun/vitra_1m/flows/</code></td></tr>
           <tr><td>EgoDex sidecar — 3D encoder</td><td><code>…/maskcap_pilot/{egodex,egodex_part2…part5,egodex_extra,egodex_test}/</code></td></tr>
           <tr><td>VITRA sidecar — 3D encoder</td><td><code>…/maskcap_pilot/vitra_full/</code></td></tr>
-          <tr><td>subset + generation manifests</td><td><code>…/maskcap_pilot/manifests/{a7_stems.txt,generation_index.tsv}</code></td></tr>
+          <tr><td>manifests <b>(superseded)</b></td><td><code>…/maskcap_pilot/manifests/</code> &mdash; frozen 09-08; filtering drops 120,715 episodes</td></tr>
         </tbody>
       </table>
     </div>
   </div>
-  <p class="footnote">root for every <code>…</code> above is <code>/virtual_lab/sjw_alinlab/beomjun/</code> · sidecar and flow H5 share the filename, so the join is by name · manifests are rebuilt as the corpus changes — re-read them rather than caching</p>
+  <p class="footnote">root for every <code>…</code> above is <code>/virtual_lab/sjw_alinlab/beomjun/</code> · sidecar and flow H5 share the filename, so the join is by name</p>
 </section>
 
 <!-- SECTION: method (2) -->
