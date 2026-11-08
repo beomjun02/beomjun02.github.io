@@ -8,10 +8,10 @@ Beomjun's personal site, served by GitHub Pages from `main`.
 - **News**: one entry per paper — arXiv OR acceptance, never both. On acceptance, replace the paper's arXiv entry with the acceptance entry, dated by the decision month.
 - `daily-news/` is written by the daily-news automation — leave it alone.
 - **`experiments/` and `projects/` were moved out on 2026-10-01** to the PRIVATE repo `git@github.com:beomjun02/lab-notebook.git` (same paths, full history) and scrubbed from this repo's history. Never add them back here — this repo is public. Lab-notebook decks/logs go to `lab-notebook`; its `experiments/README.md` is the contract.
-- **Exception (2026-11-08, user-approved): `experiments/index.html` is a password gate.** It holds only AES-GCM ciphertext
-  (PBKDF2-SHA256 600k) built by an encrypt script kept outside this repo; the plaintext source and the password never enter
-  this repo. Never commit a plaintext page under `experiments/`, and keep file names, titles and commit messages neutral
-  (no project or submission names).
+- **Exception (2026-11-08, user-approved): `experiments/` holds only password-encrypted gate pages** (index = project list,
+  `experiments/<slug>/index.html` per project). Each is AES-GCM ciphertext (PBKDF2-SHA256 600k) built by
+  `~/claude-code-rc/_exp-site/build.sh`; plaintext sources and the password never enter this repo. Never commit a
+  plaintext page under `experiments/`. Keep commit messages neutral. Project slugs may name papers already public on this site.
 - `.nojekyll` must stay — the site is plain HTML.
 - Public repo: no credentials, no double-blind-violating material.
 - Deploy = commit + push to `main` (SSH remote; this machine's `gh` CLI is logged into a different account — use plain git). Pages goes live in ~1 minute.
