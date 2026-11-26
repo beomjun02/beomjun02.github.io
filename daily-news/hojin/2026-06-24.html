@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-06-24</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
+.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+@media (prefers-color-scheme: dark) {
+  .daily-news { color: #f0f0f0; }
+  .daily-news h1 { color: #f5f5f5; }
+  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
+  .daily-news .item-title a { color: #64b5f6; }
+  .daily-news .item-title a:hover { color: #f09228; }
+  .daily-news .item-desc { color: #ccc; }
+  .daily-news .item-meta { color: #aaa; }
+  .daily-news .page-meta { color: #aaa; }
+  .daily-news .archive { border-top-color: #444; }
+  .daily-news .archive a { color: #64b5f6; }
+  .daily-news .archive a:hover { color: #f09228; }
+  .daily-news .feedback { border-top-color: #444; }
+  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-submit { background: #555; }
+  .daily-news .vote-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+}
+</style>
+</head>
+<body>
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="hojin" data-date="2026-06-24">
+<h1>Daily News — 2026-06-24</h1>
+<div class="user-banner"><div class="user-handle">Hojin</div><div class="user-categories">Robotics · Vision</div><div class="user-kws">VLA · WAM · robot foundation model · robot learning · embodied MLLM · dexterous manipulation · sim-to real RL · VLM · benchmark · perception · video understanding</div></div>
+<p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+
+
+<h2>Papers</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20781">World Action Models: A Survey</a></span> <button class="vote-btn" data-id="f0b54e1f6a" data-link="https://arxiv.org/abs/2606.20781" data-source="https://arxiv.org/abs/2606.20781" data-title="World Action Models: A Survey" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · WAM</span></span><span class="item-desc">Comprehensive survey organizing the rapidly growing WAM landscape through two complementary views: what methods generate (rendered/latent futures vs video-free action reasoning) and how they decompose by backbone, action coupling, and deployment regime. Identifies a consistent design pattern — WAMs are moving toward generating less of the future while preserving what control requires.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20905">Vesta: A Generalist Embodied Reasoning Model</a></span> <button class="vote-btn" data-id="dfbd708a58" data-link="https://arxiv.org/abs/2606.20905" data-source="https://arxiv.org/abs/2606.20905" data-title="Vesta: A Generalist Embodied Reasoning Model" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · robot foundation model</span></span><span class="item-desc">A unified foundation model consolidating localization, spatial reasoning, navigation, and long-horizon planning into a single model, eliminating the multi-model stack. On average beats individual SOTA baselines by &gt;20% and an ensemble of per-category-best baselines by &gt;10%, with &gt;35% real-robot task success improvement on memory-and-reasoning tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21086">MV-WAM: Manifold-Aware World Action Model with Value Augmentation</a></span> <button class="vote-btn" data-id="e39e94ca53" data-link="https://arxiv.org/abs/2606.21086" data-source="https://arxiv.org/abs/2606.21086" data-title="MV-WAM: Manifold-Aware World Action Model with Value Augmentation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · WAM</span></span><span class="item-desc">Addresses the visual-action manifold mismatch that limits WAM generalization under distribution shift via cross-modality causal masking and manifold-aware optimization. Introduces a progress-value regulation mechanism for autonomous deviation detection and value-guided rollback. Achieves 55.7% on RoboTwin random scenarios without randomized action supervision and 77.5% on real dual-arm tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20867">FOCA: Future-Oriented Conditioning for Data-Efficient VLA Adaptation</a></span> <button class="vote-btn" data-id="d8b32910a0" data-link="https://arxiv.org/abs/2606.20867" data-source="https://arxiv.org/abs/2606.20867" data-title="FOCA: Future-Oriented Conditioning for Data-Efficient VLA Adaptation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Tackles the sharp performance degradation of VLA models under few-shot imitation by combining explicit future interaction prediction with implicit future goal alignment in latent space. Achieves 95.7% success with just 20 demonstrations on LIBERO, 7-12% improvement on RoboCasa, and up to 26% absolute gains on real robots — new state of the art in few-shot VLA adaptation.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20698">SafeDojo: Safe RL for VLA via Interactive World Model</a></span> <button class="vote-btn" data-id="b637604bfb" data-link="https://arxiv.org/abs/2606.20698" data-source="https://arxiv.org/abs/2606.20698" data-title="SafeDojo: Safe RL for VLA via Interactive World Model" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA · sim-to real RL</span></span><span class="item-desc">First model-based safe RL framework for VLA policies, learning safe actions through world-model-based imagination. Decouples task-reward and safety-cost signals via Lagrangian-constrained GRPO, with a ResNet classifier for task progress and a lightweight safety head for per-step cost. Best safe-success rate on SafeLIBERO with 8.25pp improvement over strongest baseline, plus real Franka deployment.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21264">NAC: Neural Action Codec for VLA Models</a></span> <button class="vote-btn" data-id="c618f4fc0b" data-link="https://arxiv.org/abs/2606.21264" data-source="https://arxiv.org/abs/2606.21264" data-title="NAC: Neural Action Codec for VLA Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Repurposes neural audio codec architectures (multi-scale RVQGAN with Vocos-style ISTFT decoder) as action tokenizers for VLA models. Replaces audio-specific mel-spectrogram objectives with time-domain kinematic losses. Achieves lower reconstruction error and higher success rates than binning, FAST, and prior VQ-based tokenizers across LIBERO-10, RoboMimic, and real-world tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20679">MemoryVAM: Integrating Memory into Video Action Model for Robot Manipulation</a></span> <button class="vote-btn" data-id="7254eb82af" data-link="https://arxiv.org/abs/2606.20679" data-source="https://arxiv.org/abs/2606.20679" data-title="MemoryVAM: Integrating Memory into Video Action Model for Robot Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · WAM</span></span><span class="item-desc">Adds episodic memory to video-world-model policies via a Recap-Cue module that maps per-frame CLIP embeddings into compact memory tokens, injected into both video backbone and action decoder. Fixes the non-Markovian failure mode of short-window conditioning — improves average success from 5% to 42.5% on LIBERO-Mem and 78.3% on real-robot counting tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21165">CAMP: Compressed Action Memory for Partially Observable Manipulation</a></span> <button class="vote-btn" data-id="fec7cdbc7e" data-link="https://arxiv.org/abs/2606.21165" data-source="https://arxiv.org/abs/2606.21165" data-title="CAMP: Compressed Action Memory for Partially Observable Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Introduces a compressed action-history representation as a self-supervised memory signal for contact-rich manipulation under partial observability. Enables implicit task progress tracking and learning from failed attempts without additional supervision. First policy to demonstrate substantial success on contact-rich POMDP manipulation tasks through learned memory alone.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20999">Inductive Generalization for Robotic Manipulation</a></span> <button class="vote-btn" data-id="605a8ac2e2" data-link="https://arxiv.org/abs/2606.20999" data-source="https://arxiv.org/abs/2606.20999" data-title="Inductive Generalization for Robotic Manipulation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · VLA</span></span><span class="item-desc">Proposes a formal evaluation protocol for measuring inductive (OOD) generalization in manipulation policies on progressively harder task variants. Finds that SOTA VLA models that appear to generalize to standard domain shifts (distractors, lighting) fail inductive generalization tests — exposing a class of challenges orthogonal to data and model scaling.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21011">BayesFP: Posterior Estimation for Flow-Based Policies via Feynman-Kac Sampling</a></span> <button class="vote-btn" data-id="4d7b5a271b" data-link="https://arxiv.org/abs/2606.21011" data-source="https://arxiv.org/abs/2606.21011" data-title="BayesFP: Posterior Estimation for Flow-Based Policies via Feynman-Kac Sampling" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Extends the Feynman-Kac corrector framework from diffusion models to deterministic flow-matching policies, enabling inference-time constrained trajectory generation without retraining. Validated on pretrained Diffusion Policy, GR00T-N1.6, and pi_0.5 checkpoints for sim and real manipulation tasks, including planning around non-convex obstacles introduced at inference time.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.21139">AnyMug: Pose-Agnostic Robotic Functional Grasping via Canonicalization</a></span> <button class="vote-btn" data-id="f9d6d16049" data-link="https://arxiv.org/abs/2606.21139" data-source="https://arxiv.org/abs/2606.21139" data-title="AnyMug: Pose-Agnostic Robotic Functional Grasping via Canonicalization" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.RO · 2026-06-24<span class="item-keywords"> · dexterous manipulation · sim-to real RL</span></span><span class="item-desc">A canonicalized visuomotor RL framework for functional grasping that transforms observations and actions into a shared object-centric frame. A single closed-loop policy trained entirely in simulation with handle-aware reward and pose curriculum achieves 93%+ sim success on unseen upright and inverted mugs and transfers zero-shot to a real Franka Panda at 80%.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20705">MotionPyramid: Hierarchical Motion Representation and Residual Interfaces</a></span> <button class="vote-btn" data-id="6f02280235" data-link="https://arxiv.org/abs/2606.20705" data-source="https://arxiv.org/abs/2606.20705" data-title="MotionPyramid: Hierarchical Motion Representation and Residual Interfaces" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv cs.CV · 2026-06-24<span class="item-keywords"> · robot learning</span></span><span class="item-desc">Learns a recursive multi-level motion hierarchy from a motion tracking teacher, where lower latent levels decode immediate motor commands and higher levels unfold into temporally extended motion programs. Introduces Residual Interfaces letting downstream RL policies maintain coarse segment-level and fine frame-level residual commands — analogous to skip connections in deep networks — through a frozen hierarchy.</span></li>
+</ul>
+
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="hojin" data-date="2026-06-24"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,source:source,item_id:id,title:title})
+    }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
+      sub=w.querySelector('.fb-submit');
+  var ph={feedback:'e.g. Papers section was great / too many LLM items',
+    edit_keyword:'e.g. add VLA / remove quantum computing',
+    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
+    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
+  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
+  sub.addEventListener('click',function(){
+    var v=val.value.trim();if(!v)return;
+    sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

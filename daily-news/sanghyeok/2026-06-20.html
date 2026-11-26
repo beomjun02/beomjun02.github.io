@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily News — 2026-06-20</title>
+<link rel="stylesheet" href="/stylesheet.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
+<style>
+.daily-news { max-width: 760px; margin: 2em auto; padding: 0 1.2em; }
+.daily-news h1 { font-size: 1.6em; margin-bottom: 0.5em; }
+.daily-news h2 { font-size: 1.15em; margin-top: 1.8em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+.daily-news h3 { font-size: 1em; margin-top: 1em; }
+.daily-news ul { padding-left: 1.4em; }
+.daily-news li { margin-bottom: 1em; line-height: 1.5; }
+.daily-news .item-row { display: flex; align-items: center; gap: 0.4em; }
+.daily-news .item-title { font-weight: 500; flex: 1; min-width: 0; }
+.daily-news .item-meta { color: #888; font-size: 0.85em; display: block; margin-top: 0.15em; }
+.daily-news .item-desc { color: #555; font-size: 0.95em; display: block; margin-top: 0.25em; }
+.daily-news .item-keywords { color: #d4a017; }
+.daily-news .page-meta { color: #888; font-size: 0.85em; }
+.daily-news .user-banner { text-align: center; margin: 0 0 1.6em 0; line-height: 1.55; }
+.daily-news .user-handle { font-weight: 600; font-size: 1.15em; margin-bottom: 0.5em; }
+.daily-news .user-categories { color: #d4a017; font-size: 0.95em; font-weight: 600; margin-bottom: 0.5em; letter-spacing: 0.02em; }
+.daily-news .user-kws { color: #d4a017; font-size: 0.88em; line-height: 1.45; }
+.daily-news .archive { margin-top: 3em; border-top: 1px solid #ddd; padding-top: 1em; font-size: 0.9em; }
+.daily-news .archive ul { list-style: none; padding-left: 0; }
+.daily-news .archive li { margin-bottom: 0.3em; }
+.daily-news .archive-more { margin-top: 0.5em; }
+.daily-news .feedback { margin-top: 2.5em; border-top: 1px solid #ddd; padding-top: 1.2em; }
+.daily-news .feedback-row { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; }
+.daily-news .fb-action { border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.4em; font-size: 0.88em; font-family: inherit; background: #fff; cursor: pointer; }
+.daily-news .fb-value { flex: 1; min-width: 160px; border: 1px solid #ddd; border-radius: 4px; padding: 0.35em 0.6em; font-size: 0.9em; font-family: inherit; }
+.daily-news .fb-submit { background: #333; color: #fff; border: none; border-radius: 4px; padding: 0.4em 1em; font-size: 0.9em; font-family: inherit; cursor: pointer; }
+.daily-news .fb-submit:hover { background: #555; }
+.daily-news .fb-submit:disabled { background: #aaa; cursor: default; }
+.daily-news .fb-thanks { color: #888; font-size: 0.9em; }
+.daily-news .vote-btn { background: none; border: 1px solid #aaa; border-radius: 3px; padding: 0.3em 0.4em; cursor: pointer; color: #888; font-family: inherit; line-height: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.daily-news .vote-btn .tri { display: block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid currentColor; pointer-events: none; }
+@media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+.daily-news .vote-btn.voted { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+@media (prefers-color-scheme: dark) {
+  .daily-news { color: #f0f0f0; }
+  .daily-news h1 { color: #f5f5f5; }
+  .daily-news h2 { color: #f0f0f0; border-bottom-color: #444; }
+  .daily-news .item-title a { color: #64b5f6; }
+  .daily-news .item-title a:hover { color: #f09228; }
+  .daily-news .item-desc { color: #ccc; }
+  .daily-news .item-meta { color: #aaa; }
+  .daily-news .page-meta { color: #aaa; }
+  .daily-news .archive { border-top-color: #444; }
+  .daily-news .archive a { color: #64b5f6; }
+  .daily-news .archive a:hover { color: #f09228; }
+  .daily-news .feedback { border-top-color: #444; }
+  .daily-news .fb-action { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-value { background: #1a1a1a; color: #f0f0f0; border-color: #555; }
+  .daily-news .fb-submit { background: #555; }
+  .daily-news .vote-btn { border-color: #888; color: #aaa; }
+  @media (hover: hover) { .daily-news .vote-btn:hover { border-color: #d4a017; color: #d4a017; } }
+  .daily-news .vote-btn.voted { background: rgba(212,160,23,0.15); }
+}
+@media (max-width: 600px) {
+  .daily-news .vote-btn { padding: 0.25em 0.35em; }
+}
+</style>
+</head>
+<body>
+<div class="daily-news" data-feedback-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-20">
+<h1>Daily News — 2026-06-20</h1>
+<div class="user-banner"><div class="user-handle">Sanghyeok</div><div class="user-categories">Language · Robotics</div><div class="user-kws">Gui agent · on policy rl · LLM</div></div>
+<p class="page-meta">12 items · last 7 days · <a href="../">← all users</a> · <a href="list/">archive</a></p>
+
+<h2>Releases</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19348">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a></span> <button class="vote-btn" data-id="95124f7332" data-link="https://arxiv.org/abs/2606.19348" data-source="https://arxiv.org/abs/2606.19348" data-title="DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · LLM</span></span><span class="item-desc">DeepSeek releases V4 with two MoE models: V4-Pro (1.6T params, 49B activated) and V4-Flash (284B, 13B activated), both supporting 1M-token context. Features Compressed Sparse Attention, Manifold-Constrained Hyper-Connections, and the Muon optimizer. V4-Pro needs only 27% of DeepSeek-V3.2&#x27;s inference FLOPs and 10% of KV cache at 1M context. Model checkpoints are publicly available.</span></li>
+</ul>
+<h2>Papers</h2>
+<ul>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19659">SAGE-OPD: Selective Agent-Guided Intervention for Multi-Turn On-Policy Distillation</a></span> <button class="vote-btn" data-id="a60f6a064e" data-link="https://arxiv.org/abs/2606.19659" data-source="https://arxiv.org/abs/2606.19659" data-title="SAGE-OPD: Selective Agent-Guided Intervention for Multi-Turn On-Policy Distillation" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl · LLM</span></span><span class="item-desc">A verifier-free selective intervention framework for multi-turn on-policy distillation of LLM agents. Instead of applying teacher supervision uniformly, SAGE-OPD uses environment feedback to decide which student responses to intervene on, and weights token-level distillation by teacher confidence. Achieves up to 13.3% relative improvement in ALFWorld unseen success rate over standard OPD.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19771">Beyond Entropy: Learning from Token-Level Distributional Deviations for LLM Reasoning</a></span> <button class="vote-btn" data-id="f3664d96b7" data-link="https://arxiv.org/abs/2606.19771" data-source="https://arxiv.org/abs/2606.19771" data-title="Beyond Entropy: Learning from Token-Level Distributional Deviations for LLM Reasoning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl · LLM</span></span><span class="item-desc">Introduces the ICT framework that shifts RL optimization from scalar entropy to distributional properties of token logits. Uses Jensen-Shannon divergence to identify critical branching tokens, then selectively updates only the top 10% of unique tokens. On Qwen2.5 (0.5B–7B), yields an average pass@4 improvement of 4.58% over GRPO and DAPO baselines across seven benchmarks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.20068">Process-Verified Reinforcement Learning for Theorem Proving via Lean</a></span> <button class="vote-btn" data-id="e3336607f8" data-link="https://arxiv.org/abs/2606.20068" data-source="https://arxiv.org/abs/2606.20068" data-title="Process-Verified Reinforcement Learning for Theorem Proving via Lean" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Demonstrates that the Lean proof assistant can serve as a process-level reward oracle during RL training, supplying tactic-level verified feedback beyond just outcome rewards. Incorporates structured rewards into a GRPO-style objective with first-error propagation. Tactic-level supervision outperforms outcome-only baselines on MiniF2F and ProofNet.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19980">ENPIRE: Agentic Robot Policy Self-Improvement in the Real World</a></span> <button class="vote-btn" data-id="88515983bf" data-link="https://x.com/DrJimFan/status/2066921736369766762" data-source="https://arxiv.org/abs/2606.19980" data-title="ENPIRE: Agentic Robot Policy Self-Improvement in the Real World" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">A harness framework enabling coding agents to autonomously train robot policies through a physical feedback loop: reset, execute, verify, refine. Frontier coding agents train policies to 99% success on dexterous tasks (pin box, zip tie, tool use), and further accelerate when dispatching an agent team on a robot fleet.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19990">Reward as An Agent for Embodied World Models</a></span> <button class="vote-btn" data-id="5552be0be6" data-link="https://arxiv.org/abs/2606.19990" data-source="https://arxiv.org/abs/2606.19990" data-title="Reward as An Agent for Embodied World Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Challenges conservative rollout regimes in world-model RL with an agentic reward framework that actively evaluates behaviors to mitigate reward hacking, paired with DynDiff-GRPO for diversified action-space exploration. Demonstrates significant accuracy gains across multiple open-source world models while mitigating reward hacking under distribution shifts.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19419">Playful Agentic Robot Learning</a></span> <button class="vote-btn" data-id="2d74e4ad3d" data-link="https://arxiv.org/abs/2606.19419" data-source="https://arxiv.org/abs/2606.19419" data-title="Playful Agentic Robot Learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · LLM</span></span><span class="item-desc">Introduces RATs (Robotics Agent Teams) that use self-directed play as a continual skill-learning stage before downstream tasks. During play, the system proposes exploratory tasks, executes policies, diagnoses failures, and distills successes into a persistent code skill library. Play-learned skills improve downstream tasks by 20.6 and 17.0 pp on LIBERO-PRO and MolmoSpaces, and transfer to other agents by simple retrieval.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19531">ImageWAM: Do World Action Models Really Need Video Generation, or Just Image Editing?</a></span> <button class="vote-btn" data-id="df61267755" data-link="https://huggingface.co/papers/2606.19531" data-source="https://arxiv.org/abs/2606.19531" data-title="ImageWAM: Do World Action Models Really Need Video Generation, or Just Image Editing?" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · LLM</span></span><span class="item-desc">Proposes that image editing provides a better prior than video generation for robot action prediction. ImageWAM conditions a flow-matching action expert on KV caches from image-editing denoising, focusing on action-relevant visual differences. Outperforms standard VLA baselines while reducing FLOPs to 1/6 and latency to 1/4 of video-based WAMs.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19784">EquiVLA: A General Framework for Rotationally Equivariant Vision-Language-Action Models</a></span> <button class="vote-btn" data-id="a575ba7731" data-link="https://arxiv.org/abs/2606.19784" data-source="https://arxiv.org/abs/2606.19784" data-title="EquiVLA: A General Framework for Rotationally Equivariant Vision-Language-Action Models" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · LLM</span></span><span class="item-desc">First general framework for end-to-end SO(2)-equivariant VLA models, with EquiPerceptor for equivariant visual representations and EquiActor for equivariant flow-matching action prediction. On GR00T N1.5, achieves 92.6% average success on LIBERO (vs. 78.1% baseline) and improves real-robot Mobile ALOHA success from 54% to 72%.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19641">Scaling Self-Play for End-to-End Driving</a></span> <button class="vote-btn" data-id="d98ff58775" data-link="https://arxiv.org/abs/2606.19641" data-source="https://arxiv.org/abs/2606.19641" data-title="Scaling Self-Play for End-to-End Driving" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Introduces Gigapixel, a high-throughput batched driving simulator with perspective rendering at 50k agent steps/sec. Trains pixel-based policies via self-play DAgger from a privileged RL teacher, then bridges the sim-to-real gap through lightweight perception adaptation. Achieves competitive NAVSIM-v2 and HUGSIM performance without human trajectory supervision.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19752">Temporal Self-Imitation Learning</a></span> <button class="vote-btn" data-id="1547db9631" data-link="https://arxiv.org/abs/2606.19752" data-source="https://arxiv.org/abs/2606.19752" data-title="Temporal Self-Imitation Learning" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20<span class="item-keywords"> · on policy rl</span></span><span class="item-desc">Argues that temporal efficiency is an underutilized self-supervisory signal for RL. TSIL mines fast successful trajectories during training and converts them into reusable supervision via adaptive temporal targets and efficiency-weighted self-imitation learning. Consistently improves learning efficiency across 15 long-horizon manipulation tasks.</span></li>
+  <li><div class="item-row"><span class="item-title">🆕 <a href="https://arxiv.org/abs/2606.19928">SWAP: Symmetric Equivariant World-Model for Agile Robot Parkour</a></span> <button class="vote-btn" data-id="2594690473" data-link="https://arxiv.org/abs/2606.19928" data-source="https://arxiv.org/abs/2606.19928" data-title="SWAP: Symmetric Equivariant World-Model for Agile Robot Parkour" title="upvote"><span class="tri"></span></button></div><span class="item-meta">arXiv · 2026-06-20</span><span class="item-desc">Embeds symmetry directly into world model and actor-critic networks for quadruped parkour. In real-world tests, the robot leaps a 2.13m gap and climbs a 1.63m platform, breaking records for quadruped parkour. Demonstrates robust generalization to unseen mirrored terrains and zero-shot transfer across diverse outdoor environments.</span></li>
+</ul>
+
+<div class="feedback" data-url="https://script.google.com/macros/s/AKfycby45j4hqNc-E1yfdopvhO9ILkcq9GTV59UxjTy851o4z1lkvOu7t_LIGt8w6dsrL-B9/exec" data-user="sanghyeok" data-date="2026-06-20"><div class="feedback-row"><select class="fb-action"><option value="feedback">Feedback</option><option value="edit_keyword">Edit keyword</option><option value="edit_watchlist">Edit watchlist</option><option value="tune_interest">Tune interest</option></select><input class="fb-value" type="text" placeholder="e.g. Papers section was great / too many LLM items" maxlength="500"><button class="fb-submit">Send</button></div></div>
+
+</div>
+
+<script>
+(function(){
+  var dn=document.querySelector('.daily-news');if(!dn)return;
+  var url=dn.dataset.feedbackUrl,user=dn.dataset.user,date=dn.dataset.date;
+  if(!url||!user)return;
+  var proxy='https://daily-news-api.bullbum1126.workers.dev/';
+  var myVotes={};
+  fetch(proxy+'?action=votes&user='+user)
+    .then(function(r){return r.json()})
+    .then(function(d){
+      myVotes=d.my_votes||{};
+      Object.keys(myVotes).forEach(function(id){
+        var b=document.querySelector('.vote-btn[data-id="'+id+'"]');
+        if(b)b.classList.add('voted');
+      });
+    }).catch(function(){});
+  dn.addEventListener('click',function(e){
+    var btn=e.target.closest('.vote-btn');if(!btn)return;
+    var id=btn.dataset.id,link=btn.dataset.link,source=btn.dataset.source||'',title=btn.dataset.title;
+    var wasVoted=!!myVotes[id];
+    if(wasVoted){delete myVotes[id];btn.classList.remove('voted');}
+    else{myVotes[id]=1;btn.classList.add('voted');}
+    fetch(proxy,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:wasVoted?'unvote':'upvote',
+        value:link,source:source,item_id:id,title:title})
+    }).catch(function(){});
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var w=document.querySelector('.feedback');if(!w)return;
+  var url=w.dataset.url,user=w.dataset.user,date=w.dataset.date;
+  var sel=w.querySelector('.fb-action'),val=w.querySelector('.fb-value'),
+      sub=w.querySelector('.fb-submit');
+  var ph={feedback:'e.g. Papers section was great / too many LLM items',
+    edit_keyword:'e.g. add VLA / remove quantum computing',
+    edit_watchlist:'e.g. watch Qwen3.7 release at github.com/QwenLM / unwatch Orca Hand opensource release',
+    tune_interest:'e.g. more open-source hardware / not interested in simulation-only papers'};
+  sel.addEventListener('change',function(){val.placeholder=ph[sel.value]||'';});
+  sub.addEventListener('click',function(){
+    var v=val.value.trim();if(!v)return;
+    sub.disabled=true;sub.textContent='...';
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({user:user,date:date,action:sel.value,value:v})
+    }).then(function(){
+      w.innerHTML='<p class="fb-thanks">Received — takes effect tomorrow.</p>';
+    }).catch(function(){
+      w.innerHTML='<p class="fb-thanks">Received — thanks!</p>';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
