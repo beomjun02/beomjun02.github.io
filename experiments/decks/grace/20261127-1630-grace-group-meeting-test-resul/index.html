@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>Beomjun's Lab</title><script>(function(){function a(){try{var t=localStorage.getItem("theme"),d=document.documentElement;if(t)d.dataset.theme=t;else delete d.dataset.theme}catch(e){}}a();addEventListener("pageshow",a);addEventListener("focus",a);document.addEventListener("visibilitychange",function(){if(!document.hidden)a()});addEventListener("storage",function(e){if(!e.key||e.key==="theme")a()})})()</script>
+<style>
+:root{--bg:#fbfaf8;--fg:#1d1d1b;--muted:#6b6a66;--line:#d9d6cf;--card:#fff;--accent:#2f5d8a;--err:#a3402f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171716;--fg:#ecebe7;--muted:#a3a19b;--line:#3a3936;--card:#1f1f1d;--accent:#8fb4dc;--err:#f0a091}}
+:root[data-theme="dark"]{--bg:#171716;--fg:#ecebe7;--muted:#a3a19b;--line:#3a3936;--card:#1f1f1d;--accent:#8fb4dc;--err:#f0a091}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:16px}
+form{width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px}form[hidden]{display:none}
+h1{font-size:18px;margin:0 0 14px}input[type=password]{width:100%;font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+button{width:100%;font:inherit;padding:8px;border:0;border-radius:6px;background:var(--accent);color:var(--bg);cursor:pointer}
+#e{color:var(--err);font-size:13px;min-height:1.2em;margin:8px 0 0}
+</style></head><body>
+<form id="f" autocomplete="on" hidden><input type="password" id="p" placeholder="Password" autocomplete="current-password" required>
+<button type="submit">Open</button><p id="e"></p></form>
+<script>
+const S="o+elrtPFKjaiP5FUBnniwg==",I="6oSVjnB/DY8o6pjo",C="FQDVFbpCW/2TkLQ8c9HSpGV5Ao0/Z//eJY77H7at7MF0VC5khtwj0o3WhVfnElMpJlMNOSPWnIhpbx/pox6J2TVsfJEOMKUzyDv49aiBC64hyOpXZXl9XXtfESi/1NOfNs39Q9/I7SyQI4geQ7LVhLU/PrpDzYC+hB6G5f4ZDoVo34J/FyLLNOTUWBgcsEinLz+YT2xaHKd8+0p1ClY39qGPAzW9Woy2D+x7ZfdZMKgMrSz5KjrM86DyMEQVVwg0oSAf7oUa87Kv8ErhemiRWF025EYkpRtYzZSy+OskiOaGoMvia8T0Ce3bzdC8IFx6f3wP5g3xStrqE92ItNxq3h/Xa3376+QRWTAtOk0xBdKGK7p5a3rIjG+r/891senYGyqTT3J2G1ncso7x1A02oUiU5AQLV3TitYLxT/jvv2G/4lYRmpaHNvzLkqibnuuC+i8F7LNFvQFxKgeTWo4xl45iGapaicUYfEetT9GYTo/AZaU8VWfKrVsekZWfn4v9WObNfb150HuuyF/rpGhY+C0mWRG0aM9mH0lQ68nS5mR9PsubeigDrgI=",N=600000;
+const d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function open(k){const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:d(I)},k,d(C));let h=new TextDecoder().decode(pt);
+if(h.indexOf("<!--xc:")>=0){try{const r=(await (await fetch("/agent-lab/_shared/code.bin",{cache:"no-cache"})).text()).trim().split(".");const b=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:d(r[0])},k,d(r[1]))));h=h.replace("<!--xc:head-->",()=>b.head).replace("<!--xc:body-->",()=>b.body).replace("<!--xc:end-->",()=>b.end);}catch(e){}}
+document.open();document.write(h);document.close();const t=h.split("<title>")[1];if(t)document.title=t.split("<"+"/title>")[0];}
+async function derive(p){const b=await crypto.subtle.importKey("raw",new TextEncoder().encode(p),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:d(S),iterations:N,hash:"SHA-256"},b,{name:"AES-GCM",length:256},true,["decrypt"]);}
+function ask(){const f=document.getElementById("f");f.hidden=false;document.getElementById("p").focus();}
+(async()=>{let s=null;try{s=localStorage.getItem("xk")}catch(e){}
+if(!s)return ask();try{const k=await crypto.subtle.importKey("raw",d(s),"AES-GCM",false,["decrypt"]);await open(k);}catch(e){try{localStorage.removeItem("xk")}catch(_){}ask();}})();
+document.getElementById("f").onsubmit=async ev=>{ev.preventDefault();const e=document.getElementById("e");e.textContent="";
+try{const k=await derive(document.getElementById("p").value);await crypto.subtle.decrypt({name:"AES-GCM",iv:d(I)},k,d(C));
+try{const raw=new Uint8Array(await crypto.subtle.exportKey("raw",k));localStorage.setItem("xk",btoa(String.fromCharCode(...raw)))}catch(_){}
+await open(k);}catch(x){e.textContent="Wrong password.";}};
+</script></body></html>
